@@ -1,0 +1,3 @@
+interface ContextProps {
+  children: ReactNode;
+}
