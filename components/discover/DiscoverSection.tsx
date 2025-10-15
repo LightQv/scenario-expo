@@ -27,8 +27,6 @@ export default function DiscoverSection({
   queryPath,
   loading = false,
 }: DiscoverSectionProps) {
-  console.log("MediaCard import value:", MediaCard);
-
   const renderItem: ListRenderItem<TmdbData> = ({ item }) => (
     <MediaCard data={item} mediaType={mediaType} />
   );

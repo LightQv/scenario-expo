@@ -11,6 +11,8 @@ import i18n from "@/services/i18n";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DiscoverSection from "@/components/discover/DiscoverSection";
 import { notifyError } from "@/components/toasts/Toast";
+import { FONTS, TOKENS } from "@/constants/theme";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 type SectionData = {
   id: string;
@@ -98,7 +100,6 @@ export default function DiscoverIndexScreen() {
   const loadAllSections = async () => {
     const promises = sections.map((section) => fetchSectionData(section));
     const results = await Promise.all(promises);
-    console.log(results);
     setSections(results);
   };
 
@@ -129,14 +130,7 @@ export default function DiscoverIndexScreen() {
           />
         }
       >
-        <Text
-          style={[
-            styles.title,
-            { marginTop: -insets.top - 10, color: PlatformColor("label") },
-          ]}
-        >
-          Discover
-        </Text>
+        <HeaderTitle title="Discover" />
         {sections.map((section) => (
           <DiscoverSection
             key={section.id}
@@ -158,7 +152,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 38,
-    fontWeight: "bold",
+    fontFamily: FONTS.abril,
     marginBottom: 24,
     paddingHorizontal: 14,
   },

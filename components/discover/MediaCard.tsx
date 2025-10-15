@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontFamily: FONTS.abril,
+    fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
     lineHeight: 18,
   },
