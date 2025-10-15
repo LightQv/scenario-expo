@@ -6,12 +6,9 @@ import {
   PlatformColor,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTheme } from "@/constants/theme";
 
 export default function TopIndexScreen() {
   const insets = useSafeAreaInsets();
-
-  const { background, color } = useTheme();
 
   return (
     <ScrollView
