@@ -12,7 +12,7 @@ export default function HeaderTitle({ title }: HeaderTitleProps) {
     <Text
       style={[
         styles.title,
-        { marginTop: -insets.top - 14, color: PlatformColor("label") },
+        { marginTop: -insets.top - 12, color: PlatformColor("label") },
       ]}
     >
       {title}

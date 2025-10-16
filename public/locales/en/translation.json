@@ -14,7 +14,6 @@
       "link4": "Watchlists"
     }
   },
-
   "validator": {
     "username": {
       "min": "5 characters minimum",
@@ -45,7 +44,6 @@
       "delete": "Must matches \"your_email@mail.com/bye-scenario\""
     }
   },
-
   "form": {
     "auth": {
       "title": {
@@ -167,7 +165,6 @@
       }
     }
   },
-
   "chart": {
     "percentage": {
       "title": "View percentage by media type",
@@ -181,12 +178,10 @@
       "tv": "Tv Shows"
     }
   },
-
   "error": {
     "noBiography": "No biography yet.",
     "noSynopsis": "No synopsis yet."
   },
-
   "filter": {
     "genre": {
       "title": "Filter by",
@@ -204,7 +199,6 @@
       "option2": "TV Shows"
     }
   },
-
   "screen": {
     "home": {
       "title": "Welcome to Scenario.",
@@ -276,7 +270,6 @@
       }
     }
   },
-
   "stats": {
     "movie": "Movie watched",
     "movies": "Movies watched",
@@ -290,7 +283,6 @@
     "tvRuntime": "Episode watched",
     "tvsRuntime": "Episodes watched"
   },
-
   "toast": {
     "promise": {
       "loading": "Uploading...",
@@ -312,7 +304,6 @@
     "error": "Oops, something went wrong",
     "errorQuery": "Oops, no results...",
     "errorTMDB": "Oops, something went wrong with TMDB",
-    "errorFirebase": "Oops, error from Firebase",
     "errorSize": "File too heavy, must be lighter than 1Mb"
   }
 }

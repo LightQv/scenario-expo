@@ -3,15 +3,13 @@ import {
   ScrollView,
   PlatformColor,
   RefreshControl,
-  Text,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DiscoverSection from "@/components/discover/DiscoverSection";
 import { notifyError } from "@/components/toasts/Toast";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { FONTS } from "@/constants/theme";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 
 type SectionData = {
@@ -24,22 +22,21 @@ type SectionData = {
 };
 
 export default function DiscoverIndexScreen() {
-  const insets = useSafeAreaInsets();
   const [sections, setSections] = useState<SectionData[]>([
     {
-      id: "tv-upcoming",
-      title: "Today's TV Shows",
+      id: "trending-week",
+      title: "Trending this week",
       data: [],
-      mediaType: "tv",
-      queryPath: "tv/airing_today",
+      mediaType: "all",
+      queryPath: "trending/all/week",
       loading: true,
     },
     {
-      id: "movies-2000s",
-      title: "Best 2000s movies",
+      id: "tv-upcoming",
+      title: "Running TV Shows",
       data: [],
-      mediaType: "movie",
-      queryPath: "discover/movie",
+      mediaType: "tv",
+      queryPath: "tv/on_the_air",
       loading: true,
     },
     {
@@ -51,19 +48,27 @@ export default function DiscoverIndexScreen() {
       loading: true,
     },
     {
-      id: "trending-week",
-      title: "Trending week",
-      data: [],
-      mediaType: "all",
-      queryPath: "trending/all/week",
-      loading: true,
-    },
-    {
       id: "top-rated-tv",
       title: "Best rated TV Shows",
       data: [],
       mediaType: "tv",
       queryPath: "tv/top_rated",
+      loading: true,
+    },
+    {
+      id: "top-rated-japanimation",
+      title: "Best rated Japanese anime",
+      data: [],
+      mediaType: "tv",
+      queryPath: "discover/tv",
+      loading: true,
+    },
+    {
+      id: "movies-2000s",
+      title: "Best 2000s movies",
+      data: [],
+      mediaType: "movie",
+      queryPath: "discover/movie",
       loading: true,
     },
   ]);
@@ -78,6 +83,10 @@ export default function DiscoverIndexScreen() {
       if (section.id === "movies-2000s") {
         endpoint +=
           "&primary_release_date.gte=2000-01-01&primary_release_date.lte=2009-12-31&sort_by=vote_average.desc&vote_count.gte=1000";
+      }
+      if (section.id === "top-rated-japanimation") {
+        endpoint +=
+          "&with_genres=16&with_origin_country=JP&with_origin_language=ja&sort_by=vote_average.desc&vote_count.gte=500";
       }
 
       const response = await tmdbFetch(endpoint);
