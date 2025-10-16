@@ -29,10 +29,11 @@ export default function MediaCard({ data, mediaType }: MediaCardProps) {
   return (
     <Link
       href={{
-        pathname: "details/[id]",
-        params: { type: data.media_type || mediaType, id: data.id },
+        pathname: "/details/[id]",
+        params: { type: data.media_type || mediaType, id: data.id.toString() },
       }}
       asChild
+      push
     >
       <TouchableOpacity style={styles.container} activeOpacity={0.7}>
         <View style={styles.imageContainer}>
