@@ -5,6 +5,7 @@ import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
+import DetailHeader from "@/components/details/DetailHeader";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -98,6 +99,19 @@ export default function DetailsScreen() {
               score={data.vote_average}
               videos={data.videos?.results}
               scrollY={scrollY}
+            />
+            <DetailHeader
+              title={data.title || data.name}
+              originalTitle={data.original_title || data.name}
+              genres={data.genres}
+              overview={data.overview}
+              releaseDate={data.release_date}
+              runtime={data.runtime}
+              status={data.status}
+              firstAirDate={data.first_air_date}
+              lastAirDate={data.last_air_date}
+              numberOfSeasons={data.number_of_seasons}
+              numberOfEpisodes={data.number_of_episodes}
             />
             {/* More content sections will be added here */}
             <View
