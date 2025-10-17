@@ -31,7 +31,7 @@ export default function RatingBadge({
       <Text
         style={[
           styles.scoreText,
-          { color: PlatformColor("label") },
+          { color: "#fff" },
           isSmall ? styles.scoreTextSmall : styles.scoreTextDefault,
         ]}
       >

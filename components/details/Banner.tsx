@@ -3,7 +3,8 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  Linking,
+  Text,
+  PlatformColor,
 } from "react-native";
 import { Image } from "expo-image";
 import Animated, {
@@ -13,12 +14,9 @@ import Animated, {
   Extrapolation,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as WebBrowser from "expo-web-browser";
-import { BLURHASH, TOKENS } from "@/constants/theme";
-import { THEME_COLORS } from "@/constants/theme/colors";
-import i18n from "@/services/i18n";
+import { BLURHASH, TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import RatingBadge from "@/components/ui/RatingBadge";
 
 const { width } = Dimensions.get("window");
@@ -28,7 +26,8 @@ type BannerProps = {
   src: string;
   alt?: string;
   score?: number;
-  videos?: Video[];
+  title: string;
+  genres: Genre[];
   scrollY: SharedValue<number>;
 };
 
@@ -36,10 +35,12 @@ export default function Banner({
   src,
   alt,
   score,
-  videos,
+  title,
+  genres,
   scrollY,
 }: BannerProps) {
   const insets = useSafeAreaInsets();
+  const { type } = useLocalSearchParams<{ type: string }>();
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -75,36 +76,6 @@ export default function Banner({
     return { opacity };
   });
 
-  // Find the first YouTube trailer
-  const trailer = videos?.find(
-    (video) => video.type === "Trailer" && video.site === "YouTube",
-  );
-  const hasTrailer = !!trailer;
-
-  // Handle trailer button press
-  const handleTrailerPress = async () => {
-    if (!trailer?.key) return;
-
-    const youtubeUrl = `https://www.youtube.com/watch?v=${trailer.key}`;
-    const youtubeAppUrl = `vnd.youtube://watch?v=${trailer.key}`;
-
-    try {
-      // Try to open in YouTube app first
-      const canOpen = await Linking.canOpenURL(youtubeAppUrl);
-      if (canOpen) {
-        await Linking.openURL(youtubeAppUrl);
-      } else {
-        // Fallback to web browser (in-app)
-        await WebBrowser.openBrowserAsync(youtubeUrl, {
-          presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-          controlsColor: THEME_COLORS.main,
-        });
-      }
-    } catch (error) {
-      console.error("Error opening trailer:", error);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
@@ -132,24 +103,50 @@ export default function Banner({
         />
       </Animated.View>
 
-      {/* Bottom info bar */}
+      {/* Content Section */}
       <View
-        style={[styles.infoBar, { paddingBottom: insets.bottom / 1.5 || 16 }]}
+        style={[
+          styles.contentSection,
+          { paddingBottom: insets.bottom / 1.5 || 16 },
+        ]}
       >
-        {hasTrailer && (
-          <TouchableOpacity
-            style={styles.trailerButton}
-            activeOpacity={0.7}
-            onPress={handleTrailerPress}
+        {/* Title Section */}
+        <View style={styles.titleSection}>
+          <Text
+            style={[styles.title, { color: "#fff", fontFamily: FONTS.abril }]}
+            numberOfLines={2}
           >
-            <Ionicons name="play-circle" size={24} color="#fff" />
-            <Animated.Text style={styles.trailerText}>
-              {i18n.t("screen.detail.media.trailer")}
-            </Animated.Text>
-          </TouchableOpacity>
-        )}
+            {title}
+          </Text>
+          {/* Genre Pills - Show only first 2 */}
+          {genres && genres.length > 0 && (
+            <View style={styles.genreContainer}>
+              {genres.slice(0, 2).map((genre) => (
+                <Link
+                  href={{
+                    pathname: "/discover",
+                    params: { type, genreId: genre.id },
+                  }}
+                  key={genre.id}
+                  asChild
+                >
+                  <TouchableOpacity
+                    activeOpacity={BUTTON.opacity}
+                    style={styles.genrePill}
+                  >
+                    <Text style={styles.genreText}>{genre.name}</Text>
+                  </TouchableOpacity>
+                </Link>
+              ))}
+            </View>
+          )}
+        </View>
 
-        {score && <RatingBadge score={score} />}
+        {/* Genre Pills and Rating Row */}
+        <View style={styles.bottomRow}>
+          {/* Rating Badge */}
+          {score && <RatingBadge score={score} />}
+        </View>
       </View>
     </View>
   );
@@ -186,29 +183,51 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  infoBar: {
+  contentSection: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
+    paddingHorizontal: TOKENS.margin.horizontal,
+    gap: 4,
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: TOKENS.margin.horizontal,
-    paddingTop: 16,
   },
-  trailerButton: {
+  titleSection: {
+    gap: 4,
+  },
+  title: {
+    fontSize: 32,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+  },
+  originalTitle: {
+    fontSize: TOKENS.font.xl,
+    fontFamily: FONTS.light,
+    fontStyle: "italic",
+  },
+  bottomRow: {
+    gap: 8,
+  },
+  genreContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: THEME_COLORS.main,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 24,
+    flexWrap: "wrap",
+    gap: 8,
+    flex: 1,
   },
-  trailerText: {
-    color: "#000",
-    fontSize: 15,
-    fontWeight: "600",
+  genrePill: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignSelf: "flex-start",
+  },
+  genreText: {
+    fontSize: TOKENS.font.lg,
+    fontFamily: FONTS.medium,
+    letterSpacing: 0.2,
+    color: "#fff",
   },
 });

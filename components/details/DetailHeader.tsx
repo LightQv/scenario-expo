@@ -4,18 +4,20 @@ import {
   View,
   PlatformColor,
   TouchableOpacity,
+  Linking,
 } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
-import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
+import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
+import { TOKENS, FONTS } from "@/constants/theme";
+import { THEME_COLORS } from "@/constants/theme/colors";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
 
 type DetailHeaderProps = {
   /* Overall type */
-  title: string;
-  originalTitle: string;
-  genres: Genre[];
   overview: string;
+  videos?: Video[];
 
   /* Movie type */
   releaseDate?: string;
@@ -30,10 +32,8 @@ type DetailHeaderProps = {
 };
 
 export default function DetailHeader({
-  title,
-  originalTitle,
-  genres,
   overview,
+  videos,
   releaseDate,
   runtime,
   status,
@@ -44,62 +44,38 @@ export default function DetailHeader({
 }: DetailHeaderProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
 
+  // Find the first YouTube trailer
+  const trailer = videos?.find(
+    (video) => video.type === "Trailer" && video.site === "YouTube",
+  );
+  const hasTrailer = !!trailer;
+
+  // Handle trailer button press
+  const handleTrailerPress = async () => {
+    if (!trailer?.key) return;
+
+    const youtubeUrl = `https://www.youtube.com/watch?v=${trailer.key}`;
+    const youtubeAppUrl = `vnd.youtube://watch?v=${trailer.key}`;
+
+    try {
+      // Try to open in YouTube app first
+      const canOpen = await Linking.canOpenURL(youtubeAppUrl);
+      if (canOpen) {
+        await Linking.openURL(youtubeAppUrl);
+      } else {
+        // Fallback to web browser (in-app)
+        await WebBrowser.openBrowserAsync(youtubeUrl, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+          controlsColor: THEME_COLORS.main,
+        });
+      }
+    } catch (error) {
+      console.error("Error opening trailer:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Title Section */}
-      <View style={styles.titleSection}>
-        <Text
-          style={[
-            styles.title,
-            { color: PlatformColor("label"), fontFamily: FONTS.abril },
-          ]}
-          numberOfLines={2}
-        >
-          {title}
-        </Text>
-        {originalTitle !== title && (
-          <Text
-            style={[
-              styles.originalTitle,
-              { color: PlatformColor("secondaryLabel") },
-            ]}
-            numberOfLines={1}
-          >
-            {originalTitle}
-          </Text>
-        )}
-      </View>
-
-      {/* Genre Pills - Show only first 2 */}
-      {genres && genres.length > 0 && (
-        <View style={styles.genreContainer}>
-          {genres.slice(0, 2).map((genre) => (
-            <Link
-              href={{
-                pathname: "/discover",
-                params: { type, genreId: genre.id },
-              }}
-              key={genre.id}
-              asChild
-            >
-              <TouchableOpacity
-                activeOpacity={BUTTON.opacity}
-                style={[
-                  styles.genrePill,
-                  { backgroundColor: PlatformColor("systemGray5") },
-                ]}
-              >
-                <Text
-                  style={[styles.genreText, { color: PlatformColor("label") }]}
-                >
-                  {genre.name}
-                </Text>
-              </TouchableOpacity>
-            </Link>
-          ))}
-        </View>
-      )}
-
       {/* Metadata Section */}
       <View style={styles.metadataSection}>
         {type === "movie" && releaseDate && (
@@ -160,8 +136,22 @@ export default function DetailHeader({
         )}
       </View>
 
+      {/* Trailer Button */}
+      {hasTrailer && (
+        <TouchableOpacity
+          style={styles.trailerButton}
+          activeOpacity={0.7}
+          onPress={handleTrailerPress}
+        >
+          <Ionicons name="play-circle" size={24} color="#fff" />
+          <Text style={styles.trailerText}>
+            {i18n.t("screen.detail.media.trailer")}
+          </Text>
+        </TouchableOpacity>
+      )}
+
       {/* Synopsis Section */}
-      <View style={styles.synopsisSection}>
+      <View>
         <Text style={[styles.synopsisText, { color: PlatformColor("label") }]}>
           {overview || i18n.t("error.noSynopsis")}
         </Text>
@@ -173,38 +163,9 @@ export default function DetailHeader({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingVertical: TOKENS.margin.vertical * 2,
+    paddingBottom: TOKENS.margin.vertical * 2,
     gap: 16,
     backgroundColor: PlatformColor("systemBackground"),
-  },
-  titleSection: {
-    gap: 4,
-  },
-  title: {
-    fontSize: 32,
-    lineHeight: 36,
-    letterSpacing: -0.5,
-  },
-  originalTitle: {
-    fontSize: TOKENS.font.xl,
-    fontFamily: FONTS.light,
-    fontStyle: "italic",
-  },
-  genreContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  genrePill: {
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 999,
-    alignSelf: "flex-start",
-  },
-  genreText: {
-    fontSize: TOKENS.font.lg,
-    fontFamily: FONTS.medium,
-    letterSpacing: 0.2,
   },
   metadataSection: {
     gap: 4,
@@ -224,8 +185,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     textTransform: "uppercase",
   },
-  synopsisSection: {
-    marginTop: 4,
+  trailerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: THEME_COLORS.main,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 24,
+    alignSelf: "stretch",
+  },
+  trailerText: {
+    color: "#000",
+    fontSize: 15,
+    fontWeight: "600",
   },
   synopsisText: {
     fontSize: TOKENS.font.xl,

@@ -5,6 +5,7 @@ import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
+import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
 import Animated, {
   useAnimatedScrollHandler,
@@ -97,14 +98,14 @@ export default function DetailsScreen() {
               src={data.backdrop_path}
               alt={data.title || data.name}
               score={data.vote_average}
-              videos={data.videos?.results}
+              title={data.title || data.name}
+              genres={data.genres}
               scrollY={scrollY}
             />
+            <GradientTransition />
             <DetailHeader
-              title={data.title || data.name}
-              originalTitle={data.original_title || data.name}
-              genres={data.genres}
               overview={data.overview}
+              videos={data.videos?.results}
               releaseDate={data.release_date}
               runtime={data.runtime}
               status={data.status}
