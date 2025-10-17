@@ -3,7 +3,6 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  PlatformColor,
   Linking,
 } from "react-native";
 import { Image } from "expo-image";
@@ -20,6 +19,7 @@ import * as WebBrowser from "expo-web-browser";
 import { BLURHASH, TOKENS } from "@/constants/theme";
 import { THEME_COLORS } from "@/constants/theme/colors";
 import i18n from "@/services/i18n";
+import RatingBadge from "@/components/ui/RatingBadge";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 500;
@@ -74,9 +74,6 @@ export default function Banner({
 
     return { opacity };
   });
-
-  // Score display (TMDB rating out of 10)
-  const displayScore = score ? (score / 2).toFixed(1) : null;
 
   // Find the first YouTube trailer
   const trailer = videos?.find(
@@ -152,16 +149,7 @@ export default function Banner({
           </TouchableOpacity>
         )}
 
-        {displayScore && (
-          <View style={styles.scoreContainer}>
-            <Ionicons name="star" size={18} color={THEME_COLORS.main} />
-            <Animated.Text
-              style={[styles.scoreText, { color: PlatformColor("label") }]}
-            >
-              {displayScore}
-            </Animated.Text>
-          </View>
-        )}
+        {score && <RatingBadge score={score} />}
       </View>
     </View>
   );
@@ -209,26 +197,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingTop: 16,
   },
-  scoreContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  scoreText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
   trailerButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
     backgroundColor: THEME_COLORS.main,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 24,
   },
   trailerText: {

@@ -7,11 +7,10 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
-import { THEME_COLORS } from "@/constants/theme/colors";
 import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
+import RatingBadge from "@/components/ui/RatingBadge";
 
 type MediaCardProps = {
   data: TmdbData;
@@ -22,9 +21,6 @@ export default function MediaCard({ data, mediaType }: MediaCardProps) {
   const genre = useGenre(data, mediaType);
   const releaseDate = data.release_date || data.first_air_date;
   const isUpcoming = releaseDate && new Date(releaseDate) > new Date();
-
-  // Calcul de la note sur 5 étoiles
-  const rating = data.vote_average ? (data.vote_average / 2).toFixed(1) : null;
 
   return (
     <Link
@@ -47,28 +43,20 @@ export default function MediaCard({ data, mediaType }: MediaCardProps) {
             placeholder={BLURHASH.hash}
             transition={BLURHASH.transition}
           />
+          {data.vote_average && (
+            <View style={styles.ratingBadge}>
+              <RatingBadge score={data.vote_average} size="sm" />
+            </View>
+          )}
         </View>
 
         <View style={styles.content}>
-          <View style={styles.titleRow}>
-            <Text
-              style={[styles.title, { color: PlatformColor("label") }]}
-              numberOfLines={1}
-            >
-              {data.title || data.name}
-            </Text>
-
-            {rating && (
-              <View style={styles.ratingContainer}>
-                <Ionicons name="star" size={14} color={THEME_COLORS.main} />
-                <Text
-                  style={[styles.rating, { color: PlatformColor("label") }]}
-                >
-                  {rating}
-                </Text>
-              </View>
-            )}
-          </View>
+          <Text
+            style={[styles.title, { color: PlatformColor("label") }]}
+            numberOfLines={1}
+          >
+            {data.title || data.name}
+          </Text>
 
           <View style={styles.metaRow}>
             {genre && genre.length > 0 && (
@@ -113,34 +101,25 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     backgroundColor: PlatformColor("systemGray5"),
+    position: "relative",
   },
   image: {
     width: "100%",
     height: "100%",
   },
+  ratingBadge: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+  },
   content: {
     marginTop: 10,
     gap: 4,
   },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 6,
-  },
   title: {
-    flex: 1,
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
     lineHeight: 18,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  rating: {
-    fontFamily: FONTS.medium,
-    fontSize: TOKENS.font.md,
   },
   metaRow: {
     flexDirection: "row",
