@@ -117,10 +117,7 @@ export default function Banner({
       >
         {/* Title Section - Centered */}
         <View style={styles.titleSection}>
-          <Text
-            style={[styles.title, { color: "#fff", fontFamily: FONTS.abril }]}
-            numberOfLines={2}
-          >
+          <Text style={styles.title} numberOfLines={2}>
             {title}
           </Text>
           {/* Genre Pills and Rating Badge - Centered on same row */}
@@ -212,11 +209,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
-  },
-  originalTitle: {
-    fontSize: TOKENS.font.xl,
-    fontFamily: FONTS.light,
-    fontStyle: "italic",
+    color: "#fff",
+    fontFamily: FONTS.abril,
   },
   genreContainer: {
     flexDirection: "row",

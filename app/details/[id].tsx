@@ -121,13 +121,6 @@ export default function DetailsScreen() {
               numberOfSeasons={data.number_of_seasons}
               numberOfEpisodes={data.number_of_episodes}
             />
-            {/* More content sections will be added here */}
-            <View
-              style={{
-                height: 1000,
-                backgroundColor: PlatformColor("systemBackground"),
-              }}
-            />
           </>
         )}
       </Animated.ScrollView>
