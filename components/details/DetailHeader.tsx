@@ -155,7 +155,7 @@ export default function DetailHeader({
           activeOpacity={0.7}
           onPress={handleTrailerPress}
         >
-          <Ionicons name="play-circle" size={24} color="#fff" />
+          <Ionicons name="play-circle" size={24} color="#fffff" />
           <Text style={styles.trailerText}>
             {i18n.t("screen.detail.media.trailer")}
           </Text>
