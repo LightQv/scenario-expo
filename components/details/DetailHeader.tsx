@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   metadataRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
     gap: 6,
   },

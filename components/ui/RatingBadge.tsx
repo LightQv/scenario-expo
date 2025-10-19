@@ -1,15 +1,26 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { THEME_COLORS } from "@/constants/theme/colors";
 
 type RatingBadgeProps = {
   score: number;
-  size?: "sm" | "md" | "xl";
+  size?: "sm" | "md" | "xl" | "detail";
 };
 
 export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
+  const colorScheme = useColorScheme();
   // Convert TMDB score (0-10) to 0-5 scale
   const displayScore = (score / 2).toFixed(1);
+
+  // Theme-based background color for detail size
+  const getBackgroundColor = () => {
+    if (size === "detail") {
+      return colorScheme === "dark"
+        ? "rgba(255,255,255,0.2)" // Same as genre pills in dark mode
+        : "rgba(0,0,0,0.5)"; // Same as default rating badge in light mode
+    }
+    return "rgba(0,0,0,0.5)"; // Default for other sizes
+  };
 
   const getStyles = () => {
     switch (size) {
@@ -25,6 +36,12 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
           text: styles.scoreTextMd,
           iconSize: 14,
         };
+      case "detail":
+        return {
+          container: styles.containerDetail,
+          text: styles.scoreTextDetail,
+          iconSize: 14,
+        };
       case "xl":
       default:
         return {
@@ -38,7 +55,13 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
   const sizeStyles = getStyles();
 
   return (
-    <View style={[styles.container, sizeStyles.container]}>
+    <View
+      style={[
+        styles.container,
+        sizeStyles.container,
+        { backgroundColor: getBackgroundColor() },
+      ]}
+    >
       <Ionicons
         name="star"
         size={sizeStyles.iconSize}
@@ -55,7 +78,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 20,
     marginLeft: "auto",
   },
@@ -68,6 +90,11 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 5,
+  },
+  containerDetail: {
+    gap: 4,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
   },
   containerXl: {
     gap: 6,
@@ -82,6 +109,9 @@ const styles = StyleSheet.create({
   },
   scoreTextMd: {
     fontSize: 13,
+  },
+  scoreTextDetail: {
+    fontSize: 14,
   },
   scoreTextXl: {
     fontSize: 16,

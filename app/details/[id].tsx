@@ -1,4 +1,10 @@
-import { View, StyleSheet, PlatformColor, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  PlatformColor,
+  Pressable,
+  useColorScheme,
+} from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
@@ -17,6 +23,7 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function DetailsScreen() {
+  const colorScheme = useColorScheme();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +41,7 @@ export default function DetailsScreen() {
       scrollY.value = 0;
 
       tmdbFetch(
-        `/${type}/${id}?language=${i18n.locale}&append_to_response=videos,credits`,
+        `/${type}/${id}?language=${i18n.locale}&append_to_response=videos,credits,images`,
       )
         .then((response) => {
           setData(response);
@@ -48,7 +55,7 @@ export default function DetailsScreen() {
   }, [type, id]);
 
   // Status bar - always light for now (over the image)
-  const [statusStyle] = useState<"light" | "dark" | "auto">("light");
+  const statusStyle = colorScheme === "dark" ? "light" : "dark";
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -67,13 +74,13 @@ export default function DetailsScreen() {
           <Ionicons
             name="chevron-back"
             size={28}
-            color="#fff"
+            color={colorScheme === "dark" ? "#fff" : "#000"}
             style={{ marginLeft: 2 }}
           />
         </Pressable>
       ),
     });
-  }, [navigation, router]);
+  }, [navigation, router, colorScheme]);
 
   return (
     <View

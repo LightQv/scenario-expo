@@ -4,7 +4,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  PlatformColor,
+  useColorScheme,
 } from "react-native";
 import { Image } from "expo-image";
 import Animated, {
@@ -20,7 +20,7 @@ import { BLURHASH, TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import RatingBadge from "@/components/ui/RatingBadge";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 500;
+const BANNER_HEIGHT = 650;
 
 type BannerProps = {
   src: string;
@@ -41,6 +41,7 @@ export default function Banner({
 }: BannerProps) {
   const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type: string }>();
+  const colorScheme = useColorScheme();
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -76,6 +77,10 @@ export default function Banner({
     return { opacity };
   });
 
+  const getBackgroundColor = () => {
+    return colorScheme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.5)";
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
@@ -96,7 +101,7 @@ export default function Banner({
       {/* Gradient overlay for better text readability */}
       <Animated.View style={[styles.gradientContainer, animatedGradientStyle]}>
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
+          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]}
           style={styles.gradient}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -107,10 +112,10 @@ export default function Banner({
       <View
         style={[
           styles.contentSection,
-          { paddingBottom: insets.bottom / 1.5 || 16 },
+          { paddingBottom: insets.bottom / 2 || 16 },
         ]}
       >
-        {/* Title Section */}
+        {/* Title Section - Centered */}
         <View style={styles.titleSection}>
           <Text
             style={[styles.title, { color: "#fff", fontFamily: FONTS.abril }]}
@@ -118,10 +123,12 @@ export default function Banner({
           >
             {title}
           </Text>
-          {/* Genre Pills - Show only first 2 */}
-          {genres && genres.length > 0 && (
-            <View style={styles.genreContainer}>
-              {genres.slice(0, 2).map((genre) => (
+          {/* Genre Pills and Rating Badge - Centered on same row */}
+          <View style={styles.genreContainer}>
+            {/* Genre Pills - Show only first 2 */}
+            {genres &&
+              genres.length > 0 &&
+              genres.slice(0, 2).map((genre) => (
                 <Link
                   href={{
                     pathname: "/discover",
@@ -130,22 +137,21 @@ export default function Banner({
                   key={genre.id}
                   asChild
                 >
-                  <TouchableOpacity
-                    activeOpacity={BUTTON.opacity}
-                    style={styles.genrePill}
-                  >
-                    <Text style={styles.genreText}>{genre.name}</Text>
+                  <TouchableOpacity activeOpacity={BUTTON.opacity}>
+                    <View
+                      style={[
+                        styles.genrePill,
+                        { backgroundColor: getBackgroundColor() },
+                      ]}
+                    >
+                      <Text style={styles.genreText}>{genre.name}</Text>
+                    </View>
                   </TouchableOpacity>
                 </Link>
               ))}
-            </View>
-          )}
-        </View>
-
-        {/* Genre Pills and Rating Row */}
-        <View style={styles.bottomRow}>
-          {/* Rating Badge */}
-          {score && <RatingBadge score={score} />}
+            {/* Rating Badge */}
+            {score && <RatingBadge score={score} size="detail" />}
+          </View>
         </View>
       </View>
     </View>
@@ -178,7 +184,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: "50%",
+    height: "70%",
   },
   gradient: {
     flex: 1,
@@ -189,39 +195,39 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: TOKENS.margin.horizontal,
-    gap: 4,
+    gap: 12,
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    zIndex: 2,
   },
   titleSection: {
-    gap: 4,
+    gap: 8,
+    alignItems: "center",
   },
   title: {
-    fontSize: 32,
+    fontSize: 34,
     lineHeight: 36,
     letterSpacing: -0.5,
+    textAlign: "center",
+    paddingHorizontal: TOKENS.margin.horizontal / 2,
   },
   originalTitle: {
     fontSize: TOKENS.font.xl,
     fontFamily: FONTS.light,
     fontStyle: "italic",
   },
-  bottomRow: {
-    gap: 8,
-  },
   genreContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
-    flex: 1,
+    justifyContent: "center",
   },
   genrePill: {
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.2)",
     alignSelf: "flex-start",
   },
   genreText: {

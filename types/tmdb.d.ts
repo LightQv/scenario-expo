@@ -39,6 +39,7 @@ interface TmdbDetails extends TmdbData {
   /* Overall type */
   backdrop_path: string;
   genres: Array<Genre>;
+  images: Images;
   original_language: string;
   production_companies: Array<object>;
   production_countries: Array<object>;
@@ -88,6 +89,7 @@ type Video = {
   key: string;
   name: string;
   official: boolean;
+  site: string;
   type: string;
 };
 
@@ -151,4 +153,21 @@ type Screenshot = {
   id: number;
   file_path: string;
   vote_count: number;
+};
+
+//--- Images Type ---//
+interface Images {
+  backdrops: Array<ImageDetails>;
+  posters: Array<ImageDetails>;
+  logos?: Array<ImageDetails>;
+}
+
+type ImageDetails = {
+  aspect_ratio: number;
+  file_path: string;
+  height: number;
+  iso_639_1: string | null;
+  vote_average: number;
+  vote_count: number;
+  width: number;
 };
