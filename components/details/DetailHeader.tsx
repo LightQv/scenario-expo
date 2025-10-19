@@ -74,6 +74,18 @@ export default function DetailHeader({
     }
   };
 
+  const renderFormattedText = (content: string) => {
+    const lines = content.split("\n");
+    return lines.map((line, index) => (
+      <Text key={index}>
+        {line.trim()}
+        {index < lines.length - 1 && (
+          <Text style={{ lineHeight: 6 }}>{"\n"}</Text>
+        )}
+      </Text>
+    ));
+  };
+
   return (
     <View style={styles.container}>
       {/* Metadata Section */}
@@ -153,7 +165,7 @@ export default function DetailHeader({
       {/* Synopsis Section */}
       <View>
         <Text style={[styles.synopsisText, { color: PlatformColor("label") }]}>
-          {overview || i18n.t("error.noSynopsis")}
+          {renderFormattedText(overview || i18n.t("error.noSynopsis"))}
         </Text>
       </View>
     </View>
