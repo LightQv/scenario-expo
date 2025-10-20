@@ -59,3 +59,42 @@ export function formatRuntime(minutes: number): string {
 
   return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
 }
+
+/**
+ * Calcule l'âge à partir d'une date de naissance
+ */
+export function calculateAge(
+  birthday: string,
+  deathday?: string | null,
+): number {
+  if (!birthday) return 0;
+
+  const birthDate = new Date(birthday);
+  const endDate = deathday ? new Date(deathday) : new Date();
+
+  let age = endDate.getFullYear() - birthDate.getFullYear();
+  const monthDiff = endDate.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && endDate.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}
+
+/**
+ * Formate le genre (gender) en texte
+ */
+export function formatGender(gender: number): string {
+  switch (gender) {
+    case 1:
+      return i18n.t("screen.person.gender.female");
+    case 2:
+      return i18n.t("screen.person.gender.male");
+    default:
+      return i18n.t("screen.person.gender.other");
+  }
+}

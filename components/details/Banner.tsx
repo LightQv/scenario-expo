@@ -18,6 +18,8 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BLURHASH, TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import RatingBadge from "@/components/ui/RatingBadge";
+import { calculateAge, formatGender } from "@/services/utils";
+import i18n from "@/services/i18n";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 650;
@@ -27,8 +29,13 @@ type BannerProps = {
   alt?: string;
   score?: number;
   title: string;
-  genres: Genre[];
+  genres?: Genre[];
   scrollY: SharedValue<number>;
+  /* Person-specific props */
+  gender?: number;
+  birthday?: string | null;
+  deathday?: string | null;
+  knownForDepartment?: string;
 };
 
 export default function Banner({
@@ -38,10 +45,17 @@ export default function Banner({
   title,
   genres,
   scrollY,
+  gender,
+  birthday,
+  deathday,
+  knownForDepartment,
 }: BannerProps) {
   const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type: string }>();
   const colorScheme = useColorScheme();
+
+  const isPerson = type === "person";
+  const age = birthday ? calculateAge(birthday, deathday) : null;
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -120,34 +134,65 @@ export default function Banner({
           <Text style={styles.title} numberOfLines={2}>
             {title}
           </Text>
-          {/* Genre Pills and Rating Badge - Centered on same row */}
+          {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
           <View style={styles.genreContainer}>
-            {/* Genre Pills - Show only first 2 */}
-            {genres &&
-              genres.length > 0 &&
-              genres.slice(0, 2).map((genre) => (
-                <Link
-                  href={{
-                    pathname: "/discover",
-                    params: { type, genreId: genre.id },
-                  }}
-                  key={genre.id}
-                  asChild
-                >
-                  <TouchableOpacity activeOpacity={BUTTON.opacity}>
-                    <View
-                      style={[
-                        styles.genrePill,
-                        { backgroundColor: getBackgroundColor() },
-                      ]}
+            {isPerson ? (
+              <>
+                {/* Gender */}
+                {gender !== undefined && (
+                  <View
+                    style={[
+                      styles.genrePill,
+                      { backgroundColor: getBackgroundColor() },
+                    ]}
+                  >
+                    <Text style={styles.genreText}>{formatGender(gender)}</Text>
+                  </View>
+                )}
+                {/* Age */}
+                {age !== null && (
+                  <View
+                    style={[
+                      styles.genrePill,
+                      { backgroundColor: getBackgroundColor() },
+                    ]}
+                  >
+                    <Text style={styles.genreText}>
+                      {age} {i18n.t("screen.person.age")}
+                    </Text>
+                  </View>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Genre Pills - Show only first 2 */}
+                {genres &&
+                  genres.length > 0 &&
+                  genres.slice(0, 2).map((genre) => (
+                    <Link
+                      href={{
+                        pathname: "/discover",
+                        params: { type, genreId: genre.id },
+                      }}
+                      key={genre.id}
+                      asChild
                     >
-                      <Text style={styles.genreText}>{genre.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Link>
-              ))}
-            {/* Rating Badge */}
-            {score && <RatingBadge score={score} size="detail" />}
+                      <TouchableOpacity activeOpacity={BUTTON.opacity}>
+                        <View
+                          style={[
+                            styles.genrePill,
+                            { backgroundColor: getBackgroundColor() },
+                          ]}
+                        >
+                          <Text style={styles.genreText}>{genre.name}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </Link>
+                  ))}
+                {/* Rating Badge */}
+                {score && <RatingBadge score={score} size="detail" />}
+              </>
+            )}
           </View>
         </View>
       </View>

@@ -13,6 +13,10 @@ import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
 import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
+import CrewInfo from "@/components/details/CrewInfo";
+import CastSection from "@/components/details/CastSection";
+import KnownForSection from "@/components/details/KnownForSection";
+import SeasonsSection from "@/components/details/SeasonsSection";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -40,9 +44,13 @@ export default function DetailsScreen() {
       setData(null);
       scrollY.value = 0;
 
-      tmdbFetch(
-        `/${type}/${id}?language=${i18n.locale}&append_to_response=videos,credits,images`,
-      )
+      // Different append_to_response for person vs media
+      const appendParams =
+        type === "person"
+          ? "combined_credits,images"
+          : "videos,credits,images";
+
+      tmdbFetch(`/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`)
         .then((response) => {
           setData(response);
           setLoading(false);
@@ -102,12 +110,18 @@ export default function DetailsScreen() {
         {data && (
           <>
             <Banner
-              src={data.backdrop_path}
+              src={
+                type === "person" ? data.profile_path : data.backdrop_path
+              }
               alt={data.title || data.name}
               score={data.vote_average}
               title={data.title || data.name}
               genres={data.genres}
               scrollY={scrollY}
+              gender={data.gender}
+              birthday={data.birthday}
+              deathday={data.deathday}
+              knownForDepartment={data.known_for_department}
             />
             <GradientTransition />
             <DetailHeader
@@ -120,7 +134,44 @@ export default function DetailsScreen() {
               lastAirDate={data.last_air_date}
               numberOfSeasons={data.number_of_seasons}
               numberOfEpisodes={data.number_of_episodes}
+              biography={data.biography}
+              birthday={data.birthday}
+              placeOfBirth={data.place_of_birth}
+              knownForDepartment={data.known_for_department}
             />
+            {type === "person" ? (
+              <>
+                {/* Person: Show Known For section */}
+                {data.combined_credits && (
+                  <KnownForSection
+                    title={i18n.t("screen.person.title")}
+                    credits={data.combined_credits}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                {/* Media: Show Crew and Cast */}
+                {data.credits?.crew && data.credits.crew.length > 0 && (
+                  <CrewInfo crew={data.credits.crew} mediaType={type} />
+                )}
+                {data.credits?.cast && data.credits.cast.length > 0 && (
+                  <CastSection
+                    title={i18n.t("screen.detail.media.cast")}
+                    cast={data.credits.cast}
+                  />
+                )}
+                {/* TV Shows: Show Seasons */}
+                {type === "tv" && data.seasons && data.seasons.length > 0 && (
+                  <SeasonsSection
+                    title={i18n.t("screen.detail.media.seasons.title")}
+                    seasons={data.seasons}
+                    seriesId={id}
+                    seriesName={data.name || data.title}
+                  />
+                )}
+              </>
+            )}
           </>
         )}
       </Animated.ScrollView>

@@ -16,7 +16,7 @@ import i18n from "@/services/i18n";
 
 type DetailHeaderProps = {
   /* Overall type */
-  overview: string;
+  overview?: string;
   videos?: Video[];
 
   /* Movie type */
@@ -29,6 +29,12 @@ type DetailHeaderProps = {
   lastAirDate?: string | null;
   numberOfSeasons?: number;
   numberOfEpisodes?: number;
+
+  /* Person type */
+  biography?: string;
+  birthday?: string | null;
+  placeOfBirth?: string | null;
+  knownForDepartment?: string;
 };
 
 export default function DetailHeader({
@@ -41,8 +47,14 @@ export default function DetailHeader({
   lastAirDate,
   numberOfSeasons,
   numberOfEpisodes,
+  biography,
+  birthday,
+  placeOfBirth,
+  knownForDepartment,
 }: DetailHeaderProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
+  const isPerson = type === "person";
+  const displayText = isPerson ? biography : overview;
 
   // Find the first YouTube trailer
   const trailer = videos?.find(
@@ -146,6 +158,28 @@ export default function DetailHeader({
             )}
           </View>
         )}
+
+        {type === "person" && (
+          <View style={styles.metadataRow}>
+            {knownForDepartment && (
+              <Text
+                style={[styles.statusBadge, { color: PlatformColor("label") }]}
+              >
+                {knownForDepartment}
+              </Text>
+            )}
+            <Text
+              style={[
+                styles.metadataText,
+                { color: PlatformColor("secondaryLabel") },
+              ]}
+            >
+              {birthday && formatFullDate(birthday)}
+              {birthday && placeOfBirth && " • "}
+              {placeOfBirth}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Trailer Button */}
@@ -162,10 +196,15 @@ export default function DetailHeader({
         </TouchableOpacity>
       )}
 
-      {/* Synopsis Section */}
+      {/* Synopsis/Biography Section */}
       <View>
         <Text style={[styles.synopsisText, { color: PlatformColor("label") }]}>
-          {renderFormattedText(overview || i18n.t("error.noSynopsis"))}
+          {renderFormattedText(
+            displayText ||
+              (isPerson
+                ? i18n.t("error.noBiography")
+                : i18n.t("error.noSynopsis")),
+          )}
         </Text>
       </View>
     </View>
