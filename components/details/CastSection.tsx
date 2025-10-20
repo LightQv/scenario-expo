@@ -55,7 +55,7 @@ export default function CastSection({ title, cast }: CastSectionProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    paddingBottom: 24,
     backgroundColor: PlatformColor("systemBackground"),
   },
   header: {

@@ -141,7 +141,7 @@ export default function SeasonsSection({
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginBottom: 24,
+    paddingBottom: 24,
     backgroundColor: PlatformColor("systemBackground"),
   },
   header: {

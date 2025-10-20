@@ -17,14 +17,13 @@ import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SeasonDetailScreen() {
   const colorScheme = useColorScheme();
-  const {
-    seriesId,
-    seasonNumber,
-    seriesName,
-  } = useLocalSearchParams<{
+  const insets = useSafeAreaInsets();
+  const { seriesId, seasonNumber, seriesName } = useLocalSearchParams<{
     seriesId: string;
     seasonNumber: string;
     seriesName: string;
@@ -57,8 +56,10 @@ export default function SeasonDetailScreen() {
   // Configure header
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTransparent: false,
-      headerTitle: seriesName || "Season",
+      headerTransparent: true,
+      headerTitle:
+        seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
+      headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
       headerLeft: () => (
         <Pressable onPress={() => router.back()}>
           <Ionicons
@@ -85,7 +86,10 @@ export default function SeasonDetailScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 60 },
+        ]}
       >
         {data && (
           <>
@@ -105,7 +109,9 @@ export default function SeasonDetailScreen() {
               )}
 
               <View style={styles.headerInfo}>
-                <Text style={[styles.seasonName, { color: PlatformColor("label") }]}>
+                <Text
+                  style={[styles.seasonName, { color: PlatformColor("label") }]}
+                >
                   {data.name}
                 </Text>
 
@@ -120,12 +126,14 @@ export default function SeasonDetailScreen() {
                   </Text>
                 )}
 
+                {/* Season Overview */}
                 {data.overview && (
                   <Text
                     style={[
                       styles.overview,
                       { color: PlatformColor("secondaryLabel") },
                     ]}
+                    numberOfLines={6}
                   >
                     {data.overview}
                   </Text>
@@ -146,17 +154,14 @@ export default function SeasonDetailScreen() {
                 </Text>
 
                 {data.episodes.map((episode) => (
-                  <View
-                    key={episode.id}
-                    style={[
-                      styles.episodeCard,
-                      { backgroundColor: PlatformColor("systemGray6") },
-                    ]}
-                  >
-                    {episode.still_path && (
+                  <View key={episode.id} style={styles.episodeCard}>
+                    {/* Visible Episode Image */}
+                    <View style={styles.episodeImageContainer}>
                       <Image
                         source={{
-                          uri: `https://image.tmdb.org/t/p/w300/${episode.still_path}`,
+                          uri: episode.still_path
+                            ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
+                            : undefined,
                         }}
                         alt={episode.name}
                         style={styles.episodeImage}
@@ -164,63 +169,66 @@ export default function SeasonDetailScreen() {
                         placeholder={BLURHASH.hash}
                         transition={BLURHASH.transition}
                       />
-                    )}
+                    </View>
 
-                    <View style={styles.episodeInfo}>
-                      <View style={styles.episodeHeader}>
-                        <Text
-                          style={[
-                            styles.episodeNumber,
-                            { color: PlatformColor("secondaryLabel") },
-                          ]}
-                        >
-                          {i18n.t("screen.detail.media.seasons.episode.singular")}{" "}
-                          {episode.episode_number}
-                        </Text>
-                        {episode.runtime && (
-                          <Text
-                            style={[
-                              styles.episodeRuntime,
-                              { color: PlatformColor("secondaryLabel") },
-                            ]}
-                          >
-                            {formatRuntime(episode.runtime)}
-                          </Text>
-                        )}
-                      </View>
+                    {/* Info Section with Blurred Background */}
+                    <View style={styles.episodeInfoSection}>
+                      {/* Blurred Background Image */}
+                      <Image
+                        source={{
+                          uri: episode.still_path
+                            ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
+                            : undefined,
+                        }}
+                        alt={episode.name}
+                        style={styles.episodeBlurredBg}
+                        contentFit="cover"
+                        placeholder={BLURHASH.hash}
+                        transition={BLURHASH.transition}
+                        blurRadius={80}
+                      />
 
-                      <Text
-                        style={[
-                          styles.episodeName,
-                          { color: PlatformColor("label") },
-                        ]}
-                        numberOfLines={2}
+                      {/* Blurred Overlay */}
+                      <BlurView
+                        intensity={90}
+                        tint={colorScheme === "dark" ? "dark" : "light"}
+                        style={styles.episodeOverlay}
                       >
-                        {episode.name}
-                      </Text>
+                        <View style={styles.episodeInfo}>
+                          <View style={styles.episodeHeader}>
+                            <Text style={styles.episodeNumber}>
+                              {i18n.t(
+                                "screen.detail.media.seasons.episode.singular",
+                              )}{" "}
+                              {episode.episode_number}
+                            </Text>
+                            {episode.runtime && (
+                              <Text style={styles.episodeRuntime}>
+                                {formatRuntime(episode.runtime)}
+                              </Text>
+                            )}
+                          </View>
 
-                      {episode.overview && (
-                        <Text
-                          style={[
-                            styles.episodeOverview,
-                            { color: PlatformColor("secondaryLabel") },
-                          ]}
-                          numberOfLines={3}
-                        >
-                          {episode.overview}
-                        </Text>
-                      )}
+                          <Text style={styles.episodeName} numberOfLines={2}>
+                            {episode.name}
+                          </Text>
 
-                      {episode.air_date && (
-                        <Text
-                          style={[
-                            styles.episodeDate,
-                            { color: PlatformColor("tertiaryLabel") },
-                          ]}
-                        >
-                          {formatFullDate(episode.air_date)}
-                        </Text>
-                      )}
+                          {episode.overview && (
+                            <Text
+                              style={styles.episodeOverview}
+                              numberOfLines={3}
+                            >
+                              {episode.overview}
+                            </Text>
+                          )}
+
+                          {episode.air_date && (
+                            <Text style={styles.episodeDate}>
+                              {formatFullDate(episode.air_date)}
+                            </Text>
+                          )}
+                        </View>
+                      </BlurView>
                     </View>
                   </View>
                 ))}
@@ -243,7 +251,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingTop: TOKENS.margin.vertical * 2,
     gap: 16,
   },
   poster: {
@@ -254,7 +261,7 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
-    gap: 8,
+    gap: 10,
   },
   seasonName: {
     fontFamily: FONTS.bold,
@@ -284,13 +291,33 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
-  episodeImage: {
+  episodeImageContainer: {
     width: "100%",
     height: 200,
     backgroundColor: PlatformColor("systemGray5"),
   },
+  episodeImage: {
+    width: "100%",
+    height: "100%",
+  },
+  episodeInfoSection: {
+    position: "relative",
+    overflow: "hidden",
+  },
+  episodeBlurredBg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+  },
+  episodeOverlay: {
+    width: "100%",
+  },
   episodeInfo: {
-    padding: 12,
+    padding: 16,
     gap: 6,
   },
   episodeHeader: {
@@ -302,23 +329,28 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.sm,
     textTransform: "uppercase",
+    color: "#fff",
   },
   episodeRuntime: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
+    color: "#fff",
   },
   episodeName: {
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
-    lineHeight: 20,
+    lineHeight: 22,
+    color: "#fff",
   },
   episodeOverview: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.md,
     lineHeight: 18,
+    color: "rgba(255, 255, 255, 0.9)",
   },
   episodeDate: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
+    color: "rgba(255, 255, 255, 0.7)",
   },
 });
