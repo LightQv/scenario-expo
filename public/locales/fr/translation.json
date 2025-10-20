@@ -208,12 +208,16 @@
     "discover": {
       "sections": {
         "trendingWeek": "Tendances de la semaine",
+        "trendingPersons": "Personnes tendances",
         "highlyRatedMovies": "Films bien notés",
         "runningTvShows": "Séries TV en cours",
         "featuredMovie": "Film à la une",
         "popularMovies": "Films populaires",
+        "nowPlayingMovies": "Films en salle",
+        "upcomingMovies": "Films à venir",
         "topRatedTv": "Séries TV les mieux notées",
         "topRatedJapanimation": "Meilleurs animes japonais",
+        "topRatedDocumentaries": "Meilleurs documentaires",
         "movies2000s": "Meilleurs films des années 2000"
       }
     },

@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { FONTS, TOKENS } from "@/constants/theme";
 import MediaCard from "@/components/discover/MediaCard";
+import PersonCard from "@/components/discover/PersonCard";
 import i18n from "@/services/i18n";
 
 type DiscoverSectionProps = {
@@ -30,9 +31,13 @@ export default function DiscoverSection({
   loading = false,
   cardSize = "sm",
 }: DiscoverSectionProps) {
-  const renderItem: ListRenderItem<TmdbData> = ({ item }) => (
-    <MediaCard data={item} mediaType={mediaType} size={cardSize} />
-  );
+  const renderItem: ListRenderItem<TmdbData> = ({ item }) => {
+    // Render PersonCard for person mediaType, otherwise MediaCard
+    if (mediaType === "person") {
+      return <PersonCard data={item} />;
+    }
+    return <MediaCard data={item} mediaType={mediaType} size={cardSize} />;
+  };
 
   const renderSeparator = () => {
     const gap = cardSize === "md" ? 21 : 14; // 14 * 1.5 for md
@@ -54,7 +59,7 @@ export default function DiscoverSection({
       <View style={styles.header}>
         <Link
           href={{
-            pathname: "discover/[category]",
+            pathname: "/(tabs)/discover/[category]",
             params: { category: queryPath, mediaType, title },
           }}
           asChild

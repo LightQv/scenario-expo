@@ -18,6 +18,7 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MediaCard from "@/components/discover/MediaCard";
+import PersonCard from "@/components/discover/PersonCard";
 
 export default function CategoryDetailScreen() {
   const colorScheme = useColorScheme();
@@ -127,9 +128,13 @@ export default function CategoryDetailScreen() {
   const statusStyle = colorScheme === "dark" ? "light" : "dark";
 
   // Render item in 2-column grid
-  const renderItem = ({ item }: { item: TmdbData }) => (
-    <MediaCard data={item} mediaType={mediaType} size="grid" />
-  );
+  const renderItem = ({ item }: { item: TmdbData }) => {
+    // Render PersonCard for person mediaType, otherwise MediaCard
+    if (mediaType === "person") {
+      return <PersonCard data={item} size="grid" />;
+    }
+    return <MediaCard data={item} mediaType={mediaType} size="grid" />;
+  };
 
   // Render footer with loading indicator
   const renderFooter = () => {

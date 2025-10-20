@@ -207,12 +207,16 @@
     "discover": {
       "sections": {
         "trendingWeek": "Trending this week",
+        "trendingPersons": "Trending Persons",
         "highlyRatedMovies": "Highly rated movies",
         "runningTvShows": "Running TV Shows",
         "featuredMovie": "Featured Movie",
         "popularMovies": "Popular Movies",
+        "nowPlayingMovies": "Now Playing Movies",
+        "upcomingMovies": "Upcoming Movies",
         "topRatedTv": "Best rated TV Shows",
         "topRatedJapanimation": "Best rated Japanese anime",
+        "topRatedDocumentaries": "Best rated Documentaries",
         "movies2000s": "Best 2000s movies"
       }
     },
