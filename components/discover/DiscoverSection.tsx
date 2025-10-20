@@ -18,6 +18,7 @@ type DiscoverSectionProps = {
   mediaType: string;
   queryPath: string; // Pour la navigation vers la page complète
   loading?: boolean;
+  cardSize?: "sm" | "md" | "xl";
 };
 
 export default function DiscoverSection({
@@ -26,10 +27,16 @@ export default function DiscoverSection({
   mediaType,
   queryPath,
   loading = false,
+  cardSize = "sm",
 }: DiscoverSectionProps) {
   const renderItem: ListRenderItem<TmdbData> = ({ item }) => (
-    <MediaCard data={item} mediaType={mediaType} />
+    <MediaCard data={item} mediaType={mediaType} size={cardSize} />
   );
+
+  const renderSeparator = () => {
+    const gap = cardSize === "md" ? 21 : 14; // 14 * 1.5 for md
+    return <View style={{ width: gap }} />;
+  };
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
@@ -66,6 +73,7 @@ export default function DiscoverSection({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        ItemSeparatorComponent={renderSeparator}
         ListEmptyComponent={!loading ? renderEmpty : null}
       />
     </>

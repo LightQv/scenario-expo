@@ -206,7 +206,12 @@
       "signup": "ou Enregistrez-vous ici."
     },
     "detail": {
+      "crew": {
+        "director": "Réalisateur",
+        "composer": "Compositeur"
+      },
       "media": {
+        "trailer": "Voir la bande-annonce",
         "cast": "Casting",
         "seasons": {
           "title": "Saisons",
@@ -229,7 +234,13 @@
       }
     },
     "person": {
-      "title": "Connu pour"
+      "title": "Connu pour",
+      "gender": {
+        "male": "Homme",
+        "female": "Femme",
+        "other": "Autre"
+      },
+      "age": "ans"
     },
     "search": {
       "placeholder": "Rechercher un film, séries TV, acteur, réalisateur...",

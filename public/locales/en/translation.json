@@ -205,7 +205,12 @@
       "signup": "or Sign-up here."
     },
     "detail": {
+      "crew": {
+        "director": "Director",
+        "composer": "Composer"
+      },
       "media": {
+        "trailer": "Watch Trailer",
         "cast": "Cast",
         "seasons": {
           "title": "Seasons",
@@ -228,7 +233,13 @@
       }
     },
     "person": {
-      "title": "Been known for"
+      "title": "Been known for",
+      "gender": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "age": "years old"
     },
     "search": {
       "placeholder": "Look for movies, TV shows, actors, directors...",
