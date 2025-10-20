@@ -30,7 +30,7 @@ export default function DiscoverIndexScreen() {
   const [sections, setSections] = useState<SectionData[]>([
     {
       id: "trending-week",
-      title: "Trending this week",
+      title: i18n.t("screen.discover.sections.trendingWeek"),
       data: [],
       mediaType: "all",
       queryPath: "trending/all/week",
@@ -39,7 +39,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "highly-rated-movies",
-      title: "Highly rated movies",
+      title: i18n.t("screen.discover.sections.highlyRatedMovies"),
       data: [],
       mediaType: "movie",
       queryPath: "discover/movie",
@@ -47,7 +47,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "tv-upcoming",
-      title: "Running TV Shows",
+      title: i18n.t("screen.discover.sections.runningTvShows"),
       data: [],
       mediaType: "tv",
       queryPath: "tv/on_the_air",
@@ -55,7 +55,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "featured-movie",
-      title: "Featured Movie",
+      title: i18n.t("screen.discover.sections.featuredMovie"),
       data: [],
       mediaType: "movie",
       queryPath: "discover/movie",
@@ -64,7 +64,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "popular-movies",
-      title: "Popular Movies",
+      title: i18n.t("screen.discover.sections.popularMovies"),
       data: [],
       mediaType: "movie",
       queryPath: "movie/popular",
@@ -72,7 +72,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "top-rated-tv",
-      title: "Best rated TV Shows",
+      title: i18n.t("screen.discover.sections.topRatedTv"),
       data: [],
       mediaType: "tv",
       queryPath: "tv/top_rated",
@@ -80,7 +80,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "top-rated-japanimation",
-      title: "Best rated Japanese anime",
+      title: i18n.t("screen.discover.sections.topRatedJapanimation"),
       data: [],
       mediaType: "tv",
       queryPath: "discover/tv",
@@ -88,7 +88,7 @@ export default function DiscoverIndexScreen() {
     },
     {
       id: "movies-2000s",
-      title: "Best 2000s movies",
+      title: i18n.t("screen.discover.sections.movies2000s"),
       data: [],
       mediaType: "movie",
       queryPath: "discover/movie",

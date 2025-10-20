@@ -18,7 +18,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 type MediaCardProps = {
   data: TmdbData;
   mediaType?: string;
-  size?: "sm" | "md" | "xl";
+  size?: "sm" | "md" | "xl" | "grid";
 };
 
 export default function MediaCard({
@@ -38,14 +38,16 @@ export default function MediaCard({
         return `${basePath}w780/${data.poster_path}`; // Higher quality for xl
       case "md":
         return `${basePath}w500/${data.poster_path}`; // Medium-high quality for md
+      case "grid":
       case "sm":
       default:
-        return `${basePath}w342/${data.poster_path}`; // Standard quality for sm
+        return `${basePath}w342/${data.poster_path}`; // Standard quality for sm and grid
     }
   };
 
   // Map card size to rating badge size
   const getRatingSize = (): "sm" | "md" | "xl" => {
+    if (size === "grid") return "sm"; // Grid uses sm badge
     return size; // Direct mapping: sm -> sm, md -> md, xl -> xl
   };
 
@@ -118,6 +120,47 @@ const sharedStyles = StyleSheet.create({
 });
 
 const mediaCardStyles = {
+  grid: StyleSheet.create({
+    container: {
+      width: (SCREEN_WIDTH - TOKENS.margin.horizontal * 2 - 14) / 2,
+    },
+    imageContainer: {
+      width: (SCREEN_WIDTH - TOKENS.margin.horizontal * 2 - 14) / 2,
+      height: Math.round(
+        ((SCREEN_WIDTH - TOKENS.margin.horizontal * 2 - 14) / 2) * 1.47,
+      ), // Calculate height based on 2-column grid with 14px gap
+      borderRadius: 12,
+      overflow: "hidden",
+      backgroundColor: PlatformColor("systemGray5"),
+      position: "relative",
+    },
+    content: {
+      marginTop: 6,
+      gap: 2,
+    },
+    title: {
+      fontFamily: FONTS.bold,
+      fontSize: TOKENS.font.xxl,
+      lineHeight: 18,
+      color: PlatformColor("label"),
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    genre: {
+      fontFamily: FONTS.regular,
+      fontSize: TOKENS.font.xs,
+      flex: 1,
+      color: PlatformColor("secondaryLabel"),
+    },
+    year: {
+      fontFamily: FONTS.regular,
+      fontSize: TOKENS.font.xs,
+      color: PlatformColor("secondaryLabel"),
+    },
+  }),
   sm: StyleSheet.create({
     container: {
       width: 180,

@@ -205,6 +205,18 @@
       "title": "Bienvenue à Scenario.",
       "signup": "ou Enregistrez-vous ici."
     },
+    "discover": {
+      "sections": {
+        "trendingWeek": "Tendances de la semaine",
+        "highlyRatedMovies": "Films bien notés",
+        "runningTvShows": "Séries TV en cours",
+        "featuredMovie": "Film à la une",
+        "popularMovies": "Films populaires",
+        "topRatedTv": "Séries TV les mieux notées",
+        "topRatedJapanimation": "Meilleurs animes japonais",
+        "movies2000s": "Meilleurs films des années 2000"
+      }
+    },
     "detail": {
       "crew": {
         "director": "Réalisateur",

@@ -55,14 +55,19 @@ export default function DiscoverSection({
         <Link
           href={{
             pathname: "discover/[category]",
-            params: { category: queryPath, mediaType },
+            params: { category: queryPath, mediaType, title },
           }}
           asChild
         >
-          <TouchableOpacity activeOpacity={0.6}>
+          <TouchableOpacity activeOpacity={0.6} style={styles.titleContainer}>
             <Text style={[styles.title, { color: PlatformColor("label") }]}>
               {title}
             </Text>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={PlatformColor("secondaryLabel")}
+            />
           </TouchableOpacity>
         </Link>
       </View>
@@ -89,6 +94,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: TOKENS.margin.horizontal,
     marginBottom: 16,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   title: {
     fontFamily: FONTS.bold,
