@@ -11,12 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { FONTS, TOKENS } from "@/constants/theme";
 import MediaCard from "@/components/discover/MediaCard";
+import i18n from "@/services/i18n";
 
 type DiscoverSectionProps = {
   title: string;
   data: TmdbData[];
   mediaType: string;
-  queryPath: string; // Pour la navigation vers la page complète
+  queryPath: string; // For navigation to the full page
   loading?: boolean;
   cardSize?: "sm" | "md" | "xl";
 };
@@ -43,7 +44,7 @@ export default function DiscoverSection({
       <Text
         style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
       >
-        Aucun résultat
+        {i18n.t("toast.errorQuery")}
       </Text>
     </View>
   );

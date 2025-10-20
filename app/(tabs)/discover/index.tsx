@@ -102,7 +102,7 @@ export default function DiscoverIndexScreen() {
     try {
       let endpoint = `/${section.queryPath}?language=${i18n.locale}&page=1`;
 
-      // Paramètres spéciaux pour certaines sections
+      // Special parameters for certain sections
       if (section.id === "movies-2000s") {
         endpoint +=
           "&primary_release_date.gte=2000-01-01&primary_release_date.lte=2009-12-31&sort_by=vote_average.desc&vote_count.gte=1000";

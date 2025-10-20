@@ -46,7 +46,7 @@ export function GenreProvider({ children }: { children: React.ReactNode }) {
       try {
         setLoading(true);
 
-        // Fetch des genres de films et séries en parallèle
+        // Fetch movie and TV genres in parallel
         const [movieResponse, tvResponse] = await Promise.all([
           tmdbFetch(`/genre/movie/list?language=${i18n.locale}`),
           tmdbFetch(`/genre/tv/list?language=${i18n.locale}`),
@@ -56,7 +56,7 @@ export function GenreProvider({ children }: { children: React.ReactNode }) {
         setTvGenres(tvResponse.genres);
       } catch (error) {
         console.error("Error fetching genres:", error);
-        // On garde les valeurs null en cas d'erreur
+        // Keep null values in case of error
       } finally {
         setLoading(false);
       }
@@ -65,13 +65,13 @@ export function GenreProvider({ children }: { children: React.ReactNode }) {
     fetchGenres();
   }, [i18n.locale]);
 
-  // Combiner et dédupliquer les genres quand les deux listes sont chargées
+  // Combine and deduplicate genres when both lists are loaded
   useEffect(() => {
     if (movieGenres && tvGenres) {
-      // Concaténer les deux tableaux
+      // Concatenate both arrays
       const combinedGenres = [...movieGenres, ...tvGenres];
 
-      // Supprimer les doublons en utilisant un Map
+      // Remove duplicates using a Map
       const uniqueGenresMap = new Map<number, Genre>();
       combinedGenres.forEach((genre) => {
         if (!uniqueGenresMap.has(genre.id)) {
@@ -79,7 +79,7 @@ export function GenreProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
-      // Convertir en tableau et trier par nom
+      // Convert to array and sort by name
       const uniqueGenres = Array.from(uniqueGenresMap.values()).sort((a, b) =>
         a.name.localeCompare(b.name),
       );
