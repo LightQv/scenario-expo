@@ -86,7 +86,7 @@ export default function FiltersMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("borderless")]}>
+      <ContextMenu modifiers={[buttonStyle("glass")]}>
         <ContextMenu.Items>
           {/* Media Type Picker - only show if mediaType and onMediaTypeChange are provided */}
           {mediaType && onMediaTypeChange && (
@@ -122,7 +122,6 @@ export default function FiltersMenu({
         <ContextMenu.Trigger>
           <Image
             systemName="ellipsis"
-            size={24}
             color={colorScheme === "dark" ? "#fff" : "#000"}
           />
         </ContextMenu.Trigger>
@@ -133,7 +132,7 @@ export default function FiltersMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 24,
-    width: 24,
+    height: 34,
+    width: 34,
   },
 });
