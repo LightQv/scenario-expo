@@ -1,9 +1,13 @@
-import React from "react"
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs"
+import React from "react";
+import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 
 export default function TabLayout() {
   return (
-    <NativeTabs tintColor="#eab208" minimizeBehavior="onScrollDown">
+    <NativeTabs
+      tintColor="#eab208"
+      minimizeBehavior="onScrollDown"
+      initialRouteName="discover"
+    >
       <NativeTabs.Trigger name="top">
         <Icon sf="star.fill" />
         <Label>Top</Label>
@@ -21,5 +25,5 @@ export default function TabLayout() {
         <Label>Search</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
-  )
+  );
 }

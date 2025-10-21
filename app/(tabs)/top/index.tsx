@@ -5,10 +5,16 @@ import {
   PlatformColor,
   RefreshControl,
   ListRenderItem,
-  Animated,
   Platform,
 } from "react-native";
-import { useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
@@ -19,9 +25,6 @@ import HeaderTitle from "@/components/ui/HeaderTitle";
 import { useGenreContext } from "@/contexts/GenreContext";
 import MediaCard from "@/components/discover/MediaCard";
 import FiltersMenu, { SortOption } from "@/components/ui/FiltersMenu";
-
-// Create Animated FlatList for native scroll events
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<TmdbData>);
 
 type MediaType = "movie" | "tv";
 
@@ -61,7 +64,6 @@ export default function TopIndexScreen() {
   const [totalPages, setTotalPages] = useState(0);
 
   const flatListRef = useRef<FlatList<TmdbData>>(null);
-  const scrollY = useRef(new Animated.Value(0)).current;
 
   // Get genres based on active media type
   const activeGenres =
@@ -70,7 +72,7 @@ export default function TopIndexScreen() {
   // Sort genres alphabetically
   const sortedGenres = useMemo(
     () => [...activeGenres].sort((a, b) => a.name.localeCompare(b.name)),
-    [activeGenres]
+    [activeGenres],
   );
 
   // Handle media type change
@@ -119,7 +121,16 @@ export default function TopIndexScreen() {
         </View>
       ),
     });
-  }, [navigation, fetchParams.sort, fetchParams.genre, fetchParams.type, sortedGenres, handleSortChange, handleGenreChange, handleMediaTypeChange]);
+  }, [
+    navigation,
+    fetchParams.sort,
+    fetchParams.genre,
+    fetchParams.type,
+    sortedGenres,
+    handleSortChange,
+    handleGenreChange,
+    handleMediaTypeChange,
+  ]);
 
   // Fetch data from TMDB
   const fetchData = async (params: FetchParams, append: boolean = false) => {
@@ -135,8 +146,14 @@ export default function TopIndexScreen() {
         setData((prev) => [...prev, ...response.results]);
       } else {
         setData(response.results);
-        // Scroll to top when filters change
-        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+        // Scroll to top when filters change, using scrollToLocation to respect content inset
+        if (response.results.length > 0) {
+          flatListRef.current?.scrollToIndex({
+            index: 0,
+            animated: true,
+            viewOffset: insets.top,
+          });
+        }
       }
 
       setTotalPages(response.total_pages);
@@ -161,7 +178,6 @@ export default function TopIndexScreen() {
     }
   }, [fetchParams.page]);
 
-
   // Handle refresh
   const onRefresh = async () => {
     setRefreshing(true);
@@ -180,22 +196,6 @@ export default function TopIndexScreen() {
     <MediaCard data={item} mediaType={fetchParams.type} size="grid" />
   );
 
-  // Render header with title
-  const renderListHeader = useMemo(
-    () => (
-      <View>
-        <HeaderTitle title="Top" />
-      </View>
-    ),
-    []
-  );
-
-  // Scroll handler
-  const scrollHandler = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: true }
-  );
-
   return (
     <View
       style={[
@@ -203,7 +203,7 @@ export default function TopIndexScreen() {
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
-      <AnimatedFlatList
+      <FlatList
         ref={flatListRef}
         refreshControl={
           <RefreshControl
@@ -220,17 +220,13 @@ export default function TopIndexScreen() {
           }),
         }}
         contentInsetAdjustmentBehavior="automatic"
-        scrollToOverflowEnabled
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
         data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         numColumns={2}
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderListHeader}
-        stickyHeaderIndices={[0]}
+        ListHeaderComponent={<HeaderTitle title="Top" />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
       />

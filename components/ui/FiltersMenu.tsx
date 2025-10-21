@@ -1,7 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
 import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
 
@@ -39,12 +38,16 @@ export default function FiltersMenu({
   mediaType,
   onMediaTypeChange,
 }: FiltersMenuProps) {
+  const colorScheme = useColorScheme();
   // Build media type options
   const mediaTypeOptions = ["Movie", "TV"];
   const selectedMediaTypeIndex = mediaType === "movie" ? 0 : 1;
 
   // Build genre options array with "All" at the beginning
-  const genreOptions = [i18n.t("filter.genre.all"), ...genres.map((g) => g.name)];
+  const genreOptions = [
+    i18n.t("filter.genre.all"),
+    ...genres.map((g) => g.name),
+  ];
 
   // Calculate selected genre index (0 for "All", index+1 for genres)
   const selectedGenreIndex =
@@ -56,7 +59,9 @@ export default function FiltersMenu({
   const sortLabels = sortOptions.map((s) => s.label);
 
   // Calculate selected sort index
-  const selectedSortIndex = sortOptions.findIndex((s) => s.value === selectedSort);
+  const selectedSortIndex = sortOptions.findIndex(
+    (s) => s.value === selectedSort,
+  );
 
   const handleMediaTypeSelect = (index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -81,11 +86,7 @@ export default function FiltersMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu
-        modifiers={[
-          buttonStyle("borderless"),
-        ]}
-      >
+      <ContextMenu modifiers={[buttonStyle("borderless")]}>
         <ContextMenu.Items>
           {/* Media Type Picker - only show if mediaType and onMediaTypeChange are provided */}
           {mediaType && onMediaTypeChange && (
@@ -120,9 +121,9 @@ export default function FiltersMenu({
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <Image
-            systemName="ellipsis.circle"
+            systemName="ellipsis"
             size={24}
-            color="label"
+            color={colorScheme === "dark" ? "#fff" : "#000"}
           />
         </ContextMenu.Trigger>
       </ContextMenu>
@@ -132,9 +133,7 @@ export default function FiltersMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 34,
-    alignItems: "center",
-    justifyContent: "center",
+    height: 24,
+    width: 24,
   },
 });
