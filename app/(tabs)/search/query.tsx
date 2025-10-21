@@ -10,6 +10,7 @@ import { useEffect, useState, useRef } from "react";
 import { useScrollToTop } from "@react-navigation/native";
 import { useSearchContext } from "./_layout";
 import MediaCard from "@/components/discover/MediaCard";
+import PersonCard from "@/components/discover/PersonCard";
 import { TOKENS, FONTS } from "@/constants/theme";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
@@ -94,9 +95,12 @@ export default function QueryScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: TmdbData }) => (
-    <MediaCard data={item} mediaType={mediaType} size="grid" />
-  );
+  const renderItem = ({ item }: { item: TmdbData }) => {
+    if (mediaType === "person") {
+      return <PersonCard data={item} size="grid" />;
+    }
+    return <MediaCard data={item} mediaType={mediaType} size="grid" />;
+  };
 
   const renderEmptyComponent = () => {
     if (loading) {
