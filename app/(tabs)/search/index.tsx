@@ -6,8 +6,8 @@ import {
   ActivityIndicator,
   Keyboard,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { router } from "expo-router";
+import { useState, useCallback } from "react";
+import { router, useFocusEffect } from "expo-router";
 import { useGenreContext } from "@/contexts/GenreContext";
 import { useSearchContext } from "./_layout";
 import GenreCard from "@/components/search/GenreCard";
@@ -25,12 +25,15 @@ import {
 
 export default function SearchIndexScreen() {
   const { totalGenres, loading } = useGenreContext();
-  const { showHistory, mediaType, setMediaType, search } = useSearchContext();
+  const { showHistory, mediaType, setMediaType, search, setSearch, setShowHistory } = useSearchContext();
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
+  // Reload history when screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      loadHistory();
+    }, [])
+  );
 
   const loadHistory = async () => {
     const savedHistory = await getSearchHistory();
@@ -42,11 +45,11 @@ export default function SearchIndexScreen() {
     setHistory([]);
   };
 
-  const handleHistoryItemPress = async (item: SearchHistoryItem) => {
-    // TODO: Navigate to query results page
-    // For now, we'll just add it back to history
-    await addSearchToHistory(item.query, item.type);
-    await loadHistory();
+  const handleHistoryItemPress = (item: SearchHistoryItem) => {
+    setSearch(item.query);
+    setMediaType(item.type);
+    setShowHistory(false);
+    router.push("/(tabs)/search/query");
   };
 
   const handleScroll = () => {

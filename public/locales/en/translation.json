@@ -261,7 +261,7 @@
     },
     "search": {
       "title": "Search",
-      "placeholder": "Look for movies, TV shows, actors, directors...",
+      "placeholder": "Movies, TV shows, actors, directors...",
       "cancel": "Cancel",
       "history": {
         "title": "Recently searched",
@@ -271,6 +271,11 @@
         "movie": "Movies",
         "tv": "TV Shows",
         "person": "Persons"
+      },
+      "label": {
+        "movie": "Movie",
+        "tv": "TV Show",
+        "person": "Person"
       },
       "result": {
         "singular": "Result",

@@ -262,7 +262,7 @@
     },
     "search": {
       "title": "Rechercher",
-      "placeholder": "Rechercher un film, séries TV, acteur, réalisateur...",
+      "placeholder": "Film, séries TV, acteur, réalisateur...",
       "cancel": "Annuler",
       "history": {
         "title": "Récemment recherché",
@@ -272,6 +272,11 @@
         "movie": "Films",
         "tv": "Séries TV",
         "person": "Personnes"
+      },
+      "label": {
+        "movie": "Film",
+        "tv": "Série TV",
+        "person": "Personne"
       },
       "result": {
         "singular": "Résultat",
