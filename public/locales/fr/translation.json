@@ -185,11 +185,11 @@
   },
   "filter": {
     "genre": {
-      "title": "Sélectionner un genre",
+      "title": "Genre",
       "all": "Tous"
     },
     "sort": {
-      "title": "Trier par",
+      "title": "Trier",
       "option1": "Popularité",
       "option2": "Plus récent",
       "option3": "Meilleure note"

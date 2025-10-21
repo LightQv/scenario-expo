@@ -18,9 +18,7 @@ import { TOKENS } from "@/constants/theme";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import { useGenreContext } from "@/contexts/GenreContext";
 import MediaCard from "@/components/discover/MediaCard";
-import TabSelector from "@/components/ui/TabSelector";
-import GenreFilter from "@/components/ui/GenreFilter";
-import SortFilter, { SortOption } from "@/components/ui/SortFilter";
+import FiltersMenu, { SortOption } from "@/components/ui/FiltersMenu";
 
 // Create Animated FlatList for native scroll events
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<TmdbData>);
@@ -75,6 +73,16 @@ export default function TopIndexScreen() {
     [activeGenres]
   );
 
+  // Handle media type change
+  const handleMediaTypeChange = useCallback((type: MediaType) => {
+    setFetchParams({
+      type,
+      genre: null, // Reset genre when changing media type
+      sort: "vote_average.desc",
+      page: 1,
+    });
+  }, []);
+
   // Handle genre change
   const handleGenreChange = useCallback((genreId: number | null) => {
     setFetchParams((prev) => ({
@@ -98,20 +106,20 @@ export default function TopIndexScreen() {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerRight}>
-          <SortFilter
-            sortOptions={SORT_OPTIONS}
-            selectedSort={fetchParams.sort}
-            onSortChange={handleSortChange}
-          />
-          <GenreFilter
+          <FiltersMenu
             genres={sortedGenres}
             selectedGenreId={fetchParams.genre}
             onGenreChange={handleGenreChange}
+            sortOptions={SORT_OPTIONS}
+            selectedSort={fetchParams.sort}
+            onSortChange={handleSortChange}
+            mediaType={fetchParams.type}
+            onMediaTypeChange={handleMediaTypeChange}
           />
         </View>
       ),
     });
-  }, [navigation, fetchParams.sort, fetchParams.genre, sortedGenres, handleSortChange, handleGenreChange]);
+  }, [navigation, fetchParams.sort, fetchParams.genre, fetchParams.type, sortedGenres, handleSortChange, handleGenreChange, handleMediaTypeChange]);
 
   // Fetch data from TMDB
   const fetchData = async (params: FetchParams, append: boolean = false) => {
@@ -153,16 +161,6 @@ export default function TopIndexScreen() {
     }
   }, [fetchParams.page]);
 
-  // Handle tab change
-  const handleTabChange = useCallback((tab: string) => {
-    const newType = tab.toLowerCase() as MediaType;
-    setFetchParams({
-      type: newType,
-      genre: null, // Reset genre when changing media type
-      sort: "vote_average.desc",
-      page: 1,
-    });
-  }, []);
 
   // Handle refresh
   const onRefresh = async () => {
@@ -182,20 +180,14 @@ export default function TopIndexScreen() {
     <MediaCard data={item} mediaType={fetchParams.type} size="grid" />
   );
 
-  // Render header with title and sticky tabs
+  // Render header with title
   const renderListHeader = useMemo(
     () => (
       <View>
         <HeaderTitle title="Top" />
-        {/* Sticky Tabs */}
-        <TabSelector
-          tabs={["Movie", "TV"]}
-          activeTab={fetchParams.type === "movie" ? "Movie" : "TV"}
-          onTabChange={handleTabChange}
-        />
       </View>
     ),
-    [fetchParams.type, handleTabChange]
+    []
   );
 
   // Scroll handler
@@ -221,7 +213,7 @@ export default function TopIndexScreen() {
           />
         }
         contentContainerStyle={{
-          paddingTop: 16,
+          paddingTop: TOKENS.margin.horizontal,
           paddingBottom: Platform.select({
             android: 100 + insets.bottom,
             default: 20,

@@ -184,11 +184,11 @@
   },
   "filter": {
     "genre": {
-      "title": "Select Genre",
+      "title": "Genre",
       "all": "All"
     },
     "sort": {
-      "title": "Sort By",
+      "title": "Sort",
       "option1": "Popularity",
       "option2": "Most recent",
       "option3": "Best rating"

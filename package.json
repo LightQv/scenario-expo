@@ -5,7 +5,11 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "dev": "npx expo start --dev-client",
+    "rebuild:ios": "rm -rf ios/Pods ios/Podfile.lock && npx expo prebuild --clean && cd ios && pod install && cd .. && npx expo run:ios",
+    "clean:all": "rm -rf node_modules ios/Pods ios/Podfile.lock && npm install",
+    "upgrade": "npx expo upgrade"
   },
   "dependencies": {
     "@backpackapp-io/react-native-toast": "0.14.0",
