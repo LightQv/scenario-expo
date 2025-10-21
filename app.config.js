@@ -1,4 +1,4 @@
-import "dotenv/config"
+import "dotenv/config";
 
 export default {
   expo: {
@@ -19,6 +19,7 @@ export default {
       backgroundColor: "#ffffff",
     },
     ios: {
+      bundleIdentifier: "com.sunshine.scenarioexpo",
       supportsTablet: true,
     },
     extra: {
@@ -43,4 +44,4 @@ export default {
       typedRoutes: true,
     },
   },
-}
+};

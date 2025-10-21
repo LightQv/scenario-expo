@@ -185,8 +185,8 @@
   },
   "filter": {
     "genre": {
-      "title": "Filtrer par",
-      "every": "Tous"
+      "title": "Sélectionner un genre",
+      "all": "Tous"
     },
     "sort": {
       "title": "Trier par",
