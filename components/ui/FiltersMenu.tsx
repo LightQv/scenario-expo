@@ -1,4 +1,4 @@
-import { StyleSheet, useColorScheme } from "react-native";
+import { StyleSheet, useColorScheme, View } from "react-native";
 import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
@@ -120,10 +120,14 @@ export default function FiltersMenu({
           />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <Image
-            systemName="ellipsis"
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-          />
+          <View>
+            <Host style={{ width: 14, height: 22 }}>
+              <Image
+                systemName="ellipsis"
+                color={colorScheme === "dark" ? "#fff" : "#000"}
+              />
+            </Host>
+          </View>
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
@@ -133,6 +137,6 @@ export default function FiltersMenu({
 const styles = StyleSheet.create({
   container: {
     height: 34,
-    width: 34,
+    width: 28,
   },
 });

@@ -1,31 +1,74 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { useState } from "react";
+import { useState, createContext, useContext } from "react";
 import { Pressable, useColorScheme } from "react-native";
+
+type MediaType = "movie" | "tv" | "person";
+
+type SearchContextValue = {
+  search: string;
+  setSearch: (value: string) => void;
+  showHistory: boolean;
+  setShowHistory: (value: boolean) => void;
+  mediaType: MediaType;
+  setMediaType: (type: MediaType) => void;
+};
+
+const SearchContext = createContext<SearchContextValue>({
+  search: "",
+  setSearch: () => {},
+  showHistory: false,
+  setShowHistory: () => {},
+  mediaType: "movie",
+  setMediaType: () => {},
+});
+
+export const useSearchContext = () => useContext(SearchContext);
 
 export default function SearchLayout() {
   const colorScheme = useColorScheme();
   const [search, setSearch] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
+  const [mediaType, setMediaType] = useState<MediaType>("movie");
+
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          headerLargeTitle: false,
-          headerShadowVisible: false,
-          contentStyle: { backgroundColor: "transparent" },
-          headerTransparent: true,
-          headerTitle: "",
-          headerSearchBarOptions: {
-            placement: "automatic",
-            placeholder: "Search",
-            onChangeText: (event) => {
-              setSearch(event.nativeEvent.text);
+    <SearchContext.Provider
+      value={{
+        search,
+        setSearch,
+        showHistory,
+        setShowHistory,
+        mediaType,
+        setMediaType,
+      }}
+    >
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerLargeTitle: false,
+            headerShadowVisible: false,
+            contentStyle: { backgroundColor: "transparent" },
+            headerTransparent: true,
+            headerTitle: "",
+            headerSearchBarOptions: {
+              placement: "automatic",
+              placeholder: "Search",
+              onChangeText: (event) => {
+                const text = event.nativeEvent.text;
+                setSearch(text);
+              },
+              onFocus: () => {
+                setShowHistory(true);
+              },
+              onCancelButtonPress: () => {
+                setSearch("");
+                setShowHistory(false);
+              },
+              onSearchButtonPress: () => {},
             },
-            onSearchButtonPress: () => {},
-          },
-        }}
-      />
+          }}
+        />
       <Stack.Screen
         name="[genreId]"
         options={{
@@ -46,6 +89,7 @@ export default function SearchLayout() {
           ),
         }}
       />
-    </Stack>
+      </Stack>
+    </SearchContext.Provider>
   );
 }

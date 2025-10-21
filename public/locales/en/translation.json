@@ -263,7 +263,15 @@
       "title": "Search",
       "placeholder": "Look for movies, TV shows, actors, directors...",
       "cancel": "Cancel",
-      "history": "Search history",
+      "history": {
+        "title": "Recently searched",
+        "clear": "Clear"
+      },
+      "type": {
+        "movie": "Movies",
+        "tv": "TV Shows",
+        "person": "Persons"
+      },
       "result": {
         "singular": "Result",
         "plurial": "Results"
