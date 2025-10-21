@@ -115,14 +115,25 @@ export default function SeasonDetailScreen() {
                   {data.name}
                 </Text>
 
-                {data.air_date && (
+                {(data.air_date || data.episodes?.length) && (
                   <Text
                     style={[
                       styles.metadataText,
                       { color: PlatformColor("secondaryLabel") },
                     ]}
                   >
-                    {formatFullDate(data.air_date)}
+                    {data.air_date && formatFullDate(data.air_date)}
+                    {data.air_date && data.episodes?.length && " - "}
+                    {data.episodes?.length &&
+                      `${data.episodes.length} ${
+                        data.episodes.length === 1
+                          ? i18n.t(
+                              "screen.detail.media.seasons.episode.singular",
+                            )
+                          : i18n.t(
+                              "screen.detail.media.seasons.episode.plurial",
+                            )
+                      }`}
                   </Text>
                 )}
 
