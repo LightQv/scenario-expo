@@ -148,11 +148,7 @@ export default function TopIndexScreen() {
         setData(response.results);
         // Scroll to top when filters change, using scrollToLocation to respect content inset
         if (response.results.length > 0) {
-          flatListRef.current?.scrollToIndex({
-            index: 0,
-            animated: true,
-            viewOffset: insets.top,
-          });
+          flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
         }
       }
 

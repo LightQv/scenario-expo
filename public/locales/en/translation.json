@@ -205,6 +205,7 @@
       "signup": "or Sign-up here."
     },
     "discover": {
+      "title": "Discover",
       "sections": {
         "trendingWeek": "Trending this week",
         "trendingPersons": "Trending Persons",
@@ -212,6 +213,7 @@
         "runningTvShows": "Running TV Shows",
         "featuredMovie": "Featured Movie",
         "popularMovies": "Popular Movies",
+        "popularTv": "Popular TV Shows",
         "nowPlayingMovies": "Now Playing Movies",
         "upcomingMovies": "Upcoming Movies",
         "topRatedTv": "Best rated TV Shows",
@@ -258,6 +260,7 @@
       "age": "years old"
     },
     "search": {
+      "title": "Search",
       "placeholder": "Look for movies, TV shows, actors, directors...",
       "cancel": "Cancel",
       "history": "Search history",

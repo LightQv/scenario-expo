@@ -236,7 +236,7 @@ export default function DiscoverIndexScreen() {
           />
         }
       >
-        <HeaderTitle title="Discover" />
+        <HeaderTitle title={i18n.t("screen.discover.title")} />
 
         {sections.map((section) => {
           // Featured movie section - render single card with full size

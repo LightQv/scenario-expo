@@ -206,6 +206,7 @@
       "signup": "ou Enregistrez-vous ici."
     },
     "discover": {
+      "title": "Découvrir",
       "sections": {
         "trendingWeek": "Tendances de la semaine",
         "trendingPersons": "Personnes tendances",
@@ -213,6 +214,7 @@
         "runningTvShows": "Séries TV en cours",
         "featuredMovie": "Film à la une",
         "popularMovies": "Films populaires",
+        "popularTv": "Série TV populaires",
         "nowPlayingMovies": "Films en salle",
         "upcomingMovies": "Films à venir",
         "topRatedTv": "Séries TV les mieux notées",
@@ -259,6 +261,7 @@
       "age": "ans"
     },
     "search": {
+      "title": "Rechercher",
       "placeholder": "Rechercher un film, séries TV, acteur, réalisateur...",
       "cancel": "Annuler",
       "history": "Historique de recherche",
