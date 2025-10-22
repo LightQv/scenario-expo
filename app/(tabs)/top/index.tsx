@@ -6,6 +6,7 @@ import {
   RefreshControl,
   ListRenderItem,
   Platform,
+  Animated,
 } from "react-native";
 import {
   useState,
@@ -21,7 +22,7 @@ import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
-import HeaderTitle from "@/components/ui/HeaderTitle";
+import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import { useGenreContext } from "@/contexts/GenreContext";
 import MediaCard from "@/components/discover/MediaCard";
 import FiltersMenu, { SortOption } from "@/components/ui/FiltersMenu";
@@ -64,6 +65,7 @@ export default function TopIndexScreen() {
   const [totalPages, setTotalPages] = useState(0);
 
   const flatListRef = useRef<FlatList<TmdbData>>(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   // Get genres based on active media type
   const activeGenres =
@@ -193,14 +195,15 @@ export default function TopIndexScreen() {
   );
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-    >
-      <FlatList
+    <View style={styles.wrapper}>
+      <AnimatedHeader title="Top" scrollY={scrollY} />
+
+      <Animated.FlatList
         ref={flatListRef}
+        style={[
+          styles.container,
+          { backgroundColor: PlatformColor("systemBackground") },
+        ]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -222,7 +225,11 @@ export default function TopIndexScreen() {
         numColumns={2}
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<HeaderTitle title="Top" />}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
       />
@@ -231,6 +238,9 @@ export default function TopIndexScreen() {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },

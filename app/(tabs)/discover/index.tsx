@@ -5,15 +5,17 @@ import {
   Text,
   PlatformColor,
   RefreshControl,
+  Animated,
 } from "react-native";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import DiscoverSection from "@/components/discover/DiscoverSection";
 import MediaCard from "@/components/discover/MediaCard";
 import { notifyError } from "@/components/toasts/Toast";
 import { FONTS } from "@/constants/theme";
-import HeaderTitle from "@/components/ui/HeaderTitle";
+import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import { useGenreContext } from "@/contexts/GenreContext";
 
 type SectionData = {
@@ -29,8 +31,10 @@ type SectionData = {
 
 export default function DiscoverIndexScreen() {
   const { movieGenres } = useGenreContext();
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState<SectionData[]>([]);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   // Select random genre on mount and refresh
   const randomGenre = useMemo(() => {
@@ -56,7 +60,10 @@ export default function DiscoverIndexScreen() {
         endpoint +=
           "&with_genres=16&with_origin_country=JP&with_origin_language=ja&sort_by=vote_average.desc&vote_count.gte=500";
       }
-      if (section.id === "highly-rated-movies" || section.id === "featured-movie") {
+      if (
+        section.id === "highly-rated-movies" ||
+        section.id === "featured-movie"
+      ) {
         endpoint +=
           "&vote_average.gte=6&sort_by=vote_average.desc&vote_count.gte=500";
       }
@@ -220,14 +227,24 @@ export default function DiscoverIndexScreen() {
   };
 
   return (
-    <>
-      <ScrollView
+    <View style={styles.wrapper}>
+      <AnimatedHeader
+        title={i18n.t("screen.discover.title")}
+        scrollY={scrollY}
+      />
+
+      <Animated.ScrollView
         style={[
           styles.container,
           { backgroundColor: PlatformColor("systemBackground") },
         ]}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false },
+        )}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -236,14 +253,17 @@ export default function DiscoverIndexScreen() {
           />
         }
       >
-        <HeaderTitle title={i18n.t("screen.discover.title")} />
-
         {sections.map((section) => {
           // Featured movie section - render single card with full size
           if (section.isFeatured && section.data.length > 0) {
             return (
               <View key={section.id} style={styles.featuredSection}>
-                <Text style={[styles.featuredTitle, { color: PlatformColor("label") }]}>
+                <Text
+                  style={[
+                    styles.featuredTitle,
+                    { color: PlatformColor("label") },
+                  ]}
+                >
                   {section.title}
                 </Text>
                 <MediaCard
@@ -268,24 +288,21 @@ export default function DiscoverIndexScreen() {
             />
           );
         })}
-      </ScrollView>
-    </>
+      </Animated.ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: 38,
-    fontFamily: FONTS.abril,
-    marginBottom: 24,
-    paddingHorizontal: 14,
-  },
   content: {
-    paddingTop: 16,
     paddingHorizontal: 2,
+    paddingBottom: 16,
   },
   featuredSection: {
     marginBottom: 32,

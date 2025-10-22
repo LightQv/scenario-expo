@@ -5,13 +5,14 @@ import {
   PlatformColor,
   ActivityIndicator,
   Keyboard,
+  Animated,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
 import { useGenreContext } from "@/contexts/GenreContext";
 import { useSearchContext } from "./_layout";
 import GenreCard from "@/components/search/GenreCard";
-import HeaderTitle from "@/components/ui/HeaderTitle";
+import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import SearchHistory from "@/components/search/SearchHistory";
 import MediaTypePicker from "@/components/search/MediaTypePicker";
 import i18n from "@/services/i18n";
@@ -27,6 +28,7 @@ export default function SearchIndexScreen() {
   const { totalGenres, loading } = useGenreContext();
   const { showHistory, mediaType, setMediaType, search } = useSearchContext();
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadHistory();
@@ -89,28 +91,39 @@ export default function SearchIndexScreen() {
   }
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-    >
-      <HeaderTitle title={i18n.t("screen.search.title")} />
+    <View style={styles.wrapper}>
+      <AnimatedHeader title={i18n.t("screen.search.title")} scrollY={scrollY} />
 
-      <View style={styles.grid}>
-        {totalGenres?.map((genre) => (
-          <GenreCard key={genre.id} id={genre.id} name={genre.name} />
-        ))}
-      </View>
-    </ScrollView>
+      <Animated.ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: PlatformColor("systemBackground") },
+        ]}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: false,
+            listener: handleScroll,
+          }
+        )}
+        scrollEventThrottle={16}
+      >
+        <View style={styles.grid}>
+          {totalGenres?.map((genre) => (
+            <GenreCard key={genre.id} id={genre.id} name={genre.name} />
+          ))}
+        </View>
+      </Animated.ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
