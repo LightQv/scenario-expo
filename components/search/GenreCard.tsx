@@ -1,8 +1,16 @@
-import { StyleSheet, Text, View, TouchableOpacity, PlatformColor, Dimensions, useColorScheme } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  PlatformColor,
+  Dimensions,
+  useColorScheme,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
-import { TOKENS, FONTS, THEME_COLORS } from "@/constants/theme";
+import { TOKENS, FONTS } from "@/constants/theme";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_GAP = 12;

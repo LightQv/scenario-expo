@@ -121,7 +121,7 @@ export default function FiltersMenu({
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <View>
-            <Host style={{ width: 14, height: 22 }}>
+            <Host style={{ width: 14, height: 24 }}>
               <Image
                 systemName="ellipsis"
                 color={colorScheme === "dark" ? "#fff" : "#000"}

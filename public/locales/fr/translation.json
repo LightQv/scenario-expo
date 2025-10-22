@@ -253,6 +253,8 @@
     },
     "person": {
       "title": "Connu pour",
+      "movies": "Films",
+      "tvShows": "Séries TV",
       "gender": {
         "male": "Homme",
         "female": "Femme",

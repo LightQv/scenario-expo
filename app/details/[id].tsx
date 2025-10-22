@@ -15,7 +15,7 @@ import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
 import CrewInfo from "@/components/details/CrewInfo";
 import CastSection from "@/components/details/CastSection";
-import KnownForSection from "@/components/details/KnownForSection";
+import CollapsibleCreditsSection from "@/components/details/CollapsibleCreditsSection";
 import SeasonsSection from "@/components/details/SeasonsSection";
 import Animated, {
   useAnimatedScrollHandler,
@@ -47,7 +47,7 @@ export default function DetailsScreen() {
       // Different append_to_response for person vs media
       const appendParams =
         type === "person"
-          ? "combined_credits,images"
+          ? "movie_credits,tv_credits,images"
           : "videos,credits,images";
 
       tmdbFetch(`/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`)
@@ -141,11 +141,32 @@ export default function DetailsScreen() {
             />
             {type === "person" ? (
               <>
-                {/* Person: Show Known For section */}
-                {data.combined_credits && (
-                  <KnownForSection
-                    title={i18n.t("screen.person.title")}
-                    credits={data.combined_credits}
+                {/* Person: Show Movie Credits */}
+                {data.movie_credits && data.movie_credits.cast && (
+                  <CollapsibleCreditsSection
+                    title={i18n.t("screen.person.movies")}
+                    credits={data.movie_credits.cast
+                      .filter((movie) => movie.release_date)
+                      .sort((a, b) => {
+                        const dateA = new Date(a.release_date || "");
+                        const dateB = new Date(b.release_date || "");
+                        return dateB.getTime() - dateA.getTime();
+                      })}
+                    mediaType="movie"
+                  />
+                )}
+                {/* Person: Show TV Credits */}
+                {data.tv_credits && data.tv_credits.cast && (
+                  <CollapsibleCreditsSection
+                    title={i18n.t("screen.person.tvShows")}
+                    credits={data.tv_credits.cast
+                      .filter((tv) => tv.first_air_date)
+                      .sort((a, b) => {
+                        const dateA = new Date(a.first_air_date || "");
+                        const dateB = new Date(b.first_air_date || "");
+                        return dateB.getTime() - dateA.getTime();
+                      })}
+                    mediaType="tv"
                   />
                 )}
               </>

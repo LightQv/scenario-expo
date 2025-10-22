@@ -252,6 +252,8 @@
     },
     "person": {
       "title": "Been known for",
+      "movies": "Movies",
+      "tvShows": "TV Shows",
       "gender": {
         "male": "Male",
         "female": "Female",
