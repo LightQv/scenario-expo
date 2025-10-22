@@ -113,30 +113,6 @@ export default function QueryScreen() {
     return null;
   };
 
-  const renderFooter = () => {
-    if (results.length === 0) return null;
-
-    return (
-      <View style={styles.footer}>
-        {fetchParams.page < totalPages ? (
-          <ActivityIndicator size="small" color={PlatformColor("label")} />
-        ) : (
-          <Text
-            style={[
-              styles.footerText,
-              { color: PlatformColor("secondaryLabel") },
-            ]}
-          >
-            {totalResults}{" "}
-            {totalResults === 1
-              ? i18n.t("screen.search.result.singular")
-              : i18n.t("screen.search.result.plurial")}
-          </Text>
-        )}
-      </View>
-    );
-  };
-
   return (
     <View
       style={[
@@ -154,7 +130,6 @@ export default function QueryScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyComponent}
-        ListFooterComponent={renderFooter}
         onEndReached={handleNextPage}
         onEndReachedThreshold={0.5}
       />
@@ -169,7 +144,7 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 130,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: 20,
+    paddingBottom: 86,
   },
   row: {
     justifyContent: "space-between",
@@ -180,10 +155,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 100,
-  },
-  footer: {
-    paddingVertical: 20,
-    alignItems: "center",
   },
   footerText: {
     fontFamily: FONTS.medium,

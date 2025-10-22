@@ -302,7 +302,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 2,
-    paddingBottom: 16,
   },
   featuredSection: {
     marginBottom: 32,

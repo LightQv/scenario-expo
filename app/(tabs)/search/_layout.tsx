@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { useState, createContext, useContext } from "react";
-import { Pressable, useColorScheme } from "react-native";
+import { Pressable, useColorScheme, FlatList } from "react-native";
 import i18n from "@/services/i18n";
 
 type MediaType = "movie" | "tv" | "person";
@@ -13,6 +13,8 @@ type SearchContextValue = {
   setShowHistory: (value: boolean) => void;
   mediaType: MediaType;
   setMediaType: (type: MediaType) => void;
+  genreScrollRef: React.RefObject<FlatList> | null;
+  setGenreScrollRef: (ref: React.RefObject<FlatList>) => void;
 };
 
 const SearchContext = createContext<SearchContextValue>({
@@ -22,6 +24,8 @@ const SearchContext = createContext<SearchContextValue>({
   setShowHistory: () => {},
   mediaType: "movie",
   setMediaType: () => {},
+  genreScrollRef: null,
+  setGenreScrollRef: () => {},
 });
 
 export const useSearchContext = () => useContext(SearchContext);
@@ -31,6 +35,17 @@ export default function SearchLayout() {
   const [search, setSearch] = useState("");
   const [showHistory, setShowHistory] = useState(false);
   const [mediaType, setMediaType] = useState<MediaType>("movie");
+  const [genreScrollRef, setGenreScrollRefState] = useState<React.RefObject<FlatList> | null>(null);
+
+  const setGenreScrollRef = (ref: React.RefObject<FlatList>) => {
+    setGenreScrollRefState(ref);
+  };
+
+  const handleCancelButtonPress = () => {
+    setSearch("");
+    setShowHistory(false);
+    // Scroll animation handled by the index screen's useEffect
+  };
 
   const handleSearchButtonPress = () => {
     if (search.trim()) {
@@ -48,6 +63,8 @@ export default function SearchLayout() {
         setShowHistory,
         mediaType,
         setMediaType,
+        genreScrollRef,
+        setGenreScrollRef,
       }}
     >
       <Stack>
@@ -69,10 +86,7 @@ export default function SearchLayout() {
               onFocus: () => {
                 setShowHistory(true);
               },
-              onCancelButtonPress: () => {
-                setSearch("");
-                setShowHistory(false);
-              },
+              onCancelButtonPress: handleCancelButtonPress,
               onSearchButtonPress: handleSearchButtonPress,
             },
           }}
