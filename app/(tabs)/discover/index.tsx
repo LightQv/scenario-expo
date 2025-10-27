@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  ScrollView,
   View,
   Text,
   PlatformColor,

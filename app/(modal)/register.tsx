@@ -1,0 +1,445 @@
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  PlatformColor,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { useState } from "react";
+import { Formik } from "formik";
+import { registerSchema } from "@/services/validators";
+import i18n from "@/services/i18n";
+import { useUserContext } from "@/contexts";
+import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+
+export default function RegisterScreen() {
+  const { register, loader } = useUserContext();
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Formik
+          initialValues={{
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
+          validationSchema={registerSchema}
+          onSubmit={(values) => {
+            register(
+              values.username,
+              values.email,
+              values.password,
+              values.confirmPassword
+            );
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View style={styles.form}>
+              {/* Username Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelContainer}>
+                  <Text
+                    style={[styles.label, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("form.auth.label.username")}
+                  </Text>
+                  {errors.username && touched.username && (
+                    <Text
+                      style={[
+                        styles.errorIndicator,
+                        { color: THEME_COLORS.error },
+                      ]}
+                    >
+                      {" *"}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor:
+                        errors.username && touched.username
+                          ? THEME_COLORS.error
+                          : PlatformColor("separator"),
+                    },
+                  ]}
+                >
+                  <TextInput
+                    autoCapitalize="none"
+                    autoComplete="username"
+                    onChangeText={handleChange("username")}
+                    onBlur={handleBlur("username")}
+                    value={values.username}
+                    placeholder={i18n.t("form.auth.placeholder.username")}
+                    placeholderTextColor={PlatformColor("placeholderText")}
+                    style={[styles.input, { color: PlatformColor("label") }]}
+                    cursorColor={THEME_COLORS.main}
+                    selectionColor={THEME_COLORS.main}
+                  />
+                </View>
+                {errors.username && touched.username && (
+                  <Text
+                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                  >
+                    {errors.username}
+                  </Text>
+                )}
+              </View>
+
+              {/* Email Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelContainer}>
+                  <Text
+                    style={[styles.label, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("form.auth.label.email")}
+                  </Text>
+                  {errors.email && touched.email && (
+                    <Text
+                      style={[
+                        styles.errorIndicator,
+                        { color: THEME_COLORS.error },
+                      ]}
+                    >
+                      {" *"}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor:
+                        errors.email && touched.email
+                          ? THEME_COLORS.error
+                          : PlatformColor("separator"),
+                    },
+                  ]}
+                >
+                  <TextInput
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    keyboardType="email-address"
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    value={values.email}
+                    placeholder={i18n.t("form.auth.placeholder.email")}
+                    placeholderTextColor={PlatformColor("placeholderText")}
+                    style={[styles.input, { color: PlatformColor("label") }]}
+                    cursorColor={THEME_COLORS.main}
+                    selectionColor={THEME_COLORS.main}
+                  />
+                </View>
+                {errors.email && touched.email && (
+                  <Text
+                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                  >
+                    {errors.email}
+                  </Text>
+                )}
+              </View>
+
+              {/* Password Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelContainer}>
+                  <Text
+                    style={[styles.label, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("form.auth.label.password")}
+                  </Text>
+                  {errors.password && touched.password && (
+                    <Text
+                      style={[
+                        styles.errorIndicator,
+                        { color: THEME_COLORS.error },
+                      ]}
+                    >
+                      {" *"}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor:
+                        errors.password && touched.password
+                          ? THEME_COLORS.error
+                          : PlatformColor("separator"),
+                    },
+                  ]}
+                >
+                  <TextInput
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    onChangeText={handleChange("password")}
+                    onBlur={handleBlur("password")}
+                    value={values.password}
+                    placeholder={i18n.t("form.auth.placeholder.password")}
+                    placeholderTextColor={PlatformColor("placeholderText")}
+                    style={[styles.input, { color: PlatformColor("label") }]}
+                    cursorColor={THEME_COLORS.main}
+                    selectionColor={THEME_COLORS.main}
+                    secureTextEntry={hidePassword}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setHidePassword(!hidePassword)}
+                    style={styles.passwordToggle}
+                    activeOpacity={0.6}
+                  >
+                    <Ionicons
+                      name={hidePassword ? "eye-off-outline" : "eye-outline"}
+                      size={22}
+                      color={PlatformColor("secondaryLabel")}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.password && touched.password && (
+                  <Text
+                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                  >
+                    {errors.password}
+                  </Text>
+                )}
+              </View>
+
+              {/* Confirm Password Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelContainer}>
+                  <Text
+                    style={[styles.label, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("form.auth.label.confirmPassword")}
+                  </Text>
+                  {errors.confirmPassword && touched.confirmPassword && (
+                    <Text
+                      style={[
+                        styles.errorIndicator,
+                        { color: THEME_COLORS.error },
+                      ]}
+                    >
+                      {" *"}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor:
+                        errors.confirmPassword && touched.confirmPassword
+                          ? THEME_COLORS.error
+                          : PlatformColor("separator"),
+                    },
+                  ]}
+                >
+                  <TextInput
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    onChangeText={handleChange("confirmPassword")}
+                    onBlur={handleBlur("confirmPassword")}
+                    value={values.confirmPassword}
+                    placeholder={i18n.t(
+                      "form.auth.placeholder.confirmPassword"
+                    )}
+                    placeholderTextColor={PlatformColor("placeholderText")}
+                    style={[styles.input, { color: PlatformColor("label") }]}
+                    cursorColor={THEME_COLORS.main}
+                    selectionColor={THEME_COLORS.main}
+                    secureTextEntry={hidePassword}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setHidePassword(!hidePassword)}
+                    style={styles.passwordToggle}
+                    activeOpacity={0.6}
+                  >
+                    <Ionicons
+                      name={hidePassword ? "eye-off-outline" : "eye-outline"}
+                      size={22}
+                      color={PlatformColor("secondaryLabel")}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <Text
+                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                  >
+                    {errors.confirmPassword}
+                  </Text>
+                )}
+              </View>
+
+              {/* Submit Button */}
+              <TouchableOpacity
+                onPress={() => handleSubmit()}
+                disabled={!registerSchema.isValidSync(values) || loader}
+                style={[
+                  styles.submitButton,
+                  {
+                    backgroundColor:
+                      !registerSchema.isValidSync(values) || loader
+                        ? PlatformColor("systemGray4")
+                        : THEME_COLORS.main,
+                  },
+                ]}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.submitButtonText,
+                    {
+                      color:
+                        !registerSchema.isValidSync(values) || loader
+                          ? PlatformColor("systemGray")
+                          : "#fff",
+                    },
+                  ]}
+                >
+                  {loader
+                    ? i18n.t("form.auth.submit.loading")
+                    : i18n.t("form.auth.submit.register")}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Login Link */}
+              <TouchableOpacity
+                style={styles.loginLinkContainer}
+                activeOpacity={0.6}
+                onPress={() => router.back()}
+              >
+                <Text
+                  style={[
+                    styles.loginLinkText,
+                    { color: PlatformColor("secondaryLabel") },
+                  ]}
+                >
+                  {i18n.t("form.auth.switch.register.number1")}{" "}
+                  <Text
+                    style={[
+                      styles.loginLinkTextBold,
+                      { color: THEME_COLORS.main },
+                    ]}
+                  >
+                    {i18n.t("form.auth.switch.register.number2")}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: PlatformColor("systemBackground"),
+  },
+  scrollContent: {
+    padding: TOKENS.margin.horizontal,
+  },
+  form: {
+    gap: 20,
+  },
+  fieldContainer: {
+    gap: 8,
+  },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  label: {
+    fontFamily: FONTS.medium,
+    fontSize: TOKENS.font.lg,
+  },
+  errorIndicator: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.lg,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: TOKENS.radius.md,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    height: 48,
+  },
+  input: {
+    flex: 1,
+    fontFamily: FONTS.regular,
+    fontSize: TOKENS.font.lg,
+    height: "100%",
+  },
+  passwordToggle: {
+    padding: 4,
+  },
+  errorText: {
+    fontFamily: FONTS.regular,
+    fontSize: TOKENS.font.sm,
+    marginTop: -4,
+  },
+  submitButton: {
+    height: 52,
+    borderRadius: TOKENS.radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+  },
+  submitButtonText: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.xxl,
+  },
+  loginLinkContainer: {
+    alignItems: "center",
+    marginTop: 8,
+  },
+  loginLinkText: {
+    fontFamily: FONTS.regular,
+    fontSize: TOKENS.font.lg,
+    textAlign: "center",
+  },
+  loginLinkTextBold: {
+    fontFamily: FONTS.bold,
+  },
+});

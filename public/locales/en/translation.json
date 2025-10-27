@@ -64,18 +64,26 @@
       "placeholder": {
         "part1": "Type your",
         "part2": "here",
-        "part3": "Confirm your"
+        "part3": "Confirm your",
+        "username": "Enter your username",
+        "email": "Enter your email",
+        "password": "Enter your password",
+        "confirmPassword": "Confirm your password"
       },
       "submit": {
         "forgot": "Send",
         "login": "Login",
-        "register": "Register"
+        "register": "Register",
+        "logout": "Logout",
+        "loading": "Loading..."
+      },
+      "link": {
+        "forgot": "Forgot your password ?"
       },
       "switch": {
         "login": {
           "number1": "You don't have an account ?",
-          "number2": "Register here",
-          "number3": "Forgot your password ?"
+          "number2": "Register here"
         },
         "register": {
           "number1": "You already have an account ?",
@@ -203,6 +211,18 @@
     "home": {
       "title": "Welcome to Scenario.",
       "signup": "or Sign-up here."
+    },
+    "login": {
+      "title": "Login"
+    },
+    "register": {
+      "title": "Register"
+    },
+    "forgotPassword": {
+      "title": "Forgot something ?"
+    },
+    "account": {
+      "title": "Account"
     },
     "discover": {
       "title": "Discover",
@@ -338,6 +358,8 @@
     "expired": "Session expired",
     "success": {
       "forgot": "Email sent",
+      "login": "Welcome back!",
+      "logout": "See you soon!",
       "profile": {
         "update": {
           "email": "Email updated",

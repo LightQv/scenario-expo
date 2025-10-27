@@ -1,6 +1,7 @@
 export const THEME_COLORS = {
   main: "#eab208",
   accent: "#f9cd4a",
+  error: "#ef4444",
 };
 
 export const GRADE_COLORS = {

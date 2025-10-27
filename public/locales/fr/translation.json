@@ -64,18 +64,26 @@
       "placeholder": {
         "part1": "Entrez votre",
         "part2": "ici",
-        "part3": "Confirmez votre"
+        "part3": "Confirmez votre",
+        "username": "Entrez votre pseudo",
+        "email": "Entrez votre email",
+        "password": "Entrez votre mot de passe",
+        "confirmPassword": "Confirmez votre mot de passe"
       },
       "submit": {
         "forgot": "Envoyer",
         "login": "Connexion",
-        "register": "S'enregistrer"
+        "register": "S'enregistrer",
+        "logout": "Déconnexion",
+        "loading": "Chargement..."
+      },
+      "link": {
+        "forgot": "Mot de passe oublié ?"
       },
       "switch": {
         "login": {
           "number1": "Vous n'avez pas de compte ?",
-          "number2": "Enregistrez-vous ici",
-          "number3": "Mot de passe oublié ?"
+          "number2": "Enregistrez-vous ici"
         },
         "register": {
           "number1": "Vous avez déjà un compte ?",
@@ -204,6 +212,18 @@
     "home": {
       "title": "Bienvenue à Scenario.",
       "signup": "ou Enregistrez-vous ici."
+    },
+    "login": {
+      "title": "Connexion"
+    },
+    "register": {
+      "title": "S'enregistrer"
+    },
+    "forgotPassword": {
+      "title": "Vous avez oublié quelque chose ?"
+    },
+    "account": {
+      "title": "Compte"
     },
     "discover": {
       "title": "Découvrir",
@@ -339,6 +359,8 @@
     "expired": "Session expirée",
     "success": {
       "forgot": "Email envoyé",
+      "login": "Bon retour!",
+      "logout": "À bientôt!",
       "profile": {
         "update": {
           "email": "Email mis à jour",

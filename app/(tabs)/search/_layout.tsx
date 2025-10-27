@@ -1,8 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { useState, createContext, useContext } from "react";
-import { Pressable, useColorScheme, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import i18n from "@/services/i18n";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 type MediaType = "movie" | "tv" | "person";
 
@@ -31,7 +31,6 @@ const SearchContext = createContext<SearchContextValue>({
 export const useSearchContext = () => useContext(SearchContext);
 
 export default function SearchLayout() {
-  const colorScheme = useColorScheme();
   const [search, setSearch] = useState("");
   const [showHistory, setShowHistory] = useState(false);
   const [mediaType, setMediaType] = useState<MediaType>("movie");
@@ -99,16 +98,7 @@ export default function SearchLayout() {
             contentStyle: { backgroundColor: "transparent" },
             headerTransparent: true,
             headerTitle: "",
-            headerLeft: () => (
-              <Pressable onPress={() => router.back()}>
-                <Ionicons
-                  name="chevron-back"
-                  size={28}
-                  color={colorScheme === "dark" ? "#fff" : "#000"}
-                  style={{ marginLeft: 2 }}
-                />
-              </Pressable>
-            ),
+            headerLeft: () => <GoBackButton />,
           }}
         />
         <Stack.Screen
@@ -119,16 +109,7 @@ export default function SearchLayout() {
             contentStyle: { backgroundColor: "transparent" },
             headerTransparent: true,
             headerTitle: "",
-            headerLeft: () => (
-              <Pressable onPress={() => router.back()}>
-                <Ionicons
-                  name="chevron-back"
-                  size={28}
-                  color={colorScheme === "dark" ? "#fff" : "#000"}
-                  style={{ marginLeft: 2 }}
-                />
-              </Pressable>
-            ),
+            headerLeft: () => <GoBackButton />,
           }}
         />
       </Stack>

@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   PlatformColor,
-  Pressable,
   useColorScheme,
   ActivityIndicator,
 } from "react-native";
@@ -15,10 +14,10 @@ import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import { FONTS, TOKENS } from "@/constants/theme";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function CategoryDetailScreen() {
   const colorScheme = useColorScheme();
@@ -112,18 +111,9 @@ export default function CategoryDetailScreen() {
       headerTransparent: true,
       headerTitle: title || "Discover",
       headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
-      headerLeft: () => (
-        <Pressable onPress={() => router.back()}>
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-            style={{ marginLeft: 2 }}
-          />
-        </Pressable>
-      ),
+      headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, router, colorScheme, title]);
+  }, [navigation, colorScheme, title]);
 
   const statusStyle = colorScheme === "dark" ? "light" : "dark";
 

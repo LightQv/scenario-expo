@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   PlatformColor,
-  Pressable,
   useColorScheme,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -16,9 +15,9 @@ import { notifyError } from "@/components/toasts/Toast";
 import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function SeasonDetailScreen() {
   const colorScheme = useColorScheme();
@@ -60,18 +59,9 @@ export default function SeasonDetailScreen() {
       headerTitle:
         seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
       headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
-      headerLeft: () => (
-        <Pressable onPress={() => router.back()}>
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-            style={{ marginLeft: 2 }}
-          />
-        </Pressable>
-      ),
+      headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, router, colorScheme, seriesName]);
+  }, [navigation, colorScheme, seriesName]);
 
   const statusStyle = colorScheme === "dark" ? "light" : "dark";
 

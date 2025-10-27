@@ -1,7 +1,7 @@
 export type Extra = {
-  tmdbToken: string
-  backendUrl: string
-  backendUrlIos: string
-  backendUrlAndroid: string
-  env: "DEV" | "PROD"
-}
+  tmdbToken: string;
+  apiUrl: string;
+  apiUrlIos: string;
+  apiUrlAndroid: string;
+  env: "DEV" | "PROD";
+};

@@ -2,7 +2,6 @@ import {
   View,
   StyleSheet,
   PlatformColor,
-  Pressable,
   useColorScheme,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -24,7 +23,7 @@ import Animated, {
   FadeOutRight,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
@@ -77,18 +76,9 @@ export default function DetailsScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
-      headerLeft: () => (
-        <Pressable onPress={() => router.back()}>
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-            style={{ marginLeft: 2 }}
-          />
-        </Pressable>
-      ),
+      headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, router, colorScheme]);
+  }, [navigation]);
 
   return (
     <View
