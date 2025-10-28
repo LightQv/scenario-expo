@@ -40,7 +40,10 @@ export default function FiltersMenu({
 }: FiltersMenuProps) {
   const colorScheme = useColorScheme();
   // Build media type options
-  const mediaTypeOptions = ["Movie", "TV"];
+  const mediaTypeOptions = [
+    i18n.t("filter.type.movie"),
+    i18n.t("filter.type.tv"),
+  ];
   const selectedMediaTypeIndex = mediaType === "movie" ? 0 : 1;
 
   // Build genre options array with "All" at the beginning
@@ -91,7 +94,7 @@ export default function FiltersMenu({
           {/* Media Type Picker - only show if mediaType and onMediaTypeChange are provided */}
           {mediaType && onMediaTypeChange && (
             <Picker
-              label="Type"
+              label={i18n.t("filter.type.title")}
               options={mediaTypeOptions}
               variant="menu"
               selectedIndex={selectedMediaTypeIndex}

@@ -37,16 +37,22 @@ type FetchParams = {
 };
 
 const SORT_OPTIONS: SortOption[] = [
-  { value: "vote_average.desc", label: "Rating ↓" },
-  { value: "vote_average.asc", label: "Rating ↑" },
-  { value: "popularity.desc", label: "Popularity ↓" },
-  { value: "popularity.asc", label: "Popularity ↑" },
-  { value: "primary_release_date.desc", label: "Release Date ↓" },
-  { value: "primary_release_date.asc", label: "Release Date ↑" },
-  { value: "title.desc", label: "Title (Z-A)" },
-  { value: "title.asc", label: "Title (A-Z)" },
-  { value: "revenue.desc", label: "Revenue ↓" },
-  { value: "revenue.asc", label: "Revenue ↑" },
+  { value: "vote_average.desc", label: i18n.t("screen.top.sort.ratingDesc") },
+  { value: "vote_average.asc", label: i18n.t("screen.top.sort.ratingAsc") },
+  { value: "popularity.desc", label: i18n.t("screen.top.sort.popularityDesc") },
+  { value: "popularity.asc", label: i18n.t("screen.top.sort.popularityAsc") },
+  {
+    value: "primary_release_date.desc",
+    label: i18n.t("screen.top.sort.releaseDateDesc"),
+  },
+  {
+    value: "primary_release_date.asc",
+    label: i18n.t("screen.top.sort.releaseDateAsc"),
+  },
+  { value: "title.desc", label: i18n.t("screen.top.sort.titleDesc") },
+  { value: "title.asc", label: i18n.t("screen.top.sort.titleAsc") },
+  { value: "revenue.desc", label: i18n.t("screen.top.sort.revenueDesc") },
+  { value: "revenue.asc", label: i18n.t("screen.top.sort.revenueAsc") },
 ];
 
 export default function TopIndexScreen() {
@@ -196,7 +202,7 @@ export default function TopIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
-      <AnimatedHeader title="Top" scrollY={scrollY} />
+      <AnimatedHeader title={i18n.t("screen.top.title")} scrollY={scrollY} />
 
       <Animated.FlatList
         ref={flatListRef}

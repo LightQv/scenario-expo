@@ -211,7 +211,10 @@
       "option3": "Meilleure note"
     },
     "type": {
-      "title": "Suggérer par",
+      "title": "Type",
+      "label": "Suggérer par",
+      "movie": "Film",
+      "tv": "Série TV",
       "option1": "Films",
       "option2": "Séries TV"
     }
@@ -219,7 +222,9 @@
   "screen": {
     "home": {
       "title": "Bienvenue à Scenario.",
-      "signup": "ou Enregistrez-vous ici."
+      "signup": "ou Enregistrez-vous ici.",
+      "header": "Accueil",
+      "add": "Ajout"
     },
     "login": {
       "title": "Connexion"
@@ -232,6 +237,24 @@
     },
     "account": {
       "title": "Compte"
+    },
+    "watchlistCreate": {
+      "title": "Nouvelle liste"
+    },
+    "top": {
+      "title": "Les mieux notés",
+      "sort": {
+        "ratingDesc": "Note ↓",
+        "ratingAsc": "Note ↑",
+        "popularityDesc": "Popularité ↓",
+        "popularityAsc": "Popularité ↑",
+        "releaseDateDesc": "Date de sortie ↓",
+        "releaseDateAsc": "Date de sortie ↑",
+        "titleDesc": "Titre (Z-A)",
+        "titleAsc": "Titre (A-Z)",
+        "revenueDesc": "Revenus ↓",
+        "revenueAsc": "Revenus ↑"
+      }
     },
     "discover": {
       "title": "Découvrir",
@@ -259,8 +282,10 @@
       "media": {
         "trailer": "Voir la bande-annonce",
         "cast": "Casting",
+        "castEmpty": "Aucune information sur le casting",
         "seasons": {
           "title": "Saisons",
+          "empty": "Aucune saison trouvée",
           "season": {
             "singular": "Saison",
             "plurial": "Saisons"
@@ -324,6 +349,13 @@
       "menu": {
         "create": "Créer une liste",
         "sort": "Trier par"
+      },
+      "sort": {
+        "default": "Par défaut",
+        "titleAsc": "Titre (A-Z)",
+        "titleDesc": "Titre (Z-A)",
+        "itemsAsc": "Éléments ↑",
+        "itemsDesc": "Éléments ↓"
       }
     },
     "profile": {

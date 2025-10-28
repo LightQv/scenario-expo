@@ -3,30 +3,29 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   PlatformColor,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { useState } from "react";
+import { Formik } from "formik";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { createWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
-import { TOKENS, FONTS } from "@/constants/theme";
 import { useUserContext } from "@/contexts/UserContext";
+import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
 
 export default function WatchlistCreateModal() {
-  const insets = useSafeAreaInsets();
-  const { user } = useUserContext();
-  const [title, setTitle] = useState("");
+  const { user, loader } = useUserContext();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!title.trim()) {
-      notifyError(i18n.t("form.watchlist.error.title"));
+  const handleCreateWatchlist = async (title: string) => {
+    if (!user) {
+      notifyError(i18n.t("toast.error"));
       return;
     }
 
@@ -48,70 +47,123 @@ export default function WatchlistCreateModal() {
 
   return (
     <KeyboardAvoidingView
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View
-        style={[
-          styles.content,
-          {
-            paddingTop: insets.top + 16,
-            paddingBottom: insets.bottom + 16,
-          },
-        ]}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: PlatformColor("label") }]}>
-            {i18n.t("form.watchlist.title.create")}
-          </Text>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text style={[styles.cancelText, { color: PlatformColor("systemBlue") }]}>
-              {i18n.t("form.watchlist.cancel")}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Formik
+          initialValues={{ title: "" }}
+          validationSchema={createWatchlistSchema}
+          onSubmit={(values) => {
+            handleCreateWatchlist(values.title);
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View style={styles.form}>
+              {/* Title Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelContainer}>
+                  <Text
+                    style={[styles.label, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("form.watchlist.field.title")}
+                  </Text>
+                  {errors.title && touched.title && (
+                    <Text
+                      style={[
+                        styles.errorIndicator,
+                        { color: THEME_COLORS.error },
+                      ]}
+                    >
+                      {" *"}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor:
+                        errors.title && touched.title
+                          ? THEME_COLORS.error
+                          : PlatformColor("separator"),
+                    },
+                  ]}
+                >
+                  <TextInput
+                    autoCapitalize="words"
+                    onChangeText={handleChange("title")}
+                    onBlur={handleBlur("title")}
+                    value={values.title}
+                    placeholder={i18n.t("form.watchlist.placeholder.title")}
+                    placeholderTextColor={PlatformColor("placeholderText")}
+                    style={[styles.input, { color: PlatformColor("label") }]}
+                    cursorColor={THEME_COLORS.main}
+                    selectionColor={THEME_COLORS.main}
+                    maxLength={50}
+                    autoFocus
+                    returnKeyType="done"
+                    onSubmitEditing={() => handleSubmit()}
+                  />
+                </View>
+                {errors.title && touched.title && (
+                  <Text
+                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                  >
+                    {errors.title}
+                  </Text>
+                )}
+              </View>
 
-        <View style={styles.form}>
-          <Text style={[styles.label, { color: PlatformColor("label") }]}>
-            {i18n.t("form.watchlist.field.title")}
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: PlatformColor("systemGray6"),
-                color: PlatformColor("label"),
-              },
-            ]}
-            value={title}
-            onChangeText={setTitle}
-            placeholder={i18n.t("form.watchlist.placeholder.title")}
-            placeholderTextColor={PlatformColor("placeholderText") as any}
-            maxLength={255}
-            autoFocus
-          />
-
-          <TouchableOpacity
-            style={[
-              styles.submitButton,
-              { backgroundColor: PlatformColor("systemBlue") },
-            ]}
-            onPress={handleSubmit}
-            disabled={loading || !title.trim()}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.submitText}>
-                {i18n.t("form.watchlist.submit.create")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
+              {/* Submit Button */}
+              <TouchableOpacity
+                onPress={() => handleSubmit()}
+                disabled={!createWatchlistSchema.isValidSync(values) || loading}
+                style={[
+                  styles.submitButton,
+                  {
+                    backgroundColor:
+                      !createWatchlistSchema.isValidSync(values) || loading
+                        ? PlatformColor("systemGray4")
+                        : THEME_COLORS.main,
+                  },
+                ]}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.submitButtonText,
+                    {
+                      color:
+                        !createWatchlistSchema.isValidSync(values) || loading
+                          ? PlatformColor("systemGray")
+                          : "#fff",
+                    },
+                  ]}
+                >
+                  {loading
+                    ? i18n.t("form.auth.submit.loading")
+                    : i18n.t("form.watchlist.submit.create")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -120,49 +172,59 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
+  scrollView: {
     flex: 1,
-    paddingHorizontal: TOKENS.margin.horizontal,
+    backgroundColor: PlatformColor("systemBackground"),
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: FONTS.bold,
-  },
-  cancelText: {
-    fontSize: TOKENS.font.xxl,
-    fontFamily: FONTS.medium,
+  scrollContent: {
+    padding: TOKENS.margin.horizontal,
   },
   form: {
-    gap: 16,
+    gap: 20,
+  },
+  fieldContainer: {
+    gap: 8,
+  },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   label: {
-    fontSize: TOKENS.font.lg,
     fontFamily: FONTS.medium,
-    marginBottom: -8,
+    fontSize: TOKENS.font.lg,
+  },
+  errorIndicator: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.lg,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: TOKENS.radius.md,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    height: 48,
   },
   input: {
-    height: 48,
-    borderRadius: TOKENS.radius.md,
-    paddingHorizontal: 16,
-    fontSize: TOKENS.font.xxl,
+    flex: 1,
     fontFamily: FONTS.regular,
+    fontSize: TOKENS.font.lg,
+    height: "100%",
+  },
+  errorText: {
+    fontFamily: FONTS.regular,
+    fontSize: TOKENS.font.sm,
+    marginTop: -4,
   },
   submitButton: {
-    height: 50,
+    height: 52,
     borderRadius: TOKENS.radius.md,
-    justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
+    justifyContent: "center",
+    marginTop: 12,
   },
-  submitText: {
-    color: "#fff",
-    fontSize: TOKENS.font.xxl,
+  submitButtonText: {
     fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.xxl,
   },
 });

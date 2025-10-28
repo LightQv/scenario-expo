@@ -210,7 +210,10 @@
       "option3": "Best rating"
     },
     "type": {
-      "title": "Suggest by",
+      "title": "Type",
+      "label": "Suggest by",
+      "movie": "Movie",
+      "tv": "TV",
       "option1": "Movies",
       "option2": "TV Shows"
     }
@@ -218,7 +221,9 @@
   "screen": {
     "home": {
       "title": "Welcome to Scenario.",
-      "signup": "or Sign-up here."
+      "signup": "or Sign-up here.",
+      "header": "Home",
+      "add": "Add"
     },
     "login": {
       "title": "Login"
@@ -231,6 +236,24 @@
     },
     "account": {
       "title": "Account"
+    },
+    "watchlistCreate": {
+      "title": "New Watchlist"
+    },
+    "top": {
+      "title": "Top Rated",
+      "sort": {
+        "ratingDesc": "Rating ↓",
+        "ratingAsc": "Rating ↑",
+        "popularityDesc": "Popularity ↓",
+        "popularityAsc": "Popularity ↑",
+        "releaseDateDesc": "Release Date ↓",
+        "releaseDateAsc": "Release Date ↑",
+        "titleDesc": "Title (Z-A)",
+        "titleAsc": "Title (A-Z)",
+        "revenueDesc": "Revenue ↓",
+        "revenueAsc": "Revenue ↑"
+      }
     },
     "discover": {
       "title": "Discover",
@@ -258,8 +281,10 @@
       "media": {
         "trailer": "Watch Trailer",
         "cast": "Cast",
+        "castEmpty": "No cast information",
         "seasons": {
           "title": "Seasons",
+          "empty": "No seasons found",
           "season": {
             "singular": "Season",
             "plurial": "Seasons"
@@ -323,6 +348,13 @@
       "menu": {
         "create": "Create Watchlist",
         "sort": "Sort By"
+      },
+      "sort": {
+        "default": "Default",
+        "titleAsc": "Title (A-Z)",
+        "titleDesc": "Title (Z-A)",
+        "itemsAsc": "Items ↑",
+        "itemsDesc": "Items ↓"
       }
     },
     "profile": {

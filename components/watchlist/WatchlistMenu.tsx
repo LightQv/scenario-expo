@@ -17,11 +17,11 @@ type WatchlistMenuProps = {
 };
 
 const SORT_OPTIONS: SortOption[] = [
-  { value: "default", label: "Default" },
-  { value: "title_asc", label: "Title (A-Z)" },
-  { value: "title_desc", label: "Title (Z-A)" },
-  { value: "count_asc", label: "Items ↑" },
-  { value: "count_desc", label: "Items ↓" },
+  { value: "default", label: i18n.t("screen.watchlist.sort.default") },
+  { value: "title_asc", label: i18n.t("screen.watchlist.sort.titleAsc") },
+  { value: "title_desc", label: i18n.t("screen.watchlist.sort.titleDesc") },
+  { value: "count_asc", label: i18n.t("screen.watchlist.sort.itemsAsc") },
+  { value: "count_desc", label: i18n.t("screen.watchlist.sort.itemsDesc") },
 ];
 
 export default function WatchlistMenu({
