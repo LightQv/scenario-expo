@@ -25,7 +25,7 @@ const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 650;
 
 type BannerProps = {
-  src: string;
+  src: string | undefined;
   alt?: string;
   score?: number;
   title: string;
@@ -48,7 +48,6 @@ export default function Banner({
   gender,
   birthday,
   deathday,
-  knownForDepartment,
 }: BannerProps) {
   const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type: string }>();

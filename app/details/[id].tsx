@@ -1,11 +1,6 @@
-import {
-  View,
-  StyleSheet,
-  PlatformColor,
-  useColorScheme,
-} from "react-native";
+import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -24,15 +19,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
+import ViewAction from "@/components/actions/ViewAction";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const navigation = useNavigation();
-
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
 
@@ -49,7 +43,9 @@ export default function DetailsScreen() {
           ? "movie_credits,tv_credits,images"
           : "videos,credits,images";
 
-      tmdbFetch(`/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`)
+      tmdbFetch(
+        `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
+      )
         .then((response) => {
           setData(response);
           setLoading(false);
@@ -77,8 +73,14 @@ export default function DetailsScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
+      // Only show ViewAction for movie and tv, not for person
+      headerRight:
+        type === "movie" || type === "tv"
+          ? () =>
+              data && <ViewAction data={data} mediaType={type} size="details" />
+          : undefined,
     });
-  }, [navigation]);
+  }, [navigation, type, data]);
 
   return (
     <View
@@ -100,9 +102,7 @@ export default function DetailsScreen() {
         {data && (
           <>
             <Banner
-              src={
-                type === "person" ? data.profile_path : data.backdrop_path
-              }
+              src={type === "person" ? data.profile_path : data.backdrop_path}
               alt={data.title || data.name}
               score={data.vote_average}
               title={data.title || data.name}

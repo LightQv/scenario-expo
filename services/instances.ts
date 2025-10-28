@@ -15,7 +15,16 @@ async function request(url: string, options: RequestInit = {}) {
     throw new Error(`API Error ${res.status}: ${text}`);
   }
 
-  return res.json();
+  const text = await res.text();
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }
 
 // --- TMDB fetch ---

@@ -12,6 +12,7 @@ import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
 import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
 import RatingBadge from "@/components/ui/RatingBadge";
+import ViewAction from "@/components/actions/ViewAction";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -74,6 +75,14 @@ export default function MediaCard({
             placeholder={BLURHASH.hash}
             transition={BLURHASH.transition}
           />
+          {/* ViewAction button - top right corner */}
+          <ViewAction
+            data={data}
+            mediaType={data.media_type || mediaType}
+            size={size === "grid" ? "sm" : size}
+            style={sharedStyles.viewAction}
+          />
+          {/* RatingBadge - bottom right corner */}
           {data.vote_average && (
             <View style={sharedStyles.ratingBadge}>
               <RatingBadge score={data.vote_average} size={getRatingSize()} />
@@ -116,6 +125,12 @@ const sharedStyles = StyleSheet.create({
     position: "absolute",
     bottom: 8,
     right: 8,
+  },
+  viewAction: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 10,
   },
 });
 
