@@ -96,19 +96,27 @@
       }
     },
     "watchlist": {
-      "create": {
-        "title": "New watchlist...",
-        "label": "Title",
-        "placeholder": "Enter your title here",
-        "submit": "Create",
-        "cancel": "Cancel"
+      "title": {
+        "create": "New watchlist",
+        "update": "Edit watchlist"
       },
-      "update": {
-        "title": "A change ?",
-        "label": "Title",
-        "placeholder": "Enter your title here",
-        "submit": "Edit",
-        "cancel": "Cancel"
+      "field": {
+        "title": "Title"
+      },
+      "placeholder": {
+        "title": "Enter your title here"
+      },
+      "submit": {
+        "create": "Create",
+        "update": "Save"
+      },
+      "cancel": "Cancel",
+      "error": {
+        "title": "Title is required"
+      },
+      "success": {
+        "create": "Watchlist created",
+        "update": "Watchlist updated"
       },
       "delete": {
         "title": "Are you sure ?",
@@ -307,9 +315,14 @@
     "watchlist": {
       "title": "Watchlists",
       "subtitle": "Find here every watchlist you've created.",
+      "empty": "No watchlists yet.\nCreate one using the menu above.",
       "count": {
         "singular": "Element",
         "plurial": "Elements"
+      },
+      "menu": {
+        "create": "Create Watchlist",
+        "sort": "Sort By"
       }
     },
     "profile": {

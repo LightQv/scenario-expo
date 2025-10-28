@@ -41,7 +41,7 @@ interface Watchlist {
   id: string;
   title: string;
   authorId: string;
-  _count: { medias: number };
+  medias_count: number;
   medias: [{ id: string; tmdb_id: number }];
 }
 

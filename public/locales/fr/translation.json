@@ -96,19 +96,27 @@
       }
     },
     "watchlist": {
-      "create": {
-        "title": "Nouvelle liste...",
-        "label": "Titre",
-        "placeholder": "Entrez votre titre ici",
-        "submit": "Créer",
-        "cancel": "Annuler"
+      "title": {
+        "create": "Nouvelle liste",
+        "update": "Modifier la liste"
       },
-      "update": {
-        "title": "Un changement ?",
-        "label": "Titre",
-        "placeholder": "Entrez votre titre ici",
-        "submit": "Modifier",
-        "cancel": "Annuler"
+      "field": {
+        "title": "Titre"
+      },
+      "placeholder": {
+        "title": "Entrez votre titre ici"
+      },
+      "submit": {
+        "create": "Créer",
+        "update": "Enregistrer"
+      },
+      "cancel": "Annuler",
+      "error": {
+        "title": "Le titre est requis"
+      },
+      "success": {
+        "create": "Liste créée",
+        "update": "Liste mise à jour"
       },
       "delete": {
         "title": "Êtes-vous sur ?",
@@ -308,9 +316,14 @@
     "watchlist": {
       "title": "Listes de lecture",
       "subtitle": "Retrouvez ici toutes les listes de lecture que vous avez créé(e).",
+      "empty": "Aucune liste pour le moment.\nCréez-en une via le menu ci-dessus.",
       "count": {
         "singular": "Élément",
         "plurial": "Éléments"
+      },
+      "menu": {
+        "create": "Créer une liste",
+        "sort": "Trier par"
       }
     },
     "profile": {
