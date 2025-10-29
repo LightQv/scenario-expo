@@ -118,8 +118,11 @@
         "create": "Liste créée",
         "update": "Liste mise à jour"
       },
+      "edit": {
+        "title": "Modifier"
+      },
       "delete": {
-        "title": "Êtes-vous sur ?",
+        "title": "Supprimer",
         "warning": "Cette action est définitive.",
         "submit": "Supprimer la liste de lecture",
         "cancel": "Annuler"
@@ -241,6 +244,9 @@
     "watchlistCreate": {
       "title": "Nouvelle liste"
     },
+    "watchlistEdit": {
+      "title": "Modifier la liste"
+    },
     "top": {
       "title": "Les mieux notés",
       "sort": {
@@ -356,6 +362,19 @@
         "titleDesc": "Titre (Z-A)",
         "itemsAsc": "Éléments ↑",
         "itemsDesc": "Éléments ↓"
+      },
+      "detail": {
+        "empty": "Aucun contenu pour le moment.",
+        "menu": {
+          "sort": "Trier par"
+        },
+        "sort": {
+          "default": "Par défaut",
+          "titleAsc": "Titre (A-Z)",
+          "titleDesc": "Titre (Z-A)",
+          "dateAsc": "Plus ancien",
+          "dateDesc": "Plus récent"
+        }
       }
     },
     "profile": {

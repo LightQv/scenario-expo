@@ -42,7 +42,7 @@ interface Watchlist {
   title: string;
   authorId: string;
   medias_count: number;
-  medias: [{ id: string; tmdb_id: number }];
+  medias: APIMedia[];
 }
 
 interface User {

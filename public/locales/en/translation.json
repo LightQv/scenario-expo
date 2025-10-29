@@ -118,8 +118,11 @@
         "create": "Watchlist created",
         "update": "Watchlist updated"
       },
+      "edit": {
+        "title": "Edit"
+      },
       "delete": {
-        "title": "Are you sure ?",
+        "title": "Delete",
         "warning": "This action is final.",
         "submit": "Delete this watchlist",
         "cancel": "Cancel"
@@ -240,6 +243,9 @@
     "watchlistCreate": {
       "title": "New Watchlist"
     },
+    "watchlistEdit": {
+      "title": "Update Watchlist"
+    },
     "top": {
       "title": "Top Rated",
       "sort": {
@@ -355,6 +361,19 @@
         "titleDesc": "Title (Z-A)",
         "itemsAsc": "Items ↑",
         "itemsDesc": "Items ↓"
+      },
+      "detail": {
+        "empty": "No content yet.",
+        "menu": {
+          "sort": "Sort By"
+        },
+        "sort": {
+          "default": "Default",
+          "titleAsc": "Title (A-Z)",
+          "titleDesc": "Title (Z-A)",
+          "dateAsc": "Oldest",
+          "dateDesc": "Most Recent"
+        }
       }
     },
     "profile": {

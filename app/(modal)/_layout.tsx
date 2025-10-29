@@ -78,6 +78,20 @@ export default function ModalLayout() {
           },
         }}
       />
+      <Stack.Screen
+        name="watchlist-edit"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.watchlistEdit.title"),
+          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerLeft: () => <GoBackButton variant="close" />,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+          },
+        }}
+      />
     </Stack>
   );
 }

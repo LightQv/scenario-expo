@@ -20,7 +20,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
 
 export default function WatchlistCreateModal() {
-  const { user, loader } = useUserContext();
+  const { user } = useUserContext();
   const [loading, setLoading] = useState(false);
 
   const handleCreateWatchlist = async (title: string) => {

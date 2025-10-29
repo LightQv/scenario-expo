@@ -6,9 +6,10 @@ import {
   Keyboard,
   Animated,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGenreContext } from "@/contexts/GenreContext";
 import { useSearchContext } from "./_layout";
@@ -25,73 +26,86 @@ import {
   type SearchHistoryItem,
 } from "@/services/searchHistory";
 
-const HEADER_HEIGHT = 64;
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function SearchIndexScreen() {
   const { totalGenres, loading } = useGenreContext();
-  const {
-    showHistory,
-    mediaType,
-    setMediaType,
-    setGenreScrollRef,
-    setSearch,
-    setShowHistory,
-  } = useSearchContext();
+  const { showHistory, mediaType, setMediaType, search, setGenreScrollRef } =
+    useSearchContext();
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
   const scrollY = useRef(new Animated.Value(0)).current;
   const genreListRef = useRef<FlatList>(null);
+  const historyListRef = useRef<FlatList>(null);
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
+  // Animation values
+  const historyTranslateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const genreOpacity = useRef(new Animated.Value(1)).current;
-  const historyOpacity = useRef(new Animated.Value(0)).current;
-  const headerOpacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     loadHistory();
-    if (genreListRef) setGenreScrollRef(genreListRef);
+    // Register the list ref
+    if (genreListRef) {
+      setGenreScrollRef(genreListRef);
+    }
   }, [setGenreScrollRef]);
 
+  // Animate transitions when showHistory changes
   useEffect(() => {
     if (showHistory) {
+      // Show history: slide history up, fade out genres
       Animated.parallel([
-        Animated.timing(historyOpacity, {
-          toValue: 1,
-          duration: 200,
+        Animated.timing(historyTranslateY, {
+          toValue: 0,
+          duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(genreOpacity, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(headerOpacity, {
           toValue: 0,
           duration: 200,
           useNativeDriver: true,
         }),
       ]).start();
     } else {
+      // Hide history: slide history down, fade in genres, scroll to top
       Animated.parallel([
-        Animated.timing(historyOpacity, {
-          toValue: 0,
-          duration: 200,
+        Animated.timing(historyTranslateY, {
+          toValue: SCREEN_HEIGHT,
+          duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(genreOpacity, {
           toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(headerOpacity, {
-          toValue: 1,
-          duration: 200,
+          duration: 300,
           useNativeDriver: true,
         }),
       ]).start(() => {
+        // Scroll to top after animation completes
         genreListRef.current?.scrollToOffset({ offset: 0, animated: true });
       });
     }
-  }, [showHistory]);
+  }, [showHistory, historyTranslateY, genreOpacity]);
+
+  // Update header with MediaTypePicker when showing history
+  useEffect(() => {
+    if (showHistory) {
+      navigation.setOptions({
+        headerTitle: () => (
+          <View style={{ width: 300, marginTop: 8 }}>
+            <MediaTypePicker
+              selectedType={mediaType}
+              onTypeChange={setMediaType}
+            />
+          </View>
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerTitle: "",
+      });
+    }
+  }, [showHistory, mediaType, setMediaType, navigation]);
 
   const loadHistory = async () => {
     const savedHistory = await getSearchHistory();
@@ -104,24 +118,19 @@ export default function SearchIndexScreen() {
   };
 
   const handleHistoryItemPress = async (item: SearchHistoryItem) => {
-    // Set the search query and media type from history item
-    setSearch(item.query);
-    setMediaType(item.type);
-
-    // Add to history (updates timestamp)
+    // TODO: Navigate to query results page
+    // For now, we'll just add it back to history
     await addSearchToHistory(item.query, item.type);
     await loadHistory();
-
-    // Hide history and navigate to query page
-    setShowHistory(false);
-    router.push("/(tabs)/search/query");
   };
 
-  const handleScroll = () => Keyboard.dismiss();
+  const handleScroll = () => {
+    Keyboard.dismiss();
+  };
 
-  const renderGenreItem = ({ item }: { item: Genre }) => (
-    <GenreCard id={item.id} name={item.name} />
-  );
+  const renderGenreItem = ({ item, index }: { item: Genre; index: number }) => {
+    return <GenreCard id={item.id} name={item.name} />;
+  };
 
   const renderHistoryHeader = () => (
     <SearchHistory
@@ -146,46 +155,10 @@ export default function SearchIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
-      {/* HEADER */}
-      <Animated.View
-        style={[
-          {
-            opacity: headerOpacity,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 10,
-          },
-        ]}
-        pointerEvents={showHistory ? "none" : "auto"}
-      >
-        <AnimatedHeader
-          title={i18n.t("screen.search.title")}
-          scrollY={scrollY}
-        />
-      </Animated.View>
+      {/* AnimatedHeader - always rendered */}
+      <AnimatedHeader title={i18n.t("screen.search.title")} scrollY={scrollY} />
 
-      {/* PICKER */}
-      {showHistory && (
-        <View
-          style={{
-            position: "absolute",
-            top: insets.top,
-            left: 0,
-            right: 0,
-            paddingVertical: 8,
-            zIndex: 25,
-          }}
-        >
-          <MediaTypePicker
-            selectedType={mediaType}
-            onTypeChange={setMediaType}
-          />
-        </View>
-      )}
-
-      {/* GENRES */}
+      {/* Genre List - always rendered, fades out when history shown */}
       <Animated.View
         style={[styles.listContainer, { opacity: genreOpacity }]}
         pointerEvents={showHistory ? "none" : "auto"}
@@ -197,32 +170,32 @@ export default function SearchIndexScreen() {
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           columnWrapperStyle={styles.columnWrapper}
-          contentContainerStyle={[
-            styles.genreContent,
-            { paddingTop: HEADER_HEIGHT + insets.top + 8 },
-          ]}
+          contentContainerStyle={styles.genreContent}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false, listener: handleScroll },
+            {
+              useNativeDriver: false,
+              listener: handleScroll,
+            },
           )}
           scrollEventThrottle={16}
         />
       </Animated.View>
 
-      {/* HISTORIQUE */}
+      {/* History List - slides up from bottom */}
       <Animated.View
         style={[
           styles.historyContainer,
           {
-            opacity: historyOpacity,
             backgroundColor: PlatformColor("systemBackground"),
-            top: insets.top + HEADER_HEIGHT / 2,
+            transform: [{ translateY: historyTranslateY }],
           },
         ]}
         pointerEvents={showHistory ? "auto" : "none"}
       >
         <Animated.FlatList
+          ref={historyListRef}
           data={[{ key: "history" }]}
           renderItem={renderHistoryHeader}
           keyExtractor={(item) => item.key}
@@ -251,22 +224,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   genreContent: {
+    paddingTop: 16,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: 84,
+    paddingBottom: 16,
   },
   columnWrapper: {
     justifyContent: "space-between",
   },
   historyContainer: {
     position: "absolute",
+    top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: TOKENS.margin.horizontal,
-    zIndex: 20,
   },
   historyContent: {
     paddingTop: 16,
-    paddingBottom: 84,
   },
 });

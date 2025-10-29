@@ -3,21 +3,12 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 
-type WatchlistCreateButtonProps = {
-  onCreateWatchlist: () => void;
-};
-
-export default function WatchlistCreateButton({
-  onCreateWatchlist,
-}: WatchlistCreateButtonProps) {
+export default function WatchlistCreateButton() {
   const colorScheme = useColorScheme();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push("/(modal)/watchlist-create");
-    setTimeout(() => {
-      onCreateWatchlist();
-    }, 500);
   };
 
   return (

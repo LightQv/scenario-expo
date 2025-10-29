@@ -17,7 +17,7 @@ import {
   useLayoutEffect,
 } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation, Redirect } from "expo-router";
+import { useNavigation, Redirect, useFocusEffect } from "expo-router";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -38,8 +38,7 @@ export default function WatchlistIndexScreen() {
   const [sortedWatchlists, setSortedWatchlists] = useState<Watchlist[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [sortType, setSortType] = useState<SortType>("default");
-  const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [sortType, setSortType] = useState<SortType>("title_asc");
 
   const flatListRef = useRef<FlatList<Watchlist>>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -54,9 +53,7 @@ export default function WatchlistIndexScreen() {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerRight}>
-          <WatchlistCreateButton
-            onCreateWatchlist={() => setShouldRefresh(true)}
-          />
+          <WatchlistCreateButton />
           <WatchlistMenu sortType={sortType} onSortChange={setSortType} />
         </View>
       ),
@@ -82,26 +79,23 @@ export default function WatchlistIndexScreen() {
 
   // Sort watchlists based on sortType
   useEffect(() => {
-    if (sortType === "default") {
-      // Keep original API order
-      setSortedWatchlists(watchlists);
-    } else {
-      const sorted = [...watchlists].sort((a, b) => {
-        switch (sortType) {
-          case "title_asc":
-            return a.title.localeCompare(b.title);
-          case "title_desc":
-            return b.title.localeCompare(a.title);
-          case "count_asc":
-            return a.medias_count - b.medias_count;
-          case "count_desc":
-            return b.medias_count - a.medias_count;
-          default:
-            return 0;
-        }
-      });
-      setSortedWatchlists(sorted);
-    }
+    const sorted = [...watchlists].sort((a, b) => {
+      switch (sortType) {
+        case "default":
+          return 0; // Keep original API order
+        case "title_asc":
+          return a.title.localeCompare(b.title);
+        case "title_desc":
+          return b.title.localeCompare(a.title);
+        case "count_asc":
+          return a.medias_count - b.medias_count;
+        case "count_desc":
+          return b.medias_count - a.medias_count;
+        default:
+          return 0;
+      }
+    });
+    setSortedWatchlists(sorted);
   }, [watchlists, sortType]);
 
   // Initial load
@@ -111,13 +105,14 @@ export default function WatchlistIndexScreen() {
     }
   }, [user?.id]);
 
-  // Refresh when shouldRefresh changes
-  useEffect(() => {
-    if (shouldRefresh) {
-      fetchWatchlists();
-      setShouldRefresh(false);
-    }
-  }, [shouldRefresh]);
+  // Refresh when screen comes into focus (e.g., after creating a watchlist)
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        fetchWatchlists();
+      }
+    }, [user?.id])
+  );
 
   // Handle refresh
   const onRefresh = async () => {
