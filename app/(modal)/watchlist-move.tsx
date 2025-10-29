@@ -50,14 +50,12 @@ export default function WatchlistMoveModal() {
 
   // Check if media is already in a watchlist
   const isMediaInWatchlist = (watchlist: Watchlist): boolean => {
-    return watchlist.medias.some(
-      (media) => media.tmdb_id === Number(tmdbId),
-    );
+    return watchlist.medias.some((media) => media.tmdb_id === Number(tmdbId));
   };
 
   // Handle moving media to selected watchlist
   const handleMoveToWatchlist = async (targetWatchlistId: string) => {
-    if (!mediaId || !currentWatchlistId) {
+    if (!mediaId) {
       notifyError(i18n.t("toast.error"));
       return;
     }
@@ -65,16 +63,10 @@ export default function WatchlistMoveModal() {
     try {
       setSubmitting(true);
 
-      // Remove from current watchlist
-      await apiFetch(`/api/v1/watchlists/${currentWatchlistId}/medias`, {
-        method: "DELETE",
-        body: JSON.stringify({ mediaId }),
-      });
-
-      // Add to target watchlist
-      await apiFetch(`/api/v1/watchlists/${targetWatchlistId}/medias`, {
-        method: "POST",
-        body: JSON.stringify({ mediaId }),
+      // Update media's watchlist with single PATCH call
+      await apiFetch(`/api/v1/medias/${mediaId}`, {
+        method: "PUT",
+        body: JSON.stringify({ watchlist_id: targetWatchlistId }),
       });
 
       notifySuccess(i18n.t("form.watchlist.success.update"));
@@ -90,10 +82,7 @@ export default function WatchlistMoveModal() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator
-          size="large"
-          color={THEME_COLORS.main}
-        />
+        <ActivityIndicator size="large" color={THEME_COLORS.main} />
       </View>
     );
   }
@@ -111,7 +100,9 @@ export default function WatchlistMoveModal() {
       ]}
       contentContainerStyle={styles.scrollContent}
     >
-      <Text style={[styles.subtitle, { color: PlatformColor("secondaryLabel") }]}>
+      <Text
+        style={[styles.subtitle, { color: PlatformColor("secondaryLabel") }]}
+      >
         {i18n.t("screen.watchlist.move.subtitle")}
       </Text>
 
@@ -119,7 +110,10 @@ export default function WatchlistMoveModal() {
         {availableWatchlists.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text
-              style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+              style={[
+                styles.emptyText,
+                { color: PlatformColor("secondaryLabel") },
+              ]}
             >
               {i18n.t("screen.watchlist.empty")}
             </Text>
@@ -136,7 +130,6 @@ export default function WatchlistMoveModal() {
                   styles.watchlistItem,
                   {
                     backgroundColor: PlatformColor("secondarySystemBackground"),
-                    opacity: disabled ? 0.5 : 1,
                   },
                 ]}
                 onPress={() => handleMoveToWatchlist(watchlist.id)}
@@ -145,7 +138,10 @@ export default function WatchlistMoveModal() {
               >
                 <View style={styles.watchlistContent}>
                   <Text
-                    style={[styles.watchlistTitle, { color: PlatformColor("label") }]}
+                    style={[
+                      styles.watchlistTitle,
+                      { color: PlatformColor("label") },
+                    ]}
                     numberOfLines={1}
                   >
                     {watchlist.title}
@@ -164,13 +160,11 @@ export default function WatchlistMoveModal() {
                 </View>
 
                 {alreadyIn && (
-                  <View style={styles.iconContainer}>
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={24}
-                      color={THEME_COLORS.main}
-                    />
-                  </View>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={24}
+                    color={THEME_COLORS.main}
+                  />
                 )}
               </TouchableOpacity>
             );
@@ -219,9 +213,6 @@ const styles = StyleSheet.create({
   watchlistCount: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.md,
-  },
-  iconContainer: {
-    marginLeft: 12,
   },
   emptyContainer: {
     paddingVertical: 40,

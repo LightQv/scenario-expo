@@ -56,12 +56,12 @@ export default function WatchlistMediaCard({
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
-      {/* Viewed indicator on top right of card */}
+      {/* Viewed indicator on left center outside card */}
       {viewed && (
         <View style={styles.viewedIndicator}>
           <Ionicons
             name="eye"
-            size={18}
+            size={10}
             color={colorScheme === "dark" ? "#fff" : "#000"}
           />
         </View>
@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
   },
   viewedIndicator: {
     position: "absolute",
-    top: 12,
-    right: 12,
+    left: 1,
+    top: "50%",
     zIndex: 10,
     justifyContent: "center",
     alignItems: "center",
