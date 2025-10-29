@@ -19,7 +19,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import WatchlistCarouselBanner from "@/components/watchlist/WatchlistCarouselBanner";
 import WatchlistDetailHeader from "@/components/watchlist/WatchlistDetailHeader";
 import GradientTransition from "@/components/details/GradientTransition";
-import MediaCard from "@/components/discover/MediaCard";
+import WatchlistMediaCard from "@/components/watchlist/WatchlistMediaCard";
 import WatchlistDetailMenu from "@/components/watchlist/WatchlistDetailMenu";
 import Animated, {
   useAnimatedScrollHandler,
@@ -29,7 +29,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
-import { TOKENS } from "@/constants/theme";
 import { useCallback } from "react";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<APIMedia>);
@@ -106,7 +105,7 @@ export default function WatchlistDetailScreen() {
 
   // Render media card
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <MediaCard data={item} mediaType={item.media_type} size="grid" />
+    <WatchlistMediaCard data={item} />
   );
 
   // Empty state
@@ -128,7 +127,7 @@ export default function WatchlistDetailScreen() {
     if (!watchlist) return null;
 
     return (
-      <View style={styles.headerContainer}>
+      <View>
         <WatchlistCarouselBanner medias={watchlist.medias} scrollY={scrollY} />
         <WatchlistDetailHeader
           title={watchlist.title}
@@ -139,8 +138,12 @@ export default function WatchlistDetailScreen() {
     );
   };
 
-  // Item separator for grid
-  const renderItemSeparator = () => <View style={{ height: 14 }} />;
+  // Item separator for list
+  const renderItemSeparator = () => (
+    <View
+      style={{ height: 2, backgroundColor: PlatformColor("systemBackground") }}
+    />
+  );
 
   return (
     <View
@@ -164,8 +167,6 @@ export default function WatchlistDetailScreen() {
         ListHeaderComponent={renderListHeader()}
         ListEmptyComponent={renderEmpty}
         ItemSeparatorComponent={renderItemSeparator}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
       />
     </View>
   );
@@ -176,16 +177,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 0,
-    paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: 100,
-  },
-  headerContainer: {
-    marginHorizontal: -TOKENS.margin.horizontal, // Compensate for parent padding
-    marginBottom: TOKENS.margin.vertical * 2,
-  },
-  columnWrapper: {
-    justifyContent: "space-between",
   },
   emptyContainer: {
     flex: 1,
