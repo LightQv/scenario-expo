@@ -33,11 +33,21 @@ import { useCallback } from "react";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<APIMedia>);
 
+type SortType =
+  | "default"
+  | "title_asc"
+  | "title_desc"
+  | "date_asc"
+  | "date_desc";
+type FilterType = "all" | "movie" | "tv";
+
 export default function WatchlistDetailScreen() {
   const colorScheme = useColorScheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sortType, setSortType] = useState<SortType>("default");
+  const [filterType, setFilterType] = useState<FilterType>("all");
   const navigation = useNavigation();
 
   // Shared value for scroll offset
@@ -90,6 +100,70 @@ export default function WatchlistDetailScreen() {
     // Navigation back is handled in the menu component
   };
 
+  // Handle sort change
+  const handleSortChange = (sort: SortType) => {
+    setSortType(sort);
+  };
+
+  // Handle filter change
+  const handleFilterChange = (filter: FilterType) => {
+    setFilterType(filter);
+  };
+
+  // Get filtered and sorted media list
+  const getProcessedMedias = (): APIMedia[] => {
+    if (!watchlist?.medias) return [];
+
+    let medias = [...watchlist.medias];
+
+    // Apply filter
+    if (filterType !== "all") {
+      medias = medias.filter((media) => media.media_type === filterType);
+    }
+
+    // Apply sort
+    switch (sortType) {
+      case "title_asc":
+        medias.sort((a, b) =>
+          (a.title || a.name || "").localeCompare(b.title || b.name || ""),
+        );
+        break;
+      case "title_desc":
+        medias.sort((a, b) =>
+          (b.title || b.name || "").localeCompare(a.title || a.name || ""),
+        );
+        break;
+      case "date_asc":
+        medias.sort((a, b) => {
+          const dateA = new Date(
+            a.release_date || a.first_air_date || "",
+          ).getTime();
+          const dateB = new Date(
+            b.release_date || b.first_air_date || "",
+          ).getTime();
+          return dateA - dateB;
+        });
+        break;
+      case "date_desc":
+        medias.sort((a, b) => {
+          const dateA = new Date(
+            a.release_date || a.first_air_date || "",
+          ).getTime();
+          const dateB = new Date(
+            b.release_date || b.first_air_date || "",
+          ).getTime();
+          return dateB - dateA;
+        });
+        break;
+      case "default":
+      default:
+        // Keep original order (by added_at timestamp from backend)
+        break;
+    }
+
+    return medias;
+  };
+
   // Configure header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -98,10 +172,17 @@ export default function WatchlistDetailScreen() {
       headerLeft: () => <GoBackButton />,
       headerRight: () =>
         watchlist ? (
-          <WatchlistDetailMenu watchlistId={id} onDelete={handleDelete} />
+          <WatchlistDetailMenu
+            watchlistId={id}
+            sortType={sortType}
+            filterType={filterType}
+            onSortChange={handleSortChange}
+            onFilterChange={handleFilterChange}
+            onDelete={handleDelete}
+          />
         ) : null,
     });
-  }, [navigation, watchlist, id]);
+  }, [navigation, watchlist, id, sortType, filterType]);
 
   // Render media card
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
@@ -161,7 +242,7 @@ export default function WatchlistDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         entering={FadeInLeft}
         exiting={FadeOutRight}
-        data={watchlist?.medias || []}
+        data={getProcessedMedias()}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={renderListHeader()}

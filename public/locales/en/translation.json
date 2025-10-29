@@ -365,7 +365,8 @@
       "detail": {
         "empty": "No content yet.",
         "menu": {
-          "sort": "Sort By"
+          "sort": "Sort By",
+          "filter": "Filter By"
         },
         "sort": {
           "default": "Default",
@@ -373,6 +374,11 @@
           "titleDesc": "Title (Z-A)",
           "dateAsc": "Oldest",
           "dateDesc": "Most Recent"
+        },
+        "filter": {
+          "all": "All",
+          "movie": "Movies",
+          "tv": "TV Shows"
         }
       }
     },

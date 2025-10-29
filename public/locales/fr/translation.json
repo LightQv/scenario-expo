@@ -366,7 +366,8 @@
       "detail": {
         "empty": "Aucun contenu pour le moment.",
         "menu": {
-          "sort": "Trier par"
+          "sort": "Trier par",
+          "filter": "Filtrer par"
         },
         "sort": {
           "default": "Par défaut",
@@ -374,6 +375,11 @@
           "titleDesc": "Titre (Z-A)",
           "dateAsc": "Plus ancien",
           "dateDesc": "Plus récent"
+        },
+        "filter": {
+          "all": "Tous",
+          "movie": "Films",
+          "tv": "Séries TV"
         }
       }
     },
