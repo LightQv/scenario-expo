@@ -366,7 +366,10 @@
         "empty": "No content yet.",
         "menu": {
           "sort": "Sort By",
-          "filter": "Filter By"
+          "filter": "Filter By",
+          "view": "Viewed",
+          "unview": "Unviewed",
+          "move": "Move to another watchlist"
         },
         "sort": {
           "default": "Default",
@@ -380,6 +383,13 @@
           "movie": "Movies",
           "tv": "TV Shows"
         }
+      },
+      "move": {
+        "title": "Move to watchlist",
+        "subtitle": "Select a watchlist to move this media",
+        "submit": "Move",
+        "cancel": "Cancel",
+        "alreadyIn": "Already in this watchlist"
       }
     },
     "profile": {

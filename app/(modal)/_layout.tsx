@@ -92,6 +92,20 @@ export default function ModalLayout() {
           },
         }}
       />
+      <Stack.Screen
+        name="watchlist-move"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.watchlist.move.title"),
+          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerLeft: () => <GoBackButton variant="close" />,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+          },
+        }}
+      />
     </Stack>
   );
 }

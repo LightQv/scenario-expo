@@ -46,7 +46,7 @@ export default function WatchlistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sortType, setSortType] = useState<SortType>("default");
+  const [sortType, setSortType] = useState<SortType>("title_asc");
   const [filterType, setFilterType] = useState<FilterType>("all");
   const navigation = useNavigation();
 
@@ -186,7 +186,7 @@ export default function WatchlistDetailScreen() {
 
   // Render media card
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <WatchlistMediaCard data={item} />
+    <WatchlistMediaCard data={item} watchlistId={id} />
   );
 
   // Empty state

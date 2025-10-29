@@ -367,7 +367,10 @@
         "empty": "Aucun contenu pour le moment.",
         "menu": {
           "sort": "Trier par",
-          "filter": "Filtrer par"
+          "filter": "Filtrer par",
+          "view": "Vu",
+          "unview": "Non vu",
+          "move": "Déplacer vers une autre liste"
         },
         "sort": {
           "default": "Par défaut",
@@ -381,6 +384,13 @@
           "movie": "Films",
           "tv": "Séries TV"
         }
+      },
+      "move": {
+        "title": "Déplacer vers une liste",
+        "subtitle": "Sélectionnez une liste de lecture pour ce média",
+        "submit": "Déplacer",
+        "cancel": "Annuler",
+        "alreadyIn": "Déjà dans cette liste"
       }
     },
     "profile": {
