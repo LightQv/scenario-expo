@@ -33,8 +33,6 @@ export default function WatchlistEditModal() {
     try {
       setFetching(true);
       const response = await apiFetch(`/api/v1/watchlists/detail/${id}`);
-
-      console.log(response);
       setInitialTitle(response.title);
     } catch (error) {
       console.error("Error fetching watchlist:", error);
