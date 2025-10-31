@@ -13,7 +13,7 @@ import {
 //   useAnimatedStyle,
 // } from "react-native-reanimated";
 import { Link } from "expo-router";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 // import { apiFetch } from "@/services/instances";
@@ -122,7 +122,7 @@ export default function WatchlistCard({ data, onUpdate }: WatchlistCardProps) {
       asChild
     >
       <TouchableOpacity
-        activeOpacity={0.7}
+        activeOpacity={BUTTON.opacity}
         style={[
           styles.container,
           { backgroundColor: PlatformColor("systemBackground") },

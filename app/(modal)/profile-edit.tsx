@@ -15,7 +15,7 @@ import { Formik } from "formik";
 import { editProfileSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import { apiFetch } from "@/services/instances";
@@ -297,7 +297,7 @@ export default function ProfileEditScreen() {
                     <TouchableOpacity
                       onPress={() => setHidePassword(!hidePassword)}
                       style={styles.passwordToggle}
-                      activeOpacity={0.6}
+                      activeOpacity={BUTTON.opacity}
                     >
                       <Ionicons
                         name={hidePassword ? "eye-off-outline" : "eye-outline"}
@@ -368,7 +368,7 @@ export default function ProfileEditScreen() {
                         setHideConfirmPassword(!hideConfirmPassword)
                       }
                       style={styles.passwordToggle}
-                      activeOpacity={0.6}
+                      activeOpacity={BUTTON.opacity}
                     >
                       <Ionicons
                         name={

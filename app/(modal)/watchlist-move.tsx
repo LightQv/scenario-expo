@@ -13,7 +13,7 @@ import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useUserContext } from "@/contexts/UserContext";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function WatchlistMoveModal() {
@@ -134,7 +134,7 @@ export default function WatchlistMoveModal() {
                 ]}
                 onPress={() => handleMoveToWatchlist(watchlist.id)}
                 disabled={disabled}
-                activeOpacity={0.7}
+                activeOpacity={BUTTON.opacity}
               >
                 <View style={styles.watchlistContent}>
                   <Text

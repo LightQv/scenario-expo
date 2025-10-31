@@ -114,11 +114,11 @@ export const FONTS = {
   boldItalic: "FiraSans-BoldItalic",
 };
 
-export const BACKDROP = { opacity: 0.5 };
-
 export const BLURHASH = {
   hash: "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[",
   transition: 100,
 };
 
-export const BUTTON = { opacity: 0.6 };
+export const BUTTON = {
+  opacity: 0.6,
+};

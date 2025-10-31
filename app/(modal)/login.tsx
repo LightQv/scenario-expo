@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import { loginSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 
@@ -153,7 +153,7 @@ export default function LoginScreen() {
                   <TouchableOpacity
                     onPress={() => setHidePassword(!hidePassword)}
                     style={styles.passwordToggle}
-                    activeOpacity={0.6}
+                    activeOpacity={BUTTON.opacity}
                   >
                     <Ionicons
                       name={hidePassword ? "eye-off-outline" : "eye-outline"}
@@ -173,7 +173,7 @@ export default function LoginScreen() {
                 <Link href="/(modal)/forgot-password" asChild>
                   <TouchableOpacity
                     style={styles.forgotPasswordContainer}
-                    activeOpacity={0.6}
+                    activeOpacity={BUTTON.opacity}
                   >
                     <Text
                       style={[
@@ -200,7 +200,7 @@ export default function LoginScreen() {
                         : THEME_COLORS.main,
                   },
                 ]}
-                activeOpacity={0.7}
+                activeOpacity={BUTTON.opacity}
               >
                 <Text
                   style={[

@@ -7,7 +7,7 @@ import {
   PlatformColor,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { THEME_COLORS } from "@/constants/theme/colors";
 import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts/ThemeContext";
@@ -37,7 +37,7 @@ export default function SearchHistory({
           { backgroundColor: PlatformColor("systemBackground") },
         ]}
         onPress={() => onItemPress(item)}
-        activeOpacity={0.7}
+        activeOpacity={BUTTON.opacity}
       >
         <View style={styles.textContainer}>
           <Text
@@ -86,7 +86,7 @@ export default function SearchHistory({
         >
           {i18n.t("screen.search.history.title")}
         </Text>
-        <TouchableOpacity onPress={onClearHistory} activeOpacity={0.7}>
+        <TouchableOpacity onPress={onClearHistory} activeOpacity={BUTTON.opacity}>
           <Text style={[styles.clearButton, { color: THEME_COLORS.main }]}>
             {i18n.t("screen.search.history.clear")}
           </Text>

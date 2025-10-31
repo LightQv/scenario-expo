@@ -11,7 +11,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import i18n from "@/services/i18n";
 import { useUserContext } from "@/contexts";
-import { TOKENS, THEME_COLORS, BLURHASH } from "@/constants/theme";
+import { TOKENS, THEME_COLORS, BLURHASH, BUTTON } from "@/constants/theme";
 import { router, useNavigation } from "expo-router";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { CONFIG } from "@/services/config";
@@ -109,7 +109,7 @@ export default function ProfileBannerEditScreen() {
           onPress={handleSubmit}
           disabled={!selectedImage || isSubmitting}
           style={styles.headerButton}
-          activeOpacity={0.6}
+          activeOpacity={BUTTON.opacity}
         >
           <Ionicons
             name="checkmark"
@@ -139,7 +139,7 @@ export default function ProfileBannerEditScreen() {
         <TouchableOpacity
           onPress={pickImage}
           disabled={isSubmitting}
-          activeOpacity={0.8}
+          activeOpacity={BUTTON.opacity}
           style={styles.bannerTouchable}
         >
           <View style={styles.bannerContainer}>

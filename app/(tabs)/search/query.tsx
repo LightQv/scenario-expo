@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
-import { useScrollToTop } from "@react-navigation/native";
 import { useSearchContext } from "./_layout";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
@@ -30,7 +29,6 @@ export default function QueryScreen() {
   const [totalResults, setTotalResults] = useState<number>(0);
 
   const listRef = useRef<FlatList>(null);
-  useScrollToTop(listRef);
 
   // Execute search when component mounts or when search/mediaType changes
   useEffect(() => {

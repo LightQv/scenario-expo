@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
+import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate } from "@/services/utils";
 import i18n from "@/services/i18n";
 
@@ -44,7 +44,7 @@ export default function SeasonsSection({
         asChild
         push
       >
-        <TouchableOpacity style={styles.container} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
           <View style={styles.imageContainer}>
             {posterUrl ? (
               <Image

@@ -9,7 +9,7 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import { THEME_COLORS } from "@/constants/theme/colors";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
@@ -186,7 +186,7 @@ export default function DetailHeader({
       {hasTrailer && (
         <TouchableOpacity
           style={styles.trailerButton}
-          activeOpacity={0.7}
+          activeOpacity={BUTTON.opacity}
           onPress={handleTrailerPress}
         >
           <Ionicons name="play-circle" size={24} color="#fffff" />

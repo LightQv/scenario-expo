@@ -13,7 +13,7 @@ import { Formik } from "formik";
 import { forgottenSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import { router } from "expo-router";
 
 export default function ForgotPasswordScreen() {
@@ -126,7 +126,7 @@ export default function ForgotPasswordScreen() {
                         : THEME_COLORS.main,
                   },
                 ]}
-                activeOpacity={0.7}
+                activeOpacity={BUTTON.opacity}
               >
                 <Text
                   style={[
@@ -148,7 +148,7 @@ export default function ForgotPasswordScreen() {
               {/* Login Link */}
               <TouchableOpacity
                 style={styles.loginLinkContainer}
-                activeOpacity={0.6}
+                activeOpacity={BUTTON.opacity}
                 onPress={() => router.back()}
               >
                 <Text

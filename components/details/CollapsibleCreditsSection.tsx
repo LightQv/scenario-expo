@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useState } from "react";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import HorizontalMediaCard from "./HorizontalMediaCard";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
@@ -75,7 +75,7 @@ export default function CollapsibleCreditsSection({
             styles.collapseButton,
             { backgroundColor: PlatformColor("systemGray5") },
           ]}
-          activeOpacity={0.7}
+          activeOpacity={BUTTON.opacity}
         >
           <Animated.View style={animatedIconStyle}>
             <Ionicons name="chevron-down" size={16} color={THEME_COLORS.main} />

@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import { registerSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -218,7 +218,7 @@ export default function RegisterScreen() {
                   <TouchableOpacity
                     onPress={() => setHidePassword(!hidePassword)}
                     style={styles.passwordToggle}
-                    activeOpacity={0.6}
+                    activeOpacity={BUTTON.opacity}
                   >
                     <Ionicons
                       name={hidePassword ? "eye-off-outline" : "eye-outline"}
@@ -287,7 +287,7 @@ export default function RegisterScreen() {
                   <TouchableOpacity
                     onPress={() => setHidePassword(!hidePassword)}
                     style={styles.passwordToggle}
-                    activeOpacity={0.6}
+                    activeOpacity={BUTTON.opacity}
                   >
                     <Ionicons
                       name={hidePassword ? "eye-off-outline" : "eye-outline"}
@@ -318,7 +318,7 @@ export default function RegisterScreen() {
                         : THEME_COLORS.main,
                   },
                 ]}
-                activeOpacity={0.7}
+                activeOpacity={BUTTON.opacity}
               >
                 <Text
                   style={[

@@ -67,9 +67,7 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
         size={sizeStyles.iconSize}
         color={THEME_COLORS.main}
       />
-      <Text style={[styles.scoreText, { color: "#fff" }, sizeStyles.text]}>
-        {displayScore}
-      </Text>
+      <Text style={[styles.scoreText, sizeStyles.text]}>{displayScore}</Text>
     </View>
   );
 }
@@ -103,6 +101,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontWeight: "600",
+    color: "#fff",
   },
   scoreTextSm: {
     fontSize: 11,

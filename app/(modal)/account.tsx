@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS, TOAST_COLORS } from "@/constants/theme";
+import { FONTS, TOKENS, THEME_COLORS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -52,7 +52,7 @@ export default function AccountScreen() {
               styles.card,
               { backgroundColor: PlatformColor("systemGray5") },
             ]}
-            activeOpacity={0.7}
+            activeOpacity={BUTTON.opacity}
           >
             <View style={styles.cardContent}>
               <View
@@ -110,7 +110,7 @@ export default function AccountScreen() {
             <TouchableOpacity
               onPress={() => handleViewsPress("movie")}
               style={styles.viewsOption}
-              activeOpacity={0.7}
+              activeOpacity={BUTTON.opacity}
             >
               <Text
                 style={[styles.cardText, { color: PlatformColor("label") }]}
@@ -134,7 +134,7 @@ export default function AccountScreen() {
             <TouchableOpacity
               onPress={() => handleViewsPress("tv")}
               style={styles.viewsOption}
-              activeOpacity={0.7}
+              activeOpacity={BUTTON.opacity}
             >
               <Text
                 style={[styles.cardText, { color: PlatformColor("label") }]}

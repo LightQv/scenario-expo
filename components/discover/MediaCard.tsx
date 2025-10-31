@@ -8,13 +8,11 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
+import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
 import RatingBadge from "@/components/ui/RatingBadge";
 import ViewAction from "@/components/actions/ViewAction";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type MediaCardProps = {
   data: TmdbData;
@@ -63,7 +61,7 @@ export default function MediaCard({
       asChild
       push
     >
-      <TouchableOpacity style={componentStyles.container} activeOpacity={0.7}>
+      <TouchableOpacity style={componentStyles.container} activeOpacity={BUTTON.opacity}>
         <View style={componentStyles.imageContainer}>
           <Image
             source={{
