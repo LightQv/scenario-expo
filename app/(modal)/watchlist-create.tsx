@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  TouchableOpacity,
 } from "react-native";
 import { useState, useLayoutEffect } from "react";
 import { Formik } from "formik";
@@ -18,7 +17,7 @@ import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useUserContext } from "@/contexts/UserContext";
 import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
+import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 export default function WatchlistCreateModal() {
   const { user } = useUserContext();
@@ -77,7 +76,7 @@ export default function WatchlistCreateModal() {
             useLayoutEffect(() => {
               navigation.setOptions({
                 headerRight: () => (
-                  <TouchableOpacity
+                  <FormSubmitHeaderButton
                     onPress={() => {
                       // Touch field to show validation errors
                       setFieldTouched("title", true);
@@ -86,19 +85,7 @@ export default function WatchlistCreateModal() {
                     disabled={
                       !createWatchlistSchema.isValidSync(values) || loading
                     }
-                    style={styles.headerButton}
-                    activeOpacity={0.6}
-                  >
-                    <Ionicons
-                      name="checkmark"
-                      size={24}
-                      color={
-                        !createWatchlistSchema.isValidSync(values) || loading
-                          ? PlatformColor("systemGray")
-                          : THEME_COLORS.main
-                      }
-                    />
-                  </TouchableOpacity>
+                  />
                 ),
               });
             }, [navigation, values, loading]);
@@ -218,8 +205,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
     marginTop: -4,
-  },
-  headerButton: {
-    paddingLeft: 6,
   },
 });

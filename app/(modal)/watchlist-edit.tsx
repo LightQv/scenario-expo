@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   PlatformColor,
   KeyboardAvoidingView,
   Platform,
@@ -18,7 +17,7 @@ import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
+import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 export default function WatchlistEditModal() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -107,7 +106,7 @@ export default function WatchlistEditModal() {
             useLayoutEffect(() => {
               navigation.setOptions({
                 headerRight: () => (
-                  <TouchableOpacity
+                  <FormSubmitHeaderButton
                     onPress={() => {
                       // Touch field to show validation errors
                       setFieldTouched("title", true);
@@ -116,19 +115,7 @@ export default function WatchlistEditModal() {
                     disabled={
                       !updateWatchlistSchema.isValidSync(values) || loading
                     }
-                    style={styles.headerButton}
-                    activeOpacity={0.6}
-                  >
-                    <Ionicons
-                      name="checkmark"
-                      size={24}
-                      color={
-                        !updateWatchlistSchema.isValidSync(values) || loading
-                          ? PlatformColor("systemGray")
-                          : THEME_COLORS.main
-                      }
-                    />
-                  </TouchableOpacity>
+                  />
                 ),
               });
             }, [navigation, values, loading]);
@@ -252,8 +239,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
     marginTop: -4,
-  },
-  headerButton: {
-    paddingLeft: 6,
   },
 });
