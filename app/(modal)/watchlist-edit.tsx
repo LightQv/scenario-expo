@@ -10,17 +10,19 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Formik } from "formik";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { updateWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function WatchlistEditModal() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const navigation = useNavigation();
   const [initialTitle, setInitialTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -95,103 +97,104 @@ export default function WatchlistEditModal() {
           {({
             handleChange,
             handleBlur,
-            handleSubmit,
+            handleSubmit: formikSubmit,
             values,
             errors,
             touched,
-          }) => (
-            <View style={styles.form}>
-              {/* Title Field */}
-              <View style={styles.fieldContainer}>
-                <View style={styles.labelContainer}>
-                  <Text
-                    style={[styles.label, { color: PlatformColor("label") }]}
+            setFieldTouched,
+          }) => {
+            // Update header with submit button
+            useLayoutEffect(() => {
+              navigation.setOptions({
+                headerRight: () => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      // Touch field to show validation errors
+                      setFieldTouched("title", true);
+                      formikSubmit();
+                    }}
+                    disabled={
+                      !updateWatchlistSchema.isValidSync(values) || loading
+                    }
+                    style={styles.headerButton}
+                    activeOpacity={0.6}
                   >
-                    {i18n.t("form.watchlist.field.title")}
-                  </Text>
+                    <Ionicons
+                      name="checkmark"
+                      size={24}
+                      color={
+                        !updateWatchlistSchema.isValidSync(values) || loading
+                          ? PlatformColor("systemGray")
+                          : THEME_COLORS.main
+                      }
+                    />
+                  </TouchableOpacity>
+                ),
+              });
+            }, [navigation, values, loading]);
+
+            return (
+              <View style={styles.form}>
+                {/* Title Field */}
+                <View style={styles.fieldContainer}>
+                  <View style={styles.labelContainer}>
+                    <Text
+                      style={[styles.label, { color: PlatformColor("label") }]}
+                    >
+                      {i18n.t("form.watchlist.field.title")}
+                    </Text>
+                    {errors.title && touched.title && (
+                      <Text
+                        style={[
+                          styles.errorIndicator,
+                          { color: THEME_COLORS.error },
+                        ]}
+                      >
+                        {" *"}
+                      </Text>
+                    )}
+                  </View>
+                  <View
+                    style={[
+                      styles.inputContainer,
+                      {
+                        backgroundColor: PlatformColor(
+                          "secondarySystemBackground",
+                        ),
+                        borderColor:
+                          errors.title && touched.title
+                            ? THEME_COLORS.error
+                            : PlatformColor("separator"),
+                      },
+                    ]}
+                  >
+                    <TextInput
+                      autoCapitalize="words"
+                      onChangeText={handleChange("title")}
+                      onBlur={handleBlur("title")}
+                      value={values.title}
+                      placeholder={i18n.t("form.watchlist.placeholder.title")}
+                      placeholderTextColor={PlatformColor("placeholderText")}
+                      style={[styles.input, { color: PlatformColor("label") }]}
+                      cursorColor={THEME_COLORS.main}
+                      selectionColor={THEME_COLORS.main}
+                      maxLength={50}
+                      autoFocus
+                      returnKeyType="done"
+                      onSubmitEditing={() => formikSubmit()}
+                    />
+                  </View>
                   {errors.title && touched.title && (
                     <Text
-                      style={[
-                        styles.errorIndicator,
-                        { color: THEME_COLORS.error },
-                      ]}
+                      style={[styles.errorText, { color: THEME_COLORS.error }]}
                     >
-                      {" *"}
+                      {errors.title}
                     </Text>
                   )}
                 </View>
-                <View
-                  style={[
-                    styles.inputContainer,
-                    {
-                      backgroundColor: PlatformColor(
-                        "secondarySystemBackground",
-                      ),
-                      borderColor:
-                        errors.title && touched.title
-                          ? THEME_COLORS.error
-                          : PlatformColor("separator"),
-                    },
-                  ]}
-                >
-                  <TextInput
-                    autoCapitalize="words"
-                    onChangeText={handleChange("title")}
-                    onBlur={handleBlur("title")}
-                    value={values.title}
-                    placeholder={i18n.t("form.watchlist.placeholder.title")}
-                    placeholderTextColor={PlatformColor("placeholderText")}
-                    style={[styles.input, { color: PlatformColor("label") }]}
-                    cursorColor={THEME_COLORS.main}
-                    selectionColor={THEME_COLORS.main}
-                    maxLength={50}
-                    autoFocus
-                    returnKeyType="done"
-                    onSubmitEditing={() => handleSubmit()}
-                  />
-                </View>
-                {errors.title && touched.title && (
-                  <Text
-                    style={[styles.errorText, { color: THEME_COLORS.error }]}
-                  >
-                    {errors.title}
-                  </Text>
-                )}
               </View>
-
-              {/* Submit Button */}
-              <TouchableOpacity
-                onPress={() => handleSubmit()}
-                disabled={!updateWatchlistSchema.isValidSync(values) || loading}
-                style={[
-                  styles.submitButton,
-                  {
-                    backgroundColor:
-                      !updateWatchlistSchema.isValidSync(values) || loading
-                        ? PlatformColor("systemGray4")
-                        : THEME_COLORS.main,
-                  },
-                ]}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.submitButtonText,
-                    {
-                      color:
-                        !updateWatchlistSchema.isValidSync(values) || loading
-                          ? PlatformColor("systemGray")
-                          : "#fff",
-                    },
-                  ]}
-                >
-                  {loading
-                    ? i18n.t("form.auth.submit.loading")
-                    : i18n.t("form.watchlist.submit.update")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+            );
+          }}
         </Formik>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -250,15 +253,7 @@ const styles = StyleSheet.create({
     fontSize: TOKENS.font.sm,
     marginTop: -4,
   },
-  submitButton: {
-    height: 52,
-    borderRadius: TOKENS.radius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-  },
-  submitButtonText: {
-    fontFamily: FONTS.bold,
-    fontSize: TOKENS.font.xxl,
+  headerButton: {
+    paddingLeft: 6,
   },
 });
