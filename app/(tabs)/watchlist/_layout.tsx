@@ -1,4 +1,4 @@
-import { Stack } from "expo-router"
+import { Stack } from "expo-router";
 
 export default function WatchlistLayout() {
   return (
@@ -6,11 +6,13 @@ export default function WatchlistLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "Watchlist",
-          headerLargeTitle: true,
+          headerLargeTitle: false,
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: "transparent" },
           headerTransparent: true,
+          headerTitle: "",
         }}
       />
     </Stack>
-  )
+  );
 }

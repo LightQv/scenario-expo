@@ -39,10 +39,12 @@ interface TmdbDetails extends TmdbData {
   /* Overall type */
   backdrop_path: string;
   genres: Array<Genre>;
+  images: Images;
   original_language: string;
   production_companies: Array<object>;
   production_countries: Array<object>;
   videos: Videos;
+  credits: Credit;
 
   /* Movie type */
   runtime: number;
@@ -60,11 +62,21 @@ interface TmdbDetails extends TmdbData {
 
   /* Person type */
   biography: string;
+  birthday: string | null;
+  deathday: string | null;
+  gender: number;
+  place_of_birth: string | null;
+  combined_credits: PersonDatasList;
+  movie_credits: PersonMovieCredits;
+  tv_credits: PersonTvCredits;
 }
 
 type Crew = {
+  id: number;
   job: string;
   name: string;
+  department: string;
+  profile_path?: string;
 };
 
 type Genre = {
@@ -78,6 +90,35 @@ type Season = {
   id: number;
   name: string;
   poster_path: string | null;
+  season_number: number;
+};
+
+//--- Season Detail Type ---//
+interface SeasonDetail {
+  _id: string;
+  air_date: string | null;
+  episodes: Array<Episode>;
+  name: string;
+  overview: string;
+  id: number;
+  poster_path: string | null;
+  season_number: number;
+  vote_average: number;
+}
+
+type Episode = {
+  air_date: string | null;
+  episode_number: number;
+  id: number;
+  name: string;
+  overview: string;
+  runtime: number | null;
+  season_number: number;
+  still_path: string | null;
+  vote_average: number;
+  vote_count: number;
+  crew: Array<Crew>;
+  guest_stars: Array<Cast>;
 };
 
 type Videos = {
@@ -88,12 +129,14 @@ type Video = {
   key: string;
   name: string;
   official: boolean;
+  site: string;
   type: string;
 };
 
 //--- Credit Type ---//
 interface Credit {
   cast: Array<Cast>;
+  crew: Array<Crew>;
 }
 
 type Cast = {
@@ -126,6 +169,99 @@ type PersonDataList = {
   name: string;
 };
 
+//--- Person's Movie Credits ---//
+interface PersonMovieCredits {
+  cast: Array<PersonMovieCredit>;
+  crew: Array<PersonMovieCrew>;
+}
+
+type PersonMovieCredit = {
+  adult: boolean;
+  backdrop_path?: string;
+  character?: string;
+  credit_id: string;
+  genre_ids: Array<number>;
+  id: number;
+  order?: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  release_date?: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
+
+type PersonMovieCrew = {
+  adult: boolean;
+  backdrop_path?: string;
+  credit_id: string;
+  department: string;
+  genre_ids: Array<number>;
+  id: number;
+  job: string;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  release_date?: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
+
+//--- Person's TV Credits ---//
+interface PersonTvCredits {
+  cast: Array<PersonTvCredit>;
+  crew: Array<PersonTvCrew>;
+}
+
+type PersonTvCredit = {
+  adult: boolean;
+  backdrop_path?: string;
+  character?: string;
+  credit_id: string;
+  episode_count: number;
+  first_air_date?: string;
+  genre_ids: Array<number>;
+  id: number;
+  name: string;
+  origin_country: Array<string>;
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  vote_average: number;
+  vote_count: number;
+};
+
+type PersonTvCrew = {
+  adult: boolean;
+  backdrop_path?: string;
+  credit_id: string;
+  department: string;
+  episode_count: number;
+  first_air_date?: string;
+  genre_ids: Array<number>;
+  id: number;
+  job: string;
+  name: string;
+  origin_country: Array<string>;
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  vote_average: number;
+  vote_count: number;
+};
+
 //--- Providers Type ---//
 interface Providers {
   [key: string]: Provider;
@@ -151,4 +287,21 @@ type Screenshot = {
   id: number;
   file_path: string;
   vote_count: number;
+};
+
+//--- Images Type ---//
+interface Images {
+  backdrops: Array<ImageDetails>;
+  posters: Array<ImageDetails>;
+  logos?: Array<ImageDetails>;
+}
+
+type ImageDetails = {
+  aspect_ratio: number;
+  file_path: string;
+  height: number;
+  iso_639_1: string | null;
+  vote_average: number;
+  vote_count: number;
+  width: number;
 };

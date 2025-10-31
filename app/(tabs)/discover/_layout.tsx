@@ -1,4 +1,5 @@
-import { Stack } from "expo-router"
+import { Stack } from "expo-router";
+import ProfileHeaderButton from "@/components/ui/ProfileHeaderButton";
 
 export default function DiscoverLayout() {
   return (
@@ -6,11 +7,14 @@ export default function DiscoverLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "Discover",
-          headerLargeTitle: true,
+          headerLargeTitle: false,
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: "transparent" },
           headerTransparent: true,
+          headerTitle: "",
+          headerRight: () => <ProfileHeaderButton />,
         }}
       />
     </Stack>
-  )
+  );
 }

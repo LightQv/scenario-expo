@@ -3,7 +3,15 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { ThemeProvider } from "@/constants/theme";
+import {
+  ThemeProvider,
+  GenreProvider,
+  UserProvider,
+  ViewProvider,
+} from "@/contexts";
+import { useColorScheme } from "react-native";
+import { Toasts } from "@backpackapp-io/react-native-toast";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -53,17 +61,30 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const darkTheme = useColorScheme() === "dark";
+
   return (
-    <ThemeProvider>
-      <Stack>
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <UserProvider>
+          <ViewProvider>
+            <GenreProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(modal)"
+                  options={{ presentation: "modal", headerShown: false }}
+                />
+                <Stack.Screen
+                  name="profile"
+                  options={{ headerShown: false, presentation: "card" }}
+                />
+              </Stack>
+            </GenreProvider>
+          </ViewProvider>
+        </UserProvider>
+        <Toasts overrideDarkMode={!darkTheme} />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

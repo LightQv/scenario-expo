@@ -15,6 +15,8 @@ export const TOKENS = {
   },
   header: {
     height: 45,
+    icon: 24,
+    gap: 22,
   },
   navigation: {
     icon: 26,
@@ -23,6 +25,52 @@ export const TOKENS = {
   card: {
     tmdb: { height: 120 },
     media: { height: 80 },
+    sizes: {
+      sm: {
+        width: 180,
+        height: 265,
+        borderRadius: 12,
+        contentMarginTop: 6,
+        contentGap: 2,
+        metaGap: 8,
+        titleFontSize: 16, // TOKENS.font.xxl
+        titleLineHeight: 18,
+        metaFontSize: 11, // TOKENS.font.xs
+      },
+      md: {
+        width: 270,
+        height: 398,
+        borderRadius: 18,
+        contentMarginTop: 8,
+        contentGap: 2,
+        metaGap: 12,
+        titleFontSize: 20, // TOKENS.font.title
+        titleLineHeight: 27,
+        metaFontSize: 16, // TOKENS.font.xxl
+      },
+      xl: {
+        width: deviceWidth - 32, // Full width minus horizontal margins
+        height: Math.round((deviceWidth - 32) * 1.47), // Aspect ratio 1.47
+        borderRadius: 16,
+        contentMarginTop: 14,
+        contentGap: 6,
+        metaGap: 10,
+        titleFontSize: 20, // TOKENS.font.title
+        titleLineHeight: 24,
+        metaFontSize: 13, // TOKENS.font.md
+      },
+      grid: {
+        width: (deviceWidth - 32 - 14) / 2, // Two columns with gap
+        height: Math.round(((deviceWidth - 32 - 14) / 2) * 1.47),
+        borderRadius: 12,
+        contentMarginTop: 6,
+        contentGap: 2,
+        metaGap: 8,
+        titleFontSize: 16, // TOKENS.font.xxl
+        titleLineHeight: 18,
+        metaFontSize: 11, // TOKENS.font.xs
+      },
+    },
   },
   border: {
     xs: 0.5,
@@ -35,6 +83,7 @@ export const TOKENS = {
     sm: 6,
     md: 14,
     lg: 16,
+    xl: 24,
     full: 999,
   },
   font: {

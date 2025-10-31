@@ -14,11 +14,11 @@
       "link4": "Listes de lecture"
     }
   },
-
   "validator": {
     "username": {
       "min": "Minimum 5 caractères",
-      "max": "Maximum 30 caractères"
+      "max": "Maximum 30 caractères",
+      "required": "Le nom d'utilisateur est requis"
     },
     "email": {
       "required": "Un email valide est requis",
@@ -27,7 +27,8 @@
     },
     "password": {
       "min": "Minimum 8 caractères",
-      "max": "Maximum 30 caractères"
+      "max": "Maximum 30 caractères",
+      "required": "Le mot de passe est requis"
     },
     "confirmPassword": "Les mots de passes doivent être identiques",
     "search": {
@@ -45,7 +46,6 @@
       "delete": "Doit correspondre à \"votre_email@mail.com/bye-scenario\"."
     }
   },
-
   "form": {
     "auth": {
       "title": {
@@ -66,18 +66,26 @@
       "placeholder": {
         "part1": "Entrez votre",
         "part2": "ici",
-        "part3": "Confirmez votre"
+        "part3": "Confirmez votre",
+        "username": "Entrez votre pseudo",
+        "email": "Entrez votre email",
+        "password": "Entrez votre mot de passe",
+        "confirmPassword": "Confirmez votre mot de passe"
       },
       "submit": {
         "forgot": "Envoyer",
         "login": "Connexion",
-        "register": "S'enregistrer"
+        "register": "S'enregistrer",
+        "logout": "Déconnexion",
+        "loading": "Chargement..."
+      },
+      "link": {
+        "forgot": "Mot de passe oublié ?"
       },
       "switch": {
         "login": {
           "number1": "Vous n'avez pas de compte ?",
-          "number2": "Enregistrez-vous ici",
-          "number3": "Mot de passe oublié ?"
+          "number2": "Enregistrez-vous ici"
         },
         "register": {
           "number1": "Vous avez déjà un compte ?",
@@ -90,22 +98,33 @@
       }
     },
     "watchlist": {
-      "create": {
-        "title": "Nouvelle liste...",
-        "label": "Titre",
-        "placeholder": "Entrez votre titre ici",
-        "submit": "Créer",
-        "cancel": "Annuler"
+      "title": {
+        "create": "Nouvelle liste",
+        "update": "Modifier la liste"
       },
-      "update": {
-        "title": "Un changement ?",
-        "label": "Titre",
-        "placeholder": "Entrez votre titre ici",
-        "submit": "Modifier",
-        "cancel": "Annuler"
+      "field": {
+        "title": "Titre"
+      },
+      "placeholder": {
+        "title": "Entrez votre titre ici"
+      },
+      "submit": {
+        "create": "Créer",
+        "update": "Enregistrer"
+      },
+      "cancel": "Annuler",
+      "error": {
+        "title": "Le titre est requis"
+      },
+      "success": {
+        "create": "Liste créée",
+        "update": "Liste mise à jour"
+      },
+      "edit": {
+        "title": "Modifier"
       },
       "delete": {
-        "title": "Êtes-vous sur ?",
+        "title": "Supprimer",
         "warning": "Cette action est définitive.",
         "submit": "Supprimer la liste de lecture",
         "cancel": "Annuler"
@@ -124,7 +143,12 @@
     },
     "profile": {
       "update": {
+        "title": "Modifier le profil",
         "subtitle": "Notez que vous serez déconnecté pour valider les changements.",
+        "confirmation": {
+          "title": "Confirmer la modification",
+          "message": "Le mot de passe étant modifié, vous serez déconnecté pour des raisons de sécurité. Voulez-vous continuer ?"
+        },
         "banner": {
           "title": "Changer de bannière ?",
           "subtitle1": "Votre bannière actuelle :",
@@ -168,7 +192,6 @@
       }
     }
   },
-
   "chart": {
     "percentage": {
       "title": "Pourcentage de vue par type",
@@ -182,40 +205,107 @@
       "tv": "Séries TV"
     }
   },
-
   "error": {
     "noBiography": "Aucune biographie pour l'instant.",
     "noSynopsis": "Aucun synopsis."
   },
-
   "filter": {
     "genre": {
-      "title": "Filtrer par",
-      "every": "Tous"
+      "title": "Genre",
+      "all": "Tous"
     },
     "sort": {
-      "title": "Trier par",
+      "title": "Trier",
       "option1": "Popularité",
       "option2": "Plus récent",
       "option3": "Meilleure note"
     },
     "type": {
-      "title": "Suggérer par",
+      "title": "Type",
+      "label": "Suggérer par",
+      "movie": "Film",
+      "tv": "Série TV",
       "option1": "Films",
       "option2": "Séries TV"
     }
   },
-
   "screen": {
     "home": {
       "title": "Bienvenue à Scenario.",
-      "signup": "ou Enregistrez-vous ici."
+      "signup": "ou Enregistrez-vous ici.",
+      "header": "Accueil",
+      "add": "Ajout"
+    },
+    "login": {
+      "title": "Connexion"
+    },
+    "register": {
+      "title": "S'enregistrer"
+    },
+    "forgotPassword": {
+      "title": "Vous avez oublié quelque chose ?"
+    },
+    "account": {
+      "title": "Compte",
+      "viewProfile": "Voir le profil",
+      "profileDescription": "Vous pouvez gérer votre bannière, profil et informations de compte ici.",
+      "views": {
+        "title": "Vues",
+        "movies": "Films",
+        "tv": "Séries TV"
+      }
+    },
+    "watchlistCreate": {
+      "title": "Nouvelle liste"
+    },
+    "watchlistEdit": {
+      "title": "Modifier la liste"
+    },
+    "top": {
+      "title": "Les mieux notés",
+      "sort": {
+        "ratingDesc": "Note ↓",
+        "ratingAsc": "Note ↑",
+        "popularityDesc": "Popularité ↓",
+        "popularityAsc": "Popularité ↑",
+        "releaseDateDesc": "Date de sortie ↓",
+        "releaseDateAsc": "Date de sortie ↑",
+        "titleDesc": "Titre (Z-A)",
+        "titleAsc": "Titre (A-Z)",
+        "revenueDesc": "Revenus ↓",
+        "revenueAsc": "Revenus ↑"
+      }
+    },
+    "discover": {
+      "title": "Découvrir",
+      "sections": {
+        "trendingWeek": "Tendances de la semaine",
+        "trendingPersons": "Personnes tendances",
+        "highlyRatedMovies": "Films bien notés",
+        "runningTvShows": "Séries TV en cours",
+        "featuredMovie": "Film à la une",
+        "popularMovies": "Films populaires",
+        "popularTv": "Série TV populaires",
+        "nowPlayingMovies": "Films en salle",
+        "upcomingMovies": "Films à venir",
+        "topRatedTv": "Séries TV les mieux notées",
+        "topRatedJapanimation": "Meilleurs animes japonais",
+        "topRatedDocumentaries": "Meilleurs documentaires",
+        "movies2000s": "Meilleurs films des années 2000"
+      }
     },
     "detail": {
+      "crew": {
+        "director": "Réalisateur",
+        "composer": "Compositeur"
+      },
       "media": {
+        "trailer": "Voir la bande-annonce",
         "cast": "Casting",
+        "castEmpty": "Aucune information sur le casting",
         "seasons": {
           "title": "Saisons",
+          "empty": "Aucune saison trouvée",
           "season": {
             "singular": "Saison",
             "plurial": "Saisons"
@@ -235,12 +325,34 @@
       }
     },
     "person": {
-      "title": "Connu pour"
+      "title": "Connu pour",
+      "movies": "Films",
+      "tvShows": "Séries TV",
+      "gender": {
+        "male": "Homme",
+        "female": "Femme",
+        "other": "Autre"
+      },
+      "age": "ans"
     },
     "search": {
-      "placeholder": "Rechercher un film, séries TV, acteur, réalisateur...",
+      "title": "Rechercher",
+      "placeholder": "Film, séries TV, acteur, réalisateur...",
       "cancel": "Annuler",
-      "history": "Historique de recherche",
+      "history": {
+        "title": "Récemment recherché",
+        "clear": "Effacer"
+      },
+      "type": {
+        "movie": "Films",
+        "tv": "Séries TV",
+        "person": "Personnes"
+      },
+      "label": {
+        "movie": "Film",
+        "tv": "Série TV",
+        "person": "Personne"
+      },
       "result": {
         "singular": "Résultat",
         "plurial": "Résultats"
@@ -249,9 +361,58 @@
     "watchlist": {
       "title": "Listes de lecture",
       "subtitle": "Retrouvez ici toutes les listes de lecture que vous avez créé(e).",
+      "empty": "Aucune liste pour le moment.\nCréez-en une via le menu ci-dessus.",
       "count": {
         "singular": "Élément",
         "plurial": "Éléments"
+      },
+      "menu": {
+        "create": "Créer une liste",
+        "sort": "Trier par"
+      },
+      "sort": {
+        "default": "Par défaut",
+        "titleAsc": "Titre (A-Z)",
+        "titleDesc": "Titre (Z-A)",
+        "itemsAsc": "Éléments ↑",
+        "itemsDesc": "Éléments ↓"
+      },
+      "detail": {
+        "empty": "Aucun contenu pour le moment.",
+        "menu": {
+          "sort": "Trier par",
+          "filter": "Filtrer par",
+          "view": "Vu",
+          "unview": "Non vu",
+          "move": "Déplacer vers une autre liste",
+          "delete": "Supprimer de la liste",
+          "deleteSuccess": "Média supprimé de la liste"
+        },
+        "sort": {
+          "default": "Par défaut",
+          "titleAsc": "Titre (A-Z)",
+          "titleDesc": "Titre (Z-A)",
+          "dateAsc": "Plus ancien",
+          "dateDesc": "Plus récent"
+        },
+        "filter": {
+          "all": "Tous",
+          "movie": "Films",
+          "tv": "Séries TV"
+        }
+      },
+      "move": {
+        "title": "Déplacer vers une liste",
+        "subtitle": "Sélectionnez une liste de lecture pour ce média",
+        "submit": "Déplacer",
+        "cancel": "Annuler",
+        "alreadyIn": "Déjà dans cette liste"
+      },
+      "add": {
+        "title": "Ajouter à une liste",
+        "subtitle": "Sélectionnez une liste de lecture pour ce média",
+        "success": "Média ajouté à la liste",
+        "removed": "Média retiré de la liste"
       }
     },
     "profile": {
@@ -274,10 +435,13 @@
           "option3": "Changer de mot de passe",
           "option4": "Supprimer mon compte"
         }
+      },
+      "menu": {
+        "editBanner": "Modifier la bannière",
+        "editProfile": "Modifier le profil"
       }
     }
   },
-
   "stats": {
     "movie": "Film vu",
     "movies": "Films vus",
@@ -291,7 +455,6 @@
     "tvRuntime": "Épisode vu",
     "tvsRuntime": "Épisodes vus"
   },
-
   "toast": {
     "promise": {
       "loading": "En cours...",
@@ -302,6 +465,10 @@
     "expired": "Session expirée",
     "success": {
       "forgot": "Email envoyé",
+      "login": "Bon retour!",
+      "logout": "À bientôt!",
+      "urlCopied": "URL copiée dans le presse-papiers",
+      "banner": "Bannière mise à jour avec succès",
       "profile": {
         "update": {
           "email": "Email mis à jour",
@@ -313,7 +480,6 @@
     "error": "Oops, quelque chose a échoué",
     "errorQuery": "Désolé, aucun résultat...",
     "errorTMDB": "Oops, quelque chose a échoué avec TMDB",
-    "errorFirebase": "Oops, erreur de Firebase",
     "errorSize": "Fichier trop lourd, il doit être plus léger que 1Mb"
   }
 }
