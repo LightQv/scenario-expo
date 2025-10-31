@@ -30,7 +30,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function SearchIndexScreen() {
   const { totalGenres, loading } = useGenreContext();
-  const { showHistory, mediaType, setMediaType, search, setGenreScrollRef } =
+  const { showHistory, mediaType, setMediaType, search, setSearch, setGenreScrollRef } =
     useSearchContext();
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -118,17 +118,18 @@ export default function SearchIndexScreen() {
   };
 
   const handleHistoryItemPress = async (item: SearchHistoryItem) => {
-    // TODO: Navigate to query results page
-    // For now, we'll just add it back to history
-    await addSearchToHistory(item.query, item.type);
-    await loadHistory();
+    // Set search query and media type from history
+    setSearch(item.query);
+    setMediaType(item.type);
+    // Navigate to query page
+    router.push("/(tabs)/search/query");
   };
 
   const handleScroll = () => {
     Keyboard.dismiss();
   };
 
-  const renderGenreItem = ({ item, index }: { item: Genre; index: number }) => {
+  const renderGenreItem = ({ item }: { item: Genre }) => {
     return <GenreCard id={item.id} name={item.name} />;
   };
 
@@ -156,8 +157,12 @@ export default function SearchIndexScreen() {
   return (
     <View style={styles.wrapper}>
       {/* AnimatedHeader - always rendered */}
-      <AnimatedHeader title={i18n.t("screen.search.title")} scrollY={scrollY} />
-
+      <View style={{ display: showHistory ? "none" : "block" }}>
+        <AnimatedHeader
+          title={i18n.t("screen.search.title")}
+          scrollY={scrollY}
+        />
+      </View>
       {/* Genre List - always rendered, fades out when history shown */}
       <Animated.View
         style={[styles.listContainer, { opacity: genreOpacity }]}
@@ -224,9 +229,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   genreContent: {
-    paddingTop: 16,
+    paddingTop: 130,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: 16,
+    paddingBottom: 80,
   },
   columnWrapper: {
     justifyContent: "space-between",
@@ -239,6 +244,8 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   historyContent: {
-    paddingTop: 16,
+    paddingTop: 130,
+    paddingHorizontal: TOKENS.margin.horizontal,
+    paddingBottom: 80,
   },
 });
