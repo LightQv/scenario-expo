@@ -10,9 +10,9 @@ import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
-import { THEME_COLORS } from "@/constants/theme/colors";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts";
 
 type DetailHeaderProps = {
   /* Overall type */
@@ -53,6 +53,7 @@ export default function DetailHeader({
   knownForDepartment,
 }: DetailHeaderProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
+  const { colors } = useThemeContext();
   const isPerson = type === "person";
   const displayText = isPerson ? biography : overview;
 
@@ -78,7 +79,7 @@ export default function DetailHeader({
         // Fallback to web browser (in-app)
         await WebBrowser.openBrowserAsync(youtubeUrl, {
           presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-          controlsColor: THEME_COLORS.main,
+          controlsColor: colors.main,
         });
       }
     } catch (error) {
@@ -185,7 +186,7 @@ export default function DetailHeader({
       {/* Trailer Button */}
       {hasTrailer && (
         <TouchableOpacity
-          style={styles.trailerButton}
+          style={[styles.trailerButton, { backgroundColor: colors.main }]}
           activeOpacity={BUTTON.opacity}
           onPress={handleTrailerPress}
         >
@@ -241,7 +242,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    backgroundColor: THEME_COLORS.main,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 24,

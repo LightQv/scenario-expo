@@ -16,10 +16,12 @@ import { updateWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 export default function WatchlistEditModal() {
+  const { colors } = useThemeContext();
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const [initialTitle, setInitialTitle] = useState("");
@@ -134,7 +136,7 @@ export default function WatchlistEditModal() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -150,7 +152,7 @@ export default function WatchlistEditModal() {
                         ),
                         borderColor:
                           errors.title && touched.title
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -163,8 +165,8 @@ export default function WatchlistEditModal() {
                       placeholder={i18n.t("form.watchlist.placeholder.title")}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                       maxLength={50}
                       autoFocus
                       returnKeyType="done"
@@ -173,7 +175,7 @@ export default function WatchlistEditModal() {
                   </View>
                   {errors.title && touched.title && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.title}
                     </Text>

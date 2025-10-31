@@ -10,8 +10,8 @@ import { useState, useLayoutEffect } from "react";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import i18n from "@/services/i18n";
-import { useUserContext } from "@/contexts";
-import { TOKENS, THEME_COLORS, BLURHASH, BUTTON } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { router, useNavigation } from "expo-router";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { CONFIG } from "@/services/config";
@@ -26,6 +26,7 @@ const BANNER_HEIGHT = Math.round((BANNER_WIDTH * 4) / 3);
 
 export default function ProfileBannerEditScreen() {
   const { user, refreshUser } = useUserContext();
+  const { colors } = useThemeContext();
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -117,7 +118,7 @@ export default function ProfileBannerEditScreen() {
             color={
               !selectedImage || isSubmitting
                 ? PlatformColor("systemGray")
-                : THEME_COLORS.main
+                : colors.main
             }
           />
         </TouchableOpacity>
@@ -155,7 +156,7 @@ export default function ProfileBannerEditScreen() {
               <View
                 style={[
                   styles.bannerImage,
-                  { backgroundColor: THEME_COLORS.main },
+                  { backgroundColor: colors.main },
                 ]}
               />
             )}

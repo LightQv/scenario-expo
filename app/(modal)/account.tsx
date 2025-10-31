@@ -8,17 +8,17 @@ import {
   useColorScheme,
 } from "react-native";
 import { router } from "expo-router";
-import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS, TOAST_COLORS, BUTTON } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
+  const { colors } = useThemeContext();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const themeColor = isDark ? THEME_COLORS.accent : THEME_COLORS.main;
   const errorColor = isDark
     ? TOAST_COLORS.dark.error
     : TOAST_COLORS.light.error;
@@ -56,7 +56,7 @@ export default function AccountScreen() {
           >
             <View style={styles.cardContent}>
               <View
-                style={[styles.avatarLarge, { backgroundColor: themeColor }]}
+                style={[styles.avatarLarge, { backgroundColor: colors.main }]}
               >
                 <Text style={styles.avatarLargeText}>
                   {user?.username.charAt(0).toUpperCase()}

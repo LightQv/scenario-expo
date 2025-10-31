@@ -2,6 +2,7 @@ export const THEME_COLORS = {
   main: "#eab208",
   accent: "#f9cd4a",
   error: "#ef4444",
+  errorAccent: "#f47c7c",
 };
 
 export const ADAPTIVE_COLORS = {

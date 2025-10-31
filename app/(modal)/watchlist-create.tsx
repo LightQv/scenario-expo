@@ -15,12 +15,13 @@ import { createWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
-import { useUserContext } from "@/contexts/UserContext";
-import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 export default function WatchlistCreateModal() {
   const { user } = useUserContext();
+  const { colors } = useThemeContext();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
@@ -104,7 +105,7 @@ export default function WatchlistCreateModal() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -120,7 +121,7 @@ export default function WatchlistCreateModal() {
                         ),
                         borderColor:
                           errors.title && touched.title
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -133,8 +134,8 @@ export default function WatchlistCreateModal() {
                       placeholder={i18n.t("form.watchlist.placeholder.title")}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                       maxLength={50}
                       autoFocus
                       returnKeyType="done"
@@ -143,7 +144,7 @@ export default function WatchlistCreateModal() {
                   </View>
                   {errors.title && touched.title && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.title}
                     </Text>

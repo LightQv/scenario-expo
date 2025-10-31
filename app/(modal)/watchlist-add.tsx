@@ -12,12 +12,13 @@ import { useLocalSearchParams } from "expo-router";
 import { apiFetch, tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
-import { useUserContext } from "@/contexts/UserContext";
-import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function WatchlistAddModal() {
   const { user } = useUserContext();
+  const { colors } = useThemeContext();
   const { tmdbId, mediaType, title } = useLocalSearchParams<{
     tmdbId: string;
     mediaType: string;
@@ -132,7 +133,7 @@ export default function WatchlistAddModal() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={THEME_COLORS.main} />
+        <ActivityIndicator size="large" color={colors.main} />
       </View>
     );
   }
@@ -213,7 +214,7 @@ export default function WatchlistAddModal() {
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
-                    color={THEME_COLORS.main}
+                    color={colors.main}
                   />
                 )}
               </TouchableOpacity>

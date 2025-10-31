@@ -14,8 +14,8 @@ import { useState, useLayoutEffect } from "react";
 import { Formik } from "formik";
 import { editProfileSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
-import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import { apiFetch } from "@/services/instances";
@@ -24,6 +24,7 @@ import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 export default function ProfileEditScreen() {
   const { user, logout } = useUserContext();
+  const { colors } = useThemeContext();
   const navigation = useNavigation();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const [hideConfirmPassword, setHideConfirmPassword] = useState<boolean>(true);
@@ -149,7 +150,7 @@ export default function ProfileEditScreen() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -165,7 +166,7 @@ export default function ProfileEditScreen() {
                         ),
                         borderColor:
                           errors.username && touched.username
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -179,13 +180,13 @@ export default function ProfileEditScreen() {
                       placeholder={i18n.t("form.auth.placeholder.username")}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                     />
                   </View>
                   {errors.username && touched.username && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.username}
                     </Text>
@@ -204,7 +205,7 @@ export default function ProfileEditScreen() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -220,7 +221,7 @@ export default function ProfileEditScreen() {
                         ),
                         borderColor:
                           errors.email && touched.email
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -235,13 +236,13 @@ export default function ProfileEditScreen() {
                       placeholder={i18n.t("form.auth.placeholder.email")}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                     />
                   </View>
                   {errors.email && touched.email && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.email}
                     </Text>
@@ -260,7 +261,7 @@ export default function ProfileEditScreen() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -276,7 +277,7 @@ export default function ProfileEditScreen() {
                         ),
                         borderColor:
                           errors.password && touched.password
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -290,8 +291,8 @@ export default function ProfileEditScreen() {
                       placeholder={i18n.t("form.auth.placeholder.password")}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                       secureTextEntry={hidePassword}
                     />
                     <TouchableOpacity
@@ -308,7 +309,7 @@ export default function ProfileEditScreen() {
                   </View>
                   {errors.password && touched.password && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.password}
                     </Text>
@@ -327,7 +328,7 @@ export default function ProfileEditScreen() {
                       <Text
                         style={[
                           styles.errorIndicator,
-                          { color: THEME_COLORS.error },
+                          { color: colors.error },
                         ]}
                       >
                         {" *"}
@@ -343,7 +344,7 @@ export default function ProfileEditScreen() {
                         ),
                         borderColor:
                           errors.confirmPassword && touched.confirmPassword
-                            ? THEME_COLORS.error
+                            ? colors.error
                             : PlatformColor("separator"),
                       },
                     ]}
@@ -359,8 +360,8 @@ export default function ProfileEditScreen() {
                       )}
                       placeholderTextColor={PlatformColor("placeholderText")}
                       style={[styles.input, { color: PlatformColor("label") }]}
-                      cursorColor={THEME_COLORS.main}
-                      selectionColor={THEME_COLORS.main}
+                      cursorColor={colors.main}
+                      selectionColor={colors.main}
                       secureTextEntry={hideConfirmPassword}
                     />
                     <TouchableOpacity
@@ -383,7 +384,7 @@ export default function ProfileEditScreen() {
                   </View>
                   {errors.confirmPassword && touched.confirmPassword && (
                     <Text
-                      style={[styles.errorText, { color: THEME_COLORS.error }]}
+                      style={[styles.errorText, { color: colors.error }]}
                     >
                       {errors.confirmPassword}
                     </Text>

@@ -12,12 +12,13 @@ import {
 import { Formik } from "formik";
 import { forgottenSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
-import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { router } from "expo-router";
 
 export default function ForgotPasswordScreen() {
   const { forgotPassword, loader } = useUserContext();
+  const { colors } = useThemeContext();
 
   return (
     <KeyboardAvoidingView
@@ -69,7 +70,7 @@ export default function ForgotPasswordScreen() {
                     <Text
                       style={[
                         styles.errorIndicator,
-                        { color: THEME_COLORS.error },
+                        { color: colors.error },
                       ]}
                     >
                       {" *"}
@@ -85,7 +86,7 @@ export default function ForgotPasswordScreen() {
                       ),
                       borderColor:
                         errors.email && touched.email
-                          ? THEME_COLORS.error
+                          ? colors.error
                           : PlatformColor("separator"),
                     },
                   ]}
@@ -100,13 +101,13 @@ export default function ForgotPasswordScreen() {
                     placeholder={i18n.t("form.auth.placeholder.email")}
                     placeholderTextColor={PlatformColor("placeholderText")}
                     style={[styles.input, { color: PlatformColor("label") }]}
-                    cursorColor={THEME_COLORS.main}
-                    selectionColor={THEME_COLORS.main}
+                    cursorColor={colors.main}
+                    selectionColor={colors.main}
                   />
                 </View>
                 {errors.email && touched.email && (
                   <Text
-                    style={[styles.errorText, { color: THEME_COLORS.error }]}
+                    style={[styles.errorText, { color: colors.error }]}
                   >
                     {errors.email}
                   </Text>
@@ -123,7 +124,7 @@ export default function ForgotPasswordScreen() {
                     backgroundColor:
                       !forgottenSchema.isValidSync(values) || loader
                         ? PlatformColor("systemGray4")
-                        : THEME_COLORS.main,
+                        : colors.main,
                   },
                 ]}
                 activeOpacity={BUTTON.opacity}
@@ -161,7 +162,7 @@ export default function ForgotPasswordScreen() {
                   <Text
                     style={[
                       styles.loginLinkTextBold,
-                      { color: THEME_COLORS.main },
+                      { color: colors.main },
                     ]}
                   >
                     {i18n.t("form.auth.switch.forgot.number2")}

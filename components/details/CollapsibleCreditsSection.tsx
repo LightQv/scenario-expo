@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useState } from "react";
-import { FONTS, TOKENS, THEME_COLORS, BUTTON } from "@/constants/theme";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import HorizontalMediaCard from "./HorizontalMediaCard";
 import { Ionicons } from "@expo/vector-icons";
+import { useThemeContext } from "@/contexts";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -29,6 +30,7 @@ export default function CollapsibleCreditsSection({
   mediaType,
 }: CollapsibleCreditsSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { colors } = useThemeContext();
   const rotation = useSharedValue(0);
 
   const toggleCollapse = () => {
@@ -78,7 +80,7 @@ export default function CollapsibleCreditsSection({
           activeOpacity={BUTTON.opacity}
         >
           <Animated.View style={animatedIconStyle}>
-            <Ionicons name="chevron-down" size={16} color={THEME_COLORS.main} />
+            <Ionicons name="chevron-down" size={16} color={colors.main} />
           </Animated.View>
         </TouchableOpacity>
       </View>

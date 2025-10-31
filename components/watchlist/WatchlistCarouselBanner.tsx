@@ -14,7 +14,8 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Carousel from "react-native-reanimated-carousel";
-import { BLURHASH, THEME_COLORS } from "@/constants/theme";
+import { BLURHASH } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 650;
@@ -30,6 +31,7 @@ export default function WatchlistCarouselBanner({
 }: WatchlistCarouselBannerProps) {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
 
   // Parallax animation for the banner (same formula as Banner component)
   const animatedCarouselStyle = useAnimatedStyle(() => {
@@ -106,7 +108,7 @@ export default function WatchlistCarouselBanner({
             <View
               style={[
                 styles.image,
-                { backgroundColor: THEME_COLORS.main },
+                { backgroundColor: colors.main },
               ]}
             />
           )}

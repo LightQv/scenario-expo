@@ -1,11 +1,12 @@
 import { Pressable, PlatformColor, View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useUserContext } from "@/contexts";
-import { THEME_COLORS, FONTS } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS } from "@/constants/theme";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
+  const { colors } = useThemeContext();
 
   const handlePress = () => {
     if (authState.authenticated && user) {
@@ -21,7 +22,7 @@ export default function ProfileHeaderButton() {
     <Pressable onPress={handlePress} style={styles.headerButton}>
       {authState.authenticated && user ? (
         <View
-          style={[styles.avatarCircle, { backgroundColor: THEME_COLORS.main }]}
+          style={[styles.avatarCircle, { backgroundColor: colors.main }]}
         >
           <Text style={styles.avatarText}>
             {user.username.charAt(0).toUpperCase()}

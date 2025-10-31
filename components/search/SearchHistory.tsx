@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
-import { THEME_COLORS } from "@/constants/theme/colors";
 import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import type { SearchHistoryItem } from "@/services/searchHistory";
@@ -87,7 +86,7 @@ export default function SearchHistory({
           {i18n.t("screen.search.history.title")}
         </Text>
         <TouchableOpacity onPress={onClearHistory} activeOpacity={BUTTON.opacity}>
-          <Text style={[styles.clearButton, { color: THEME_COLORS.main }]}>
+          <Text style={[styles.clearButton, { color: colors.main }]}>
             {i18n.t("screen.search.history.clear")}
           </Text>
         </TouchableOpacity>
