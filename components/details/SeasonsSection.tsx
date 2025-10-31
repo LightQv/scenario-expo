@@ -108,7 +108,7 @@ export default function SeasonsSection({
       <Text
         style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
       >
-        No seasons found
+        {i18n.t("screen.detail.media.seasons.empty")}
       </Text>
     </View>
   );

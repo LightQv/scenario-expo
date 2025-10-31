@@ -17,7 +17,8 @@
   "validator": {
     "username": {
       "min": "5 characters minimum",
-      "max": "30 characters maximum"
+      "max": "30 characters maximum",
+      "required": "Username is required"
     },
     "email": {
       "required": "A valid Email is required",
@@ -26,7 +27,8 @@
     },
     "password": {
       "min": "8 characters minimum",
-      "max": "30 characters maximum"
+      "max": "30 characters maximum",
+      "required": "Password is required"
     },
     "confirmPassword": "Passwords must match",
     "search": {
@@ -64,18 +66,26 @@
       "placeholder": {
         "part1": "Type your",
         "part2": "here",
-        "part3": "Confirm your"
+        "part3": "Confirm your",
+        "username": "Enter your username",
+        "email": "Enter your email",
+        "password": "Enter your password",
+        "confirmPassword": "Confirm your password"
       },
       "submit": {
         "forgot": "Send",
         "login": "Login",
-        "register": "Register"
+        "register": "Register",
+        "logout": "Logout",
+        "loading": "Loading..."
+      },
+      "link": {
+        "forgot": "Forgot your password ?"
       },
       "switch": {
         "login": {
           "number1": "You don't have an account ?",
-          "number2": "Register here",
-          "number3": "Forgot your password ?"
+          "number2": "Register here"
         },
         "register": {
           "number1": "You already have an account ?",
@@ -88,22 +98,33 @@
       }
     },
     "watchlist": {
-      "create": {
-        "title": "New watchlist...",
-        "label": "Title",
-        "placeholder": "Enter your title here",
-        "submit": "Create",
-        "cancel": "Cancel"
+      "title": {
+        "create": "New watchlist",
+        "update": "Edit watchlist"
       },
-      "update": {
-        "title": "A change ?",
-        "label": "Title",
-        "placeholder": "Enter your title here",
-        "submit": "Edit",
-        "cancel": "Cancel"
+      "field": {
+        "title": "Title"
+      },
+      "placeholder": {
+        "title": "Enter your title here"
+      },
+      "submit": {
+        "create": "Create",
+        "update": "Save"
+      },
+      "cancel": "Cancel",
+      "error": {
+        "title": "Title is required"
+      },
+      "success": {
+        "create": "Watchlist created",
+        "update": "Watchlist updated"
+      },
+      "edit": {
+        "title": "Edit"
       },
       "delete": {
-        "title": "Are you sure ?",
+        "title": "Delete",
         "warning": "This action is final.",
         "submit": "Delete this watchlist",
         "cancel": "Cancel"
@@ -122,7 +143,12 @@
     },
     "profile": {
       "update": {
+        "title": "Edit Profile",
         "subtitle": "Please note that you'll be disconnected to ensure the update.",
+        "confirmation": {
+          "title": "Confirm Profile Update",
+          "message": "Since the password is modified, you will be logged out for security reasons. Do you want to continue?"
+        },
         "banner": {
           "title": "Change your banner ?",
           "subtitle": "Your actual banner :",
@@ -184,17 +210,20 @@
   },
   "filter": {
     "genre": {
-      "title": "Filter by",
-      "every": "All"
+      "title": "Genre",
+      "all": "All"
     },
     "sort": {
-      "title": "Sort by",
+      "title": "Sort",
       "option1": "Popularity",
       "option2": "Most recent",
       "option3": "Best rating"
     },
     "type": {
-      "title": "Suggest by",
+      "title": "Type",
+      "label": "Suggest by",
+      "movie": "Movie",
+      "tv": "TV",
       "option1": "Movies",
       "option2": "TV Shows"
     }
@@ -202,7 +231,67 @@
   "screen": {
     "home": {
       "title": "Welcome to Scenario.",
-      "signup": "or Sign-up here."
+      "signup": "or Sign-up here.",
+      "header": "Home",
+      "add": "Add"
+    },
+    "login": {
+      "title": "Login"
+    },
+    "register": {
+      "title": "Register"
+    },
+    "forgotPassword": {
+      "title": "Forgot something ?"
+    },
+    "account": {
+      "title": "Account",
+      "viewProfile": "View profile",
+      "profileDescription": "You can manage your banner, profile and account informations there.",
+      "views": {
+        "title": "Views",
+        "movies": "Movies",
+        "tv": "TV Shows"
+      }
+    },
+    "watchlistCreate": {
+      "title": "New Watchlist"
+    },
+    "watchlistEdit": {
+      "title": "Update Watchlist"
+    },
+    "top": {
+      "title": "Top",
+      "sort": {
+        "ratingDesc": "Rating ↓",
+        "ratingAsc": "Rating ↑",
+        "popularityDesc": "Popularity ↓",
+        "popularityAsc": "Popularity ↑",
+        "releaseDateDesc": "Release Date ↓",
+        "releaseDateAsc": "Release Date ↑",
+        "titleDesc": "Title (Z-A)",
+        "titleAsc": "Title (A-Z)",
+        "revenueDesc": "Revenue ↓",
+        "revenueAsc": "Revenue ↑"
+      }
+    },
+    "discover": {
+      "title": "Discover",
+      "sections": {
+        "trendingWeek": "Trending this week",
+        "trendingPersons": "Trending Persons",
+        "highlyRatedMovies": "Highly rated movies",
+        "runningTvShows": "Running TV Shows",
+        "featuredMovie": "Featured Movie",
+        "popularMovies": "Popular Movies",
+        "popularTv": "Popular TV Shows",
+        "nowPlayingMovies": "Now Playing Movies",
+        "upcomingMovies": "Upcoming Movies",
+        "topRatedTv": "Best rated TV Shows",
+        "topRatedJapanimation": "Best rated Japanese anime",
+        "topRatedDocumentaries": "Best rated Documentaries",
+        "movies2000s": "Best 2000s movies"
+      }
     },
     "detail": {
       "crew": {
@@ -212,8 +301,10 @@
       "media": {
         "trailer": "Watch Trailer",
         "cast": "Cast",
+        "castEmpty": "No cast information",
         "seasons": {
           "title": "Seasons",
+          "empty": "No seasons found",
           "season": {
             "singular": "Season",
             "plurial": "Seasons"
@@ -234,6 +325,8 @@
     },
     "person": {
       "title": "Been known for",
+      "movies": "Movies",
+      "tvShows": "TV Shows",
       "gender": {
         "male": "Male",
         "female": "Female",
@@ -242,9 +335,23 @@
       "age": "years old"
     },
     "search": {
-      "placeholder": "Look for movies, TV shows, actors, directors...",
+      "title": "Search",
+      "placeholder": "Movies, TV shows, actors, directors...",
       "cancel": "Cancel",
-      "history": "Search history",
+      "history": {
+        "title": "Recently searched",
+        "clear": "Clear"
+      },
+      "type": {
+        "movie": "Movies",
+        "tv": "TV Shows",
+        "person": "Persons"
+      },
+      "label": {
+        "movie": "Movie",
+        "tv": "TV Show",
+        "person": "Person"
+      },
       "result": {
         "singular": "Result",
         "plurial": "Results"
@@ -253,9 +360,58 @@
     "watchlist": {
       "title": "Watchlists",
       "subtitle": "Find here every watchlist you've created.",
+      "empty": "No watchlists yet.\nCreate one using the menu above.",
       "count": {
         "singular": "Element",
         "plurial": "Elements"
+      },
+      "menu": {
+        "create": "Create Watchlist",
+        "sort": "Sort By"
+      },
+      "sort": {
+        "default": "Default",
+        "titleAsc": "Title (A-Z)",
+        "titleDesc": "Title (Z-A)",
+        "itemsAsc": "Items ↑",
+        "itemsDesc": "Items ↓"
+      },
+      "detail": {
+        "empty": "No content yet.",
+        "menu": {
+          "sort": "Sort By",
+          "filter": "Filter By",
+          "view": "Viewed",
+          "unview": "Unviewed",
+          "move": "Move to another watchlist",
+          "delete": "Delete from watchlist",
+          "deleteSuccess": "Media deleted from watchlist"
+        },
+        "sort": {
+          "default": "Default",
+          "titleAsc": "Title (A-Z)",
+          "titleDesc": "Title (Z-A)",
+          "dateAsc": "Oldest",
+          "dateDesc": "Most Recent"
+        },
+        "filter": {
+          "all": "All",
+          "movie": "Movies",
+          "tv": "TV Shows"
+        }
+      },
+      "move": {
+        "title": "Move to watchlist",
+        "subtitle": "Select a watchlist to move this media",
+        "submit": "Move",
+        "cancel": "Cancel",
+        "alreadyIn": "Already in this watchlist"
+      },
+      "add": {
+        "title": "Add to watchlist",
+        "subtitle": "Select a watchlist to add this media",
+        "success": "Media added to watchlist",
+        "removed": "Media removed from watchlist"
       }
     },
     "profile": {
@@ -278,6 +434,10 @@
           "option3": "Change password",
           "option4": "Delete my account"
         }
+      },
+      "menu": {
+        "editBanner": "Edit Banner",
+        "editProfile": "Edit Profile"
       }
     }
   },
@@ -304,6 +464,10 @@
     "expired": "Session expired",
     "success": {
       "forgot": "Email sent",
+      "login": "Welcome back!",
+      "logout": "See you soon!",
+      "urlCopied": "URL copied to clipboard",
+      "banner": "Banner updated successfully",
       "profile": {
         "update": {
           "email": "Email updated",

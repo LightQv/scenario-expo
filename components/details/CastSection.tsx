@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { FONTS, TOKENS } from "@/constants/theme";
 import CastCard from "@/components/details/CastCard";
+import i18n from "@/services/i18n";
 
 type CastSectionProps = {
   title: string;
@@ -26,7 +27,7 @@ export default function CastSection({ title, cast }: CastSectionProps) {
       <Text
         style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
       >
-        No cast information
+        {i18n.t("screen.detail.media.castEmpty")}
       </Text>
     </View>
   );

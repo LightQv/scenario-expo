@@ -4,8 +4,6 @@ import {
   Text,
   ScrollView,
   PlatformColor,
-  Pressable,
-  useColorScheme,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -16,12 +14,13 @@ import { notifyError } from "@/components/toasts/Toast";
 import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import GoBackButton from "@/components/ui/GoBackButton";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function SeasonDetailScreen() {
-  const colorScheme = useColorScheme();
+  const { colors, isDark } = useThemeContext();
   const insets = useSafeAreaInsets();
   const { seriesId, seasonNumber, seriesName } = useLocalSearchParams<{
     seriesId: string;
@@ -59,21 +58,12 @@ export default function SeasonDetailScreen() {
       headerTransparent: true,
       headerTitle:
         seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
-      headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
-      headerLeft: () => (
-        <Pressable onPress={() => router.back()}>
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-            style={{ marginLeft: 2 }}
-          />
-        </Pressable>
-      ),
+      headerTintColor: colors.text,
+      headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, router, colorScheme, seriesName]);
+  }, [navigation, colors.text, seriesName]);
 
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  const statusStyle = isDark ? "light" : "dark";
 
   return (
     <View
@@ -115,14 +105,25 @@ export default function SeasonDetailScreen() {
                   {data.name}
                 </Text>
 
-                {data.air_date && (
+                {(data.air_date || data.episodes?.length) && (
                   <Text
                     style={[
                       styles.metadataText,
                       { color: PlatformColor("secondaryLabel") },
                     ]}
                   >
-                    {formatFullDate(data.air_date)}
+                    {data.air_date && formatFullDate(data.air_date)}
+                    {data.air_date && data.episodes?.length && " - "}
+                    {data.episodes?.length &&
+                      `${data.episodes.length} ${
+                        data.episodes.length === 1
+                          ? i18n.t(
+                              "screen.detail.media.seasons.episode.singular",
+                            )
+                          : i18n.t(
+                              "screen.detail.media.seasons.episode.plurial",
+                            )
+                      }`}
                   </Text>
                 )}
 
@@ -191,7 +192,7 @@ export default function SeasonDetailScreen() {
                       {/* Blurred Overlay */}
                       <BlurView
                         intensity={90}
-                        tint={colorScheme === "dark" ? "dark" : "light"}
+                        tint={isDark ? "dark" : "light"}
                         style={styles.episodeOverlay}
                       >
                         <View style={styles.episodeInfo}>

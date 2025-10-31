@@ -67,6 +67,8 @@ interface TmdbDetails extends TmdbData {
   gender: number;
   place_of_birth: string | null;
   combined_credits: PersonDatasList;
+  movie_credits: PersonMovieCredits;
+  tv_credits: PersonTvCredits;
 }
 
 type Crew = {
@@ -165,6 +167,99 @@ type PersonDataList = {
   /* Tv type */
   first_air_date?: string;
   name: string;
+};
+
+//--- Person's Movie Credits ---//
+interface PersonMovieCredits {
+  cast: Array<PersonMovieCredit>;
+  crew: Array<PersonMovieCrew>;
+}
+
+type PersonMovieCredit = {
+  adult: boolean;
+  backdrop_path?: string;
+  character?: string;
+  credit_id: string;
+  genre_ids: Array<number>;
+  id: number;
+  order?: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  release_date?: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
+
+type PersonMovieCrew = {
+  adult: boolean;
+  backdrop_path?: string;
+  credit_id: string;
+  department: string;
+  genre_ids: Array<number>;
+  id: number;
+  job: string;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  release_date?: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
+
+//--- Person's TV Credits ---//
+interface PersonTvCredits {
+  cast: Array<PersonTvCredit>;
+  crew: Array<PersonTvCrew>;
+}
+
+type PersonTvCredit = {
+  adult: boolean;
+  backdrop_path?: string;
+  character?: string;
+  credit_id: string;
+  episode_count: number;
+  first_air_date?: string;
+  genre_ids: Array<number>;
+  id: number;
+  name: string;
+  origin_country: Array<string>;
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  vote_average: number;
+  vote_count: number;
+};
+
+type PersonTvCrew = {
+  adult: boolean;
+  backdrop_path?: string;
+  credit_id: string;
+  department: string;
+  episode_count: number;
+  first_air_date?: string;
+  genre_ids: Array<number>;
+  id: number;
+  job: string;
+  name: string;
+  origin_country: Array<string>;
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path?: string;
+  vote_average: number;
+  vote_count: number;
 };
 
 //--- Providers Type ---//

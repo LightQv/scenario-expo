@@ -5,11 +5,25 @@ interface APIMedia {
   poster_path: string;
   backdrop_path: string;
   release_date: string;
+  release_year: string;
   runtime: number;
   title: string;
   media_type: string;
-  viewerId?: string;
+  viewer_id?: string;
   watchlistId?: string;
+}
+
+interface ViewCreate {
+  tmdb_id: number;
+  genre_ids: number[];
+  poster_path: string;
+  backdrop_path: string;
+  release_date: string;
+  release_year: string;
+  runtime: number;
+  title: string;
+  media_type: string;
+  viewer_id: string;
 }
 
 interface Media {
@@ -27,8 +41,8 @@ interface Watchlist {
   id: string;
   title: string;
   authorId: string;
-  _count: { medias: number };
-  medias: [{ id: string; tmdb_id: number }];
+  medias_count: number;
+  medias: APIMedia[];
 }
 
 interface User {

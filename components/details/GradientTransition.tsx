@@ -1,11 +1,9 @@
-import { PlatformColor, StyleSheet, View, useColorScheme } from "react-native";
+import { PlatformColor, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const GRADIENT_HEIGHT = 240;
 
 export default function GradientTransition() {
-  const colorScheme = useColorScheme();
-
   // Use appropriate background color based on theme
   const backgroundColor = PlatformColor("systemBackground");
 

@@ -12,13 +12,14 @@ import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
 import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
 import RatingBadge from "@/components/ui/RatingBadge";
+import ViewAction from "@/components/actions/ViewAction";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type MediaCardProps = {
   data: TmdbData;
   mediaType?: string;
-  size?: "sm" | "md" | "xl";
+  size?: "sm" | "md" | "xl" | "grid";
 };
 
 export default function MediaCard({
@@ -38,14 +39,16 @@ export default function MediaCard({
         return `${basePath}w780/${data.poster_path}`; // Higher quality for xl
       case "md":
         return `${basePath}w500/${data.poster_path}`; // Medium-high quality for md
+      case "grid":
       case "sm":
       default:
-        return `${basePath}w342/${data.poster_path}`; // Standard quality for sm
+        return `${basePath}w342/${data.poster_path}`; // Standard quality for sm and grid
     }
   };
 
   // Map card size to rating badge size
   const getRatingSize = (): "sm" | "md" | "xl" => {
+    if (size === "grid") return "sm"; // Grid uses sm badge
     return size; // Direct mapping: sm -> sm, md -> md, xl -> xl
   };
 
@@ -72,6 +75,14 @@ export default function MediaCard({
             placeholder={BLURHASH.hash}
             transition={BLURHASH.transition}
           />
+          {/* ViewAction button - top right corner */}
+          <ViewAction
+            data={data}
+            mediaType={data.media_type || mediaType}
+            size={size === "grid" ? "sm" : size}
+            style={sharedStyles.viewAction}
+          />
+          {/* RatingBadge - bottom right corner */}
           {data.vote_average && (
             <View style={sharedStyles.ratingBadge}>
               <RatingBadge score={data.vote_average} size={getRatingSize()} />
@@ -115,124 +126,169 @@ const sharedStyles = StyleSheet.create({
     bottom: 8,
     right: 8,
   },
+  viewAction: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 10,
+  },
 });
 
 const mediaCardStyles = {
-  sm: StyleSheet.create({
+  grid: StyleSheet.create({
     container: {
-      width: 180,
+      width: TOKENS.card.sizes.grid.width,
     },
     imageContainer: {
-      width: 180,
-      height: 265,
-      borderRadius: 12,
+      width: TOKENS.card.sizes.grid.width,
+      height: TOKENS.card.sizes.grid.height,
+      borderRadius: TOKENS.card.sizes.grid.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
       position: "relative",
     },
     content: {
-      marginTop: 6,
-      gap: 2,
+      marginTop: TOKENS.card.sizes.grid.contentMarginTop,
+      gap: TOKENS.card.sizes.grid.contentGap,
     },
     title: {
       fontFamily: FONTS.bold,
-      fontSize: TOKENS.font.xxl,
-      lineHeight: 18,
+      fontSize: TOKENS.card.sizes.grid.titleFontSize,
+      lineHeight: TOKENS.card.sizes.grid.titleLineHeight,
       color: PlatformColor("label"),
     },
     metaRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: TOKENS.card.sizes.grid.metaGap,
     },
     genre: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.xs,
+      fontSize: TOKENS.card.sizes.grid.metaFontSize,
       flex: 1,
       color: PlatformColor("secondaryLabel"),
     },
     year: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.xs,
+      fontSize: TOKENS.card.sizes.grid.metaFontSize,
+      color: PlatformColor("secondaryLabel"),
+    },
+  }),
+  sm: StyleSheet.create({
+    container: {
+      width: TOKENS.card.sizes.sm.width,
+    },
+    imageContainer: {
+      width: TOKENS.card.sizes.sm.width,
+      height: TOKENS.card.sizes.sm.height,
+      borderRadius: TOKENS.card.sizes.sm.borderRadius,
+      overflow: "hidden",
+      backgroundColor: PlatformColor("systemGray5"),
+      position: "relative",
+    },
+    content: {
+      marginTop: TOKENS.card.sizes.sm.contentMarginTop,
+      gap: TOKENS.card.sizes.sm.contentGap,
+    },
+    title: {
+      fontFamily: FONTS.bold,
+      fontSize: TOKENS.card.sizes.sm.titleFontSize,
+      lineHeight: TOKENS.card.sizes.sm.titleLineHeight,
+      color: PlatformColor("label"),
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: TOKENS.card.sizes.sm.metaGap,
+    },
+    genre: {
+      fontFamily: FONTS.regular,
+      fontSize: TOKENS.card.sizes.sm.metaFontSize,
+      flex: 1,
+      color: PlatformColor("secondaryLabel"),
+    },
+    year: {
+      fontFamily: FONTS.regular,
+      fontSize: TOKENS.card.sizes.sm.metaFontSize,
       color: PlatformColor("secondaryLabel"),
     },
   }),
   md: StyleSheet.create({
     container: {
-      width: 270,
+      width: TOKENS.card.sizes.md.width,
     },
     imageContainer: {
-      width: 270,
-      height: 398,
-      borderRadius: 18,
+      width: TOKENS.card.sizes.md.width,
+      height: TOKENS.card.sizes.md.height,
+      borderRadius: TOKENS.card.sizes.md.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
       position: "relative",
     },
     content: {
-      marginTop: 8,
-      gap: 2,
+      marginTop: TOKENS.card.sizes.md.contentMarginTop,
+      gap: TOKENS.card.sizes.md.contentGap,
     },
     title: {
       fontFamily: FONTS.bold,
-      fontSize: TOKENS.font.title,
-      lineHeight: 27,
+      fontSize: TOKENS.card.sizes.md.titleFontSize,
+      lineHeight: TOKENS.card.sizes.md.titleLineHeight,
       color: PlatformColor("label"),
     },
     metaRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 12,
+      gap: TOKENS.card.sizes.md.metaGap,
     },
     genre: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.xxl,
+      fontSize: TOKENS.card.sizes.md.metaFontSize,
       flex: 1,
       color: PlatformColor("secondaryLabel"),
     },
     year: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.xxl,
+      fontSize: TOKENS.card.sizes.md.metaFontSize,
       color: PlatformColor("secondaryLabel"),
     },
   }),
   xl: StyleSheet.create({
     container: {
-      width: SCREEN_WIDTH - TOKENS.margin.horizontal * 2,
+      width: TOKENS.card.sizes.xl.width,
     },
     imageContainer: {
-      width: SCREEN_WIDTH - TOKENS.margin.horizontal * 2,
-      height: Math.round((SCREEN_WIDTH - TOKENS.margin.horizontal * 2) * 1.47),
-      borderRadius: 16,
+      width: TOKENS.card.sizes.xl.width,
+      height: TOKENS.card.sizes.xl.height,
+      borderRadius: TOKENS.card.sizes.xl.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
       position: "relative",
     },
     content: {
-      marginTop: 14,
-      gap: 6,
+      marginTop: TOKENS.card.sizes.xl.contentMarginTop,
+      gap: TOKENS.card.sizes.xl.contentGap,
     },
     title: {
       fontFamily: FONTS.bold,
-      fontSize: TOKENS.font.title,
-      lineHeight: 24,
+      fontSize: TOKENS.card.sizes.xl.titleFontSize,
+      lineHeight: TOKENS.card.sizes.xl.titleLineHeight,
       color: PlatformColor("label"),
     },
     metaRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 10,
+      gap: TOKENS.card.sizes.xl.metaGap,
     },
     genre: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.md,
+      fontSize: TOKENS.card.sizes.xl.metaFontSize,
       flex: 1,
       flexShrink: 1,
       color: PlatformColor("secondaryLabel"),
     },
     year: {
       fontFamily: FONTS.regular,
-      fontSize: TOKENS.font.md,
+      fontSize: TOKENS.card.sizes.xl.metaFontSize,
       flexShrink: 0,
       color: PlatformColor("secondaryLabel"),
     },

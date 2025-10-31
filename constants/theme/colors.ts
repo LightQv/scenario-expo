@@ -1,6 +1,20 @@
 export const THEME_COLORS = {
   main: "#eab208",
   accent: "#f9cd4a",
+  error: "#ef4444",
+};
+
+export const ADAPTIVE_COLORS = {
+  light: {
+    text: "#000",
+    background: "#fff",
+    headerBackground: "#fff",
+  },
+  dark: {
+    text: "#fff",
+    background: "#1C1C1E",
+    headerBackground: "#1C1C1E",
+  },
 };
 
 export const GRADE_COLORS = {

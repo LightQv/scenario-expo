@@ -1,12 +1,6 @@
-import {
-  View,
-  StyleSheet,
-  PlatformColor,
-  Pressable,
-  useColorScheme,
-} from "react-native";
+import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -15,7 +9,7 @@ import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
 import CrewInfo from "@/components/details/CrewInfo";
 import CastSection from "@/components/details/CastSection";
-import KnownForSection from "@/components/details/KnownForSection";
+import CollapsibleCreditsSection from "@/components/details/CollapsibleCreditsSection";
 import SeasonsSection from "@/components/details/SeasonsSection";
 import Animated, {
   useAnimatedScrollHandler,
@@ -24,16 +18,18 @@ import Animated, {
   FadeOutRight,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
+import GoBackButton from "@/components/ui/GoBackButton";
+import ViewAction from "@/components/actions/ViewAction";
+import ShareButton from "@/components/ui/ShareButton";
+import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
+import HeaderRight from "@/components/ui/HeaderRight";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const navigation = useNavigation();
-
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
 
@@ -47,10 +43,12 @@ export default function DetailsScreen() {
       // Different append_to_response for person vs media
       const appendParams =
         type === "person"
-          ? "combined_credits,images"
+          ? "movie_credits,tv_credits,images"
           : "videos,credits,images";
 
-      tmdbFetch(`/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`)
+      tmdbFetch(
+        `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
+      )
         .then((response) => {
           setData(response);
           setLoading(false);
@@ -77,18 +75,29 @@ export default function DetailsScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
-      headerLeft: () => (
-        <Pressable onPress={() => router.back()}>
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
-            style={{ marginLeft: 2 }}
-          />
-        </Pressable>
-      ),
+      headerLeft: () => <GoBackButton />,
+      // Only show ShareButton and ViewAction for movie and tv, not for person
+      headerRight:
+        type === "movie" || type === "tv"
+          ? () =>
+              data && (
+                <HeaderRight>
+                  <ShareButton
+                    mediaType={type}
+                    tmdbId={id}
+                    title={data.title || data.name}
+                  />
+                  <AddToWatchlistButton
+                    mediaType={type}
+                    tmdbId={id}
+                    title={data.title || data.name}
+                  />
+                  <ViewAction data={data} mediaType={type} size="details" />
+                </HeaderRight>
+              )
+          : undefined,
     });
-  }, [navigation, router, colorScheme]);
+  }, [navigation, type, data, id]);
 
   return (
     <View
@@ -110,9 +119,7 @@ export default function DetailsScreen() {
         {data && (
           <>
             <Banner
-              src={
-                type === "person" ? data.profile_path : data.backdrop_path
-              }
+              src={type === "person" ? data.profile_path : data.backdrop_path}
               alt={data.title || data.name}
               score={data.vote_average}
               title={data.title || data.name}
@@ -141,11 +148,32 @@ export default function DetailsScreen() {
             />
             {type === "person" ? (
               <>
-                {/* Person: Show Known For section */}
-                {data.combined_credits && (
-                  <KnownForSection
-                    title={i18n.t("screen.person.title")}
-                    credits={data.combined_credits}
+                {/* Person: Show Movie Credits */}
+                {data.movie_credits && data.movie_credits.cast && (
+                  <CollapsibleCreditsSection
+                    title={i18n.t("screen.person.movies")}
+                    credits={data.movie_credits.cast
+                      .filter((movie) => movie.release_date)
+                      .sort((a, b) => {
+                        const dateA = new Date(a.release_date || "");
+                        const dateB = new Date(b.release_date || "");
+                        return dateB.getTime() - dateA.getTime();
+                      })}
+                    mediaType="movie"
+                  />
+                )}
+                {/* Person: Show TV Credits */}
+                {data.tv_credits && data.tv_credits.cast && (
+                  <CollapsibleCreditsSection
+                    title={i18n.t("screen.person.tvShows")}
+                    credits={data.tv_credits.cast
+                      .filter((tv) => tv.first_air_date)
+                      .sort((a, b) => {
+                        const dateA = new Date(a.first_air_date || "");
+                        const dateB = new Date(b.first_air_date || "");
+                        return dateB.getTime() - dateA.getTime();
+                      })}
+                    mediaType="tv"
                   />
                 )}
               </>
