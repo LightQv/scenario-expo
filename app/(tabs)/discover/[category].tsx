@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   PlatformColor,
-  useColorScheme,
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -18,9 +17,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
 import GoBackButton from "@/components/ui/GoBackButton";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function CategoryDetailScreen() {
-  const colorScheme = useColorScheme();
+  const { colors, isDark } = useThemeContext();
   const insets = useSafeAreaInsets();
   const { category, mediaType, title } = useLocalSearchParams<{
     category: string;
@@ -110,12 +110,12 @@ export default function CategoryDetailScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: title || "Discover",
-      headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+      headerTintColor: colors.text,
       headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, colorScheme, title]);
+  }, [navigation, colors.text, title]);
 
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  const statusStyle = isDark ? "light" : "dark";
 
   // Render item in 2-column grid
   const renderItem = ({ item }: { item: TmdbData }) => {

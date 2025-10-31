@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   PlatformColor,
-  useColorScheme,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -18,9 +17,10 @@ import { StatusBar } from "expo-status-bar";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GoBackButton from "@/components/ui/GoBackButton";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function SeasonDetailScreen() {
-  const colorScheme = useColorScheme();
+  const { colors, isDark } = useThemeContext();
   const insets = useSafeAreaInsets();
   const { seriesId, seasonNumber, seriesName } = useLocalSearchParams<{
     seriesId: string;
@@ -58,12 +58,12 @@ export default function SeasonDetailScreen() {
       headerTransparent: true,
       headerTitle:
         seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
-      headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+      headerTintColor: colors.text,
       headerLeft: () => <GoBackButton />,
     });
-  }, [navigation, colorScheme, seriesName]);
+  }, [navigation, colors.text, seriesName]);
 
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  const statusStyle = isDark ? "light" : "dark";
 
   return (
     <View
@@ -192,7 +192,7 @@ export default function SeasonDetailScreen() {
                       {/* Blurred Overlay */}
                       <BlurView
                         intensity={90}
-                        tint={colorScheme === "dark" ? "dark" : "light"}
+                        tint={isDark ? "dark" : "light"}
                         style={styles.episodeOverlay}
                       >
                         <View style={styles.episodeInfo}>

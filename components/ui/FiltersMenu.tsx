@@ -1,8 +1,9 @@
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export type SortOption = {
   value: string;
@@ -38,7 +39,7 @@ export default function FiltersMenu({
   mediaType,
   onMediaTypeChange,
 }: FiltersMenuProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
   // Build media type options
   const mediaTypeOptions = [
     i18n.t("filter.type.movie"),
@@ -127,7 +128,7 @@ export default function FiltersMenu({
             <Host style={{ width: 14, height: 24 }}>
               <Image
                 systemName="ellipsis"
-                color={colorScheme === "dark" ? "#fff" : "#000"}
+                color={colors.text}
               />
             </Host>
           </View>

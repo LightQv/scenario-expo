@@ -5,12 +5,12 @@ import {
   TouchableOpacity,
   FlatList,
   PlatformColor,
-  useColorScheme,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FONTS, TOKENS } from "@/constants/theme";
 import { THEME_COLORS } from "@/constants/theme/colors";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts/ThemeContext";
 import type { SearchHistoryItem } from "@/services/searchHistory";
 
 type SearchHistoryProps = {
@@ -24,7 +24,7 @@ export default function SearchHistory({
   onItemPress,
   onClearHistory,
 }: SearchHistoryProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
   const getTypeLabel = (type: "movie" | "tv" | "person") => {
     return i18n.t(`screen.search.type.${type}`);
   };
@@ -81,7 +81,7 @@ export default function SearchHistory({
         <Text
           style={[
             styles.headerTitle,
-            { color: colorScheme === "dark" ? "#fff" : "#000" },
+            { color: colors.text },
           ]}
         >
           {i18n.t("screen.search.history.title")}

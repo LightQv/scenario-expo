@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     flexDirection: "row",
-    gap: 16,
-    marginRight: 8,
+    gap: 22,
+    marginHorizontal: 8,
     alignItems: "center",
   },
   emptyContainer: {

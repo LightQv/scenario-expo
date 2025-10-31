@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { useUserContext } from "@/contexts";
 import { FONTS, TOKENS, THEME_COLORS, TOAST_COLORS } from "@/constants/theme";
 import i18n from "@/services/i18n";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
@@ -62,6 +63,11 @@ export default function AccountScreen() {
               </Text>
             </View>
           </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={PlatformColor("secondaryLabel")}
+          />
         </View>
 
         {/* Logout Button */}
@@ -94,8 +100,13 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   userCard: {
-    borderRadius: TOKENS.radius.md,
-    padding: 16,
+    borderRadius: TOKENS.radius.xl,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   userHeader: {
     display: "flex",
@@ -113,7 +124,7 @@ const styles = StyleSheet.create({
   avatarLargeText: {
     color: "#fff",
     fontFamily: FONTS.bold,
-    fontSize: 28,
+    fontSize: 24,
   },
   username: {
     fontFamily: FONTS.regular,
@@ -125,7 +136,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     height: 52,
-    borderRadius: TOKENS.radius.md,
+    borderRadius: TOKENS.radius.xl,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 12,

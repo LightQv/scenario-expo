@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
-  useColorScheme,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -13,6 +12,7 @@ import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { useViewContext } from "@/contexts/ViewContext";
+import { useThemeContext } from "@/contexts/ThemeContext";
 import WatchlistMediaCardMenu from "./WatchlistMediaCardMenu";
 
 type WatchlistMediaCardProps = {
@@ -26,7 +26,7 @@ export default function WatchlistMediaCard({
   watchlistId,
   onDelete,
 }: WatchlistMediaCardProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
   const { isViewed } = useViewContext();
   const viewed = isViewed(data.tmdb_id, data.media_type);
 
@@ -57,7 +57,7 @@ export default function WatchlistMediaCard({
           <Ionicons
             name="checkmark-outline"
             size={12}
-            color={colorScheme === "dark" ? "#fff" : "#000"}
+            color={colors.text}
           />
         </View>
       )}

@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
 import GoBackButton from "@/components/ui/GoBackButton";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function ModalLayout() {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
 
   return (
     <Stack>
@@ -14,11 +14,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.login.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -28,11 +28,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.register.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -42,11 +42,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.forgotPassword.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -56,11 +56,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.account.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -70,11 +70,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.watchlistCreate.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -84,11 +84,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.watchlistEdit.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -98,11 +98,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.watchlist.move.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />
@@ -112,11 +112,11 @@ export default function ModalLayout() {
           presentation: "modal",
           headerShown: true,
           headerTitle: i18n.t("screen.watchlist.add.title"),
-          headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+          headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#1C1C1E" : "#fff",
+            backgroundColor: colors.headerBackground,
           },
         }}
       />

@@ -1,8 +1,9 @@
-import { StyleSheet, useColorScheme, View } from "react-native";
-import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
+import { StyleSheet } from "react-native";
+import { Button, ContextMenu, Host, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 type SortType =
   | "default"
@@ -33,7 +34,7 @@ export default function WatchlistMenu({
   sortType,
   onSortChange,
 }: WatchlistMenuProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
 
   // Build sort options array
   const sortLabels = SORT_OPTIONS.map((s) => s.label);
@@ -61,14 +62,7 @@ export default function WatchlistMenu({
           />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <View>
-            <Host style={{ width: 14, height: 22 }}>
-              <Image
-                systemName="ellipsis"
-                color={colorScheme === "dark" ? "#fff" : "#000"}
-              />
-            </Host>
-          </View>
+          <Button systemImage="ellipsis" color={colors.text} variant="plain" />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
@@ -77,7 +71,7 @@ export default function WatchlistMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
+    height: 24,
     width: 28,
   },
 });

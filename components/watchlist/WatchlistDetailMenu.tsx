@@ -1,4 +1,4 @@
-import { StyleSheet, useColorScheme, View, Alert } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import { Button, ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 type SortType =
   | "default"
@@ -65,7 +66,7 @@ export default function WatchlistDetailMenu({
   onFilterChange,
   onDelete,
 }: WatchlistDetailMenuProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
 
   // Build option arrays
   const sortLabels = SORT_OPTIONS.map((s) => s.label);
@@ -167,7 +168,7 @@ export default function WatchlistDetailMenu({
             <Host style={{ width: 14, height: 22 }}>
               <Image
                 systemName="ellipsis"
-                color={colorScheme === "dark" ? "#fff" : "#000"}
+                color={colors.text}
               />
             </Host>
           </View>

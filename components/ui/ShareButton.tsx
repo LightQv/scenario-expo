@@ -1,9 +1,10 @@
-import { Pressable, useColorScheme } from "react-native";
+import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { CONFIG } from "@/services/config";
 import { notifySuccess, notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 type ShareButtonProps = {
   mediaType: string;
@@ -12,7 +13,7 @@ type ShareButtonProps = {
 };
 
 export default function ShareButton({ mediaType, tmdbId }: ShareButtonProps) {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
 
   const handleCopy = async () => {
     try {
@@ -26,11 +27,7 @@ export default function ShareButton({ mediaType, tmdbId }: ShareButtonProps) {
 
   return (
     <Pressable onPress={handleCopy}>
-      <Ionicons
-        name="copy-outline"
-        size={24}
-        color={colorScheme === "dark" ? "#fff" : "#000"}
-      />
+      <Ionicons name="copy-outline" size={24} color={colors.text} />
     </Pressable>
   );
 }

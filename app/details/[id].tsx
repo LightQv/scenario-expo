@@ -22,6 +22,7 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import ViewAction from "@/components/actions/ViewAction";
 import ShareButton from "@/components/ui/ShareButton";
 import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
+import HeaderRight from "@/components/ui/HeaderRight";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
@@ -80,7 +81,7 @@ export default function DetailsScreen() {
         type === "movie" || type === "tv"
           ? () =>
               data && (
-                <View style={styles.headerRight}>
+                <HeaderRight>
                   <ShareButton
                     mediaType={type}
                     tmdbId={id}
@@ -92,7 +93,7 @@ export default function DetailsScreen() {
                     title={data.title || data.name}
                   />
                   <ViewAction data={data} mediaType={type} size="details" />
-                </View>
+                </HeaderRight>
               )
           : undefined,
     });
@@ -209,12 +210,6 @@ export default function DetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  headerRight: {
-    flexDirection: "row",
-    gap: 22,
-    marginHorizontal: 8,
-    alignItems: "center",
   },
   scrollContent: {
     paddingTop: 0,

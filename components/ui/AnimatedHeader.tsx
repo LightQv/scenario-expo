@@ -25,7 +25,7 @@ export default function AnimatedHeader({
       style={[
         styles.header,
         {
-          paddingTop: insets.top,
+          paddingTop: insets.top + 2,
         },
       ]}
       pointerEvents="none"
