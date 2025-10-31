@@ -20,6 +20,8 @@ import Animated, {
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
 import ViewAction from "@/components/actions/ViewAction";
+import ShareButton from "@/components/ui/ShareButton";
+import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
@@ -73,14 +75,28 @@ export default function DetailsScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
-      // Only show ViewAction for movie and tv, not for person
+      // Only show ShareButton and ViewAction for movie and tv, not for person
       headerRight:
         type === "movie" || type === "tv"
           ? () =>
-              data && <ViewAction data={data} mediaType={type} size="details" />
+              data && (
+                <View style={styles.headerRight}>
+                  <ShareButton
+                    mediaType={type}
+                    tmdbId={id}
+                    title={data.title || data.name}
+                  />
+                  <AddToWatchlistButton
+                    mediaType={type}
+                    tmdbId={id}
+                    title={data.title || data.name}
+                  />
+                  <ViewAction data={data} mediaType={type} size="details" />
+                </View>
+              )
           : undefined,
     });
-  }, [navigation, type, data]);
+  }, [navigation, type, data, id]);
 
   return (
     <View
@@ -193,6 +209,12 @@ export default function DetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerRight: {
+    flexDirection: "row",
+    gap: 22,
+    marginHorizontal: 8,
+    alignItems: "center",
   },
   scrollContent: {
     paddingTop: 0,

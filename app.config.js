@@ -28,6 +28,7 @@ export default {
       apiUrlAndroid: process.env.EXPO_API_URL_ANDROID,
       tmdbKey: process.env.EXPO_TMDB_API_KEY,
       tmdbToken: process.env.EXPO_TMDB_API_TOKEN,
+      webClientUrl: process.env.EXPO_WEB_CLIENT_URL,
       env: process.env.EXPO_ENV ?? "DEV",
     },
     plugins: [

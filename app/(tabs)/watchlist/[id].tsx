@@ -186,7 +186,11 @@ export default function WatchlistDetailScreen() {
 
   // Render media card
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <WatchlistMediaCard data={item} watchlistId={id} />
+    <WatchlistMediaCard
+      data={item}
+      watchlistId={id}
+      onDelete={fetchWatchlistDetail}
+    />
   );
 
   // Empty state

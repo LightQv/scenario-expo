@@ -8,20 +8,20 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { router, useLocalSearchParams } from "expo-router";
-import { apiFetch } from "@/services/instances";
+import { useLocalSearchParams } from "expo-router";
+import { apiFetch, tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useUserContext } from "@/contexts/UserContext";
 import { FONTS, TOKENS, THEME_COLORS } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function WatchlistMoveModal() {
+export default function WatchlistAddModal() {
   const { user } = useUserContext();
-  const { mediaId, tmdbId, currentWatchlistId } = useLocalSearchParams<{
-    mediaId: string;
+  const { tmdbId, mediaType, title } = useLocalSearchParams<{
     tmdbId: string;
-    currentWatchlistId: string;
+    mediaType: string;
+    title: string;
   }>();
 
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
@@ -53,9 +53,9 @@ export default function WatchlistMoveModal() {
     return watchlist.medias.some((media) => media.tmdb_id === Number(tmdbId));
   };
 
-  // Handle moving media to selected watchlist
-  const handleMoveToWatchlist = async (targetWatchlistId: string) => {
-    if (!mediaId) {
+  // Handle adding/removing media to/from selected watchlist
+  const handleToggleWatchlist = async (targetWatchlistId: string) => {
+    if (!tmdbId || !mediaType || !title) {
       notifyError(i18n.t("toast.error"));
       return;
     }
@@ -63,16 +63,66 @@ export default function WatchlistMoveModal() {
     try {
       setSubmitting(true);
 
-      // Update media's watchlist with single PATCH call
-      await apiFetch(`/api/v1/medias/${mediaId}`, {
-        method: "PUT",
-        body: JSON.stringify({ watchlist_id: targetWatchlistId }),
-      });
+      // Find the target watchlist
+      const targetWatchlist = watchlists.find(
+        (w) => w.id === targetWatchlistId,
+      );
 
-      notifySuccess(i18n.t("form.watchlist.success.update"));
-      router.back();
+      if (!targetWatchlist) {
+        notifyError(i18n.t("toast.error"));
+        return;
+      }
+
+      // Check if media is already in this watchlist
+      const existingMedia = targetWatchlist.medias.find(
+        (media) => media.tmdb_id === Number(tmdbId),
+      );
+
+      if (existingMedia) {
+        // Remove media from watchlist
+        await apiFetch(`/api/v1/medias/${existingMedia.id}`, {
+          method: "DELETE",
+        });
+
+        notifySuccess(i18n.t("screen.watchlist.add.removed"));
+      } else {
+        // Fetch complete media details from TMDB
+        const tmdbData = await tmdbFetch(
+          `/${mediaType}/${tmdbId}?language=${i18n.locale}`,
+        );
+
+        // Prepare media data according to MediaCreate schema
+        const mediaPayload = {
+          tmdb_id: Number(tmdbId),
+          genre_ids: tmdbData.genres?.map((g: { id: number }) => g.id) || [0],
+          poster_path: tmdbData.poster_path || "",
+          backdrop_path: tmdbData.backdrop_path || "",
+          release_date:
+            tmdbData.release_date || tmdbData.first_air_date || "1900-01-01",
+          runtime:
+            tmdbData.runtime ||
+            tmdbData.episode_run_time?.[0] ||
+            tmdbData.number_of_episodes ||
+            0,
+          title: tmdbData.title || tmdbData.name || title,
+          media_type: mediaType,
+          watchlist_id: targetWatchlistId,
+        };
+
+        // Create new media in the selected watchlist
+        await apiFetch(`/api/v1/medias`, {
+          method: "POST",
+          body: JSON.stringify(mediaPayload),
+        });
+
+        notifySuccess(i18n.t("screen.watchlist.add.success"));
+      }
+
+      // Refresh watchlists to update the checkmarks
+      const response = await apiFetch(`/api/v1/watchlists/${user?.id}`);
+      setWatchlists(response);
     } catch (error) {
-      console.error("Error moving media:", error);
+      console.error("Error toggling media in watchlist:", error);
       notifyError(i18n.t("toast.error"));
     } finally {
       setSubmitting(false);
@@ -87,10 +137,10 @@ export default function WatchlistMoveModal() {
     );
   }
 
-  // Filter out current watchlist and sort by title
-  const availableWatchlists = watchlists
-    .filter((w) => w.id !== currentWatchlistId)
-    .sort((a, b) => a.title.localeCompare(b.title));
+  // Sort by title
+  const sortedWatchlists = [...watchlists].sort((a, b) =>
+    a.title.localeCompare(b.title),
+  );
 
   return (
     <ScrollView
@@ -103,11 +153,11 @@ export default function WatchlistMoveModal() {
       <Text
         style={[styles.subtitle, { color: PlatformColor("secondaryLabel") }]}
       >
-        {i18n.t("screen.watchlist.move.subtitle")}
+        {i18n.t("screen.watchlist.add.subtitle")}
       </Text>
 
       <View style={styles.listContainer}>
-        {availableWatchlists.length === 0 ? (
+        {sortedWatchlists.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text
               style={[
@@ -119,9 +169,9 @@ export default function WatchlistMoveModal() {
             </Text>
           </View>
         ) : (
-          availableWatchlists.map((watchlist) => {
+          sortedWatchlists.map((watchlist) => {
             const alreadyIn = isMediaInWatchlist(watchlist);
-            const disabled = alreadyIn || submitting;
+            const disabled = submitting;
 
             return (
               <TouchableOpacity
@@ -132,7 +182,7 @@ export default function WatchlistMoveModal() {
                     backgroundColor: PlatformColor("secondarySystemBackground"),
                   },
                 ]}
-                onPress={() => handleMoveToWatchlist(watchlist.id)}
+                onPress={() => handleToggleWatchlist(watchlist.id)}
                 disabled={disabled}
                 activeOpacity={0.7}
               >

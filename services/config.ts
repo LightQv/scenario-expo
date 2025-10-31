@@ -22,4 +22,5 @@ export const CONFIG = {
       : Platform.OS === "ios"
         ? extra.apiUrlIos
         : extra.apiUrlAndroid,
+  webClientUrl: extra.webClientUrl,
 };

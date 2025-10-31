@@ -4,53 +4,39 @@ import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
-import { useViewContext } from "@/contexts/ViewContext";
+import { apiFetch } from "@/services/instances";
+import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 
 type WatchlistMediaCardMenuProps = {
   media: APIMedia;
   watchlistId: string;
+  onDelete?: () => void;
 };
 
 export default function WatchlistMediaCardMenu({
   media,
   watchlistId,
+  onDelete,
 }: WatchlistMediaCardMenuProps) {
   const colorScheme = useColorScheme();
-  const { isViewed, addView, removeView, getViewByTmdbId } = useViewContext();
 
-  const viewed = isViewed(media.tmdb_id, media.media_type);
-
-  const handleToggleView = async () => {
+  const handleDeleteMedia = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-    if (viewed) {
-      // Remove view
-      const viewObj = getViewByTmdbId(media.tmdb_id, media.media_type);
-      if (viewObj) {
-        try {
-          await removeView(viewObj.id);
-        } catch (err) {
-          console.error("Error removing view:", err);
-        }
+    try {
+      await apiFetch(`/api/v1/medias/${media.id}`, {
+        method: "DELETE",
+      });
+
+      notifySuccess(i18n.t("screen.watchlist.detail.menu.deleteSuccess"));
+
+      // Call the onDelete callback to refresh the list
+      if (onDelete) {
+        onDelete();
       }
-    } else {
-      // Add view
-      try {
-        await addView({
-          tmdb_id: media.tmdb_id,
-          genre_ids: media.genre_ids,
-          poster_path: media.poster_path,
-          backdrop_path: media.backdrop_path,
-          release_date: media.release_date,
-          release_year: media.release_year,
-          runtime: media.runtime,
-          title: media.title,
-          media_type: media.media_type,
-          viewer_id: media.viewer_id || "",
-        });
-      } catch (err) {
-        console.error("Error adding view:", err);
-      }
+    } catch (err) {
+      console.error("Error deleting media:", err);
+      notifyError(i18n.t("toast.error"));
     }
   };
 
@@ -70,16 +56,15 @@ export default function WatchlistMediaCardMenu({
     <Host style={styles.container}>
       <ContextMenu modifiers={[buttonStyle("glass")]}>
         <ContextMenu.Items>
-          <Button
-            onPress={handleToggleView}
-            systemImage={viewed ? "eye.slash" : "eye"}
-          >
-            {viewed
-              ? i18n.t("screen.watchlist.detail.menu.unview")
-              : i18n.t("screen.watchlist.detail.menu.view")}
-          </Button>
           <Button onPress={handleMoveToWatchlist} systemImage="arrow.right">
             {i18n.t("screen.watchlist.detail.menu.move")}
+          </Button>
+          <Button
+            onPress={handleDeleteMedia}
+            systemImage="trash"
+            role="destructive"
+          >
+            {i18n.t("screen.watchlist.detail.menu.delete")}
           </Button>
         </ContextMenu.Items>
         <ContextMenu.Trigger>

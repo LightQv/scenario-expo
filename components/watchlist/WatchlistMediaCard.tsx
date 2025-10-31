@@ -8,16 +8,9 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import {
-  TOKENS,
-  FONTS,
-  BLURHASH,
-  BUTTON,
-  THEME_COLORS,
-} from "@/constants/theme";
+import { TOKENS, FONTS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
-import Animated, { FadeIn, Layout } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { useViewContext } from "@/contexts/ViewContext";
 import WatchlistMediaCardMenu from "./WatchlistMediaCardMenu";
@@ -25,11 +18,13 @@ import WatchlistMediaCardMenu from "./WatchlistMediaCardMenu";
 type WatchlistMediaCardProps = {
   data: APIMedia;
   watchlistId: string;
+  onDelete?: () => void;
 };
 
 export default function WatchlistMediaCard({
   data,
   watchlistId,
+  onDelete,
 }: WatchlistMediaCardProps) {
   const colorScheme = useColorScheme();
   const { isViewed } = useViewContext();
@@ -60,8 +55,8 @@ export default function WatchlistMediaCard({
       {viewed && (
         <View style={styles.viewedIndicator}>
           <Ionicons
-            name="eye"
-            size={10}
+            name="checkmark-outline"
+            size={12}
             color={colorScheme === "dark" ? "#fff" : "#000"}
           />
         </View>
@@ -108,17 +103,13 @@ export default function WatchlistMediaCard({
         >
           <TouchableOpacity activeOpacity={BUTTON.opacity}>
             <View style={styles.textContainer}>
-              <Animated.Text
-                layout={Layout}
-                entering={FadeIn.duration(300)}
+              <Text
                 style={[styles.title, { color: PlatformColor("label") }]}
                 numberOfLines={2}
               >
                 {data.title}
-              </Animated.Text>
-              <Animated.Text
-                layout={Layout}
-                entering={FadeIn.duration(300)}
+              </Text>
+              <Text
                 style={[
                   styles.subtitle,
                   { color: PlatformColor("secondaryLabel") },
@@ -126,13 +117,17 @@ export default function WatchlistMediaCard({
                 numberOfLines={1}
               >
                 {getMetadata()}
-              </Animated.Text>
+              </Text>
             </View>
           </TouchableOpacity>
         </Link>
 
         {/* Menu on the right */}
-        <WatchlistMediaCardMenu media={data} watchlistId={watchlistId} />
+        <WatchlistMediaCardMenu
+          media={data}
+          watchlistId={watchlistId}
+          onDelete={onDelete}
+        />
       </View>
     </View>
   );

@@ -12,11 +12,7 @@ export default function WatchlistCreateButton() {
   };
 
   return (
-    <TouchableOpacity
-      onPress={handlePress}
-      activeOpacity={0.7}
-      style={{ marginLeft: 4 }}
-    >
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
       <Ionicons
         name="add"
         size={28}

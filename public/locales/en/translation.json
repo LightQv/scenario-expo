@@ -369,7 +369,9 @@
           "filter": "Filter By",
           "view": "Viewed",
           "unview": "Unviewed",
-          "move": "Move to another watchlist"
+          "move": "Move to another watchlist",
+          "delete": "Delete from watchlist",
+          "deleteSuccess": "Media deleted from watchlist"
         },
         "sort": {
           "default": "Default",
@@ -390,6 +392,12 @@
         "submit": "Move",
         "cancel": "Cancel",
         "alreadyIn": "Already in this watchlist"
+      },
+      "add": {
+        "title": "Add to watchlist",
+        "subtitle": "Select a watchlist to add this media",
+        "success": "Media added to watchlist",
+        "removed": "Media removed from watchlist"
       }
     },
     "profile": {
@@ -440,6 +448,7 @@
       "forgot": "Email sent",
       "login": "Welcome back!",
       "logout": "See you soon!",
+      "urlCopied": "URL copied to clipboard",
       "profile": {
         "update": {
           "email": "Email updated",

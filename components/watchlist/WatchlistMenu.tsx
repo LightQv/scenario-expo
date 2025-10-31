@@ -4,7 +4,12 @@ import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
 
-type SortType = "default" | "title_asc" | "title_desc" | "count_asc" | "count_desc";
+type SortType =
+  | "default"
+  | "title_asc"
+  | "title_desc"
+  | "count_asc"
+  | "count_desc";
 
 type SortOption = {
   value: SortType;

@@ -144,9 +144,9 @@ export default function ViewAction({
     >
       <View style={styles.iconContainer}>
         <Ionicons
-          name={viewed ? "heart" : "heart-outline"}
+          name="checkmark-outline"
           size={sizeStyles.iconSize}
-          color={viewed ? THEME_COLORS.error : "#fff"}
+          color={viewed ? THEME_COLORS.main : "#fff"}
         />
       </View>
     </Pressable>
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
   },
   // Details size (header button)
   containerDetails: {
-    marginLeft: 2,
-    padding: 4,
+    marginLeft: 0,
+    padding: 0,
   },
   // Small size (180px MediaCard)
   containerSm: {

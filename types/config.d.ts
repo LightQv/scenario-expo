@@ -3,5 +3,6 @@ export type Extra = {
   apiUrl: string;
   apiUrlIos: string;
   apiUrlAndroid: string;
+  webClientUrl: string;
   env: "DEV" | "PROD";
 };

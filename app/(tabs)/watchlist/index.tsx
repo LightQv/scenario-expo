@@ -28,7 +28,12 @@ import WatchlistCard from "@/components/watchlist/WatchlistCard";
 import WatchlistMenu from "@/components/watchlist/WatchlistMenu";
 import WatchlistCreateButton from "@/components/watchlist/WatchlistCreateButton";
 
-type SortType = "default" | "title_asc" | "title_desc" | "count_asc" | "count_desc";
+type SortType =
+  | "default"
+  | "title_asc"
+  | "title_desc"
+  | "count_asc"
+  | "count_desc";
 
 export default function WatchlistIndexScreen() {
   const insets = useSafeAreaInsets();
@@ -111,7 +116,7 @@ export default function WatchlistIndexScreen() {
       if (user?.id) {
         fetchWatchlists();
       }
-    }, [user?.id])
+    }, [user?.id]),
   );
 
   // Handle refresh

@@ -370,7 +370,9 @@
           "filter": "Filtrer par",
           "view": "Vu",
           "unview": "Non vu",
-          "move": "Déplacer vers une autre liste"
+          "move": "Déplacer vers une autre liste",
+          "delete": "Supprimer de la liste",
+          "deleteSuccess": "Média supprimé de la liste"
         },
         "sort": {
           "default": "Par défaut",
@@ -391,6 +393,12 @@
         "submit": "Déplacer",
         "cancel": "Annuler",
         "alreadyIn": "Déjà dans cette liste"
+      },
+      "add": {
+        "title": "Ajouter à une liste",
+        "subtitle": "Sélectionnez une liste de lecture pour ce média",
+        "success": "Média ajouté à la liste",
+        "removed": "Média retiré de la liste"
       }
     },
     "profile": {
@@ -441,6 +449,7 @@
       "forgot": "Email envoyé",
       "login": "Bon retour!",
       "logout": "À bientôt!",
+      "urlCopied": "URL copiée dans le presse-papiers",
       "profile": {
         "update": {
           "email": "Email mis à jour",
