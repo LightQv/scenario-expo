@@ -144,7 +144,7 @@ export default function ViewAction({
     >
       <View style={styles.iconContainer}>
         <Ionicons
-          name="checkmark-outline"
+          name="eye"
           size={sizeStyles.iconSize}
           color={viewed ? colors.main : "#fff"}
         />

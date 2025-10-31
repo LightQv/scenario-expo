@@ -16,6 +16,7 @@ import { router, useNavigation } from "expo-router";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { CONFIG } from "@/services/config";
 import { Ionicons } from "@expo/vector-icons";
+import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 const { width, height } = Dimensions.get("window");
 // Banner preview with vertical aspect ratio for modal display
@@ -106,22 +107,10 @@ export default function ProfileBannerEditScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
+        <FormSubmitHeaderButton
           onPress={handleSubmit}
           disabled={!selectedImage || isSubmitting}
-          style={styles.headerButton}
-          activeOpacity={BUTTON.opacity}
-        >
-          <Ionicons
-            name="checkmark"
-            size={24}
-            color={
-              !selectedImage || isSubmitting
-                ? PlatformColor("systemGray")
-                : colors.main
-            }
-          />
-        </TouchableOpacity>
+        />
       ),
     });
   }, [navigation, selectedImage, isSubmitting]);
@@ -212,8 +201,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     alignItems: "center",
     justifyContent: "center",
-  },
-  headerButton: {
-    paddingLeft: 6,
   },
 });

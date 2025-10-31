@@ -100,7 +100,7 @@
     "watchlist": {
       "title": {
         "create": "New watchlist",
-        "update": "Edit watchlist"
+        "update": "Rename watchlist"
       },
       "field": {
         "title": "Title"
@@ -121,7 +121,7 @@
         "update": "Watchlist updated"
       },
       "edit": {
-        "title": "Edit"
+        "title": "Rename"
       },
       "delete": {
         "title": "Delete",

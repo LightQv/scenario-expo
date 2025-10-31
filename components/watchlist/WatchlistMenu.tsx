@@ -54,7 +54,7 @@ export default function WatchlistMenu({
           <Picker
             label={i18n.t("screen.watchlist.menu.sort")}
             options={sortLabels}
-            variant="menu"
+            variant="inline"
             selectedIndex={selectedSortIndex}
             onOptionSelected={({ nativeEvent: { index } }) =>
               handleSortSelect(index)
@@ -62,7 +62,11 @@ export default function WatchlistMenu({
           />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <Button systemImage="ellipsis" color={colors.text} variant="plain" />
+          <Button
+            systemImage="arrow.up.arrow.down"
+            color={colors.text}
+            variant="plain"
+          />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>

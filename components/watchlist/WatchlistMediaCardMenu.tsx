@@ -109,7 +109,7 @@ export default function WatchlistMediaCardMenu({
               ? i18n.t("screen.watchlist.detail.menu.unview")
               : i18n.t("screen.watchlist.detail.menu.view")}
           </Button>
-          <Button onPress={handleMoveToWatchlist} systemImage="arrow.right">
+          <Button onPress={handleMoveToWatchlist} systemImage="folder">
             {i18n.t("screen.watchlist.detail.menu.move")}
           </Button>
           <Button
@@ -123,10 +123,7 @@ export default function WatchlistMediaCardMenu({
         <ContextMenu.Trigger>
           <View>
             <Host style={{ width: 14, height: 22 }}>
-              <Image
-                systemName="ellipsis"
-                color={colors.text}
-              />
+              <Image systemName="ellipsis" color={colors.text} />
             </Host>
           </View>
         </ContextMenu.Trigger>
