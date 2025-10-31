@@ -18,8 +18,11 @@ import { CONFIG } from "@/services/config";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
-// Dynamic banner height: 40% of screen height, capped between 250 and 400
-const BANNER_HEIGHT = Math.min(Math.max(height, 500), 700);
+// Banner preview with vertical aspect ratio for modal display
+// Width spans full screen minus padding
+const BANNER_WIDTH = width - TOKENS.margin.horizontal * 2;
+// Height uses 3:4 vertical ratio (portrait-friendly)
+const BANNER_HEIGHT = Math.round((BANNER_WIDTH * 4) / 3);
 
 export default function ProfileBannerEditScreen() {
   const { user, refreshUser } = useUserContext();

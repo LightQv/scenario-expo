@@ -247,12 +247,12 @@
     "account": {
       "title": "Account",
       "viewProfile": "View profile",
+      "profileDescription": "You can manage your banner, profile and account informations there.",
       "views": {
         "title": "Views",
         "movies": "Movies",
         "tv": "TV Shows"
-      },
-      "settings": "Account settings"
+      }
     },
     "watchlistCreate": {
       "title": "New Watchlist"
@@ -261,7 +261,7 @@
       "title": "Update Watchlist"
     },
     "top": {
-      "title": "Top Rated",
+      "title": "Top",
       "sort": {
         "ratingDesc": "Rating ↓",
         "ratingAsc": "Rating ↑",

@@ -248,12 +248,12 @@
     "account": {
       "title": "Compte",
       "viewProfile": "Voir le profil",
+      "profileDescription": "Vous pouvez gérer votre bannière, profil et informations de compte ici.",
       "views": {
         "title": "Vues",
         "movies": "Films",
         "tv": "Séries TV"
-      },
-      "settings": "Paramètres du compte"
+      }
     },
     "watchlistCreate": {
       "title": "Nouvelle liste"

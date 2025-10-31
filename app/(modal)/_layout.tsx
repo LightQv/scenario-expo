@@ -121,20 +121,6 @@ export default function ModalLayout() {
         }}
       />
       <Stack.Screen
-        name="account-settings"
-        options={{
-          presentation: "modal",
-          headerShown: true,
-          headerTitle: i18n.t("screen.account.settings"),
-          headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
-        }}
-      />
-      <Stack.Screen
         name="profile-edit"
         options={{
           presentation: "modal",
