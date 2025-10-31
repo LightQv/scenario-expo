@@ -98,3 +98,40 @@ export function formatGender(gender: number): string {
       return i18n.t("screen.person.gender.other");
   }
 }
+
+/**
+ * Formate une durée totale en semaines, jours, heures et minutes
+ * Affiche dynamiquement les unités nécessaires (pas de secondes)
+ */
+export function formatTotalRuntime(minutes: number): string {
+  if (!minutes || minutes === 0) return "0min";
+
+  const weeks = Math.floor(minutes / (60 * 24 * 7));
+  const days = Math.floor((minutes % (60 * 24 * 7)) / (60 * 24));
+  const hours = Math.floor((minutes % (60 * 24)) / 60);
+  const mins = Math.floor(minutes % 60);
+
+  const parts: string[] = [];
+
+  if (weeks > 0) {
+    const weekLabel =
+      weeks === 1 ? i18n.t("stats.durationWeek") : i18n.t("stats.durationWeeks");
+    parts.push(`${weeks} ${weekLabel}`);
+  }
+
+  if (days > 0) {
+    const dayLabel =
+      days === 1 ? i18n.t("stats.durationDay") : i18n.t("stats.durationDays");
+    parts.push(`${days} ${dayLabel}`);
+  }
+
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+
+  if (mins > 0) {
+    parts.push(`${mins}min`);
+  }
+
+  return parts.join(" ");
+}

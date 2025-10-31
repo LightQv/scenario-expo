@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  PlatformColor,
-  useColorScheme,
-} from "react-native";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { TOKENS, FONTS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 

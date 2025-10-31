@@ -17,7 +17,8 @@
   "validator": {
     "username": {
       "min": "5 characters minimum",
-      "max": "30 characters maximum"
+      "max": "30 characters maximum",
+      "required": "Username is required"
     },
     "email": {
       "required": "A valid Email is required",
@@ -26,7 +27,8 @@
     },
     "password": {
       "min": "8 characters minimum",
-      "max": "30 characters maximum"
+      "max": "30 characters maximum",
+      "required": "Password is required"
     },
     "confirmPassword": "Passwords must match",
     "search": {
@@ -141,7 +143,12 @@
     },
     "profile": {
       "update": {
+        "title": "Edit Profile",
         "subtitle": "Please note that you'll be disconnected to ensure the update.",
+        "confirmation": {
+          "title": "Confirm Profile Update",
+          "message": "Since the password is modified, you will be logged out for security reasons. Do you want to continue?"
+        },
         "banner": {
           "title": "Change your banner ?",
           "subtitle": "Your actual banner :",
@@ -238,7 +245,14 @@
       "title": "Forgot something ?"
     },
     "account": {
-      "title": "Account"
+      "title": "Account",
+      "viewProfile": "View profile",
+      "views": {
+        "title": "Views",
+        "movies": "Movies",
+        "tv": "TV Shows"
+      },
+      "settings": "Account settings"
     },
     "watchlistCreate": {
       "title": "New Watchlist"
@@ -420,6 +434,10 @@
           "option3": "Change password",
           "option4": "Delete my account"
         }
+      },
+      "menu": {
+        "editBanner": "Edit Banner",
+        "editProfile": "Edit Profile"
       }
     }
   },
@@ -449,6 +467,7 @@
       "login": "Welcome back!",
       "logout": "See you soon!",
       "urlCopied": "URL copied to clipboard",
+      "banner": "Banner updated successfully",
       "profile": {
         "update": {
           "email": "Email updated",

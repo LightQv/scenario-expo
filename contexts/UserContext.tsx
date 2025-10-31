@@ -4,6 +4,21 @@ import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { apiFetch } from "@/services/instances";
+import { CONFIG } from "@/services/config";
+
+/**
+ * Transform user data from API response to app format
+ * Converts profile_banner path to full URL
+ */
+const transformUserData = (userData: any): User => {
+  const { profile_banner, ...others } = userData;
+  return {
+    ...others,
+    profileBanner: profile_banner
+      ? `${CONFIG.apiBaseUrl}/${profile_banner.slice(1)}`
+      : null,
+  };
+};
 
 interface UserContextValue {
   authState: { loading: boolean; authenticated: boolean | null };
@@ -19,6 +34,7 @@ interface UserContextValue {
   forgotPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   expireSession: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextValue | undefined>(undefined);
@@ -125,8 +141,9 @@ export function UserProvider({ children }: ContextProps) {
       });
 
       if (result) {
+        const transformedUser = transformUserData(result);
         setAuthState({ loading: true, authenticated: null });
-        await SecureStore.setItemAsync("user", JSON.stringify(result));
+        await SecureStore.setItemAsync("user", JSON.stringify(transformedUser));
         notifySuccess(i18n.t("toast.success.login"));
         router.back(); // Close modal
         setLoader(false);
@@ -181,6 +198,25 @@ export function UserProvider({ children }: ContextProps) {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      if (!user?.id) return;
+
+      // Fetch updated user data from the API
+      const rawUserData = await apiFetch(`/api/v1/users/${user.id}`);
+
+      // Transform the data (convert profile_banner path to full URL)
+      const transformedUser = transformUserData(rawUserData);
+
+      // Update local state and SecureStore
+      setUser(transformedUser);
+      await SecureStore.setItemAsync("user", JSON.stringify(transformedUser));
+    } catch (err: any) {
+      console.error("Refresh user error:", err);
+      // Don't show error to user, silently fail
+    }
+  };
+
   const value = {
     authState,
     user,
@@ -190,6 +226,7 @@ export function UserProvider({ children }: ContextProps) {
     forgotPassword,
     logout,
     expireSession,
+    refreshUser,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

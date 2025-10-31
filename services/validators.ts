@@ -87,3 +87,22 @@ export const editPasswordSchema = Yup.object({
     i18n.t("validator.confirmPassword")
   ),
 })
+
+export const editProfileSchema = Yup.object({
+  username: Yup.string()
+    .min(5, i18n.t("validator.username.min"))
+    .max(30, i18n.t("validator.username.max"))
+    .required(i18n.t("validator.username.required")),
+  email: Yup.string()
+    .email(i18n.t("validator.email.required"))
+    .min(8, i18n.t("validator.email.min"))
+    .max(255, i18n.t("validator.email.max"))
+    .required(i18n.t("validator.email.required")),
+  password: Yup.string()
+    .min(8, i18n.t("validator.password.min"))
+    .max(30, i18n.t("validator.password.max"))
+    .required(i18n.t("validator.password.required")),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), undefined], i18n.t("validator.confirmPassword"))
+    .required(i18n.t("validator.confirmPassword")),
+})
