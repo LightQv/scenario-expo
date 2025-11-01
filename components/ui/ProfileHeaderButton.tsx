@@ -2,7 +2,7 @@ import { Pressable, PlatformColor, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useUserContext, useThemeContext } from "@/contexts";
-import { FONTS } from "@/constants/theme";
+import { FONTS, TOKENS } from "@/constants/theme";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
@@ -40,7 +40,7 @@ export default function ProfileHeaderButton() {
       ) : (
         <Ionicons
           name="person-circle-outline"
-          size={24}
+          size={TOKENS.icon}
           color={PlatformColor("label")}
         />
       )}

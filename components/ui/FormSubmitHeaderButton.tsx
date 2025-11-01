@@ -1,6 +1,6 @@
 import { TouchableOpacity, StyleSheet, PlatformColor } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { BUTTON } from "@/constants/theme";
+import { BUTTON, TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
 
 type FormSubmitHeaderButtonProps = {
@@ -23,7 +23,7 @@ export default function FormSubmitHeaderButton({
     >
       <Ionicons
         name="checkmark"
-        size={24}
+        size={TOKENS.icon}
         color={disabled ? PlatformColor("systemGray") : colors.main}
       />
     </TouchableOpacity>

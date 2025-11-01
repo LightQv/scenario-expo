@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useThemeContext } from "@/contexts/ThemeContext";
-import { BUTTON } from "@/constants/theme";
+import { BUTTON, TOKENS } from "@/constants/theme";
 
 export default function WatchlistCreateButton() {
   const { colors } = useThemeContext();
@@ -17,7 +17,7 @@ export default function WatchlistCreateButton() {
     <TouchableOpacity onPress={handlePress} activeOpacity={BUTTON.opacity}>
       <Ionicons
         name="add"
-        size={24}
+        size={TOKENS.icon}
         color={colors.text}
       />
     </TouchableOpacity>

@@ -163,7 +163,7 @@ export default function WatchlistMoveModal() {
                 {alreadyIn && (
                   <Ionicons
                     name="checkmark-circle"
-                    size={24}
+                    size={TOKENS.icon}
                     color={colors.main}
                   />
                 )}

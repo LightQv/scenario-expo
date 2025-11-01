@@ -13,6 +13,7 @@ export const TOKENS = {
   image: {
     height: 280,
   },
+  icon: 24,
   header: {
     height: 45,
     icon: 24,

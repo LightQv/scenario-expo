@@ -2,6 +2,7 @@ import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import { TOKENS } from "@/constants/theme";
 
 type GoBackButtonProps = {
   variant?: "back" | "close";
@@ -15,7 +16,7 @@ export default function GoBackButton({ variant = "back" }: GoBackButtonProps) {
 
   return (
     <Pressable onPress={() => router.back()} style={{ marginLeft: margin }}>
-      <Ionicons name={iconName} size={24} color={colors.text} />
+      <Ionicons name={iconName} size={TOKENS.icon} color={colors.text} />
     </Pressable>
   );
 }

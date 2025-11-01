@@ -4,115 +4,17 @@ import {
   View,
   StyleSheet,
   PlatformColor,
-  // Alert,
 } from "react-native";
-// import { useRef, useState } from "react";
-// import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-// import Reanimated, {
-//   SharedValue,
-//   useAnimatedStyle,
-// } from "react-native-reanimated";
 import { Link } from "expo-router";
 import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
-// import { apiFetch } from "@/services/instances";
-// import { notifyError } from "@/components/toasts/Toast";
 
 type WatchlistCardProps = {
   data: Watchlist;
-  onUpdate: () => void;
 };
 
-export default function WatchlistCard({ data, onUpdate }: WatchlistCardProps) {
-  // const swipeRef = useRef<Swipeable>(null);
-  // const [isDeleting, setIsDeleting] = useState(false);
-
-  // const renderLeftAction = (
-  //   _prog: SharedValue<number>,
-  //   drag: SharedValue<number>,
-  // ) => {
-  //   const styleAnimation = useAnimatedStyle(() => {
-  //     return {
-  //       transform: [{ translateX: drag.value }],
-  //     };
-  //   });
-
-  //   return (
-  //     <Reanimated.View style={[styles.leftAction, styleAnimation]}>
-  //       <Ionicons name="pencil" size={20} color="#fff" />
-  //     </Reanimated.View>
-  //   );
-  // };
-
-  // const renderRightAction = (
-  //   _prog: SharedValue<number>,
-  //   drag: SharedValue<number>,
-  // ) => {
-  //   const styleAnimation = useAnimatedStyle(() => {
-  //     return {
-  //       transform: [{ translateX: drag.value }],
-  //     };
-  //   });
-
-  //   return (
-  //     <Reanimated.View style={[styles.rightAction, styleAnimation]}>
-  //       <Ionicons name="trash" size={20} color="#fff" />
-  //     </Reanimated.View>
-  //   );
-  // };
-
-  // const handleSwipeableOpen = (direction: "left" | "right") => {
-  //   if (direction === "left") {
-  //     // Edit - open modal
-  //     router.push({
-  //       pathname: "/(modal)/watchlist-edit",
-  //       params: { id: data.id },
-  //     });
-  //     swipeRef.current?.close();
-  //   } else if (direction === "right") {
-  //     // Delete - show confirmation
-  //     openDelete();
-  //   }
-  // };
-
-  // const openDelete = () => {
-  //   Alert.alert(
-  //     i18n.t("form.watchlist.delete.title"),
-  //     i18n.t("form.watchlist.delete.warning"),
-  //     [
-  //       {
-  //         text: i18n.t("form.watchlist.delete.submit"),
-  //         onPress: () => deleteWatchlist(),
-  //         style: "destructive",
-  //       },
-  //       {
-  //         text: i18n.t("form.watchlist.delete.cancel"),
-  //         style: "cancel",
-  //         onPress: () => swipeRef.current?.close(),
-  //       },
-  //     ],
-  //   );
-  // };
-
-  // const deleteWatchlist = async () => {
-  //   try {
-  //     setIsDeleting(true);
-  //     await apiFetch(`/api/v1/watchlists/${data.id}`, {
-  //       method: "DELETE",
-  //     });
-  //     onUpdate();
-  //   } catch (err: any) {
-  //     console.error("Error deleting watchlist:", err);
-  //     if (!err.message?.includes("403")) {
-  //       notifyError(i18n.t("toast.error"));
-  //     }
-  //   } finally {
-  //     setIsDeleting(false);
-  //     swipeRef.current?.close();
-  //   }
-  // };
-
+export default function WatchlistCard({ data }: WatchlistCardProps) {
   return (
     <Link
       href={{

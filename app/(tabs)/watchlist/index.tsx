@@ -125,14 +125,9 @@ export default function WatchlistIndexScreen() {
     await fetchWatchlists();
   };
 
-  // Handle watchlist update
-  const handleWatchlistUpdate = useCallback(() => {
-    fetchWatchlists();
-  }, [user?.id]);
-
   // Render watchlist card
   const renderItem: ListRenderItem<Watchlist> = ({ item }) => (
-    <WatchlistCard data={item} onUpdate={handleWatchlistUpdate} />
+    <WatchlistCard data={item} />
   );
 
   // Empty state
@@ -151,7 +146,7 @@ export default function WatchlistIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
-      <AnimatedHeader title="Watchlist" scrollY={scrollY} />
+      <AnimatedHeader title={i18n.t("screen.watchlist.title")} scrollY={scrollY} />
 
       <Animated.FlatList
         ref={flatListRef}
