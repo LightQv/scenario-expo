@@ -253,6 +253,9 @@
         "title": "Vues",
         "movies": "Films",
         "tv": "Séries TV"
+      },
+      "settings": {
+        "title": "Paramètres du compte"
       }
     },
     "watchlistCreate": {

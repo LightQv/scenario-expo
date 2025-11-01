@@ -252,6 +252,9 @@
         "title": "Views",
         "movies": "Movies",
         "tv": "TV Shows"
+      },
+      "settings": {
+        "title": "Account Settings"
       }
     },
     "watchlistCreate": {

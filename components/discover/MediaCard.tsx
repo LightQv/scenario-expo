@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
-  Dimensions,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -63,7 +62,10 @@ export default function MediaCard({
       asChild
       push
     >
-      <TouchableOpacity style={componentStyles.container} activeOpacity={BUTTON.opacity}>
+      <TouchableOpacity
+        style={componentStyles.container}
+        activeOpacity={BUTTON.opacity}
+      >
         <View style={componentStyles.imageContainer}>
           <Image
             source={{

@@ -38,6 +38,10 @@ export default function AccountScreen() {
     router.push(`/profile/${type}`);
   };
 
+  const handleAccountSettingsPress = () => {
+    router.push("/(modal)/account-settings");
+  };
+
   return (
     <ScrollView
       style={styles.scrollView}
@@ -145,6 +149,31 @@ export default function AccountScreen() {
                 name="chevron-forward"
                 size={20}
                 color={PlatformColor("secondaryLabel")}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Account Settings Section */}
+        <View style={styles.section}>
+          <View
+            style={[
+              styles.viewsContainer,
+              { backgroundColor: PlatformColor("systemGray5") },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={handleAccountSettingsPress}
+              style={styles.viewsOption}
+              activeOpacity={BUTTON.opacity}
+            >
+              <Text style={[styles.cardText, { color: errorColor }]}>
+                {i18n.t("screen.account.settings.title")}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={errorColor}
               />
             </TouchableOpacity>
           </View>
