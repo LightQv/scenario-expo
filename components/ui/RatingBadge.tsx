@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { THEME_COLORS } from "@/constants/theme/colors";
+import { useThemeContext } from "@/contexts";
 
 type RatingBadgeProps = {
   score: number;
@@ -9,6 +9,7 @@ type RatingBadgeProps = {
 
 export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
   const colorScheme = useColorScheme();
+  const { colors } = useThemeContext();
   // Convert TMDB score (0-10) to 0-5 scale
   const displayScore = (score / 2).toFixed(1);
 
@@ -65,11 +66,9 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
       <Ionicons
         name="star"
         size={sizeStyles.iconSize}
-        color={THEME_COLORS.main}
+        color={colors.main}
       />
-      <Text style={[styles.scoreText, { color: "#fff" }, sizeStyles.text]}>
-        {displayScore}
-      </Text>
+      <Text style={[styles.scoreText, sizeStyles.text]}>{displayScore}</Text>
     </View>
   );
 }
@@ -103,6 +102,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontWeight: "600",
+    color: "#fff",
   },
   scoreTextSm: {
     fontSize: 11,

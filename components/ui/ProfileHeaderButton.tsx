@@ -1,40 +1,48 @@
-import { Pressable, PlatformColor, View, Text, StyleSheet } from "react-native";
+import { Pressable, PlatformColor, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useUserContext } from "@/contexts";
-import { THEME_COLORS, FONTS } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS } from "@/constants/theme";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
+  const { colors } = useThemeContext();
 
   const handlePress = () => {
     if (authState.authenticated && user) {
-      // Open account modal when authenticated
       router.push("/(modal)/account");
     } else {
-      // Open login modal when not authenticated
       router.push("/(modal)/login");
     }
   };
 
+  const isAuthenticated = authState.authenticated && user;
+
   return (
-    <Pressable onPress={handlePress} style={styles.headerButton}>
-      {authState.authenticated && user ? (
-        <View
-          style={[styles.avatarCircle, { backgroundColor: THEME_COLORS.main }]}
-        >
-          <Text style={styles.avatarText}>
-            {user.username.charAt(0).toUpperCase()}
-          </Text>
-        </View>
+    <Pressable
+      onPress={handlePress}
+      style={[
+        styles.headerButton,
+        isAuthenticated && {
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          backgroundColor: colors.main,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+      ]}
+    >
+      {isAuthenticated ? (
+        <Text style={styles.avatarText}>
+          {user.username.charAt(0).toUpperCase()}
+        </Text>
       ) : (
-        <View style={styles.avatarCircle}>
-          <Ionicons
-            name="person-outline"
-            size={16}
-            color={PlatformColor("label")}
-          />
-        </View>
+        <Ionicons
+          name="person-circle-outline"
+          size={TOKENS.icon}
+          color={PlatformColor("label")}
+        />
       )}
     </Pressable>
   );
@@ -43,13 +51,7 @@ export default function ProfileHeaderButton() {
 const styles = StyleSheet.create({
   headerButton: {
     marginLeft: 4.25,
-  },
-  avatarCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    overflow: "visible",
   },
   avatarText: {
     color: "#fff",

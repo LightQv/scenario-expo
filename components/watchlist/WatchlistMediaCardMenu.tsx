@@ -5,6 +5,7 @@ import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
+import { formatYear } from "@/services/utils";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useViewContext } from "@/contexts/ViewContext";
@@ -44,17 +45,13 @@ export default function WatchlistMediaCardMenu({
         }
       } else {
         // Add to views
-        const releaseYear = media.release_date
-          ? new Date(media.release_date).getFullYear().toString()
-          : "";
-
         const viewData: ViewCreate = {
           tmdb_id: media.tmdb_id,
           genre_ids: media.genre_ids,
           poster_path: media.poster_path,
           backdrop_path: media.backdrop_path,
           release_date: media.release_date,
-          release_year: releaseYear,
+          release_year: formatYear(media.release_date),
           runtime: media.runtime,
           title: media.title,
           media_type: media.media_type,
@@ -112,7 +109,7 @@ export default function WatchlistMediaCardMenu({
               ? i18n.t("screen.watchlist.detail.menu.unview")
               : i18n.t("screen.watchlist.detail.menu.view")}
           </Button>
-          <Button onPress={handleMoveToWatchlist} systemImage="arrow.right">
+          <Button onPress={handleMoveToWatchlist} systemImage="folder">
             {i18n.t("screen.watchlist.detail.menu.move")}
           </Button>
           <Button
@@ -126,10 +123,7 @@ export default function WatchlistMediaCardMenu({
         <ContextMenu.Trigger>
           <View>
             <Host style={{ width: 14, height: 22 }}>
-              <Image
-                systemName="ellipsis"
-                color={colors.text}
-              />
+              <Image systemName="ellipsis" color={colors.text} />
             </Host>
           </View>
         </ContextMenu.Trigger>

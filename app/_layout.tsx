@@ -70,11 +70,11 @@ function RootLayoutNav() {
           <ViewProvider>
             <GenreProvider>
               <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="(modal)"
                   options={{ presentation: "modal", headerShown: false }}
                 />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="profile"
                   options={{ headerShown: false, presentation: "card" }}

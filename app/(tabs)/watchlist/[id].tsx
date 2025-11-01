@@ -124,34 +124,22 @@ export default function WatchlistDetailScreen() {
     // Apply sort
     switch (sortType) {
       case "title_asc":
-        medias.sort((a, b) =>
-          (a.title || a.name || "").localeCompare(b.title || b.name || ""),
-        );
+        medias.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
         break;
       case "title_desc":
-        medias.sort((a, b) =>
-          (b.title || b.name || "").localeCompare(a.title || a.name || ""),
-        );
+        medias.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
         break;
       case "date_asc":
         medias.sort((a, b) => {
-          const dateA = new Date(
-            a.release_date || a.first_air_date || "",
-          ).getTime();
-          const dateB = new Date(
-            b.release_date || b.first_air_date || "",
-          ).getTime();
+          const dateA = new Date(a.release_date || "").getTime();
+          const dateB = new Date(b.release_date || "").getTime();
           return dateA - dateB;
         });
         break;
       case "date_desc":
         medias.sort((a, b) => {
-          const dateA = new Date(
-            a.release_date || a.first_air_date || "",
-          ).getTime();
-          const dateB = new Date(
-            b.release_date || b.first_air_date || "",
-          ).getTime();
+          const dateA = new Date(a.release_date || "").getTime();
+          const dateB = new Date(b.release_date || "").getTime();
           return dateB - dateA;
         });
         break;

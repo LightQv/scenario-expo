@@ -10,12 +10,13 @@ import { useState, useLayoutEffect } from "react";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import i18n from "@/services/i18n";
-import { useUserContext } from "@/contexts";
-import { TOKENS, THEME_COLORS, BLURHASH } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { router, useNavigation } from "expo-router";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { CONFIG } from "@/services/config";
 import { Ionicons } from "@expo/vector-icons";
+import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 
 const { width, height } = Dimensions.get("window");
 // Banner preview with vertical aspect ratio for modal display
@@ -26,6 +27,7 @@ const BANNER_HEIGHT = Math.round((BANNER_WIDTH * 4) / 3);
 
 export default function ProfileBannerEditScreen() {
   const { user, refreshUser } = useUserContext();
+  const { colors } = useThemeContext();
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -105,22 +107,10 @@ export default function ProfileBannerEditScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
+        <FormSubmitHeaderButton
           onPress={handleSubmit}
           disabled={!selectedImage || isSubmitting}
-          style={styles.headerButton}
-          activeOpacity={0.6}
-        >
-          <Ionicons
-            name="checkmark"
-            size={24}
-            color={
-              !selectedImage || isSubmitting
-                ? PlatformColor("systemGray")
-                : THEME_COLORS.main
-            }
-          />
-        </TouchableOpacity>
+        />
       ),
     });
   }, [navigation, selectedImage, isSubmitting]);
@@ -139,7 +129,7 @@ export default function ProfileBannerEditScreen() {
         <TouchableOpacity
           onPress={pickImage}
           disabled={isSubmitting}
-          activeOpacity={0.8}
+          activeOpacity={BUTTON.opacity}
           style={styles.bannerTouchable}
         >
           <View style={styles.bannerContainer}>
@@ -155,7 +145,7 @@ export default function ProfileBannerEditScreen() {
               <View
                 style={[
                   styles.bannerImage,
-                  { backgroundColor: THEME_COLORS.main },
+                  { backgroundColor: colors.main },
                 ]}
               />
             )}
@@ -211,8 +201,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     alignItems: "center",
     justifyContent: "center",
-  },
-  headerButton: {
-    paddingLeft: 6,
   },
 });
