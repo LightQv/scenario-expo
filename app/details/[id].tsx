@@ -20,7 +20,7 @@ import Animated, {
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
 import ViewAction from "@/components/actions/ViewAction";
-import ShareButton from "@/components/ui/ShareButton";
+import CopyUrlButton from "@/components/details/CopyUrlButton";
 import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
 import HeaderRight from "@/components/ui/HeaderRight";
 
@@ -76,13 +76,13 @@ export default function DetailsScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
-      // Only show ShareButton and ViewAction for movie and tv, not for person
+      // Only show CopyUrlButton and ViewAction for movie and tv, not for person
       headerRight:
         type === "movie" || type === "tv"
           ? () =>
               data && (
                 <HeaderRight>
-                  <ShareButton
+                  <CopyUrlButton
                     mediaType={type}
                     tmdbId={id}
                     title={data.title || data.name}

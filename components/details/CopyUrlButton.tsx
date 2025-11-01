@@ -7,13 +7,13 @@ import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { TOKENS } from "@/constants/theme";
 
-type ShareButtonProps = {
+type CopyUrlButtonProps = {
   mediaType: string;
   tmdbId: string;
   title?: string;
 };
 
-export default function ShareButton({ mediaType, tmdbId }: ShareButtonProps) {
+export default function CopyUrlButton({ mediaType, tmdbId }: CopyUrlButtonProps) {
   const { colors } = useThemeContext();
 
   const handleCopy = async () => {
