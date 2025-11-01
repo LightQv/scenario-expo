@@ -52,15 +52,14 @@ export default function MediaTypePicker({
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: TOKENS.margin.horizontal,
+    height: 39,
   },
   glassView: {
     borderRadius: TOKENS.radius.full,
     marginHorizontal: TOKENS.margin.horizontal,
   },
   picker: {
-    height: 48,
-    flex: 1,
     paddingHorizontal: TOKENS.margin.horizontal,
+    height: 39,
   },
 });

@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
+import { Stack } from "expo-router";
 import { useSearchContext } from "./_layout";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
@@ -15,13 +16,15 @@ import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import { addSearchToHistory } from "@/services/searchHistory";
+import { useThemeContext } from "@/contexts";
 
 type FetchParams = {
   page: number;
 };
 
 export default function QueryScreen() {
-  const { search, mediaType, setShowHistory } = useSearchContext();
+  const { search, mediaType } = useSearchContext();
+  const { colors } = useThemeContext();
   const [fetchParams, setFetchParams] = useState<FetchParams>({ page: 1 });
   const [loading, setLoading] = useState<boolean>(false);
   const [results, setResults] = useState<TmdbData[]>([]);
@@ -56,7 +59,6 @@ export default function QueryScreen() {
     setFetchParams({ page: 1 });
     listRef.current?.scrollToOffset({ animated: true, offset: 0 });
     setLoading(true);
-    setShowHistory(false);
   };
 
   const fetchSearchResults = async () => {
@@ -112,26 +114,36 @@ export default function QueryScreen() {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-    >
-      <FlatList
-        ref={listRef}
-        data={results}
-        renderItem={renderItem}
-        keyExtractor={(item) => `${item.id}-${item.media_type || mediaType}`}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmptyComponent}
-        onEndReached={handleNextPage}
-        onEndReachedThreshold={0.5}
+    <>
+      <Stack.Screen
+        options={{
+          headerTitle: totalResults > 0 && !loading ? search : "",
+          headerTitleStyle: {
+            color: colors.text,
+          },
+        }}
       />
-    </View>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: PlatformColor("systemBackground") },
+        ]}
+      >
+        <FlatList
+          ref={listRef}
+          data={results}
+          renderItem={renderItem}
+          keyExtractor={(item) => `${item.id}-${item.media_type || mediaType}`}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyComponent}
+          onEndReached={handleNextPage}
+          onEndReachedThreshold={0.5}
+        />
+      </View>
+    </>
   );
 }
 

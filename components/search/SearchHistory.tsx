@@ -77,15 +77,13 @@ export default function SearchHistory({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text
-          style={[
-            styles.headerTitle,
-            { color: colors.text },
-          ]}
-        >
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
           {i18n.t("screen.search.history.title")}
         </Text>
-        <TouchableOpacity onPress={onClearHistory} activeOpacity={BUTTON.opacity}>
+        <TouchableOpacity
+          onPress={onClearHistory}
+          activeOpacity={BUTTON.opacity}
+        >
           <Text style={[styles.clearButton, { color: colors.main }]}>
             {i18n.t("screen.search.history.clear")}
           </Text>
