@@ -7,7 +7,6 @@ import {
   Animated,
 } from "react-native";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import DiscoverSection from "@/components/discover/DiscoverSection";
@@ -30,7 +29,6 @@ type SectionData = {
 
 export default function DiscoverIndexScreen() {
   const { movieGenres } = useGenreContext();
-  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState<SectionData[]>([]);
   const scrollY = useRef(new Animated.Value(0)).current;

@@ -2,20 +2,18 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  Text,
   PlatformColor,
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
 import { useState, useEffect, useMemo } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import DiscoverSection from "@/components/discover/DiscoverSection";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import { notifyError } from "@/components/toasts/Toast";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { TOKENS } from "@/constants/theme";
 
 type SectionData = {
   id: string;

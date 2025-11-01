@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  PlatformColor,
-} from "react-native";
+import { StyleSheet, View, Text, PlatformColor } from "react-native";
 import { TOKENS, FONTS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { formatTotalRuntime } from "@/services/utils";
@@ -22,7 +16,6 @@ export default function StatisticsPills({
   movieRuntime,
   tvEpisodesCount,
 }: StatisticsPillsProps) {
-
   const formatMovieCount = () => {
     if (movieCount === 0) return `0 ${i18n.t("stats.movies")}`;
     if (movieCount === 1) return `${movieCount} ${i18n.t("stats.movie")}`;

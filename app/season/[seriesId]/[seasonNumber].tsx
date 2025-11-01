@@ -6,7 +6,7 @@ import {
   PlatformColor,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Image } from "expo-image";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
@@ -29,7 +29,6 @@ export default function SeasonDetailScreen() {
   }>();
   const [data, setData] = useState<SeasonDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const navigation = useNavigation();
 
   // Fetch season details

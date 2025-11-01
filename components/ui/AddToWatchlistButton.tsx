@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { BUTTON, TOKENS } from "@/constants/theme";
