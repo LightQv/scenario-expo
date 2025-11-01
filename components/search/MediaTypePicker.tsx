@@ -35,7 +35,7 @@ export default function MediaTypePicker({
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <GlassView style={styles.glassView}>
         <Host matchContents style={styles.picker}>
           <Picker
@@ -51,9 +51,6 @@ export default function MediaTypePicker({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 39,
-  },
   glassView: {
     borderRadius: TOKENS.radius.full,
     marginHorizontal: TOKENS.margin.horizontal,
@@ -61,5 +58,6 @@ const styles = StyleSheet.create({
   picker: {
     paddingHorizontal: TOKENS.margin.horizontal,
     height: 39,
+    flex: 1,
   },
 });

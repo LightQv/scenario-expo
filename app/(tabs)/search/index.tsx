@@ -181,7 +181,7 @@ export default function SearchScreen() {
           transform: [{ translateY: historyTranslateY }],
         }}
       >
-        <View style={{ marginBottom: 8 }}>
+        <View style={{ marginBottom: 28 }}>
           <MediaTypePicker
             selectedType={mediaType}
             onTypeChange={setMediaType}
