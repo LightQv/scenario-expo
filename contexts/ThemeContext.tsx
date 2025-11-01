@@ -17,6 +17,7 @@ interface ThemeContextProps {
     headerBackground: string;
     grade: typeof GRADE_COLORS.light;
     toast: typeof TOAST_COLORS.light;
+    error: string;
   };
 }
 
@@ -30,6 +31,7 @@ const ThemeContext = createContext<ThemeContextProps>({
     headerBackground: ADAPTIVE_COLORS.light.headerBackground,
     grade: GRADE_COLORS.light,
     toast: TOAST_COLORS.light,
+    error: THEME_COLORS.error,
   },
 });
 
@@ -55,6 +57,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         : ADAPTIVE_COLORS.light.headerBackground,
       grade: isDark ? GRADE_COLORS.dark : GRADE_COLORS.light,
       toast: isDark ? TOAST_COLORS.dark : TOAST_COLORS.light,
+      error: isDark ? THEME_COLORS.errorAccent : THEME_COLORS.error,
     },
   };
 

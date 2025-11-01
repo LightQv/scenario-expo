@@ -54,11 +54,7 @@ export default function WatchlistMediaCard({
       {/* Viewed indicator on left center outside card */}
       {viewed && (
         <View style={styles.viewedIndicator}>
-          <Ionicons
-            name="checkmark-outline"
-            size={12}
-            color={colors.text}
-          />
+          <Ionicons name="eye" size={11} color={colors.text} />
         </View>
       )}
 
@@ -146,7 +142,7 @@ const styles = StyleSheet.create({
   },
   viewedIndicator: {
     position: "absolute",
-    left: 1,
+    left: 2,
     top: "50%",
     zIndex: 10,
     justifyContent: "center",

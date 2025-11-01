@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -33,7 +33,6 @@ export default function CategoryDetailScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const router = useRouter();
   const navigation = useNavigation();
 
   // Build the endpoint with special parameters

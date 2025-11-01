@@ -8,7 +8,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BLURHASH, TOKENS, FONTS, THEME_COLORS } from "@/constants/theme";
+import { BLURHASH, TOKENS, FONTS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 650;
@@ -27,6 +28,7 @@ export default function ProfileBanner({
   scrollY,
 }: ProfileBannerProps) {
   const insets = useSafeAreaInsets();
+  const { colors } = useThemeContext();
 
   // Parallax animation for the banner image
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -78,7 +80,7 @@ export default function ProfileBanner({
             />
           ) : (
             <View
-              style={[styles.image, { backgroundColor: THEME_COLORS.main }]}
+              style={[styles.image, { backgroundColor: colors.main }]}
             />
           )}
         </Animated.View>

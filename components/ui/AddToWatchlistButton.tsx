@@ -1,6 +1,7 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { BUTTON, TOKENS } from "@/constants/theme";
 
 type AddToWatchlistButtonProps = {
   tmdbId: string;
@@ -21,8 +22,8 @@ export default function AddToWatchlistButton({
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-      <Ionicons name="add" size={24} color="#fff" />
+    <TouchableOpacity onPress={handlePress} activeOpacity={BUTTON.opacity}>
+      <Ionicons name="add" size={TOKENS.icon} color="#fff" />
     </TouchableOpacity>
   );
 }

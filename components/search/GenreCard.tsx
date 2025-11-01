@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_GAP = 12;
@@ -39,7 +39,7 @@ export default function GenreCard({ id, name }: GenreCardProps) {
       }}
       asChild
     >
-      <TouchableOpacity style={styles.container} activeOpacity={0.7}>
+      <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
         <View style={styles.card}>
           <BlurView intensity={20} style={styles.blurContainer}>
             <LinearGradient

@@ -1,13 +1,11 @@
 import {
   StyleSheet,
-  ScrollView,
   View,
   Text,
   PlatformColor,
   FlatList,
   ActivityIndicator,
   ListRenderItem,
-  RefreshControl,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
@@ -74,7 +72,7 @@ export default function ViewTypeScreen() {
       // Apply genre filter
       if (genreId !== null) {
         processed = processed.filter((view) =>
-          view.genre_ids?.includes(genreId)
+          view.genre_ids?.includes(genreId),
         );
       }
 
@@ -82,33 +80,25 @@ export default function ViewTypeScreen() {
       switch (sortType) {
         case "title_asc":
           processed.sort((a, b) =>
-            (a.title || a.name || "").localeCompare(b.title || b.name || "")
+            (a.title || "").localeCompare(b.title || ""),
           );
           break;
         case "title_desc":
           processed.sort((a, b) =>
-            (b.title || b.name || "").localeCompare(a.title || a.name || "")
+            (b.title || "").localeCompare(a.title || ""),
           );
           break;
         case "date_asc":
           processed.sort((a, b) => {
-            const dateA = new Date(
-              a.release_date || a.first_air_date || ""
-            ).getTime();
-            const dateB = new Date(
-              b.release_date || b.first_air_date || ""
-            ).getTime();
+            const dateA = new Date(a.release_date || "").getTime();
+            const dateB = new Date(b.release_date || "").getTime();
             return dateA - dateB;
           });
           break;
         case "date_desc":
           processed.sort((a, b) => {
-            const dateA = new Date(
-              a.release_date || a.first_air_date || ""
-            ).getTime();
-            const dateB = new Date(
-              b.release_date || b.first_air_date || ""
-            ).getTime();
+            const dateA = new Date(a.release_date || "").getTime();
+            const dateB = new Date(b.release_date || "").getTime();
             return dateB - dateA;
           });
           break;

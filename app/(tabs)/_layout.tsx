@@ -1,16 +1,13 @@
 import React from "react";
 import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
-import { useUserContext } from "@/contexts";
+import { useThemeContext, useUserContext } from "@/contexts";
 
 export default function TabLayout() {
   const { authState } = useUserContext();
+  const { colors } = useThemeContext();
 
   return (
-    <NativeTabs
-      tintColor="#eab208"
-      minimizeBehavior="onScrollDown"
-      initialRouteName="discover"
-    >
+    <NativeTabs tintColor={colors.main} minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="top">
         <Icon sf="star.fill" />
         <Label>Top</Label>

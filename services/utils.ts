@@ -1,8 +1,7 @@
 import i18n from "./i18n";
-import { GRADE_COLORS } from "@/constants/theme/colors";
 
 /**
- * Formate une date complète de manière localisée
+ * Formats a complete date in a localized manner
  */
 export function formatFullDate(dateString: string): string {
   if (!dateString) return "";
@@ -18,7 +17,7 @@ export function formatFullDate(dateString: string): string {
 }
 
 /**
- * Extrait uniquement l'année d'une date
+ * Extracts only the year from a date
  */
 export function formatYear(dateString: string): string {
   if (!dateString) return "";
@@ -26,26 +25,7 @@ export function formatYear(dateString: string): string {
 }
 
 /**
- * Détermine la couleur selon la note
- */
-export function setScoreColor(score: number, isDark: boolean): string {
-  const colors = isDark ? GRADE_COLORS.dark : GRADE_COLORS.light;
-
-  if (score >= 8) return colors.excellent;
-  if (score >= 7) return colors.good;
-  if (score >= 5) return colors.average;
-  return colors.bad;
-}
-
-/**
- * Convertit une note sur 10 en note sur 5
- */
-export function convertRatingToFive(rating: number): number {
-  return Number((rating / 2).toFixed(1));
-}
-
-/**
- * Formate la durée en heures et minutes
+ * Formats duration in hours and minutes
  */
 export function formatRuntime(minutes: number): string {
   if (!minutes) return "";
@@ -61,7 +41,7 @@ export function formatRuntime(minutes: number): string {
 }
 
 /**
- * Calcule l'âge à partir d'une date de naissance
+ * Calculates age from a birth date
  */
 export function calculateAge(
   birthday: string,
@@ -86,7 +66,7 @@ export function calculateAge(
 }
 
 /**
- * Formate le genre (gender) en texte
+ * Formats gender as text
  */
 export function formatGender(gender: number): string {
   switch (gender) {
@@ -100,8 +80,8 @@ export function formatGender(gender: number): string {
 }
 
 /**
- * Formate une durée totale en semaines, jours, heures et minutes
- * Affiche dynamiquement les unités nécessaires (pas de secondes)
+ * Formats a total duration in weeks, days, hours and minutes
+ * Dynamically displays the necessary units (no seconds)
  */
 export function formatTotalRuntime(minutes: number): string {
   if (!minutes || minutes === 0) return "0min";
@@ -115,7 +95,9 @@ export function formatTotalRuntime(minutes: number): string {
 
   if (weeks > 0) {
     const weekLabel =
-      weeks === 1 ? i18n.t("stats.durationWeek") : i18n.t("stats.durationWeeks");
+      weeks === 1
+        ? i18n.t("stats.durationWeek")
+        : i18n.t("stats.durationWeeks");
     parts.push(`${weeks} ${weekLabel}`);
   }
 

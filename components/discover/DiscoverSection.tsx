@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
 import i18n from "@/services/i18n";
@@ -64,7 +64,7 @@ export default function DiscoverSection({
           }}
           asChild
         >
-          <TouchableOpacity activeOpacity={0.6} style={styles.titleContainer}>
+          <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.titleContainer}>
             <Text style={[styles.title, { color: PlatformColor("label") }]}>
               {title}
             </Text>

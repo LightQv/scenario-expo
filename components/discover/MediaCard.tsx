@@ -4,17 +4,15 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
-  Dimensions,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
+import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
 import RatingBadge from "@/components/ui/RatingBadge";
 import ViewAction from "@/components/actions/ViewAction";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
+import { useUserContext } from "@/contexts/UserContext";
 
 type MediaCardProps = {
   data: TmdbData;
@@ -27,6 +25,7 @@ export default function MediaCard({
   mediaType,
   size = "sm",
 }: MediaCardProps) {
+  const { authState } = useUserContext();
   const genre = useGenre(data, mediaType);
   const releaseDate = data.release_date || data.first_air_date;
   const isUpcoming = releaseDate && new Date(releaseDate) > new Date();
@@ -63,7 +62,10 @@ export default function MediaCard({
       asChild
       push
     >
-      <TouchableOpacity style={componentStyles.container} activeOpacity={0.7}>
+      <TouchableOpacity
+        style={componentStyles.container}
+        activeOpacity={BUTTON.opacity}
+      >
         <View style={componentStyles.imageContainer}>
           <Image
             source={{
@@ -75,13 +77,15 @@ export default function MediaCard({
             placeholder={BLURHASH.hash}
             transition={BLURHASH.transition}
           />
-          {/* ViewAction button - top right corner */}
-          <ViewAction
-            data={data}
-            mediaType={data.media_type || mediaType}
-            size={size === "grid" ? "sm" : size}
-            style={sharedStyles.viewAction}
-          />
+          {/* ViewAction button - top right corner (only when authenticated) */}
+          {authState.authenticated && (
+            <ViewAction
+              data={data}
+              mediaType={data.media_type || mediaType}
+              size={size === "grid" ? "sm" : size}
+              style={sharedStyles.viewAction}
+            />
+          )}
           {/* RatingBadge - bottom right corner */}
           {data.vote_average && (
             <View style={sharedStyles.ratingBadge}>

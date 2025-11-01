@@ -135,21 +135,21 @@ export default function WatchlistDetailMenu({
       <ContextMenu modifiers={[buttonStyle("glass")]}>
         <ContextMenu.Items>
           <Picker
-            label={i18n.t("screen.watchlist.detail.menu.sort")}
-            options={sortLabels}
-            variant="menu"
-            selectedIndex={selectedSortIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleSortSelect(index)
-            }
-          />
-          <Picker
             label={i18n.t("screen.watchlist.detail.menu.filter")}
             options={filterLabels}
-            variant="menu"
+            variant="inline"
             selectedIndex={selectedFilterIndex}
             onOptionSelected={({ nativeEvent: { index } }) =>
               handleFilterSelect(index)
+            }
+          />
+          <Picker
+            label={i18n.t("screen.watchlist.detail.menu.sort")}
+            options={sortLabels}
+            variant="inline"
+            selectedIndex={selectedSortIndex}
+            onOptionSelected={({ nativeEvent: { index } }) =>
+              handleSortSelect(index)
             }
           />
           <Button onPress={handleEdit} systemImage="pencil">
@@ -166,10 +166,7 @@ export default function WatchlistDetailMenu({
         <ContextMenu.Trigger>
           <View>
             <Host style={{ width: 14, height: 22 }}>
-              <Image
-                systemName="ellipsis"
-                color={colors.text}
-              />
+              <Image systemName="ellipsis" color={colors.text} />
             </Host>
           </View>
         </ContextMenu.Trigger>

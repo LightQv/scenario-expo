@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Button, ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
+import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { FONTS, TOKENS, BLURHASH } from "@/constants/theme";
+import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -46,7 +46,7 @@ export default function PersonCard({ data, size = "sm" }: PersonCardProps) {
       asChild
       push
     >
-      <TouchableOpacity style={componentStyles.container} activeOpacity={0.7}>
+      <TouchableOpacity style={componentStyles.container} activeOpacity={BUTTON.opacity}>
         <View style={componentStyles.imageContainer}>
           {profileUrl ? (
             <Image

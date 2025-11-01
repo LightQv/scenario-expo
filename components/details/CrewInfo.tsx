@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Link } from "expo-router";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 
 type CrewInfoProps = {
@@ -46,7 +46,7 @@ export default function CrewInfo({ crew, mediaType }: CrewInfoProps) {
             asChild
             push
           >
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={BUTTON.opacity}>
               <Text style={[styles.name, { color: PlatformColor("label") }]}>
                 {director.name}
               </Text>
@@ -70,7 +70,7 @@ export default function CrewInfo({ crew, mediaType }: CrewInfoProps) {
             asChild
             push
           >
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={BUTTON.opacity}>
               <Text style={[styles.name, { color: PlatformColor("label") }]}>
                 {composer.name}
               </Text>

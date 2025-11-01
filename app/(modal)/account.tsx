@@ -8,17 +8,17 @@ import {
   useColorScheme,
 } from "react-native";
 import { router } from "expo-router";
-import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, THEME_COLORS, TOAST_COLORS } from "@/constants/theme";
+import { useUserContext, useThemeContext } from "@/contexts";
+import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
+  const { colors } = useThemeContext();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const themeColor = isDark ? THEME_COLORS.accent : THEME_COLORS.main;
   const errorColor = isDark
     ? TOAST_COLORS.dark.error
     : TOAST_COLORS.light.error;
@@ -38,6 +38,10 @@ export default function AccountScreen() {
     router.push(`/profile/${type}`);
   };
 
+  const handleAccountSettingsPress = () => {
+    router.push("/(modal)/account-settings");
+  };
+
   return (
     <ScrollView
       style={styles.scrollView}
@@ -52,11 +56,11 @@ export default function AccountScreen() {
               styles.card,
               { backgroundColor: PlatformColor("systemGray5") },
             ]}
-            activeOpacity={0.7}
+            activeOpacity={BUTTON.opacity}
           >
             <View style={styles.cardContent}>
               <View
-                style={[styles.avatarLarge, { backgroundColor: themeColor }]}
+                style={[styles.avatarLarge, { backgroundColor: colors.main }]}
               >
                 <Text style={styles.avatarLargeText}>
                   {user?.username.charAt(0).toUpperCase()}
@@ -110,7 +114,7 @@ export default function AccountScreen() {
             <TouchableOpacity
               onPress={() => handleViewsPress("movie")}
               style={styles.viewsOption}
-              activeOpacity={0.7}
+              activeOpacity={BUTTON.opacity}
             >
               <Text
                 style={[styles.cardText, { color: PlatformColor("label") }]}
@@ -134,7 +138,7 @@ export default function AccountScreen() {
             <TouchableOpacity
               onPress={() => handleViewsPress("tv")}
               style={styles.viewsOption}
-              activeOpacity={0.7}
+              activeOpacity={BUTTON.opacity}
             >
               <Text
                 style={[styles.cardText, { color: PlatformColor("label") }]}
@@ -145,6 +149,31 @@ export default function AccountScreen() {
                 name="chevron-forward"
                 size={20}
                 color={PlatformColor("secondaryLabel")}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Account Settings Section */}
+        <View style={styles.section}>
+          <View
+            style={[
+              styles.viewsContainer,
+              { backgroundColor: PlatformColor("systemGray5") },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={handleAccountSettingsPress}
+              style={styles.viewsOption}
+              activeOpacity={BUTTON.opacity}
+            >
+              <Text style={[styles.cardText, { color: errorColor }]}>
+                {i18n.t("screen.account.settings.title")}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={errorColor}
               />
             </TouchableOpacity>
           </View>

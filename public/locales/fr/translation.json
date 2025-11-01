@@ -100,7 +100,7 @@
     "watchlist": {
       "title": {
         "create": "Nouvelle liste",
-        "update": "Modifier la liste"
+        "update": "Renommer la liste"
       },
       "field": {
         "title": "Titre"
@@ -121,7 +121,7 @@
         "update": "Liste mise à jour"
       },
       "edit": {
-        "title": "Modifier"
+        "title": "Renommer"
       },
       "delete": {
         "title": "Supprimer",
@@ -253,6 +253,9 @@
         "title": "Vues",
         "movies": "Films",
         "tv": "Séries TV"
+      },
+      "settings": {
+        "title": "Paramètres du compte"
       }
     },
     "watchlistCreate": {

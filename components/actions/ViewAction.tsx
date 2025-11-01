@@ -2,11 +2,10 @@ import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useUserContext, useViewContext } from "@/contexts";
+import { useUserContext, useViewContext, useThemeContext } from "@/contexts";
 import { notifyError } from "@/components/toasts/Toast";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
-import { THEME_COLORS } from "@/constants/theme";
 
 type ViewActionProps = {
   data: TmdbData | TmdbDetails;
@@ -24,6 +23,7 @@ export default function ViewAction({
   const router = useRouter();
   const { user, authState } = useUserContext();
   const { addView, removeView } = useViewContext();
+  const { colors } = useThemeContext();
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Get size-specific styles
@@ -144,9 +144,9 @@ export default function ViewAction({
     >
       <View style={styles.iconContainer}>
         <Ionicons
-          name="checkmark-outline"
+          name="eye"
           size={sizeStyles.iconSize}
-          color={viewed ? THEME_COLORS.main : "#fff"}
+          color={viewed ? colors.main : "#fff"}
         />
       </View>
     </Pressable>
