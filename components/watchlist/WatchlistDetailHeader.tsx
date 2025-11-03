@@ -13,6 +13,10 @@ export default function WatchlistDetailHeader({
 }: WatchlistDetailHeaderProps) {
   const colorScheme = useColorScheme();
 
+  // Translate system watchlist title
+  const displayTitle =
+    title === "toWatch" ? i18n.t("screen.watchlist.system.title") : title;
+
   const getBackgroundColor = () => {
     return colorScheme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.5)";
   };
@@ -22,7 +26,7 @@ export default function WatchlistDetailHeader({
       {/* Title Section - Centered */}
       <View style={styles.titleSection}>
         <Text style={styles.title} numberOfLines={2}>
-          {title}
+          {displayTitle}
         </Text>
         {/* Media Count Pill - Centered */}
         <View style={styles.pillContainer}>

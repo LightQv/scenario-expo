@@ -162,6 +162,7 @@ export default function WatchlistDetailScreen() {
         watchlist ? (
           <WatchlistDetailMenu
             watchlistId={id}
+            watchlistType={watchlist.type}
             sortType={sortType}
             filterType={filterType}
             onSortChange={handleSortChange}
@@ -177,6 +178,7 @@ export default function WatchlistDetailScreen() {
     <WatchlistMediaCard
       data={item}
       watchlistId={id}
+      watchlistType={watchlist?.type}
       onDelete={fetchWatchlistDetail}
     />
   );

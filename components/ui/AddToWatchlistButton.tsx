@@ -23,7 +23,7 @@ export default function AddToWatchlistButton({
 
   return (
     <TouchableOpacity onPress={handlePress} activeOpacity={BUTTON.opacity}>
-      <Ionicons name="add" size={TOKENS.icon} color="#fff" />
+      <Ionicons name="list-outline" size={TOKENS.icon} color="#fff" />
     </TouchableOpacity>
   );
 }

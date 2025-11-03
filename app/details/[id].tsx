@@ -22,6 +22,7 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import ViewAction from "@/components/actions/ViewAction";
 import CopyUrlButton from "@/components/details/CopyUrlButton";
 import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
+import BookmarkButton from "@/components/ui/BookmarkButton";
 import HeaderRight from "@/components/ui/HeaderRight";
 
 export default function DetailsScreen() {
@@ -91,6 +92,17 @@ export default function DetailsScreen() {
                     mediaType={type}
                     tmdbId={id}
                     title={data.title || data.name}
+                  />
+                  <BookmarkButton
+                    tmdbId={Number(id)}
+                    mediaType={type}
+                    title={data.title || data.name || ""}
+                    posterPath={data.poster_path || ""}
+                    backdropPath={data.backdrop_path || ""}
+                    releaseDate={data.release_date}
+                    firstAirDate={data.first_air_date}
+                    runtime={data.runtime}
+                    genreIds={data.genres?.map((g) => g.id) || []}
                   />
                   <ViewAction data={data} mediaType={type} size="details" />
                 </HeaderRight>

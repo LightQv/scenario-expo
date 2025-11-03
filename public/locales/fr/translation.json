@@ -365,6 +365,9 @@
       "title": "Listes de lecture",
       "subtitle": "Retrouvez ici toutes les listes de lecture que vous avez créé(e).",
       "empty": "Aucune liste pour le moment.\nCréez-en une via le menu ci-dessus.",
+      "system": {
+        "title": "À regarder"
+      },
       "count": {
         "singular": "Élément",
         "plurial": "Éléments"

@@ -8,6 +8,7 @@ import {
   GenreProvider,
   UserProvider,
   ViewProvider,
+  BookmarkProvider,
 } from "@/contexts";
 import { useColorScheme } from "react-native";
 import { Toasts } from "@backpackapp-io/react-native-toast";
@@ -68,19 +69,21 @@ function RootLayoutNav() {
       <ThemeProvider>
         <UserProvider>
           <ViewProvider>
-            <GenreProvider>
-              <Stack>
-                <Stack.Screen
-                  name="(modal)"
-                  options={{ presentation: "modal", headerShown: false }}
-                />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="profile"
-                  options={{ headerShown: false, presentation: "card" }}
-                />
-              </Stack>
-            </GenreProvider>
+            <BookmarkProvider>
+              <GenreProvider>
+                <Stack>
+                  <Stack.Screen
+                    name="(modal)"
+                    options={{ presentation: "modal", headerShown: false }}
+                  />
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="profile"
+                    options={{ headerShown: false, presentation: "card" }}
+                  />
+                </Stack>
+              </GenreProvider>
+            </BookmarkProvider>
           </ViewProvider>
         </UserProvider>
         <Toasts overrideDarkMode={!darkTheme} />
