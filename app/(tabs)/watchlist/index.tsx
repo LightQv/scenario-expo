@@ -82,9 +82,14 @@ export default function WatchlistIndexScreen() {
     }
   };
 
-  // Sort watchlists based on sortType
+  // Sort watchlists based on sortType, with SYSTEM type always first
   useEffect(() => {
     const sorted = [...watchlists].sort((a, b) => {
+      // Always prioritize SYSTEM watchlist first
+      if (a.type === "SYSTEM" && b.type !== "SYSTEM") return -1;
+      if (a.type !== "SYSTEM" && b.type === "SYSTEM") return 1;
+
+      // Then apply user's sort preference
       switch (sortType) {
         case "default":
           return 0; // Keep original API order

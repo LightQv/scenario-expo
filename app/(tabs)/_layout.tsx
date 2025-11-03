@@ -1,10 +1,20 @@
 import React from "react";
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
-import { useThemeContext, useUserContext } from "@/contexts";
+import {
+  NativeTabs,
+  Icon,
+  Label,
+  Badge,
+} from "expo-router/unstable-native-tabs";
+import {
+  useThemeContext,
+  useUserContext,
+  useBookmarkContext,
+} from "@/contexts";
 
 export default function TabLayout() {
   const { authState } = useUserContext();
   const { colors } = useThemeContext();
+  const { bookmarkCount } = useBookmarkContext();
 
   return (
     <NativeTabs tintColor={colors.main} minimizeBehavior="onScrollDown">
@@ -20,6 +30,7 @@ export default function TabLayout() {
         <NativeTabs.Trigger name="watchlist">
           <Icon sf="list.bullet" />
           <Label>Watchlist</Label>
+          {bookmarkCount > 0 && <Badge>{bookmarkCount.toString()}</Badge>}
         </NativeTabs.Trigger>
       )}
       <NativeTabs.Trigger name="search" role="search">

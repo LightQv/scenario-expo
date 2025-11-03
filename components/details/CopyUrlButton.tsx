@@ -13,12 +13,16 @@ type CopyUrlButtonProps = {
   title?: string;
 };
 
-export default function CopyUrlButton({ mediaType, tmdbId }: CopyUrlButtonProps) {
+export default function CopyUrlButton({
+  mediaType,
+  tmdbId,
+}: CopyUrlButtonProps) {
   const { colors } = useThemeContext();
 
   const handleCopy = async () => {
+    console.log(tmdbId);
     try {
-      const url = `${CONFIG.webClientUrl}/detail/${mediaType}/${tmdbId}`;
+      const url = `${CONFIG.webClientUrl}/details/${mediaType}/${tmdbId}`;
       await Clipboard.setStringAsync(url);
       notifySuccess(i18n.t("toast.success.urlCopied"));
     } catch (error) {

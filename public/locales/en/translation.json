@@ -364,6 +364,9 @@
       "title": "Watchlists",
       "subtitle": "Find here every watchlist you've created.",
       "empty": "No watchlists yet.\nCreate one using the menu above.",
+      "system": {
+        "title": "To Watch"
+      },
       "count": {
         "singular": "Element",
         "plurial": "Elements"
