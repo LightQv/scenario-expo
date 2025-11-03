@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import { BUTTON, TOKENS } from "@/constants/theme";
-import { useBookmarkContext } from "@/contexts";
+import { useBookmarkContext, useThemeContext } from "@/contexts";
 import { formatYear } from "@/services/utils";
 
 type BookmarkButtonProps = {
@@ -32,6 +32,7 @@ export default function BookmarkButton({
   const { isBookmarked, addBookmark, removeBookmark, getBookmarkByTmdbId } =
     useBookmarkContext();
   const [isProcessing, setIsProcessing] = useState(false);
+  const { colors } = useThemeContext();
 
   const bookmarked = isBookmarked(tmdbId, mediaType);
 
@@ -81,7 +82,7 @@ export default function BookmarkButton({
       <Ionicons
         name={bookmarked ? "bookmark" : "bookmark-outline"}
         size={TOKENS.icon}
-        color="#fff"
+        color={bookmarked ? colors.main : "#fff"}
       />
     </TouchableOpacity>
   );
