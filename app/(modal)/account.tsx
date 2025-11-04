@@ -42,6 +42,10 @@ export default function AccountScreen() {
     router.push("/(modal)/account-settings");
   };
 
+  const handleApplicationSettingsPress = () => {
+    router.push("/(modal)/application-settings");
+  };
+
   return (
     <ScrollView
       style={styles.scrollView}
@@ -144,6 +148,31 @@ export default function AccountScreen() {
                 style={[styles.cardText, { color: PlatformColor("label") }]}
               >
                 {i18n.t("screen.account.views.tv")}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={PlatformColor("secondaryLabel")}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Application Settings Section */}
+        <View style={styles.section}>
+          <View
+            style={[
+              styles.viewsContainer,
+              { backgroundColor: PlatformColor("systemGray5") },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={handleApplicationSettingsPress}
+              style={styles.viewsOption}
+              activeOpacity={BUTTON.opacity}
+            >
+              <Text style={[styles.cardText, { color: PlatformColor("label") }]}>
+                {i18n.t("screen.account.application.title")}
               </Text>
               <Ionicons
                 name="chevron-forward"
