@@ -17,7 +17,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import { addSearchToHistory } from "@/services/searchHistory";
 import { useThemeContext } from "@/contexts";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
-import { ContentUnavailableView, Host, Text } from "@expo/ui/swift-ui";
+import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 
 type FetchParams = {
   page: number;
