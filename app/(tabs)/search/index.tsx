@@ -4,7 +4,6 @@ import {
   Animated,
   Dimensions,
   PlatformColor,
-  ActivityIndicator,
   Keyboard,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
@@ -23,6 +22,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import i18n from "@/services/i18n";
 import { TOKENS } from "@/constants/theme";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -116,18 +116,7 @@ export default function SearchScreen() {
   const handleScroll = () => Keyboard.dismiss();
 
   if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: PlatformColor("systemBackground"),
-        }}
-      >
-        <ActivityIndicator size="large" color={PlatformColor("label")} />
-      </View>
-    );
+    return <FullScreenLoader />;
   }
 
   return (

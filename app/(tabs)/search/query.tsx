@@ -3,7 +3,6 @@ import {
   View,
   FlatList,
   PlatformColor,
-  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { Stack } from "expo-router";
@@ -16,6 +15,7 @@ import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import { addSearchToHistory } from "@/services/searchHistory";
 import { useThemeContext } from "@/contexts";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 type FetchParams = {
   page: number;
@@ -103,11 +103,7 @@ export default function QueryScreen() {
 
   const renderEmptyComponent = () => {
     if (loading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={PlatformColor("label")} />
-        </View>
-      );
+      return <FullScreenLoader />;
     }
     return null;
   };
@@ -158,12 +154,6 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: "space-between",
     marginBottom: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 100,
   },
   footerText: {
     fontFamily: FONTS.medium,

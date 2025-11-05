@@ -5,7 +5,6 @@ import {
   PlatformColor,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
@@ -15,6 +14,7 @@ import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 export default function WatchlistAddModal() {
   const { user } = useUserContext();
@@ -131,11 +131,7 @@ export default function WatchlistAddModal() {
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.main} />
-      </View>
-    );
+    return <FullScreenLoader color={colors.main} />;
   }
 
   // Sort by title
@@ -234,11 +230,6 @@ const styles = StyleSheet.create({
     paddingTop: TOKENS.modal.paddingTop,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: TOKENS.margin.horizontal * 4,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   subtitle: {
     fontFamily: FONTS.regular,
