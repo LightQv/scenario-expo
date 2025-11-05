@@ -50,7 +50,7 @@ export default function ProfileHeaderButton() {
 
 const styles = StyleSheet.create({
   headerButton: {
-    marginLeft: 4.25,
+    marginLeft: 5.5,
     overflow: "visible",
   },
   avatarText: {

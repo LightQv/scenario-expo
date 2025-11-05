@@ -10,21 +10,25 @@ import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useUserContext } from "@/contexts/UserContext";
+import { useBookmarkContext } from "@/contexts/BookmarkContext";
 
 type WatchlistMediaCardMenuProps = {
   media: APIMedia;
   watchlistId: string;
+  watchlistType?: string;
   onDelete?: () => void;
 };
 
 export default function WatchlistMediaCardMenu({
   media,
   watchlistId,
+  watchlistType,
   onDelete,
 }: WatchlistMediaCardMenuProps) {
   const { colors } = useThemeContext();
   const { user } = useUserContext();
   const { isViewed, getViewByTmdbId, addView, removeView } = useViewContext();
+  const { refreshBookmarks } = useBookmarkContext();
 
   const viewed = isViewed(media.tmdb_id, media.media_type);
 
@@ -74,6 +78,11 @@ export default function WatchlistMediaCardMenu({
       });
 
       notifySuccess(i18n.t("screen.watchlist.detail.menu.deleteSuccess"));
+
+      // If deleting from a SYSTEM watchlist, refresh bookmarks
+      if (watchlistType === "SYSTEM") {
+        await refreshBookmarks();
+      }
 
       // Call the onDelete callback to refresh the list
       if (onDelete) {

@@ -38,7 +38,7 @@ export default function DiscoverIndexScreen() {
     if (!movieGenres || movieGenres.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * movieGenres.length);
     return movieGenres[randomIndex];
-  }, [movieGenres, refreshing]); // Re-select on refresh
+  }, [movieGenres]);
 
   const fetchSectionData = async (section: SectionData) => {
     try {
@@ -103,15 +103,6 @@ export default function DiscoverIndexScreen() {
   const initialSections = useMemo(() => {
     return [
       {
-        id: "featured-movie",
-        title: i18n.t("screen.discover.sections.featuredMovie"),
-        data: [],
-        mediaType: "movie",
-        queryPath: "discover/movie",
-        loading: true,
-        isFeatured: true,
-      },
-      {
         id: "trending-week",
         title: i18n.t("screen.discover.sections.trendingWeek"),
         data: [],
@@ -151,6 +142,15 @@ export default function DiscoverIndexScreen() {
         mediaType: "movie",
         queryPath: "discover/movie",
         loading: true,
+      },
+      {
+        id: "featured-movie",
+        title: i18n.t("screen.discover.sections.featuredMovie"),
+        data: [],
+        mediaType: "movie",
+        queryPath: "discover/movie",
+        loading: true,
+        isFeatured: true,
       },
       {
         id: "upcoming-movies",
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    paddingTop: 4,
   },
   content: {
     paddingHorizontal: 2,

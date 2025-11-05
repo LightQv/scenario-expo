@@ -8,10 +8,10 @@
       "logout": "Déconnexion"
     },
     "tabs": {
-      "link1": "Rechercher",
-      "link2": "À voir",
-      "link3": "Découvrir",
-      "link4": "Listes de lecture"
+      "top": "Top",
+      "discover": "Découvrir",
+      "watchlist": "Liste",
+      "search": "Rechercher"
     }
   },
   "validator": {
@@ -256,6 +256,9 @@
       },
       "settings": {
         "title": "Paramètres du compte"
+      },
+      "application": {
+        "title": "Paramètres de l'application"
       }
     },
     "watchlistCreate": {
@@ -365,6 +368,9 @@
       "title": "Listes de lecture",
       "subtitle": "Retrouvez ici toutes les listes de lecture que vous avez créé(e).",
       "empty": "Aucune liste pour le moment.\nCréez-en une via le menu ci-dessus.",
+      "system": {
+        "title": "À regarder"
+      },
       "count": {
         "singular": "Élément",
         "plurial": "Éléments"
@@ -416,6 +422,24 @@
         "subtitle": "Sélectionnez une liste de lecture pour ce média",
         "success": "Média ajouté à la liste",
         "removed": "Média retiré de la liste"
+      }
+    },
+    "applicationSettings": {
+      "title": "Paramètres de l'application",
+      "theme": {
+        "title": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      },
+      "colors": {
+        "title": "Couleurs d'accent",
+        "light": "Mode clair",
+        "dark": "Mode sombre"
+      },
+      "reset": {
+        "button": "Réinitialiser par défaut",
+        "confirm": "Réinitialiser tous les paramètres par défaut ?"
       }
     },
     "profile": {
@@ -478,6 +502,9 @@
           "password": "Mot de passe mis à jour"
         },
         "delete": "Compte supprimé"
+      },
+      "settings": {
+        "reset": "Paramètres réinitialisés avec succès"
       }
     },
     "error": "Oops, quelque chose a échoué",

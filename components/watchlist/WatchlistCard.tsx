@@ -15,6 +15,14 @@ type WatchlistCardProps = {
 };
 
 export default function WatchlistCard({ data }: WatchlistCardProps) {
+  // Translate system watchlist title
+  const displayTitle =
+    data.title === "toWatch"
+      ? i18n.t("screen.watchlist.system.title")
+      : data.title;
+
+  const isSystemWatchlist = data.type === "SYSTEM";
+
   return (
     <Link
       href={{
@@ -23,20 +31,14 @@ export default function WatchlistCard({ data }: WatchlistCardProps) {
       }}
       asChild
     >
-      <TouchableOpacity
-        activeOpacity={BUTTON.opacity}
-        style={[
-          styles.container,
-          { backgroundColor: PlatformColor("systemBackground") },
-        ]}
-      >
+      <TouchableOpacity activeOpacity={BUTTON.opacity}>
         <View style={styles.content}>
           <View style={styles.textContainer}>
             <Text
               style={[styles.title, { color: PlatformColor("label") }]}
               numberOfLines={1}
             >
-              {data.title}
+              {displayTitle}
             </Text>
             <Text
               style={[styles.count, { color: PlatformColor("secondaryLabel") }]}
@@ -47,11 +49,20 @@ export default function WatchlistCard({ data }: WatchlistCardProps) {
                 : i18n.t("screen.watchlist.count.singular")}
             </Text>
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={18}
-            color={PlatformColor("tertiaryLabel") as any}
-          />
+          <View style={styles.iconContainer}>
+            {isSystemWatchlist && (
+              <Ionicons
+                name="lock-closed"
+                size={14}
+                color={PlatformColor("tertiaryLabel") as any}
+              />
+            )}
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={PlatformColor("tertiaryLabel") as any}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     </Link>
@@ -59,12 +70,6 @@ export default function WatchlistCard({ data }: WatchlistCardProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: TOKENS.margin.horizontal,
-    marginBottom: 12,
-    borderRadius: TOKENS.radius.md,
-    overflow: "hidden",
-  },
   content: {
     flexDirection: "row",
     alignItems: "center",
@@ -77,6 +82,11 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 4,
     marginRight: 12,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   title: {
     fontSize: TOKENS.font.xxl,

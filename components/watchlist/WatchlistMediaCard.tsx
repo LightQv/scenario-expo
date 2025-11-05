@@ -18,12 +18,14 @@ import WatchlistMediaCardMenu from "./WatchlistMediaCardMenu";
 type WatchlistMediaCardProps = {
   data: APIMedia;
   watchlistId: string;
+  watchlistType?: string;
   onDelete?: () => void;
 };
 
 export default function WatchlistMediaCard({
   data,
   watchlistId,
+  watchlistType,
   onDelete,
 }: WatchlistMediaCardProps) {
   const { colors } = useThemeContext();
@@ -122,6 +124,7 @@ export default function WatchlistMediaCard({
         <WatchlistMediaCardMenu
           media={data}
           watchlistId={watchlistId}
+          watchlistType={watchlistType}
           onDelete={onDelete}
         />
       </View>

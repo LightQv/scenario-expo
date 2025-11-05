@@ -10,6 +10,9 @@ export const TOKENS = {
     horizontal: 16,
     vertical: 10,
   },
+  modal: {
+    paddingTop: 90,
+  },
   image: {
     height: 280,
   },

@@ -28,6 +28,7 @@ type FilterOption = {
 
 type WatchlistDetailMenuProps = {
   watchlistId: string;
+  watchlistType?: string;
   sortType: SortType;
   filterType: FilterType;
   onSortChange: (sort: SortType) => void;
@@ -60,6 +61,7 @@ const FILTER_OPTIONS: FilterOption[] = [
 
 export default function WatchlistDetailMenu({
   watchlistId,
+  watchlistType,
   sortType,
   filterType,
   onSortChange,
@@ -67,6 +69,7 @@ export default function WatchlistDetailMenu({
   onDelete,
 }: WatchlistDetailMenuProps) {
   const { colors } = useThemeContext();
+  const isSystemWatchlist = watchlistType === "SYSTEM";
 
   // Build option arrays
   const sortLabels = SORT_OPTIONS.map((s) => s.label);
@@ -152,16 +155,20 @@ export default function WatchlistDetailMenu({
               handleSortSelect(index)
             }
           />
-          <Button onPress={handleEdit} systemImage="pencil">
-            {i18n.t("form.watchlist.edit.title")}
-          </Button>
-          <Button
-            onPress={openDeleteConfirmation}
-            systemImage="trash"
-            role="destructive"
-          >
-            {i18n.t("form.watchlist.delete.title")}
-          </Button>
+          {!isSystemWatchlist && (
+            <>
+              <Button onPress={handleEdit} systemImage="pencil">
+                {i18n.t("form.watchlist.edit.title")}
+              </Button>
+              <Button
+                onPress={openDeleteConfirmation}
+                systemImage="trash"
+                role="destructive"
+              >
+                {i18n.t("form.watchlist.delete.title")}
+              </Button>
+            </>
+          )}
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <View>

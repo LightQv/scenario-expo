@@ -9,6 +9,7 @@ interface APIMedia {
   runtime: number;
   title: string;
   media_type: string;
+  type?: string;
   viewer_id?: string;
   watchlistId?: string;
 }
@@ -26,6 +27,17 @@ interface ViewCreate {
   viewer_id: string;
 }
 
+interface BookmarkCreate {
+  tmdb_id: number;
+  genre_ids: number[];
+  poster_path: string;
+  backdrop_path: string;
+  release_date: string;
+  runtime: number;
+  title: string;
+  media_type: string;
+}
+
 interface Media {
   _count: { medias: number };
   medias: APIMedia[];
@@ -40,6 +52,7 @@ interface MediaRelease {
 interface Watchlist {
   id: string;
   title: string;
+  type?: string;
   authorId: string;
   medias_count: number;
   medias: APIMedia[];
