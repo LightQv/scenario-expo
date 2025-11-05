@@ -9,10 +9,10 @@ import {
   UserProvider,
   ViewProvider,
   BookmarkProvider,
+  useThemeContext,
 } from "@/contexts";
-import { useColorScheme } from "react-native";
+import { Appearance } from "react-native";
 import { Toasts } from "@backpackapp-io/react-native-toast";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -62,32 +62,48 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const darkTheme = useColorScheme() === "dark";
+  return (
+    <ThemeProvider>
+      <ThemeWrapper />
+    </ThemeProvider>
+  );
+}
+
+function ThemeWrapper() {
+  const { isDark, themePreference } = useThemeContext();
+
+  // Force the appearance mode when theme is manually set
+  useEffect(() => {
+    if (themePreference === "light") {
+      Appearance.setColorScheme("light");
+    } else if (themePreference === "dark") {
+      Appearance.setColorScheme("dark");
+    } else {
+      // System - let the OS control it
+      Appearance.setColorScheme(null);
+    }
+  }, [themePreference]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <UserProvider>
-          <ViewProvider>
-            <BookmarkProvider>
-              <GenreProvider>
-                <Stack>
-                  <Stack.Screen
-                    name="(modal)"
-                    options={{ presentation: "modal", headerShown: false }}
-                  />
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="profile"
-                    options={{ headerShown: false, presentation: "card" }}
-                  />
-                </Stack>
-              </GenreProvider>
-            </BookmarkProvider>
-          </ViewProvider>
-        </UserProvider>
-        <Toasts overrideDarkMode={!darkTheme} />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <UserProvider>
+      <ViewProvider>
+        <BookmarkProvider>
+          <GenreProvider>
+            <Stack>
+              <Stack.Screen
+                name="(modal)"
+                options={{ presentation: "modal", headerShown: false }}
+              />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="profile"
+                options={{ headerShown: false, presentation: "card" }}
+              />
+            </Stack>
+          </GenreProvider>
+        </BookmarkProvider>
+      </ViewProvider>
+      <Toasts overrideDarkMode={!isDark} />
+    </UserProvider>
   );
 }

@@ -31,13 +31,7 @@ export default function WatchlistCard({ data }: WatchlistCardProps) {
       }}
       asChild
     >
-      <TouchableOpacity
-        activeOpacity={BUTTON.opacity}
-        style={[
-          styles.container,
-          { backgroundColor: PlatformColor("systemBackground") },
-        ]}
-      >
+      <TouchableOpacity activeOpacity={BUTTON.opacity}>
         <View style={styles.content}>
           <View style={styles.textContainer}>
             <Text
@@ -76,12 +70,6 @@ export default function WatchlistCard({ data }: WatchlistCardProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: TOKENS.margin.horizontal,
-    marginBottom: 12,
-    borderRadius: TOKENS.radius.md,
-    overflow: "hidden",
-  },
   content: {
     flexDirection: "row",
     alignItems: "center",

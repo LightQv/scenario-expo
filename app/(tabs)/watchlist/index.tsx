@@ -151,7 +151,10 @@ export default function WatchlistIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
-      <AnimatedHeader title={i18n.t("screen.watchlist.title")} scrollY={scrollY} />
+      <AnimatedHeader
+        title={i18n.t("screen.watchlist.title")}
+        scrollY={scrollY}
+      />
 
       <Animated.FlatList
         ref={flatListRef}

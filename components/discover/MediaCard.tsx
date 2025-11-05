@@ -62,60 +62,62 @@ export default function MediaCard({
       asChild
       push
     >
-      <TouchableOpacity
-        style={componentStyles.container}
-        activeOpacity={BUTTON.opacity}
-      >
-        <View style={componentStyles.imageContainer}>
-          <Image
-            source={{
-              uri: getPosterUrl(),
-            }}
-            alt={data.title || data.name}
-            style={sharedStyles.image}
-            contentFit="cover"
-            placeholder={BLURHASH.hash}
-            transition={BLURHASH.transition}
-          />
-          {/* ViewAction button - top right corner (only when authenticated) */}
-          {authState.authenticated && (
-            <ViewAction
-              data={data}
-              mediaType={data.media_type || mediaType}
-              size={size === "grid" ? "sm" : size}
-              style={sharedStyles.viewAction}
+      <View>
+        <TouchableOpacity
+          style={componentStyles.container}
+          activeOpacity={BUTTON.opacity}
+        >
+          <View style={componentStyles.imageContainer}>
+            <Image
+              source={{
+                uri: getPosterUrl(),
+              }}
+              alt={data.title || data.name}
+              style={sharedStyles.image}
+              contentFit="cover"
+              placeholder={BLURHASH.hash}
+              transition={BLURHASH.transition}
             />
-          )}
-          {/* RatingBadge - bottom right corner */}
-          {data.vote_average && (
-            <View style={sharedStyles.ratingBadge}>
-              <RatingBadge score={data.vote_average} size={getRatingSize()} />
-            </View>
-          )}
-        </View>
-
-        <View style={componentStyles.content}>
-          <Text style={componentStyles.title} numberOfLines={1}>
-            {data.title || data.name}
-          </Text>
-
-          <View style={componentStyles.metaRow}>
-            {genre && genre.length > 0 && (
-              <Text style={componentStyles.genre} numberOfLines={1}>
-                {genre[0]}
-              </Text>
+            {/* ViewAction button - top right corner (only when authenticated) */}
+            {authState.authenticated && (
+              <ViewAction
+                data={data}
+                mediaType={data.media_type || mediaType}
+                size={size === "grid" ? "sm" : size}
+                style={sharedStyles.viewAction}
+              />
             )}
-
-            {releaseDate && (
-              <Text style={componentStyles.year} numberOfLines={1}>
-                {isUpcoming
-                  ? formatFullDate(releaseDate)
-                  : formatYear(releaseDate)}
-              </Text>
+            {/* RatingBadge - bottom right corner */}
+            {data.vote_average && (
+              <View style={sharedStyles.ratingBadge}>
+                <RatingBadge score={data.vote_average} size={getRatingSize()} />
+              </View>
             )}
           </View>
-        </View>
-      </TouchableOpacity>
+
+          <View style={componentStyles.content}>
+            <Text style={componentStyles.title} numberOfLines={1}>
+              {data.title || data.name}
+            </Text>
+
+            <View style={componentStyles.metaRow}>
+              {genre && genre.length > 0 && (
+                <Text style={componentStyles.genre} numberOfLines={1}>
+                  {genre[0]}
+                </Text>
+              )}
+
+              {releaseDate && (
+                <Text style={componentStyles.year} numberOfLines={1}>
+                  {isUpcoming
+                    ? formatFullDate(releaseDate)
+                    : formatYear(releaseDate)}
+                </Text>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
     </Link>
   );
 }

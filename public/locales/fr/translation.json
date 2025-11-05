@@ -8,10 +8,10 @@
       "logout": "Déconnexion"
     },
     "tabs": {
-      "link1": "Rechercher",
-      "link2": "À voir",
-      "link3": "Découvrir",
-      "link4": "Listes de lecture"
+      "top": "Top",
+      "discover": "Découvrir",
+      "watchlist": "Liste",
+      "search": "Rechercher"
     }
   },
   "validator": {
@@ -256,6 +256,9 @@
       },
       "settings": {
         "title": "Paramètres du compte"
+      },
+      "application": {
+        "title": "Paramètres de l'application"
       }
     },
     "watchlistCreate": {
@@ -421,6 +424,24 @@
         "removed": "Média retiré de la liste"
       }
     },
+    "applicationSettings": {
+      "title": "Paramètres de l'application",
+      "theme": {
+        "title": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      },
+      "colors": {
+        "title": "Couleurs d'accent",
+        "light": "Mode clair",
+        "dark": "Mode sombre"
+      },
+      "reset": {
+        "button": "Réinitialiser par défaut",
+        "confirm": "Réinitialiser tous les paramètres par défaut ?"
+      }
+    },
     "profile": {
       "stats": {
         "header": "Statistiques",
@@ -481,6 +502,9 @@
           "password": "Mot de passe mis à jour"
         },
         "delete": "Compte supprimé"
+      },
+      "settings": {
+        "reset": "Paramètres réinitialisés avec succès"
       }
     },
     "error": "Oops, quelque chose a échoué",

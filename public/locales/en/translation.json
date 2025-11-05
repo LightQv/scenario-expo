@@ -8,10 +8,10 @@
       "logout": "Logout"
     },
     "tabs": {
-      "link1": "Search",
-      "link2": "Must see",
-      "link3": "Discover",
-      "link4": "Watchlists"
+      "top": "Top",
+      "discover": "Discover",
+      "watchlist": "Watchlist",
+      "search": "Search"
     }
   },
   "validator": {
@@ -255,6 +255,9 @@
       },
       "settings": {
         "title": "Account Settings"
+      },
+      "application": {
+        "title": "Application settings"
       }
     },
     "watchlistCreate": {
@@ -420,6 +423,24 @@
         "removed": "Media removed from watchlist"
       }
     },
+    "applicationSettings": {
+      "title": "Application Settings",
+      "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "colors": {
+        "title": "Accent Colors",
+        "light": "Light mode",
+        "dark": "Dark mode"
+      },
+      "reset": {
+        "button": "Reset to defaults",
+        "confirm": "Reset all settings to defaults?"
+      }
+    },
     "profile": {
       "stats": {
         "header": "Statistics",
@@ -480,6 +501,9 @@
           "password": "Password updated"
         },
         "delete": "Account deleted"
+      },
+      "settings": {
+        "reset": "Settings reset successfully"
       }
     },
     "error": "Oops, something went wrong",
