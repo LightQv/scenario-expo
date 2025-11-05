@@ -7,7 +7,7 @@ import {
   ListRenderItem,
   Text,
 } from "react-native";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, useCallback, memo } from "react";
 import {
   useLocalSearchParams,
   useNavigation,
@@ -16,7 +16,7 @@ import {
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
-import WatchlistCarouselBanner from "@/components/watchlist/WatchlistCarouselBanner";
+import WatchlistDetailBanner from "@/components/watchlist/WatchlistDetailBanner";
 import WatchlistDetailHeader from "@/components/watchlist/WatchlistDetailHeader";
 import GradientTransition from "@/components/details/GradientTransition";
 import WatchlistMediaCard from "@/components/watchlist/WatchlistMediaCard";
@@ -24,12 +24,9 @@ import WatchlistDetailMenu from "@/components/watchlist/WatchlistDetailMenu";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
-  FadeInLeft,
-  FadeOutRight,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
-import { useCallback } from "react";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<APIMedia>);
 
@@ -40,6 +37,25 @@ type SortType =
   | "date_asc"
   | "date_desc";
 type FilterType = "all" | "movie" | "tv";
+
+// Memoize the media card component
+const MemoizedWatchlistMediaCard = memo(WatchlistMediaCard);
+
+// Memoize the list header
+const ListHeader = memo(
+  ({ watchlist, scrollY }: { watchlist: Watchlist; scrollY: any }) => (
+    <View>
+      <WatchlistDetailBanner medias={watchlist.medias} scrollY={scrollY} />
+      <WatchlistDetailHeader
+        title={watchlist.title}
+        mediaCount={watchlist.medias_count}
+      />
+      <GradientTransition />
+    </View>
+  ),
+);
+
+ListHeader.displayName = "ListHeader";
 
 export default function WatchlistDetailScreen() {
   const colorScheme = useColorScheme();
@@ -54,7 +70,7 @@ export default function WatchlistDetailScreen() {
   const scrollY = useSharedValue(0);
 
   // Fetch watchlist detail
-  const fetchWatchlistDetail = async () => {
+  const fetchWatchlistDetail = useCallback(async () => {
     if (!id) return;
 
     try {
@@ -67,14 +83,14 @@ export default function WatchlistDetailScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   // Initial load
   useEffect(() => {
     if (id) {
       fetchWatchlistDetail();
     }
-  }, [id]);
+  }, [id, fetchWatchlistDetail]);
 
   // Refresh when screen comes into focus (e.g., after editing watchlist)
   useFocusEffect(
@@ -82,36 +98,40 @@ export default function WatchlistDetailScreen() {
       if (id) {
         fetchWatchlistDetail();
       }
-    }, [id]),
+    }, [id, fetchWatchlistDetail]),
   );
 
   // Status bar - always light (over the image)
   const statusStyle = colorScheme === "dark" ? "light" : "dark";
 
-  // Scroll handler to track scroll position
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
+  // Optimized scroll handler using worklet
+  const scrollHandler = useAnimatedScrollHandler(
+    {
+      onScroll: (event) => {
+        "worklet";
+        scrollY.value = event.contentOffset.y;
+      },
     },
-  });
+    [],
+  );
 
   // Handle watchlist deletion
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     // Navigation back is handled in the menu component
-  };
+  }, []);
 
   // Handle sort change
-  const handleSortChange = (sort: SortType) => {
+  const handleSortChange = useCallback((sort: SortType) => {
     setSortType(sort);
-  };
+  }, []);
 
   // Handle filter change
-  const handleFilterChange = (filter: FilterType) => {
+  const handleFilterChange = useCallback((filter: FilterType) => {
     setFilterType(filter);
-  };
+  }, []);
 
-  // Get filtered and sorted media list
-  const getProcessedMedias = (): APIMedia[] => {
+  // Get filtered and sorted media list - memoized
+  const processedMedias = useCallback((): APIMedia[] => {
     if (!watchlist?.medias) return [];
 
     let medias = [...watchlist.medias];
@@ -150,7 +170,7 @@ export default function WatchlistDetailScreen() {
     }
 
     return medias;
-  };
+  }, [watchlist?.medias, filterType, sortType]);
 
   // Configure header
   useLayoutEffect(() => {
@@ -171,20 +191,32 @@ export default function WatchlistDetailScreen() {
           />
         ) : null,
     });
-  }, [navigation, watchlist, id, sortType, filterType]);
+  }, [
+    navigation,
+    watchlist,
+    id,
+    sortType,
+    filterType,
+    handleSortChange,
+    handleFilterChange,
+    handleDelete,
+  ]);
 
-  // Render media card
-  const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <WatchlistMediaCard
-      data={item}
-      watchlistId={id}
-      watchlistType={watchlist?.type}
-      onDelete={fetchWatchlistDetail}
-    />
+  // Render media card with useCallback
+  const renderItem: ListRenderItem<APIMedia> = useCallback(
+    ({ item }) => (
+      <MemoizedWatchlistMediaCard
+        data={item}
+        watchlistId={id}
+        watchlistType={watchlist?.type}
+        onDelete={fetchWatchlistDetail}
+      />
+    ),
+    [id, watchlist?.type, fetchWatchlistDetail],
   );
 
   // Empty state
-  const renderEmpty = () => {
+  const renderEmpty = useCallback(() => {
     if (loading) return null;
     return (
       <View style={styles.emptyContainer}>
@@ -195,30 +227,29 @@ export default function WatchlistDetailScreen() {
         </Text>
       </View>
     );
-  };
+  }, [loading]);
 
   // List header with banner and title
-  const renderListHeader = () => {
+  const renderListHeader = useCallback(() => {
     if (!watchlist) return null;
-
-    return (
-      <View>
-        <WatchlistCarouselBanner medias={watchlist.medias} scrollY={scrollY} />
-        <WatchlistDetailHeader
-          title={watchlist.title}
-          mediaCount={watchlist.medias_count}
-        />
-        <GradientTransition />
-      </View>
-    );
-  };
+    return <ListHeader watchlist={watchlist} scrollY={scrollY} />;
+  }, [watchlist, scrollY]);
 
   // Item separator for list
-  const renderItemSeparator = () => (
-    <View
-      style={{ height: 2, backgroundColor: PlatformColor("systemBackground") }}
-    />
+  const renderItemSeparator = useCallback(
+    () => (
+      <View
+        style={{
+          height: 2,
+          backgroundColor: PlatformColor("systemBackground"),
+        }}
+      />
+    ),
+    [],
   );
+
+  // Key extractor
+  const keyExtractor = useCallback((item: APIMedia) => item.id.toString(), []);
 
   return (
     <View
@@ -234,14 +265,21 @@ export default function WatchlistDetailScreen() {
         onScroll={scrollHandler}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        entering={FadeInLeft}
-        exiting={FadeOutRight}
-        data={getProcessedMedias()}
+        data={processedMedias()}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
         ListHeaderComponent={renderListHeader()}
         ListEmptyComponent={renderEmpty}
         ItemSeparatorComponent={renderItemSeparator}
+        // Performance optimizations
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={10}
+        windowSize={21}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+        }}
       />
     </View>
   );
@@ -253,6 +291,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
+    backgroundColor: PlatformColor("systemBackground"),
   },
   emptyContainer: {
     flex: 1,

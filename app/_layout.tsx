@@ -13,6 +13,7 @@ import {
 } from "@/contexts";
 import { Appearance } from "react-native";
 import { Toasts } from "@backpackapp-io/react-native-toast";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -63,9 +64,11 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <ThemeProvider>
-      <ThemeWrapper />
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider>
+        <ThemeWrapper />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
