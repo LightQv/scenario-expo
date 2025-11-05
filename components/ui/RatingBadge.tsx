@@ -63,11 +63,7 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
         { backgroundColor: getBackgroundColor() },
       ]}
     >
-      <Ionicons
-        name="star"
-        size={sizeStyles.iconSize}
-        color={colors.main}
-      />
+      <Ionicons name="star" size={sizeStyles.iconSize} color={colors.main} />
       <Text style={[styles.scoreText, sizeStyles.text]}>{displayScore}</Text>
     </View>
   );

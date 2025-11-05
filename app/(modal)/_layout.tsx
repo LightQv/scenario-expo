@@ -17,9 +17,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -31,9 +29,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -45,9 +41,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -59,9 +53,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -73,9 +65,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -87,9 +77,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -101,9 +89,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -115,9 +101,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -129,9 +113,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -143,9 +125,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -157,9 +137,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
@@ -171,9 +149,7 @@ export default function ModalLayout() {
           headerTintColor: colors.text,
           headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
+          headerTransparent: true,
         }}
       />
     </Stack>

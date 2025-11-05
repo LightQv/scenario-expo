@@ -8,10 +8,10 @@
       "logout": "Logout"
     },
     "tabs": {
-      "link1": "Search",
-      "link2": "Must see",
-      "link3": "Discover",
-      "link4": "Watchlists"
+      "top": "Top",
+      "discover": "Discover",
+      "watchlist": "Watchlist",
+      "search": "Search"
     }
   },
   "validator": {

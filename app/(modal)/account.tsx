@@ -171,7 +171,9 @@ export default function AccountScreen() {
               style={styles.viewsOption}
               activeOpacity={BUTTON.opacity}
             >
-              <Text style={[styles.cardText, { color: PlatformColor("label") }]}>
+              <Text
+                style={[styles.cardText, { color: PlatformColor("label") }]}
+              >
                 {i18n.t("screen.account.application.title")}
               </Text>
               <Ionicons
@@ -199,11 +201,7 @@ export default function AccountScreen() {
               <Text style={[styles.cardText, { color: errorColor }]}>
                 {i18n.t("screen.account.settings.title")}
               </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={errorColor}
-              />
+              <Ionicons name="chevron-forward" size={20} color={errorColor} />
             </TouchableOpacity>
           </View>
         </View>
@@ -233,10 +231,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: TOKENS.margin.horizontal,
+    paddingTop: TOKENS.modal.paddingTop,
   },
   container: {
     gap: 28,
-    paddingTop: TOKENS.margin.horizontal,
   },
   profileSection: {
     gap: 8,

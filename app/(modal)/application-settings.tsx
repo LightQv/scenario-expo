@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   content: {
     padding: TOKENS.margin.horizontal,
     gap: 28,
-    paddingTop: TOKENS.margin.horizontal / 1.8,
+    paddingTop: TOKENS.modal.paddingTop,
   },
   section: {
     gap: 12,

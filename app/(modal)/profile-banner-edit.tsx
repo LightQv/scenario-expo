@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: TOKENS.margin.horizontal,
+    paddingTop: TOKENS.modal.paddingTop,
   },
   container: {
     gap: 20,

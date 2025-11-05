@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: TOKENS.margin.horizontal,
+    paddingTop: TOKENS.modal.paddingTop,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: TOKENS.margin.horizontal * 4,
   },
