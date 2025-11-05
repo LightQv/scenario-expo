@@ -49,7 +49,7 @@ export default function WatchlistMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("glass")]}>
+      <ContextMenu modifiers={[buttonStyle("plain")]}>
         <ContextMenu.Items>
           <Picker
             label={i18n.t("screen.watchlist.menu.sort")}
@@ -75,7 +75,7 @@ export default function WatchlistMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 24,
-    width: 28,
+    height: 26,
+    width: 20,
   },
 });
