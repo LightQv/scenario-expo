@@ -3,6 +3,7 @@ import {
   View,
   FlatList,
   PlatformColor,
+  Dimensions,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { Stack } from "expo-router";
@@ -16,10 +17,13 @@ import { notifyError } from "@/components/toasts/Toast";
 import { addSearchToHistory } from "@/services/searchHistory";
 import { useThemeContext } from "@/contexts";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import { ContentUnavailableView, Host, Text } from "@expo/ui/swift-ui";
 
 type FetchParams = {
   page: number;
 };
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function QueryScreen() {
   const { search, mediaType } = useSearchContext();
@@ -76,7 +80,6 @@ export default function QueryScreen() {
         setTotalPages(data.total_pages);
         setTotalResults(data.total_results);
       } else {
-        notifyError(i18n.t("toast.errorQuery"));
         setTotalPages(0);
         setTotalResults(0);
       }
@@ -104,6 +107,18 @@ export default function QueryScreen() {
   const renderEmptyComponent = () => {
     if (loading) {
       return <FullScreenLoader />;
+    }
+
+    if (!loading && results.length === 0) {
+      return (
+        <Host style={styles.emptyContainer}>
+          <ContentUnavailableView
+            systemImage="magnifyingglass"
+            title={`${i18n.t("screen.search.empty.title")} "${search}"`}
+            description={i18n.t("screen.search.empty.description")}
+          />
+        </Host>
+      );
     }
     return null;
   };
@@ -158,5 +173,10 @@ const styles = StyleSheet.create({
   footerText: {
     fontFamily: FONTS.medium,
     fontSize: TOKENS.font.md,
+  },
+  emptyContainer: {
+    height: SCREEN_HEIGHT - 130,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
