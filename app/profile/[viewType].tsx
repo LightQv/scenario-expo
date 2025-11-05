@@ -4,7 +4,7 @@ import {
   Text,
   PlatformColor,
   FlatList,
-  ActivityIndicator,
+  Dimensions,
   ListRenderItem,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -16,6 +16,9 @@ import { TOKENS, FONTS } from "@/constants/theme";
 import ViewMediaCard from "@/components/views/ViewMediaCard";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import ViewHeaderMenu from "@/components/views/ViewHeaderMenu";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 
@@ -121,11 +124,7 @@ export default function ViewTypeScreen() {
 
   const renderEmpty = () => {
     if (isLoading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={PlatformColor("label")} />
-        </View>
-      );
+      return <FullScreenLoader />;
     }
     return (
       <View style={styles.emptyContainer}>
@@ -175,12 +174,6 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 200,
     paddingBottom: 86,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 100,
   },
   emptyContainer: {
     flex: 1,

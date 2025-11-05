@@ -8,27 +8,34 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Carousel from "react-native-reanimated-carousel";
 import { BLURHASH } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
+import { useMemo } from "react";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 650;
 
-type WatchlistCarouselBannerProps = {
+type WatchlistDetailBannerProps = {
   medias: APIMedia[];
   scrollY: SharedValue<number>;
 };
 
-export default function WatchlistCarouselBanner({
+export default function WatchlistDetailBanner({
   medias,
   scrollY,
-}: WatchlistCarouselBannerProps) {
+}: WatchlistDetailBannerProps) {
   const insets = useSafeAreaInsets();
   const { colors } = useThemeContext();
 
-  // Parallax animation for the banner (same formula as Banner component)
-  const animatedCarouselStyle = useAnimatedStyle(() => {
+  // Randomly select one media on component mount - using useMemo to maintain same selection during component lifecycle
+  const randomMedia = useMemo(() => {
+    if (!medias || medias.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * medias.length);
+    return medias[randomIndex];
+  }, [medias]); // Only recalculates if medias array reference changes
+
+  // Parallax animation for the banner image (same formula as Banner component)
+  const animatedImageStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
@@ -61,53 +68,31 @@ export default function WatchlistCarouselBanner({
     return { opacity };
   });
 
-  const renderCarouselItem = ({
-    item,
-    index,
-  }: {
-    item: APIMedia;
-    index: number;
-  }) => (
-    <Image
-      source={{
-        uri: `https://image.tmdb.org/t/p/original/${item.backdrop_path}`,
-      }}
-      alt={`${item.title}-${index}`}
-      key={`${item.id}-${index}`}
-      style={styles.image}
-      contentFit="cover"
-      placeholder={BLURHASH.hash}
-      transition={BLURHASH.transition}
-    />
-  );
-
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Animated.View style={[styles.imageContainer, animatedCarouselStyle]}>
-          {medias && medias.length > 0 ? (
-            <Carousel
-              width={width}
-              height={BANNER_HEIGHT}
-              loop
-              autoPlay={medias.length > 1}
-              enabled={false}
-              scrollAnimationDuration={1500}
-              autoPlayInterval={5000}
-              snapEnabled={false}
-              data={medias}
-              renderItem={renderCarouselItem}
-              mode="parallax"
-              modeConfig={{
-                parallaxScrollingScale: 1,
-                parallaxScrollingOffset: 0,
-                parallaxAdjacentItemScale: 1,
+        {randomMedia ? (
+          <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
+            <Image
+              source={{
+                uri: `https://image.tmdb.org/t/p/original/${randomMedia.backdrop_path}`,
               }}
+              alt={randomMedia.title}
+              style={styles.image}
+              contentFit="cover"
+              placeholder={BLURHASH.hash}
+              transition={BLURHASH.transition}
             />
-          ) : (
-            <View style={[styles.image, { backgroundColor: colors.main }]} />
-          )}
-        </Animated.View>
+          </Animated.View>
+        ) : (
+          <Animated.View
+            style={[
+              styles.imageContainer,
+              animatedImageStyle,
+              { backgroundColor: colors.main },
+            ]}
+          />
+        )}
       </View>
 
       {/* Gradient overlay for better text readability */}

@@ -18,6 +18,7 @@ import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 export default function CategoryDetailScreen() {
   const { colors, isDark } = useThemeContext();
@@ -138,11 +139,7 @@ export default function CategoryDetailScreen() {
   // Render empty state
   const renderEmpty = () => {
     if (loading) {
-      return (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={PlatformColor("label")} />
-        </View>
-      );
+      return <FullScreenLoader />;
     }
     return (
       <View style={styles.centerContainer}>

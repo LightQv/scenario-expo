@@ -1,8 +1,8 @@
-import { Pressable, PlatformColor, Text, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Pressable, Text, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { useUserContext, useThemeContext } from "@/contexts";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { FONTS } from "@/constants/theme";
+import { Host, Image } from "@expo/ui/swift-ui";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
@@ -22,40 +22,37 @@ export default function ProfileHeaderButton() {
     <Pressable
       onPress={handlePress}
       style={[
-        styles.headerButton,
-        isAuthenticated && {
-          width: 28,
-          height: 28,
-          borderRadius: 14,
-          backgroundColor: colors.main,
-          alignItems: "center",
-          justifyContent: "center",
-        },
+        styles.button,
+        isAuthenticated && { backgroundColor: colors.main },
       ]}
+      hitSlop={10}
     >
       {isAuthenticated ? (
         <Text style={styles.avatarText}>
           {user.username.charAt(0).toUpperCase()}
         </Text>
       ) : (
-        <Ionicons
-          name="person-circle-outline"
-          size={TOKENS.icon}
-          color={PlatformColor("label")}
-        />
+        <Host>
+          <Image systemName="person.crop.circle" />
+        </Host>
       )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  headerButton: {
-    marginLeft: 5.5,
-    overflow: "visible",
+  button: {
+    width: 36,
+    height: 36,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
+
   avatarText: {
     color: "#fff",
     fontFamily: FONTS.bold,
-    fontSize: 14,
+    fontSize: 18,
   },
 });

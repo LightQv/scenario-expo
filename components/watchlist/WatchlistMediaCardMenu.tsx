@@ -108,7 +108,7 @@ export default function WatchlistMediaCardMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("glass")]}>
+      <ContextMenu modifiers={[buttonStyle("plain")]}>
         <ContextMenu.Items>
           <Button
             onPress={handleToggleView}
@@ -130,11 +130,7 @@ export default function WatchlistMediaCardMenu({
           </Button>
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <View>
-            <Host style={{ width: 14, height: 22 }}>
-              <Image systemName="ellipsis" color={colors.text} />
-            </Host>
-          </View>
+          <Button systemImage="ellipsis" color={colors.text} />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>

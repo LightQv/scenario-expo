@@ -1,10 +1,8 @@
 import {
   StyleSheet,
   ScrollView,
-  View,
   PlatformColor,
   RefreshControl,
-  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect, useMemo } from "react";
 import { useLocalSearchParams } from "expo-router";
@@ -14,6 +12,7 @@ import DiscoverSection from "@/components/discover/DiscoverSection";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 type SectionData = {
   id: string;
@@ -120,16 +119,7 @@ export default function GenreResultsScreen() {
   };
 
   if (loading) {
-    return (
-      <View
-        style={[
-          styles.loadingContainer,
-          { backgroundColor: PlatformColor("systemBackground") },
-        ]}
-      >
-        <ActivityIndicator size="large" color={PlatformColor("label")} />
-      </View>
-    );
+    return <FullScreenLoader />;
   }
 
   return (
@@ -170,11 +160,6 @@ export default function GenreResultsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   content: {
     paddingTop: 190,

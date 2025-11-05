@@ -52,6 +52,8 @@ export default function MediaCard({
   };
 
   const componentStyles = mediaCardStyles[size];
+  const hasValidRating =
+    typeof data.vote_average === "number" && data.vote_average > 0;
 
   return (
     <Link
@@ -62,62 +64,60 @@ export default function MediaCard({
       asChild
       push
     >
-      <View>
-        <TouchableOpacity
-          style={componentStyles.container}
-          activeOpacity={BUTTON.opacity}
-        >
-          <View style={componentStyles.imageContainer}>
-            <Image
-              source={{
-                uri: getPosterUrl(),
-              }}
-              alt={data.title || data.name}
-              style={sharedStyles.image}
-              contentFit="cover"
-              placeholder={BLURHASH.hash}
-              transition={BLURHASH.transition}
+      <TouchableOpacity
+        style={componentStyles.container}
+        activeOpacity={BUTTON.opacity}
+      >
+        <View style={componentStyles.imageContainer}>
+          <Image
+            source={{
+              uri: getPosterUrl(),
+            }}
+            alt={data.title || data.name}
+            style={sharedStyles.image}
+            contentFit="cover"
+            placeholder={BLURHASH.hash}
+            transition={BLURHASH.transition}
+          />
+          {/* ViewAction button - top right corner (only when authenticated) */}
+          {authState.authenticated && (
+            <ViewAction
+              data={data}
+              mediaType={data.media_type || mediaType}
+              size={size === "grid" ? "sm" : size}
+              style={sharedStyles.viewAction}
             />
-            {/* ViewAction button - top right corner (only when authenticated) */}
-            {authState.authenticated && (
-              <ViewAction
-                data={data}
-                mediaType={data.media_type || mediaType}
-                size={size === "grid" ? "sm" : size}
-                style={sharedStyles.viewAction}
-              />
-            )}
-            {/* RatingBadge - bottom right corner */}
-            {data.vote_average && (
-              <View style={sharedStyles.ratingBadge}>
-                <RatingBadge score={data.vote_average} size={getRatingSize()} />
-              </View>
-            )}
-          </View>
-
-          <View style={componentStyles.content}>
-            <Text style={componentStyles.title} numberOfLines={1}>
-              {data.title || data.name}
-            </Text>
-
-            <View style={componentStyles.metaRow}>
-              {genre && genre.length > 0 && (
-                <Text style={componentStyles.genre} numberOfLines={1}>
-                  {genre[0]}
-                </Text>
-              )}
-
-              {releaseDate && (
-                <Text style={componentStyles.year} numberOfLines={1}>
-                  {isUpcoming
-                    ? formatFullDate(releaseDate)
-                    : formatYear(releaseDate)}
-                </Text>
-              )}
+          )}
+          {/* RatingBadge - bottom right corner */}
+          {hasValidRating && (
+            <View style={sharedStyles.ratingBadge}>
+              <RatingBadge score={data.vote_average} size={getRatingSize()} />
             </View>
+          )}
+        </View>
+
+        <View style={componentStyles.content}>
+          <Text style={componentStyles.title} numberOfLines={1}>
+            {data.title || data.name}
+          </Text>
+
+          <View style={componentStyles.metaRow}>
+            {genre && genre.length > 0 && (
+              <Text style={componentStyles.genre} numberOfLines={1}>
+                {genre[0]}
+              </Text>
+            )}
+
+            {releaseDate && (
+              <Text style={componentStyles.year} numberOfLines={1}>
+                {isUpcoming
+                  ? formatFullDate(releaseDate)
+                  : formatYear(releaseDate)}
+              </Text>
+            )}
           </View>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableOpacity>
     </Link>
   );
 }

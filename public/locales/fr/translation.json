@@ -301,6 +301,10 @@
       }
     },
     "detail": {
+      "actions": {
+        "copy": "Copier l'URL",
+        "addToWatchlist": "Ajouter à une liste"
+      },
       "crew": {
         "director": "Réalisateur",
         "composer": "Compositeur"
