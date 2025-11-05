@@ -19,13 +19,13 @@ export default function TabLayout() {
 
   return (
     <NativeTabs tintColor={colors.main} minimizeBehavior="onScrollDown">
-      <NativeTabs.Trigger name="top">
-        <Icon sf="star.fill" />
-        <Label>{i18n.t("navigation.tabs.top")}</Label>
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="discover">
         <Icon sf="film" />
         <Label>{i18n.t("navigation.tabs.discover")}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="top">
+        <Icon sf="star.fill" />
+        <Label>{i18n.t("navigation.tabs.top")}</Label>
       </NativeTabs.Trigger>
       {authState.authenticated && (
         <NativeTabs.Trigger name="watchlist">
