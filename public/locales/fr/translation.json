@@ -366,6 +366,10 @@
       "result": {
         "singular": "Résultat",
         "plurial": "Résultats"
+      },
+      "empty": {
+        "title": "Aucun résultat pour",
+        "description": "Vérifiez l'orthographe ou essayez une nouvelle recherche."
       }
     },
     "watchlist": {

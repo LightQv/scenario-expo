@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import { Button, ContextMenu, Host, Image } from "@expo/ui/swift-ui";
+import { StyleSheet } from "react-native";
+import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
