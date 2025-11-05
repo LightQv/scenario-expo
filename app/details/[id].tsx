@@ -20,8 +20,7 @@ import Animated, {
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
 import ViewAction from "@/components/actions/ViewAction";
-import CopyUrlButton from "@/components/details/CopyUrlButton";
-import AddToWatchlistButton from "@/components/ui/AddToWatchlistButton";
+import DetailsActionsMenu from "@/components/details/DetailsActionsMenu";
 import BookmarkButton from "@/components/ui/BookmarkButton";
 import HeaderRight from "@/components/ui/HeaderRight";
 
@@ -77,22 +76,12 @@ export default function DetailsScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
-      // Only show CopyUrlButton and ViewAction for movie and tv, not for person
+      // Only show actions for movie and tv, not for person
       headerRight:
         type === "movie" || type === "tv"
           ? () =>
               data && (
                 <HeaderRight>
-                  <CopyUrlButton
-                    mediaType={type}
-                    tmdbId={id}
-                    title={data.title || data.name}
-                  />
-                  <AddToWatchlistButton
-                    mediaType={type}
-                    tmdbId={id}
-                    title={data.title || data.name}
-                  />
                   <BookmarkButton
                     tmdbId={Number(id)}
                     mediaType={type}
@@ -105,6 +94,11 @@ export default function DetailsScreen() {
                     genreIds={data.genres?.map((g) => g.id) || []}
                   />
                   <ViewAction data={data} mediaType={type} size="details" />
+                  <DetailsActionsMenu
+                    mediaType={type}
+                    tmdbId={id}
+                    title={data.title || data.name || ""}
+                  />
                 </HeaderRight>
               )
           : undefined,

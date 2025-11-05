@@ -300,6 +300,10 @@
       }
     },
     "detail": {
+      "actions": {
+        "copy": "Copy URL",
+        "addToWatchlist": "Add to Watchlist"
+      },
       "crew": {
         "director": "Director",
         "composer": "Composer"
