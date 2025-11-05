@@ -301,6 +301,10 @@
       }
     },
     "detail": {
+      "actions": {
+        "copy": "Copier l'URL",
+        "addToWatchlist": "Ajouter à une liste"
+      },
       "crew": {
         "director": "Réalisateur",
         "composer": "Compositeur"
@@ -362,6 +366,10 @@
       "result": {
         "singular": "Résultat",
         "plurial": "Résultats"
+      },
+      "empty": {
+        "title": "Aucun résultat pour",
+        "description": "Vérifiez l'orthographe ou essayez une nouvelle recherche."
       }
     },
     "watchlist": {

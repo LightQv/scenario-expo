@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { Formik } from "formik";
@@ -19,6 +18,7 @@ import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { useThemeContext } from "@/contexts";
 import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 export default function WatchlistEditModal() {
   const { colors } = useThemeContext();
@@ -64,17 +64,7 @@ export default function WatchlistEditModal() {
   };
 
   if (fetching) {
-    return (
-      <View
-        style={[
-          styles.container,
-          styles.centered,
-          { backgroundColor: PlatformColor("systemBackground") },
-        ]}
-      >
-        <ActivityIndicator size="large" color={PlatformColor("label") as any} />
-      </View>
-    );
+    return <FullScreenLoader />;
   }
 
   return (
@@ -193,10 +183,6 @@ export default function WatchlistEditModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
   },
   scrollView: {
     flex: 1,

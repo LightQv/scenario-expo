@@ -1,4 +1,4 @@
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, Alert } from "react-native";
 import { Button, ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
@@ -6,7 +6,6 @@ import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
-import { useThemeContext } from "@/contexts/ThemeContext";
 
 type SortType =
   | "default"
@@ -68,7 +67,6 @@ export default function WatchlistDetailMenu({
   onFilterChange,
   onDelete,
 }: WatchlistDetailMenuProps) {
-  const { colors } = useThemeContext();
   const isSystemWatchlist = watchlistType === "SYSTEM";
 
   // Build option arrays
@@ -135,7 +133,7 @@ export default function WatchlistDetailMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("glass")]}>
+      <ContextMenu modifiers={[buttonStyle("plain")]}>
         <ContextMenu.Items>
           <Picker
             label={i18n.t("screen.watchlist.detail.menu.filter")}
@@ -171,11 +169,7 @@ export default function WatchlistDetailMenu({
           )}
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <View>
-            <Host style={{ width: 14, height: 22 }}>
-              <Image systemName="ellipsis" color={colors.text} />
-            </Host>
-          </View>
+          <Image systemName="ellipsis" />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
@@ -184,7 +178,8 @@ export default function WatchlistDetailMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 28,
+    height: 26,
+    width: 20,
+    marginLeft: 8,
   },
 });

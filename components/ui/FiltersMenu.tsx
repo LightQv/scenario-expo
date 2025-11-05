@@ -1,9 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
-import { useThemeContext } from "@/contexts/ThemeContext";
 
 export type SortOption = {
   value: string;
@@ -39,7 +38,6 @@ export default function FiltersMenu({
   mediaType,
   onMediaTypeChange,
 }: FiltersMenuProps) {
-  const { colors } = useThemeContext();
   // Build media type options
   const mediaTypeOptions = [
     i18n.t("filter.type.movie"),
@@ -90,7 +88,7 @@ export default function FiltersMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("glass")]}>
+      <ContextMenu modifiers={[buttonStyle("plain")]}>
         <ContextMenu.Items>
           {/* Media Type Picker - only show if mediaType and onMediaTypeChange are provided */}
           {mediaType && onMediaTypeChange && (
@@ -124,14 +122,7 @@ export default function FiltersMenu({
           />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <View>
-            <Host style={{ width: 14, height: 24 }}>
-              <Image
-                systemName="ellipsis"
-                color={colors.text}
-              />
-            </Host>
-          </View>
+          <Image systemName="ellipsis" />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
@@ -140,7 +131,8 @@ export default function FiltersMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 28,
+    height: 26,
+    width: 20,
+    marginLeft: 8,
   },
 });

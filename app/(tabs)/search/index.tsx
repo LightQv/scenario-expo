@@ -4,7 +4,6 @@ import {
   Animated,
   Dimensions,
   PlatformColor,
-  ActivityIndicator,
   Keyboard,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
@@ -23,6 +22,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import i18n from "@/services/i18n";
 import { TOKENS } from "@/constants/theme";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -116,28 +116,14 @@ export default function SearchScreen() {
   const handleScroll = () => Keyboard.dismiss();
 
   if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: PlatformColor("systemBackground"),
-        }}
-      >
-        <ActivityIndicator size="large" color={PlatformColor("label")} />
-      </View>
-    );
+    return <FullScreenLoader />;
   }
 
   return (
     <View
       style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
     >
-      <Animated.View
-        pointerEvents={showHistory ? "none" : "auto"}
-        style={{ opacity: headerOpacity }}
-      >
+      <Animated.View style={{ opacity: headerOpacity }}>
         <AnimatedHeader
           title={i18n.t("screen.search.title")}
           scrollY={scrollY}
@@ -181,12 +167,7 @@ export default function SearchScreen() {
           transform: [{ translateY: historyTranslateY }],
         }}
       >
-        <View style={{ marginBottom: 28 }}>
-          <MediaTypePicker
-            selectedType={mediaType}
-            onTypeChange={setMediaType}
-          />
-        </View>
+        <MediaTypePicker selectedType={mediaType} onTypeChange={setMediaType} />
 
         <FlatList
           data={[{ key: "history" }]}
@@ -199,6 +180,7 @@ export default function SearchScreen() {
           )}
           keyExtractor={(item) => item.key}
           contentContainerStyle={{
+            paddingTop: 32,
             paddingHorizontal: TOKENS.margin.horizontal,
             paddingBottom: 80,
           }}

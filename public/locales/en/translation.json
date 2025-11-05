@@ -300,6 +300,10 @@
       }
     },
     "detail": {
+      "actions": {
+        "copy": "Copy URL",
+        "addToWatchlist": "Add to Watchlist"
+      },
       "crew": {
         "director": "Director",
         "composer": "Composer"
@@ -361,6 +365,10 @@
       "result": {
         "singular": "Result",
         "plurial": "Results"
+      },
+      "empty": {
+        "title": "No Results for",
+        "description": "Check the spelling or try a new search."
       }
     },
     "watchlist": {
