@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { Host, Picker } from "@expo/ui/swift-ui";
 import { GlassView } from "expo-glass-effect";
 import i18n from "@/services/i18n";
@@ -35,29 +35,27 @@ export default function MediaTypePicker({
   };
 
   return (
-    <View>
-      <GlassView style={styles.glassView}>
-        <Host matchContents style={styles.picker}>
-          <Picker
-            options={options}
-            selectedIndex={selectedIndex}
-            onOptionSelected={handleOptionSelected}
-            variant="segmented"
-          />
-        </Host>
-      </GlassView>
-    </View>
+    <GlassView style={styles.glassView}>
+      <Host matchContents style={styles.picker}>
+        <Picker
+          options={options}
+          selectedIndex={selectedIndex}
+          onOptionSelected={handleOptionSelected}
+          variant="segmented"
+        />
+      </Host>
+    </GlassView>
   );
 }
 
 const styles = StyleSheet.create({
   glassView: {
     borderRadius: TOKENS.radius.full,
-    marginHorizontal: TOKENS.margin.horizontal,
+    height: 32,
+    width: "auto",
   },
   picker: {
-    paddingHorizontal: TOKENS.margin.horizontal,
-    height: 39,
+    height: 31,
     flex: 1,
   },
 });
