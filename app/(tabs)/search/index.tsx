@@ -7,7 +7,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useGenreContext } from "@/contexts/GenreContext";
 import { useSearchContext } from "./_layout";
 import GenreCard from "@/components/search/GenreCard";
@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import i18n from "@/services/i18n";
 import { TOKENS } from "@/constants/theme";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import { useCallback } from "react";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -43,9 +44,12 @@ export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const genreListRef = useRef<FlatList<any> | null>(null);
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
+  // Reload history whenever the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadHistory();
+    }, [])
+  );
 
   useEffect(() => {
     setShowHistory(showHistoryParam === "true");
@@ -159,7 +163,7 @@ export default function SearchScreen() {
       <Animated.View
         style={{
           position: "absolute",
-          top: insets.top,
+          top: 0,
           left: 0,
           right: 0,
           bottom: 0,
@@ -167,10 +171,16 @@ export default function SearchScreen() {
           transform: [{ translateY: historyTranslateY }],
         }}
       >
-        <MediaTypePicker selectedType={mediaType} onTypeChange={setMediaType} />
-
         <FlatList
           data={[{ key: "history" }]}
+          ListHeaderComponent={() => (
+            <View style={{ paddingVertical: 32 }}>
+              <MediaTypePicker
+                selectedType={mediaType}
+                onTypeChange={setMediaType}
+              />
+            </View>
+          )}
           renderItem={() => (
             <SearchHistory
               history={history}
@@ -180,7 +190,6 @@ export default function SearchScreen() {
           )}
           keyExtractor={(item) => item.key}
           contentContainerStyle={{
-            paddingTop: 32,
             paddingHorizontal: TOKENS.margin.horizontal,
             paddingBottom: 80,
           }}
