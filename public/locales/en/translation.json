@@ -1,12 +1,5 @@
 {
   "navigation": {
-    "drawer": {
-      "link1": "Statistics",
-      "link2": "Movies Watched",
-      "link3": "TV Shows Watched",
-      "link4": "Settings",
-      "logout": "Logout"
-    },
     "tabs": {
       "top": "Top",
       "discover": "Discover",
@@ -189,19 +182,6 @@
           "cancel": "No"
         }
       }
-    }
-  },
-  "chart": {
-    "percentage": {
-      "title": "View percentage by media type",
-      "label": "Media type",
-      "movie": "Movies",
-      "tv": "Tv Shows"
-    },
-    "decade": {
-      "title": "View count by year",
-      "movie": "Movies",
-      "tv": "Tv Shows"
     }
   },
   "error": {
@@ -499,8 +479,6 @@
     "expired": "Session expired",
     "success": {
       "forgot": "Email sent",
-      "login": "Welcome back!",
-      "logout": "See you soon!",
       "urlCopied": "URL copied to clipboard",
       "banner": "Banner updated successfully",
       "profile": {

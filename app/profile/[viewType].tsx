@@ -4,7 +4,6 @@ import {
   Text,
   PlatformColor,
   FlatList,
-  Dimensions,
   ListRenderItem,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -17,8 +16,6 @@ import ViewMediaCard from "@/components/views/ViewMediaCard";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import ViewHeaderMenu from "@/components/views/ViewHeaderMenu";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 

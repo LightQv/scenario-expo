@@ -1,12 +1,5 @@
 {
   "navigation": {
-    "drawer": {
-      "link1": "Statistiques",
-      "link2": "Films vus",
-      "link3": "Séries TV vus",
-      "link4": "Paramètres",
-      "logout": "Déconnexion"
-    },
     "tabs": {
       "top": "Top",
       "discover": "Découvrir",
@@ -190,19 +183,6 @@
           "cancel": "Non"
         }
       }
-    }
-  },
-  "chart": {
-    "percentage": {
-      "title": "Pourcentage de vue par type",
-      "label": "Type de média",
-      "movie": "Films",
-      "tv": "Séries TV"
-    },
-    "decade": {
-      "title": "Nombre de vue par année",
-      "movie": "Films",
-      "tv": "Séries TV"
     }
   },
   "error": {
@@ -500,8 +480,6 @@
     "expired": "Session expirée",
     "success": {
       "forgot": "Email envoyé",
-      "login": "Bon retour!",
-      "logout": "À bientôt!",
       "urlCopied": "URL copiée dans le presse-papiers",
       "banner": "Bannière mise à jour avec succès",
       "profile": {
