@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { formatYear } from "@/services/utils";
-import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import { notifyError } from "@/components/toasts/Toast";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useUserContext } from "@/contexts/UserContext";
@@ -76,8 +76,6 @@ export default function WatchlistMediaCardMenu({
       await apiFetch(`/api/v1/medias/${media.id}`, {
         method: "DELETE",
       });
-
-      notifySuccess(i18n.t("screen.watchlist.detail.menu.deleteSuccess"));
 
       // If deleting from a SYSTEM watchlist, refresh bookmarks
       if (watchlistType === "SYSTEM") {

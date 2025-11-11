@@ -218,7 +218,7 @@ export default function TopIndexScreen() {
           />
         }
         contentContainerStyle={{
-          paddingTop: TOKENS.margin.horizontal - 2,
+          paddingTop: TOKENS.margin.horizontal,
           paddingBottom: Platform.select({
             android: 100 + insets.bottom,
             default: 20,

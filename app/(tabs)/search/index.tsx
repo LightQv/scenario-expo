@@ -48,7 +48,7 @@ export default function SearchScreen() {
   useFocusEffect(
     useCallback(() => {
       loadHistory();
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function SearchScreen() {
           numColumns={2}
           columnWrapperStyle={{ justifyContent: "space-between" }}
           contentContainerStyle={{
-            paddingTop: 130,
+            paddingTop: 132,
             paddingHorizontal: TOKENS.margin.horizontal,
             paddingBottom: 80,
           }}

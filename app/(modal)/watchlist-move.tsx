@@ -84,9 +84,9 @@ export default function WatchlistMoveModal() {
     return <FullScreenLoader color={colors.main} />;
   }
 
-  // Filter out current watchlist and sort by title
+  // Filter out current watchlist and system watchlist, then sort by title
   const availableWatchlists = watchlists
-    .filter((w) => w.id !== currentWatchlistId)
+    .filter((w) => w.id !== currentWatchlistId && w.type !== "SYSTEM")
     .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: TOKENS.modal.paddingTop,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: TOKENS.margin.horizontal * 4,
+    paddingBottom: TOKENS.margin.horizontal * 3,
   },
   subtitle: {
     fontFamily: FONTS.regular,

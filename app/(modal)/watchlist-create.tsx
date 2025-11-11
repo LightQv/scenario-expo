@@ -14,7 +14,7 @@ import { router, useNavigation } from "expo-router";
 import { createWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
-import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import { notifyError } from "@/components/toasts/Toast";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
@@ -37,7 +37,6 @@ export default function WatchlistCreateModal() {
         method: "POST",
         body: JSON.stringify({ title: title.trim() }),
       });
-      notifySuccess(i18n.t("form.watchlist.success.create"));
       router.back();
     } catch (error) {
       console.error("Error creating watchlist:", error);
@@ -103,10 +102,7 @@ export default function WatchlistCreateModal() {
                     </Text>
                     {errors.title && touched.title && (
                       <Text
-                        style={[
-                          styles.errorIndicator,
-                          { color: colors.error },
-                        ]}
+                        style={[styles.errorIndicator, { color: colors.error }]}
                       >
                         {" *"}
                       </Text>
@@ -143,9 +139,7 @@ export default function WatchlistCreateModal() {
                     />
                   </View>
                   {errors.title && touched.title && (
-                    <Text
-                      style={[styles.errorText, { color: colors.error }]}
-                    >
+                    <Text style={[styles.errorText, { color: colors.error }]}>
                       {errors.title}
                     </Text>
                   )}

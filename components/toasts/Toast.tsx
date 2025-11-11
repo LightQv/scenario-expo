@@ -1,20 +1,14 @@
-import { toast } from "@backpackapp-io/react-native-toast";
-import i18n from "@/services/i18n";
+import { Toast } from "toastify-react-native";
+import * as Haptics from "expo-haptics";
 
 // Toast Success
 export const notifySuccess = (message: string) => {
-  toast.success(message, { id: "success" });
-};
-
-// Toast Promise
-export const notifyPromise = (promise: any) => {
-  toast.promise(promise, {
-    loading: i18n.t("toast.promise.loading"),
-    success: i18n.t("toast.promise.success"),
-    error: i18n.t("toast.error"),
-  });
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  Toast.success(message);
 };
 
 // Toast Error
-export const notifyError = (message: string) =>
-  toast.error(message, { id: "error" });
+export const notifyError = (message: string) => {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  Toast.error(message);
+};

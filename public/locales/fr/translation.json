@@ -109,10 +109,6 @@
       "error": {
         "title": "Le titre est requis"
       },
-      "success": {
-        "create": "Liste créée",
-        "update": "Liste mise à jour"
-      },
       "edit": {
         "title": "Renommer"
       },
@@ -121,6 +117,9 @@
         "warning": "Cette action est définitive.",
         "submit": "Supprimer la liste de lecture",
         "cancel": "Annuler"
+      },
+      "success": {
+        "update": "Média déplacé avec succès"
       }
     },
     "media": {
@@ -382,8 +381,7 @@
           "view": "Vu",
           "unview": "Non vu",
           "move": "Déplacer vers une autre liste",
-          "delete": "Supprimer de la liste",
-          "deleteSuccess": "Média supprimé de la liste"
+          "delete": "Supprimer de la liste"
         },
         "sort": {
           "default": "Par défaut",
@@ -407,9 +405,7 @@
       },
       "add": {
         "title": "Ajouter à une liste",
-        "subtitle": "Sélectionnez une liste de lecture pour ce média",
-        "success": "Média ajouté à la liste",
-        "removed": "Média retiré de la liste"
+        "subtitle": "Sélectionnez une liste de lecture pour ce média"
       }
     },
     "applicationSettings": {

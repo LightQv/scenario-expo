@@ -45,7 +45,10 @@ export default function DetailsActionsMenu({
           <Button onPress={handleCopy} systemImage="doc.on.doc">
             {i18n.t("screen.detail.actions.copy")}
           </Button>
-          <Button onPress={handleAddToWatchlist} systemImage="plus.square.on.square">
+          <Button
+            onPress={handleAddToWatchlist}
+            systemImage="plus.square.on.square"
+          >
             {i18n.t("screen.detail.actions.addToWatchlist")}
           </Button>
         </ContextMenu.Items>
@@ -61,6 +64,6 @@ const styles = StyleSheet.create({
   container: {
     height: 26,
     width: 20,
-    marginLeft: 8,
+    marginLeft: 4,
   },
 });

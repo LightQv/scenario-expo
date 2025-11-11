@@ -109,10 +109,6 @@
       "error": {
         "title": "Title is required"
       },
-      "success": {
-        "create": "Watchlist created",
-        "update": "Watchlist updated"
-      },
       "edit": {
         "title": "Rename"
       },
@@ -121,6 +117,9 @@
         "warning": "This action is final.",
         "submit": "Delete this watchlist",
         "cancel": "Cancel"
+      },
+      "success": {
+        "update": "Media moved successfully"
       }
     },
     "media": {
@@ -381,8 +380,7 @@
           "view": "Viewed",
           "unview": "Unviewed",
           "move": "Move to another watchlist",
-          "delete": "Delete from watchlist",
-          "deleteSuccess": "Media deleted from watchlist"
+          "delete": "Delete from watchlist"
         },
         "sort": {
           "default": "Default",
@@ -406,9 +404,7 @@
       },
       "add": {
         "title": "Add to watchlist",
-        "subtitle": "Select a watchlist to add this media",
-        "success": "Media added to watchlist",
-        "removed": "Media removed from watchlist"
+        "subtitle": "Select a watchlist to add this media"
       }
     },
     "applicationSettings": {

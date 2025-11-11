@@ -146,7 +146,9 @@ export default function ViewAction({
         <Ionicons
           name="eye"
           size={sizeStyles.iconSize}
-          color={viewed ? colors.main : "#fff"}
+          color={
+            viewed ? colors.main : size === "details" ? colors.text : "#fff"
+          }
         />
       </View>
     </Pressable>
