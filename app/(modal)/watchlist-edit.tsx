@@ -14,7 +14,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { updateWatchlistSchema } from "@/services/validators";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
-import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import { notifyError } from "@/components/toasts/Toast";
 import { useThemeContext } from "@/contexts";
 import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
@@ -53,7 +53,6 @@ export default function WatchlistEditModal() {
         method: "PUT",
         body: JSON.stringify({ title: title.trim() }),
       });
-      notifySuccess(i18n.t("form.watchlist.success.update"));
       router.back();
     } catch (error) {
       console.error("Error updating watchlist:", error);
@@ -124,10 +123,7 @@ export default function WatchlistEditModal() {
                     </Text>
                     {errors.title && touched.title && (
                       <Text
-                        style={[
-                          styles.errorIndicator,
-                          { color: colors.error },
-                        ]}
+                        style={[styles.errorIndicator, { color: colors.error }]}
                       >
                         {" *"}
                       </Text>
@@ -164,9 +160,7 @@ export default function WatchlistEditModal() {
                     />
                   </View>
                   {errors.title && touched.title && (
-                    <Text
-                      style={[styles.errorText, { color: colors.error }]}
-                    >
+                    <Text style={[styles.errorText, { color: colors.error }]}>
                       {errors.title}
                     </Text>
                   )}

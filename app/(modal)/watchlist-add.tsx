@@ -84,8 +84,6 @@ export default function WatchlistAddModal() {
         await apiFetch(`/api/v1/medias/${existingMedia.id}`, {
           method: "DELETE",
         });
-
-        notifySuccess(i18n.t("screen.watchlist.add.removed"));
       } else {
         // Fetch complete media details from TMDB
         const tmdbData = await tmdbFetch(
@@ -115,8 +113,6 @@ export default function WatchlistAddModal() {
           method: "POST",
           body: JSON.stringify(mediaPayload),
         });
-
-        notifySuccess(i18n.t("screen.watchlist.add.success"));
       }
 
       // Refresh watchlists to update the checkmarks
@@ -134,10 +130,10 @@ export default function WatchlistAddModal() {
     return <FullScreenLoader color={colors.main} />;
   }
 
-  // Sort by title
-  const sortedWatchlists = [...watchlists].sort((a, b) =>
-    a.title.localeCompare(b.title),
-  );
+  // Filter out system watchlist and sort by title
+  const sortedWatchlists = [...watchlists]
+    .filter((w) => w.type !== "SYSTEM")
+    .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <ScrollView
@@ -229,7 +225,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: TOKENS.modal.paddingTop,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: TOKENS.margin.horizontal * 4,
+    paddingBottom: TOKENS.margin.horizontal * 3,
   },
   subtitle: {
     fontFamily: FONTS.regular,

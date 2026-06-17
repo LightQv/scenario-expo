@@ -82,7 +82,7 @@ export default function BookmarkButton({
       <Ionicons
         name={bookmarked ? "bookmark" : "bookmark-outline"}
         size={TOKENS.icon}
-        color={bookmarked ? colors.main : "#fff"}
+        color={bookmarked ? colors.main : colors.text}
       />
     </TouchableOpacity>
   );
