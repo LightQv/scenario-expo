@@ -1,16 +1,17 @@
-import { PlatformColor, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useThemeContext } from "@/contexts";
 
 const GRADIENT_HEIGHT = 240;
 
 export default function GradientTransition() {
-  // Use appropriate background color based on theme
-  const backgroundColor = PlatformColor("systemBackground");
+  const { colors, isDark } = useThemeContext();
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["transparent", backgroundColor]}
+        key={isDark ? "dark" : "light"}
+        colors={["transparent", colors.background]}
         style={styles.gradient}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}

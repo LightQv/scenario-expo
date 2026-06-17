@@ -90,7 +90,9 @@ export default function DetailsScreen() {
                     backdropPath={data.backdrop_path || ""}
                     releaseDate={data.release_date}
                     firstAirDate={data.first_air_date}
-                    runtime={data.runtime}
+                    runtime={
+                      type === "tv" ? data.number_of_episodes : data.runtime
+                    }
                     genreIds={data.genres?.map((g) => g.id) || []}
                   />
                   <ViewAction data={data} mediaType={type} size="details" />

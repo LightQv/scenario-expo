@@ -12,7 +12,8 @@
     "ios:prebuild": "npx expo prebuild --platform ios",
     "ios:build:clean": "xcodebuild clean -workspace ios/Scenario.xcworkspace -scheme Scenario -configuration Debug -destination 'generic/platform=iOS'",
     "ios:build:debug": "xcodebuild -workspace ios/Scenario.xcworkspace -scheme Scenario -configuration Debug -destination 'generic/platform=iOS' -derivedDataPath ios/build",
-    "ios:build:release": "xcodebuild -workspace ios/Scenario.xcworkspace -scheme Scenario -configuration Scenario -destination 'generic/platform=iOS' -derivedDataPath ios/build"
+    "ios:build:release": "xcodebuild -workspace ios/Scenario.xcworkspace -scheme Scenario -configuration Scenario -destination 'generic/platform=iOS' -derivedDataPath ios/build",
+    "android": "expo run:android"
   },
   "dependencies": {
     "@expo/ui": "~0.2.0-beta.7",

@@ -7,6 +7,18 @@ import { notifyError } from "@/components/toasts/Toast";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
 
+function getMediaRuntime(data: TmdbData | TmdbDetails, type: string): number {
+  if (type === "tv" && "number_of_episodes" in data) {
+    return data.number_of_episodes || 0;
+  }
+
+  if ("runtime" in data) {
+    return data.runtime || 0;
+  }
+
+  return 0;
+}
+
 type ViewActionProps = {
   data: TmdbData | TmdbDetails;
   mediaType?: string; // Optional override for media type (movie or tv)
@@ -57,8 +69,8 @@ export default function ViewAction({
     if (mediaType) return mediaType;
     if (data.media_type) return data.media_type;
     // Infer from data structure: TV shows have number_of_seasons
-    return data.number_of_seasons !== undefined ? "tv" : "movie";
-  }, [mediaType, data.media_type, data.number_of_seasons]);
+    return "number_of_seasons" in data ? "tv" : "movie";
+  }, [mediaType, data]);
 
   // Use the data's ID and determined type
   const tmdbId = data.id;
@@ -95,14 +107,8 @@ export default function ViewAction({
         // Remove view
         await removeView(viewObj.id);
       } else {
-        // Add view - all data comes from props
-        // Get runtime (TmdbDetails) or default to 0 (TmdbData)
-        const runtime =
-          "runtime" in data
-            ? data.runtime
-            : "number_of_episodes" in data
-              ? data.number_of_episodes
-              : 0;
+        // Add view - all data comes from props.
+        const runtime = getMediaRuntime(data, type);
 
         // Get backdrop (TmdbDetails) or poster (TmdbData fallback)
         const backdrop =
@@ -120,7 +126,7 @@ export default function ViewAction({
             data.release_date?.slice(0, 4) ||
             data.first_air_date?.slice(0, 4) ||
             "",
-          runtime: runtime || 0,
+          runtime,
           title: data.title || data.name || "",
           media_type: type,
           viewer_id: user.id,

@@ -22,6 +22,7 @@ export default function LoginScreen() {
   const { login, loader } = useUserContext();
   const { colors } = useThemeContext();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   return (
     <KeyboardAvoidingView
@@ -36,8 +37,15 @@ export default function LoginScreen() {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
-          onSubmit={(values) => {
-            login(values.email, values.password);
+          onSubmit={async (values) => {
+            try {
+              setAuthError(null);
+              await login(values.email, values.password);
+            } catch (error) {
+              setAuthError(
+                error instanceof Error ? error.message : i18n.t("toast.error"),
+              );
+            }
           }}
         >
           {({
@@ -86,7 +94,10 @@ export default function LoginScreen() {
                     autoCapitalize="none"
                     autoComplete="email"
                     keyboardType="email-address"
-                    onChangeText={handleChange("email")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("email")(value);
+                    }}
                     onBlur={handleBlur("email")}
                     value={values.email}
                     placeholder={i18n.t("form.auth.placeholder.email")}
@@ -141,7 +152,10 @@ export default function LoginScreen() {
                   <TextInput
                     autoCapitalize="none"
                     autoComplete="password"
-                    onChangeText={handleChange("password")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("password")(value);
+                    }}
                     onBlur={handleBlur("password")}
                     value={values.password}
                     placeholder={i18n.t("form.auth.placeholder.password")}
@@ -187,6 +201,31 @@ export default function LoginScreen() {
                   </TouchableOpacity>
                 </Link>
               </View>
+
+              {authError && (
+                <View
+                  style={[
+                    styles.inlineMessage,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor: colors.error,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="alert-circle"
+                    size={18}
+                    color={colors.error}
+                  />
+                  <Text
+                    style={[styles.inlineMessageText, { color: colors.error }]}
+                  >
+                    {authError}
+                  </Text>
+                </View>
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity
@@ -303,6 +342,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
     marginTop: -4,
+  },
+  inlineMessage: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderRadius: TOKENS.radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  inlineMessageText: {
+    flex: 1,
+    fontFamily: FONTS.medium,
+    fontSize: TOKENS.font.md,
+    lineHeight: 18,
   },
   submitButton: {
     height: 52,

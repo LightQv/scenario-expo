@@ -6,6 +6,7 @@ import {
   PlatformColor,
   Dimensions,
   useColorScheme,
+  ColorValue,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -27,7 +28,7 @@ export default function GenreCard({ id, name }: GenreCardProps) {
   const isDark = colorScheme === "dark";
 
   // Neutral gradient colors that adapt to theme
-  const gradientColors = isDark
+  const gradientColors: [ColorValue, ColorValue] = isDark
     ? ["rgba(255, 255, 255, 0.08)", "rgba(255, 255, 255, 0.04)"]
     : ["rgba(0, 0, 0, 0.05)", "rgba(0, 0, 0, 0.02)"];
 

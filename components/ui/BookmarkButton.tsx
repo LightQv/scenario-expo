@@ -4,7 +4,6 @@ import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import { BUTTON, TOKENS } from "@/constants/theme";
 import { useBookmarkContext, useThemeContext } from "@/contexts";
-import { formatYear } from "@/services/utils";
 
 type BookmarkButtonProps = {
   tmdbId: number;
@@ -52,7 +51,6 @@ export default function BookmarkButton({
       } else {
         // Add bookmark
         const date = releaseDate || firstAirDate || "";
-        const releaseYear = date ? formatYear(date) : "";
 
         await addBookmark({
           tmdb_id: tmdbId,
@@ -60,7 +58,6 @@ export default function BookmarkButton({
           poster_path: posterPath,
           backdrop_path: backdropPath,
           release_date: date,
-          release_year: releaseYear,
           runtime: runtime || 0,
           media_type: mediaType,
           genre_ids: genreIds,

@@ -20,10 +20,21 @@ export default function HorizontalMediaCard({
   data,
   mediaType,
 }: HorizontalMediaCardProps) {
-  const genre = useGenre(data, mediaType);
+  const genre = useGenre(
+    {
+      genre_ids: data.genre_ids,
+      media_type: mediaType,
+    } as TmdbData,
+    mediaType,
+  );
   const releaseDate =
-    "release_date" in data ? data.release_date : data.first_air_date;
-  const title = "title" in data ? data.title : data.name;
+    mediaType === "movie"
+      ? (data as PersonMovieCredit).release_date
+      : (data as PersonTvCredit).first_air_date;
+  const title =
+    mediaType === "movie"
+      ? (data as PersonMovieCredit).title
+      : (data as PersonTvCredit).name;
 
   const posterUrl = data.poster_path
     ? `https://image.tmdb.org/t/p/w342/${data.poster_path}`
