@@ -84,7 +84,7 @@ function ThemeWrapper() {
       Appearance.setColorScheme("dark");
     } else {
       // System - let the OS control it
-      Appearance.setColorScheme(null);
+      Appearance.setColorScheme("unspecified");
     }
   }, [themePreference]);
 

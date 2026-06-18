@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
+import { Button, ContextMenu, Host, Image } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
@@ -111,24 +111,24 @@ export default function WatchlistMediaCardMenu({
           <Button
             onPress={handleToggleView}
             systemImage={viewed ? "eye.slash" : "eye"}
-          >
-            {viewed
+            label={viewed
               ? i18n.t("screen.watchlist.detail.menu.unview")
               : i18n.t("screen.watchlist.detail.menu.view")}
-          </Button>
-          <Button onPress={handleMoveToWatchlist} systemImage="folder">
-            {i18n.t("screen.watchlist.detail.menu.move")}
-          </Button>
+          />
+          <Button
+            onPress={handleMoveToWatchlist}
+            systemImage="folder"
+            label={i18n.t("screen.watchlist.detail.menu.move")}
+          />
           <Button
             onPress={handleDeleteMedia}
             systemImage="trash"
             role="destructive"
-          >
-            {i18n.t("screen.watchlist.detail.menu.delete")}
-          </Button>
+            label={i18n.t("screen.watchlist.detail.menu.delete")}
+          />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <Button systemImage="ellipsis" color={colors.text} />
+          <Image systemName="ellipsis" color={colors.text} />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>

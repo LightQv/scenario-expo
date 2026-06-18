@@ -19,10 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import GoBackButton from "@/components/ui/GoBackButton";
-import ViewAction from "@/components/actions/ViewAction";
-import DetailsActionsMenu from "@/components/details/DetailsActionsMenu";
-import BookmarkButton from "@/components/ui/BookmarkButton";
-import HeaderRight from "@/components/ui/HeaderRight";
+import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
 
 export default function DetailsScreen() {
   const colorScheme = useColorScheme();
@@ -76,36 +73,8 @@ export default function DetailsScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
-      // Only show actions for movie and tv, not for person
-      headerRight:
-        type === "movie" || type === "tv"
-          ? () =>
-              data && (
-                <HeaderRight>
-                  <BookmarkButton
-                    tmdbId={Number(id)}
-                    mediaType={type}
-                    title={data.title || data.name || ""}
-                    posterPath={data.poster_path || ""}
-                    backdropPath={data.backdrop_path || ""}
-                    releaseDate={data.release_date}
-                    firstAirDate={data.first_air_date}
-                    runtime={
-                      type === "tv" ? data.number_of_episodes : data.runtime
-                    }
-                    genreIds={data.genres?.map((g) => g.id) || []}
-                  />
-                  <ViewAction data={data} mediaType={type} size="details" />
-                  <DetailsActionsMenu
-                    mediaType={type}
-                    tmdbId={id}
-                    title={data.title || data.name || ""}
-                  />
-                </HeaderRight>
-              )
-          : undefined,
     });
-  }, [navigation, type, data, id]);
+  }, [navigation]);
 
   return (
     <View
@@ -114,6 +83,9 @@ export default function DetailsScreen() {
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
+      {(type === "movie" || type === "tv") && data && (
+        <DetailsHeaderActions data={data} mediaType={type} tmdbId={id} />
+      )}
       <StatusBar style={statusStyle} animated />
 
       <Animated.ScrollView

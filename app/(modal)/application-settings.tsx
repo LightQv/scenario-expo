@@ -199,7 +199,7 @@ export default function ApplicationSettingsScreen() {
               <ColorPicker
                 key={`light-${customColors.light}`}
                 selection={customColors.light}
-                onValueChanged={(color) => handleColorChange("light", color)}
+                onSelectionChange={(color) => handleColorChange("light", color)}
               />
             </Host>
           </View>
@@ -220,7 +220,7 @@ export default function ApplicationSettingsScreen() {
               <ColorPicker
                 key={`dark-${customColors.dark}`}
                 selection={customColors.dark}
-                onValueChanged={(color) => handleColorChange("dark", color)}
+                onSelectionChange={(color) => handleColorChange("dark", color)}
               />
             </Host>
           </View>

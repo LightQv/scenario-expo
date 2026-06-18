@@ -14,10 +14,8 @@ import {
   useRef,
   useMemo,
   useCallback,
-  useLayoutEffect,
 } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -57,7 +55,6 @@ const SORT_OPTIONS: SortOption[] = [
 
 export default function TopIndexScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
   const { movieGenres, tvGenres } = useGenreContext();
   const [fetchParams, setFetchParams] = useState<FetchParams>({
     type: "movie",
@@ -110,35 +107,6 @@ export default function TopIndexScreen() {
       page: 1,
     }));
   }, []);
-
-  // Configure header with filters in headerRight
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <FiltersMenu
-            genres={sortedGenres}
-            selectedGenreId={fetchParams.genre}
-            onGenreChange={handleGenreChange}
-            sortOptions={SORT_OPTIONS}
-            selectedSort={fetchParams.sort}
-            onSortChange={handleSortChange}
-            mediaType={fetchParams.type}
-            onMediaTypeChange={handleMediaTypeChange}
-          />
-        </View>
-      ),
-    });
-  }, [
-    navigation,
-    fetchParams.sort,
-    fetchParams.genre,
-    fetchParams.type,
-    sortedGenres,
-    handleSortChange,
-    handleGenreChange,
-    handleMediaTypeChange,
-  ]);
 
   // Fetch data from TMDB
   const fetchData = async (params: FetchParams, append: boolean = false) => {
@@ -202,6 +170,16 @@ export default function TopIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
+      <FiltersMenu
+        genres={sortedGenres}
+        selectedGenreId={fetchParams.genre}
+        onGenreChange={handleGenreChange}
+        sortOptions={SORT_OPTIONS}
+        selectedSort={fetchParams.sort}
+        onSortChange={handleSortChange}
+        mediaType={fetchParams.type}
+        onMediaTypeChange={handleMediaTypeChange}
+      />
       <AnimatedHeader title={i18n.t("screen.top.title")} scrollY={scrollY} />
 
       <Animated.FlatList
@@ -249,11 +227,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  headerRight: {
-    flexDirection: "row",
-    gap: 8,
-    marginRight: 8,
   },
   row: {
     justifyContent: "space-between",

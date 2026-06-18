@@ -1,9 +1,7 @@
-import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
-import { useThemeContext } from "@/contexts/ThemeContext";
+import type { HeaderMenuItem } from "@/components/ui/HeaderActionCapsule";
+import HeaderMenu from "@/components/ui/HeaderMenu";
 
 type SortType =
   | "default"
@@ -34,49 +32,23 @@ export default function WatchlistMenu({
   sortType,
   onSortChange,
 }: WatchlistMenuProps) {
-  const { colors } = useThemeContext();
+  const actions: HeaderMenuItem[] = SORT_OPTIONS.map((option) => ({
+    id: option.value,
+    title: option.label,
+    selected: sortType === option.value,
+    onPress: () => handlePressAction(option.value),
+  }));
 
-  // Build sort options array
-  const sortLabels = SORT_OPTIONS.map((s) => s.label);
-
-  // Calculate selected sort index
-  const selectedSortIndex = SORT_OPTIONS.findIndex((s) => s.value === sortType);
-
-  const handleSortSelect = (index: number) => {
+  const handlePressAction = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onSortChange(SORT_OPTIONS[index].value);
+    onSortChange(id as SortType);
   };
 
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Picker
-            label={i18n.t("screen.watchlist.menu.sort")}
-            options={sortLabels}
-            variant="inline"
-            selectedIndex={selectedSortIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleSortSelect(index)
-            }
-          />
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Button
-            systemImage="arrow.up.arrow.down"
-            color={colors.text}
-            variant="plain"
-          />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <HeaderMenu
+      label={i18n.t("screen.watchlist.menu.sort")}
+      icon="arrow.up.arrow.down"
+      actions={actions}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 26,
-    width: 20,
-    marginRight: 4,
-  },
-});

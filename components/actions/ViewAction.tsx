@@ -6,6 +6,7 @@ import { useUserContext, useViewContext, useThemeContext } from "@/contexts";
 import { notifyError } from "@/components/toasts/Toast";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
+import HeaderIconButton from "@/components/ui/HeaderIconButton";
 
 function getMediaRuntime(data: TmdbData | TmdbDetails, type: string): number {
   if (type === "tv" && "number_of_episodes" in data) {
@@ -142,6 +143,17 @@ export default function ViewAction({
     }
   };
 
+  if (size === "details") {
+    return (
+      <HeaderIconButton
+        icon="eye"
+        active={viewed}
+        disabled={isProcessing}
+        onPress={handleView}
+      />
+    );
+  }
+
   return (
     <Pressable
       onPress={handleView}
@@ -152,9 +164,7 @@ export default function ViewAction({
         <Ionicons
           name="eye"
           size={sizeStyles.iconSize}
-          color={
-            viewed ? colors.main : size === "details" ? colors.text : "#fff"
-          }
+          color={viewed ? colors.main : "#fff"}
         />
       </View>
     </Pressable>

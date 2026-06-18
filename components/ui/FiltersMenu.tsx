@@ -1,8 +1,7 @@
-import { StyleSheet } from "react-native";
-import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
+import type { HeaderMenuItem } from "@/components/ui/HeaderActionCapsule";
+import HeaderMenu from "@/components/ui/HeaderMenu";
 
 export type SortOption = {
   value: string;
@@ -38,101 +37,76 @@ export default function FiltersMenu({
   mediaType,
   onMediaTypeChange,
 }: FiltersMenuProps) {
-  // Build media type options
   const mediaTypeOptions = [
-    i18n.t("filter.type.movie"),
-    i18n.t("filter.type.tv"),
-  ];
-  const selectedMediaTypeIndex = mediaType === "movie" ? 0 : 1;
+    { value: "movie", label: i18n.t("filter.type.movie") },
+    { value: "tv", label: i18n.t("filter.type.tv") },
+  ] as const;
 
-  // Build genre options array with "All" at the beginning
   const genreOptions = [
-    i18n.t("filter.genre.all"),
-    ...genres.map((g) => g.name),
+    { id: null, name: i18n.t("filter.genre.all") },
+    ...genres,
   ];
 
-  // Calculate selected genre index (0 for "All", index+1 for genres)
-  const selectedGenreIndex =
-    selectedGenreId === null
-      ? 0
-      : genres.findIndex((g) => g.id === selectedGenreId) + 1;
+  const actions: HeaderMenuItem[] = [
+    ...(mediaType && onMediaTypeChange
+      ? [
+          {
+            id: "type",
+            title: i18n.t("filter.type.title"),
+            icon: "play.rectangle",
+            children: mediaTypeOptions.map((option) => ({
+              id: `type:${option.value}`,
+              title: option.label,
+              selected: mediaType === option.value,
+              onPress: () => handlePressAction(`type:${option.value}`),
+            })),
+          } satisfies HeaderMenuItem,
+        ]
+      : []),
+    {
+      id: "genre",
+      title: i18n.t("filter.genre.title"),
+      icon: "tag",
+      children: genreOptions.map((option) => ({
+        id: `genre:${option.id ?? "all"}`,
+        title: option.name,
+        selected: selectedGenreId === option.id,
+        onPress: () => handlePressAction(`genre:${option.id ?? "all"}`),
+      })),
+    },
+    {
+      id: "sort",
+      title: i18n.t("filter.sort.title"),
+      icon: "arrow.up.arrow.down",
+      children: sortOptions.map((option) => ({
+        id: `sort:${option.value}`,
+        title: option.label,
+        selected: selectedSort === option.value,
+        onPress: () => handlePressAction(`sort:${option.value}`),
+      })),
+    },
+  ];
 
-  // Build sort options array
-  const sortLabels = sortOptions.map((s) => s.label);
+  const handlePressAction = (id: string) => {
+    const [kind, value] = id.split(":");
+    if (!value) return;
 
-  // Calculate selected sort index
-  const selectedSortIndex = sortOptions.findIndex(
-    (s) => s.value === selectedSort,
-  );
-
-  const handleMediaTypeSelect = (index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    if (onMediaTypeChange) {
-      onMediaTypeChange(index === 0 ? "movie" : "tv");
+
+    if (kind === "type" && onMediaTypeChange) {
+      onMediaTypeChange(value as MediaType);
     }
-  };
 
-  const handleGenreSelect = (index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    if (index === 0) {
-      onGenreChange(null); // "All" selected
-    } else {
-      onGenreChange(genres[index - 1].id);
+    if (kind === "genre") {
+      onGenreChange(value === "all" ? null : Number(value));
     }
-  };
 
-  const handleSortSelect = (index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onSortChange(sortOptions[index].value);
+    if (kind === "sort") {
+      onSortChange(value);
+    }
   };
 
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          {/* Media Type Picker - only show if mediaType and onMediaTypeChange are provided */}
-          {mediaType && onMediaTypeChange && (
-            <Picker
-              label={i18n.t("filter.type.title")}
-              options={mediaTypeOptions}
-              variant="menu"
-              selectedIndex={selectedMediaTypeIndex}
-              onOptionSelected={({ nativeEvent: { index } }) =>
-                handleMediaTypeSelect(index)
-              }
-            />
-          )}
-          <Picker
-            label={i18n.t("filter.genre.title")}
-            options={genreOptions}
-            variant="menu"
-            selectedIndex={selectedGenreIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleGenreSelect(index)
-            }
-          />
-          <Picker
-            label={i18n.t("filter.sort.title")}
-            options={sortLabels}
-            variant="menu"
-            selectedIndex={selectedSortIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleSortSelect(index)
-            }
-          />
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Image systemName="ellipsis" />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <HeaderMenu label="Filters" actions={actions} />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 26,
-    width: 20,
-    marginLeft: 8,
-  },
-});

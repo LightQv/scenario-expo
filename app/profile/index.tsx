@@ -1,7 +1,7 @@
 import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
 import { useEffect, useState, useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -15,6 +15,7 @@ import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import GradientTransition from "@/components/details/GradientTransition";
 import StatisticsPills from "@/components/profile/StatisticsPills";
+import ProfileMenu from "@/components/profile/ProfileMenu";
 
 type Statistics = {
   movieCount: number;
@@ -114,6 +115,7 @@ export default function ProfileScreen() {
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
+      <ProfileMenu />
       <StatusBar style={statusStyle} animated />
 
       <Animated.ScrollView

@@ -178,29 +178,8 @@ export default function WatchlistDetailScreen() {
       headerTransparent: true,
       headerTitle: "",
       headerLeft: () => <GoBackButton />,
-      headerRight: () =>
-        watchlist ? (
-          <WatchlistDetailMenu
-            watchlistId={id}
-            watchlistType={watchlist.type}
-            sortType={sortType}
-            filterType={filterType}
-            onSortChange={handleSortChange}
-            onFilterChange={handleFilterChange}
-            onDelete={handleDelete}
-          />
-        ) : null,
     });
-  }, [
-    navigation,
-    watchlist,
-    id,
-    sortType,
-    filterType,
-    handleSortChange,
-    handleFilterChange,
-    handleDelete,
-  ]);
+  }, [navigation]);
 
   // Render media card with useCallback
   const renderItem: ListRenderItem<APIMedia> = useCallback(
@@ -258,6 +237,17 @@ export default function WatchlistDetailScreen() {
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
+      {watchlist && (
+        <WatchlistDetailMenu
+          watchlistId={id}
+          watchlistType={watchlist.type}
+          sortType={sortType}
+          filterType={filterType}
+          onSortChange={handleSortChange}
+          onFilterChange={handleFilterChange}
+          onDelete={handleDelete}
+        />
+      )}
       <StatusBar style={statusStyle} animated />
 
       <AnimatedFlatList

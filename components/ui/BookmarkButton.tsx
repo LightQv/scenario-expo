@@ -1,9 +1,8 @@
-import { TouchableOpacity, ActivityIndicator } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator } from "react-native";
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
-import { BUTTON, TOKENS } from "@/constants/theme";
 import { useBookmarkContext, useThemeContext } from "@/contexts";
+import HeaderIconButton from "@/components/ui/HeaderIconButton";
 
 type BookmarkButtonProps = {
   tmdbId: number;
@@ -75,12 +74,11 @@ export default function BookmarkButton({
   }
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={BUTTON.opacity}>
-      <Ionicons
-        name={bookmarked ? "bookmark" : "bookmark-outline"}
-        size={TOKENS.icon}
-        color={bookmarked ? colors.main : colors.text}
-      />
-    </TouchableOpacity>
+    <HeaderIconButton
+      icon={bookmarked ? "bookmark" : "bookmark-outline"}
+      active={bookmarked}
+      onPress={handlePress}
+      disabled={isProcessing}
+    />
   );
 }

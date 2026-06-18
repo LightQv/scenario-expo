@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { Host, Picker } from "@expo/ui/swift-ui";
+import { Host, Picker, Text } from "@expo/ui/swift-ui";
+import { pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
 import { GlassView } from "expo-glass-effect";
 import i18n from "@/services/i18n";
 import { TOKENS } from "@/constants/theme";
@@ -25,12 +26,8 @@ export default function MediaTypePicker({
 
   const selectedIndex = MEDIA_TYPES.indexOf(selectedType);
 
-  const handleOptionSelected = ({
-    nativeEvent,
-  }: {
-    nativeEvent: { index: number };
-  }) => {
-    const newType = MEDIA_TYPES[nativeEvent.index];
+  const handleSelectionChange = (index: number) => {
+    const newType = MEDIA_TYPES[index];
     onTypeChange(newType);
   };
 
@@ -38,11 +35,16 @@ export default function MediaTypePicker({
     <GlassView style={styles.glassView}>
       <Host matchContents style={styles.picker}>
         <Picker
-          options={options}
-          selectedIndex={selectedIndex}
-          onOptionSelected={handleOptionSelected}
-          variant="segmented"
-        />
+          selection={selectedIndex}
+          onSelectionChange={handleSelectionChange}
+          modifiers={[pickerStyle("segmented")]}
+        >
+          {options.map((option, index) => (
+            <Text key={MEDIA_TYPES[index]} modifiers={[tag(index)]}>
+              {option}
+            </Text>
+          ))}
+        </Picker>
       </Host>
     </GlassView>
   );

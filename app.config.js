@@ -40,6 +40,14 @@ export default {
           experimentalLauncherActivity: true,
         },
       ],
+      [
+        "expo-build-properties",
+        {
+          ios: {
+            deploymentTarget: "16.4",
+          },
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

@@ -15,6 +15,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import { FONTS } from "@/constants/theme";
 import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import { useGenreContext } from "@/contexts/GenreContext";
+import ProfileHeaderButton from "@/components/ui/ProfileHeaderButton";
 
 type SectionData = {
   id: string;
@@ -225,6 +226,7 @@ export default function DiscoverIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
+      <ProfileHeaderButton />
       <AnimatedHeader
         title={i18n.t("screen.discover.title")}
         scrollY={scrollY}

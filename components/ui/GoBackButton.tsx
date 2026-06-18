@@ -12,7 +12,7 @@ export default function GoBackButton({ variant = "back" }: GoBackButtonProps) {
   const { colors } = useThemeContext();
 
   const iconName = variant === "close" ? "close" : "chevron-back";
-  const margin = variant === "close" ? 6 : 4;
+  const margin = variant === "close" ? 0 : -2;
 
   return (
     <Pressable onPress={() => router.back()} style={{ marginLeft: margin }}>

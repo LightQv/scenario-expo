@@ -6,9 +6,11 @@ import {
   FlatList,
   ListRenderItem,
 } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { useScrollToTop } from "@react-navigation/native";
+import {
+  useLocalSearchParams,
+  useScrollToTop,
+} from "expo-router";
+import { useEffect, useState, useRef } from "react";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
 import { TOKENS, FONTS } from "@/constants/theme";
@@ -22,7 +24,6 @@ type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 export default function ViewTypeScreen() {
   const { viewType } = useLocalSearchParams<{ viewType: string }>();
   const { views, isLoading } = useViewContext();
-  const navigation = useNavigation();
   const [filteredViews, setFilteredViews] = useState<APIMedia[]>([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
@@ -48,21 +49,6 @@ export default function ViewTypeScreen() {
   const handleGenreChange = (genre: number | null) => {
     setGenreId(genre);
   };
-
-  // Configure header with menu
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <ViewHeaderMenu
-          mediaType={viewType}
-          sortType={sortType}
-          genreId={genreId}
-          onSortChange={handleSortChange}
-          onGenreChange={handleGenreChange}
-        />
-      ),
-    });
-  }, [navigation, viewType, sortType, genreId]);
 
   // Filter, sort and process views
   useEffect(() => {
@@ -149,6 +135,13 @@ export default function ViewTypeScreen() {
         { backgroundColor: PlatformColor("systemBackground") },
       ]}
     >
+      <ViewHeaderMenu
+        mediaType={viewType}
+        sortType={sortType}
+        genreId={genreId}
+        onSortChange={handleSortChange}
+        onGenreChange={handleGenreChange}
+      />
       <FlatList
         ref={listRef}
         data={filteredViews}

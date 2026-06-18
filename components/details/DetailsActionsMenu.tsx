@@ -1,12 +1,10 @@
-import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host, Image } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { CONFIG } from "@/services/config";
 import { notifySuccess, notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
+import HeaderMenu from "@/components/ui/HeaderMenu";
 
 type DetailsActionsMenuProps = {
   mediaType: string;
@@ -39,31 +37,22 @@ export default function DetailsActionsMenu({
   };
 
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Button onPress={handleCopy} systemImage="doc.on.doc">
-            {i18n.t("screen.detail.actions.copy")}
-          </Button>
-          <Button
-            onPress={handleAddToWatchlist}
-            systemImage="plus.square.on.square"
-          >
-            {i18n.t("screen.detail.actions.addToWatchlist")}
-          </Button>
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Image systemName="ellipsis" />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <HeaderMenu
+      label="More actions"
+      actions={[
+        {
+          id: "copy",
+          title: i18n.t("screen.detail.actions.copy"),
+          icon: "doc.on.doc",
+          onPress: handleCopy,
+        },
+        {
+          id: "addToWatchlist",
+          title: i18n.t("screen.detail.actions.addToWatchlist"),
+          icon: "plus.square.on.square",
+          onPress: handleAddToWatchlist,
+        },
+      ]}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 26,
-    width: 20,
-    marginLeft: 4,
-  },
-});

@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
+import { Button, ContextMenu, Host, Image } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
@@ -42,12 +42,11 @@ export default function ViewMediaCardMenu({
             onPress={handleUnview}
             systemImage="eye.slash"
             role="destructive"
-          >
-            {i18n.t("screen.watchlist.detail.menu.unview")}
-          </Button>
+            label={i18n.t("screen.watchlist.detail.menu.unview")}
+          />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <Button systemImage="ellipsis" color={colors.text} />
+          <Image systemName="ellipsis" color={colors.text} />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>

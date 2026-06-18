@@ -216,8 +216,8 @@ Translation files located in `public/locales/`
 
 ## 🔍 Key Dependencies
 
-- **Expo SDK 54**: Core framework
-- **React Native 0.81**: Mobile framework
+- **Expo SDK 56**: Core framework
+- **React Native 0.85**: Mobile framework
 - **Expo Router**: File-based navigation
 - **Reanimated**: Smooth animations
 - **Formik + Yup**: Form handling and validation
