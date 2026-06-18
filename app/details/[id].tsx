@@ -18,7 +18,6 @@ import Animated, {
   FadeOutRight,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import GoBackButton from "@/components/ui/GoBackButton";
 import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
 
 export default function DetailsScreen() {
@@ -72,7 +71,6 @@ export default function DetailsScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
-      headerLeft: () => <GoBackButton />,
     });
   }, [navigation]);
 

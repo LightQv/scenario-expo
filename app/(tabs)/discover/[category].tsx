@@ -16,7 +16,6 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MediaCard from "@/components/discover/MediaCard";
 import PersonCard from "@/components/discover/PersonCard";
-import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
@@ -111,7 +110,6 @@ export default function CategoryDetailScreen() {
       headerTransparent: true,
       headerTitle: title || "Discover",
       headerTintColor: colors.text,
-      headerLeft: () => <GoBackButton />,
     });
   }, [navigation, colors.text, title]);
 

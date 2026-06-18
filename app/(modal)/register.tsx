@@ -17,6 +17,7 @@ import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function RegisterScreen() {
   const { register, loader } = useUserContext();
@@ -25,10 +26,12 @@ export default function RegisterScreen() {
   const [authError, setAuthError] = useState<string | null>(null);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -410,7 +413,8 @@ export default function RegisterScreen() {
           )}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

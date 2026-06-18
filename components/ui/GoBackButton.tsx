@@ -1,22 +1,22 @@
-import { Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useThemeContext } from "@/contexts/ThemeContext";
-import { TOKENS } from "@/constants/theme";
+import { Stack, router } from "expo-router";
 
 type GoBackButtonProps = {
   variant?: "back" | "close";
 };
 
 export default function GoBackButton({ variant = "back" }: GoBackButtonProps) {
-  const { colors } = useThemeContext();
-
-  const iconName = variant === "close" ? "close" : "chevron-back";
-  const margin = variant === "close" ? 0 : -2;
+  const iconName = variant === "close" ? "xmark" : "chevron.left";
+  const label = variant === "close" ? "Close" : "Back";
 
   return (
-    <Pressable onPress={() => router.back()} style={{ marginLeft: margin }}>
-      <Ionicons name={iconName} size={TOKENS.icon} color={colors.text} />
-    </Pressable>
+    <Stack.Toolbar placement="left">
+      <Stack.Toolbar.Button
+        accessibilityLabel={label}
+        icon={iconName as never}
+        onPress={() => router.back()}
+      >
+        {label}
+      </Stack.Toolbar.Button>
+    </Stack.Toolbar>
   );
 }

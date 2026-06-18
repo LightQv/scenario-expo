@@ -18,6 +18,7 @@ import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function AccountSettingsScreen() {
   const { user, logout } = useUserContext();
@@ -64,10 +65,12 @@ export default function AccountSettingsScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -158,7 +161,8 @@ export default function AccountSettingsScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

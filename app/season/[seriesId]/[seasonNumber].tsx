@@ -16,7 +16,6 @@ import { formatFullDate, formatRuntime } from "@/services/utils";
 import { StatusBar } from "expo-status-bar";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function SeasonDetailScreen() {
@@ -58,7 +57,6 @@ export default function SeasonDetailScreen() {
       headerTitle:
         seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
       headerTintColor: colors.text,
-      headerLeft: () => <GoBackButton />,
     });
   }, [navigation, colors.text, seriesName]);
 

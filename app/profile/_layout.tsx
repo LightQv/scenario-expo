@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function ProfileLayout() {
   return (
@@ -9,7 +8,6 @@ export default function ProfileLayout() {
         options={{
           headerTransparent: true,
           headerTitle: "",
-          headerLeft: () => <GoBackButton />,
         }}
       />
       <Stack.Screen
@@ -17,7 +15,6 @@ export default function ProfileLayout() {
         options={{
           headerTransparent: true,
           headerTitle: "",
-          headerLeft: () => <GoBackButton />,
         }}
       />
     </Stack>

@@ -16,6 +16,7 @@ import i18n from "@/services/i18n";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { router } from "expo-router";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function ForgotPasswordScreen() {
   const { forgotPassword, loader } = useUserContext();
@@ -24,10 +25,12 @@ export default function ForgotPasswordScreen() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -212,7 +215,8 @@ export default function ForgotPasswordScreen() {
           )}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

@@ -26,7 +26,6 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import GoBackButton from "@/components/ui/GoBackButton";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<APIMedia>);
 
@@ -177,7 +176,6 @@ export default function WatchlistDetailScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
-      headerLeft: () => <GoBackButton />,
     });
   }, [navigation]);
 

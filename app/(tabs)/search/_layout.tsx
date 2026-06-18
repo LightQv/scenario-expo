@@ -1,6 +1,5 @@
 import { router, Stack } from "expo-router";
 import { useState, createContext, useContext } from "react";
-import GoBackButton from "@/components/ui/GoBackButton";
 
 type MediaType = "movie" | "tv" | "person";
 
@@ -57,7 +56,6 @@ export default function SearchLayout() {
             headerTransparent: true,
             headerShadowVisible: false,
             headerTitle: "",
-            headerLeft: () => <GoBackButton />,
           }}
         />
         <Stack.Screen
@@ -66,7 +64,6 @@ export default function SearchLayout() {
             headerTransparent: true,
             headerShadowVisible: false,
             headerTitle: "",
-            headerLeft: () => <GoBackButton />,
           }}
         />
       </Stack>

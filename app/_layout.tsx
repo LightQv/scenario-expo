@@ -93,7 +93,11 @@ function ThemeWrapper() {
       <ViewProvider>
         <BookmarkProvider>
           <GenreProvider>
-            <Stack>
+            <Stack
+              screenOptions={{
+                headerBackButtonDisplayMode: "minimal",
+              }}
+            >
               <Stack.Screen
                 name="(modal)"
                 options={{ presentation: "modal", headerShown: false }}

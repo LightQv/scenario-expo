@@ -14,6 +14,7 @@ import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { notifySuccess } from "@/components/toasts/Toast";
 import { ColorPicker, Host } from "@expo/ui/swift-ui";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 type ThemePreference = "light" | "dark" | "system";
 
@@ -57,13 +58,15 @@ export default function ApplicationSettingsScreen() {
   };
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-      contentContainerStyle={styles.content}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: PlatformColor("systemBackground") },
+        ]}
+        contentContainerStyle={styles.content}
+      >
       {/* Theme Section */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: PlatformColor("label") }]}>
@@ -240,7 +243,8 @@ export default function ApplicationSettingsScreen() {
           {i18n.t("screen.applicationSettings.reset.button")}
         </Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 
