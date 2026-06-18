@@ -11,12 +11,6 @@ import { useState } from "react";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import HorizontalMediaCard from "./HorizontalMediaCard";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeContext } from "@/contexts";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
 
 type CollapsibleCreditsSectionProps = {
   title: string;
@@ -36,19 +30,10 @@ export default function CollapsibleCreditsSection({
   secondaryTextColor,
 }: CollapsibleCreditsSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { colors } = useThemeContext();
-  const rotation = useSharedValue(0);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
-    rotation.value = withTiming(isCollapsed ? 0 : -90, { duration: 200 });
   };
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotate: `${rotation.value}deg` }],
-    };
-  });
 
   const renderItem: ListRenderItem<PersonMovieCredit | PersonTvCredit> = ({
     item,
@@ -91,15 +76,14 @@ export default function CollapsibleCreditsSection({
         </Text>
         <TouchableOpacity
           onPress={toggleCollapse}
-          style={[
-            styles.collapseButton,
-            { backgroundColor: PlatformColor("systemGray5") },
-          ]}
+          style={styles.collapseButton}
           activeOpacity={BUTTON.opacity}
         >
-          <Animated.View style={animatedIconStyle}>
-            <Ionicons name="chevron-down" size={16} color={colors.main} />
-          </Animated.View>
+          <Ionicons
+            name={isCollapsed ? "chevron-down" : "chevron-up"}
+            size={24}
+            color={textColor || PlatformColor("label")}
+          />
         </TouchableOpacity>
       </View>
 
@@ -128,16 +112,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: TOKENS.margin.horizontal,
     marginBottom: 12,
+    minHeight: 40,
   },
   title: {
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxxl,
+    lineHeight: 40,
     flex: 1,
   },
   collapseButton: {
-    width: 24,
-    height: 24,
-    borderRadius: TOKENS.radius.full,
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
   },

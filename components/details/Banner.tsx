@@ -189,13 +189,13 @@ export default function Banner({
         ]}
       >
         {/* Title Section - Centered */}
-        <View style={styles.titleSection}>
+        <View style={[styles.titleSection, isPerson && styles.personTitleSection]}>
           <Text style={[styles.title, { color: palette.text }]} numberOfLines={2}>
             {title}
           </Text>
           {controls}
           {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
-          <View style={styles.genreContainer}>
+          <View style={[styles.genreContainer, isPerson && styles.personGenreContainer]}>
             {isPerson ? (
               <>
                 {/* Gender */}
@@ -356,7 +356,7 @@ function renderMetadata({
 
   if (type === "person") {
     return (
-      <View style={styles.metadataGroup}>
+      <View style={[styles.metadataGroup, styles.personMetadataGroup]}>
         {knownForDepartment && (
           <Text style={[styles.statusText, { color: textColor }]}>
             {knownForDepartment}
@@ -420,6 +420,9 @@ const styles = StyleSheet.create({
     gap: 4,
     alignItems: "center",
   },
+  personTitleSection: {
+    gap: 10,
+  },
   title: {
     fontSize: 34,
     lineHeight: 36,
@@ -427,16 +430,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
     fontFamily: FONTS.abril,
-    textShadowColor: "rgba(0,0,0,0.45)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 16,
   },
   genreContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
     justifyContent: "center",
-    marginBottom: 4,
+    marginBottom: 10,
+  },
+  personGenreContainer: {
+    marginTop: 2,
+    marginBottom: 8,
   },
   genrePill: {
     paddingHorizontal: 18,
@@ -453,20 +457,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
+  personMetadataGroup: {
+    gap: 10,
+  },
   metadataText: {
     fontSize: TOKENS.font.md,
     fontFamily: FONTS.regular,
     textAlign: "center",
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 8,
   },
   statusText: {
     fontSize: TOKENS.font.sm,
     fontFamily: FONTS.bold,
     textTransform: "uppercase",
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 8,
   },
 });
