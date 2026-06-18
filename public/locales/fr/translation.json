@@ -328,6 +328,7 @@
       "title": "Rechercher",
       "placeholder": "Film, séries TV, acteur, réalisateur...",
       "cancel": "Annuler",
+      "showAllResults": "Voir tous les résultats",
       "history": {
         "title": "Récemment recherché",
         "clear": "Effacer"

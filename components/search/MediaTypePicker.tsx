@@ -13,6 +13,7 @@ type MediaTypePickerProps = {
 };
 
 const MEDIA_TYPES: MediaType[] = ["movie", "tv", "person"];
+const PICKER_HEIGHT = 42;
 
 export default function MediaTypePicker({
   selectedType,
@@ -33,7 +34,7 @@ export default function MediaTypePicker({
 
   return (
     <GlassView style={styles.glassView}>
-      <Host matchContents style={styles.picker}>
+      <Host style={styles.picker}>
         <Picker
           selection={selectedIndex}
           onSelectionChange={handleSelectionChange}
@@ -53,11 +54,11 @@ export default function MediaTypePicker({
 const styles = StyleSheet.create({
   glassView: {
     borderRadius: TOKENS.radius.full,
-    height: 32,
-    width: "auto",
+    height: PICKER_HEIGHT,
+    width: "100%",
   },
   picker: {
-    height: 31,
+    height: PICKER_HEIGHT,
     flex: 1,
   },
 });
