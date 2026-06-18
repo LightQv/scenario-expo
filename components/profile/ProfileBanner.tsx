@@ -1,24 +1,27 @@
 import { StyleSheet, View, Dimensions, Text } from "react-native";
 import { Image } from "expo-image";
+import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   interpolate,
-  Extrapolation,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BLURHASH, TOKENS, FONTS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
+import { colorWithAlpha } from "@/services/detailPalette";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 650;
+const BANNER_HEIGHT = 600;
 
 type ProfileBannerProps = {
   bannerUrl: string | undefined;
   username: string;
   email: string;
   scrollY: SharedValue<number>;
+  backgroundColor: string;
+  textColor: string;
+  secondaryTextColor: string;
 };
 
 export default function ProfileBanner({
@@ -26,8 +29,10 @@ export default function ProfileBanner({
   username,
   email,
   scrollY,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: ProfileBannerProps) {
-  const insets = useSafeAreaInsets();
   const { colors } = useThemeContext();
 
   // Parallax animation for the banner image
@@ -52,20 +57,8 @@ export default function ProfileBanner({
     };
   });
 
-  // Fade out gradient as user scrolls
-  const animatedGradientStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      scrollY.value,
-      [0, BANNER_HEIGHT * 0.5],
-      [1, 0],
-      Extrapolation.CLAMP,
-    );
-
-    return { opacity };
-  });
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}> 
       <View style={styles.imageWrapper}>
         <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
           {bannerUrl ? (
@@ -86,29 +79,77 @@ export default function ProfileBanner({
         </Animated.View>
       </View>
 
-      {/* Gradient overlay for better text readability */}
-      <Animated.View style={[styles.gradientContainer, animatedGradientStyle]}>
+      <View pointerEvents="none" style={styles.gradientContainer}>
+        {bannerUrl && (
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={[
+                  "rgba(0,0,0,0)",
+                  "rgba(0,0,0,0)",
+                  "rgba(0,0,0,0.06)",
+                  "rgba(0,0,0,0.3)",
+                  "rgba(0,0,0,0.66)",
+                  "rgba(0,0,0,1)",
+                ]}
+                locations={[0, 0.38, 0.54, 0.72, 0.92, 1]}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+              />
+            }
+          >
+            <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
+              <Image
+                source={{ uri: bannerUrl }}
+                alt={`${username} banner`}
+                style={styles.image}
+                contentFit="cover"
+                blurRadius={340}
+                cachePolicy="none"
+              />
+            </Animated.View>
+          </MaskedView>
+        )}
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]}
-          style={styles.gradient}
+          colors={[
+            "transparent",
+            "transparent",
+            colorWithAlpha(backgroundColor, 0.22),
+            colorWithAlpha(backgroundColor, 0.54),
+            colorWithAlpha(backgroundColor, 0.82),
+            colorWithAlpha(backgroundColor, 0.96),
+            backgroundColor,
+          ]}
+          locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
+          style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         />
-      </Animated.View>
+        <LinearGradient
+          colors={[
+            "transparent",
+            "transparent",
+            "rgba(0,0,0,0.1)",
+            "rgba(0,0,0,0.16)",
+            "transparent",
+          ]}
+          locations={[0, 0.44, 0.62, 0.78, 1]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        />
+      </View>
 
       {/* Content Section */}
-      <View
-        style={[
-          styles.contentSection,
-          { paddingBottom: insets.bottom / 2 || 16 },
-        ]}
-      >
+      <View style={styles.contentSection}>
         {/* Username as title - Centered */}
         <View style={styles.titleSection}>
-          <Text style={styles.title} numberOfLines={2}>
+          <Text style={[styles.title, { color: textColor }]} numberOfLines={2}>
             {username}
           </Text>
-          <Text style={styles.email} numberOfLines={1}>
+          <Text style={[styles.email, { color: secondaryTextColor }]} numberOfLines={1}>
             {email}
           </Text>
         </View>
@@ -140,13 +181,11 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
-    height: "70%",
-  },
-  gradient: {
-    flex: 1,
+    bottom: 0,
+    overflow: "hidden",
   },
   contentSection: {
     position: "absolute",
@@ -159,6 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 16,
     zIndex: 2,
   },
   titleSection: {
@@ -171,13 +211,11 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
-    color: "#fff",
     fontFamily: FONTS.abril,
   },
   email: {
     fontSize: TOKENS.font.lg,
     textAlign: "center",
-    color: "rgba(255, 255, 255, 0.8)",
     fontFamily: FONTS.regular,
   },
 });

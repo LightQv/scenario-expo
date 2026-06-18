@@ -1,4 +1,4 @@
-import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useEffect, useState, useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "expo-router";
@@ -8,14 +8,14 @@ import Animated, {
   FadeInLeft,
   FadeOutRight,
 } from "react-native-reanimated";
-import { useUserContext } from "@/contexts";
+import { useThemeContext, useUserContext } from "@/contexts";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
-import GradientTransition from "@/components/details/GradientTransition";
 import StatisticsPills from "@/components/profile/StatisticsPills";
 import ProfileMenu from "@/components/profile/ProfileMenu";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 type Statistics = {
   movieCount: number;
@@ -25,7 +25,7 @@ type Statistics = {
 };
 
 export default function ProfileScreen() {
-  const colorScheme = useColorScheme();
+  const { colors, isDark } = useThemeContext();
   const { user, refreshUser } = useUserContext();
   const [statistics, setStatistics] = useState<Statistics>({
     movieCount: 0,
@@ -98,8 +98,10 @@ export default function ProfileScreen() {
     }, []),
   );
 
-  // Status bar - always light for now (over the image)
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  const statusStyle = isDark ? "light" : "dark";
+  const backgroundColor = colors.background;
+  const textColor = colors.text;
+  const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -112,9 +114,10 @@ export default function ProfileScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor },
       ]}
     >
+      <GoBackButton />
       <ProfileMenu />
       <StatusBar style={statusStyle} animated />
 
@@ -133,9 +136,11 @@ export default function ProfileScreen() {
               username={user.username}
               email={user.email}
               scrollY={scrollY}
+              backgroundColor={backgroundColor}
+              textColor={textColor}
+              secondaryTextColor={secondaryTextColor}
             />
-            <GradientTransition />
-            <View style={styles.contentContainer}>
+            <View style={[styles.contentContainer, { backgroundColor }]}> 
               <StatisticsPills
                 movieCount={statistics.movieCount}
                 tvCount={statistics.tvCount}
@@ -161,6 +166,5 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
     paddingBottom: 300,
-    backgroundColor: PlatformColor("systemBackground"),
   },
 });

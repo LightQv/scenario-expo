@@ -1,6 +1,8 @@
 import {
   View,
   StyleSheet,
+  PlatformColor,
+  ColorValue,
   FlatList,
   ListRenderItem,
   Text,
@@ -18,7 +20,6 @@ import WatchlistDetailBanner from "@/components/watchlist/WatchlistDetailBanner"
 import WatchlistMediaCard from "@/components/watchlist/WatchlistMediaCard";
 import WatchlistDetailMenu from "@/components/watchlist/WatchlistDetailMenu";
 import { useThemeContext } from "@/contexts";
-import { colorWithAlpha } from "@/services/detailPalette";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -51,7 +52,7 @@ const ListHeader = memo(
     scrollY: any;
     backgroundColor: string;
     textColor: string;
-    pillBackgroundColor: string;
+    pillBackgroundColor: ColorValue;
   }) => (
     <WatchlistDetailBanner
       medias={watchlist.medias}
@@ -116,7 +117,7 @@ export default function WatchlistDetailScreen() {
   const backgroundColor = colors.background;
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
-  const pillBackgroundColor = colorWithAlpha(colors.main, isDark ? 0.34 : 0.28);
+  const pillBackgroundColor = PlatformColor("secondarySystemBackground");
 
   // Optimized scroll handler using worklet
   const scrollHandler = useAnimatedScrollHandler(

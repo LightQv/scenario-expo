@@ -66,7 +66,7 @@ export default function SeasonDetailScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor: colors.background },
       ]}
     >
       <StatusBar style={statusStyle} animated />
@@ -97,7 +97,7 @@ export default function SeasonDetailScreen() {
 
               <View style={styles.headerInfo}>
                 <Text
-                  style={[styles.seasonName, { color: PlatformColor("label") }]}
+                  style={[styles.seasonName, { color: colors.text }]}
                 >
                   {data.name}
                 </Text>
@@ -106,7 +106,7 @@ export default function SeasonDetailScreen() {
                   <Text
                     style={[
                       styles.metadataText,
-                      { color: PlatformColor("secondaryLabel") },
+                      { color: isDark ? "#c9c9ce" : "#8e8e93" },
                     ]}
                   >
                     {data.air_date && formatFullDate(data.air_date)}
@@ -129,7 +129,7 @@ export default function SeasonDetailScreen() {
                   <Text
                     style={[
                       styles.overview,
-                      { color: PlatformColor("secondaryLabel") },
+                      { color: isDark ? "#c9c9ce" : "#8e8e93" },
                     ]}
                     numberOfLines={6}
                   >
@@ -145,7 +145,7 @@ export default function SeasonDetailScreen() {
                 <Text
                   style={[
                     styles.sectionTitle,
-                    { color: PlatformColor("label") },
+                    { color: colors.text },
                   ]}
                 >
                   {i18n.t("screen.detail.media.seasons.episode.plurial")}

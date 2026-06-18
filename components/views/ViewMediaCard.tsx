@@ -15,11 +15,17 @@ import ViewMediaCardMenu from "./ViewMediaCardMenu";
 type ViewMediaCardProps = {
   data: APIMedia;
   onDelete?: (id: string) => void;
+  backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function ViewMediaCard({
   data,
   onDelete,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: ViewMediaCardProps) {
   const getMetadata = () => {
     if (data.media_type === "movie") {
@@ -39,7 +45,7 @@ export default function ViewMediaCard({
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor: backgroundColor || PlatformColor("systemBackground") },
       ]}
     >
       <View style={styles.content}>
@@ -84,7 +90,7 @@ export default function ViewMediaCard({
           <TouchableOpacity activeOpacity={BUTTON.opacity}>
             <View style={styles.textContainer}>
               <Text
-                style={[styles.title, { color: PlatformColor("label") }]}
+                style={[styles.title, { color: textColor || PlatformColor("label") }]}
                 numberOfLines={2}
               >
                 {data.title}
@@ -92,7 +98,7 @@ export default function ViewMediaCard({
               <Text
                 style={[
                   styles.subtitle,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >

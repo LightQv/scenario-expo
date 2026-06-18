@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions, Text } from "react-native";
+import { StyleSheet, View, Dimensions, Text, ColorValue } from "react-native";
 import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
@@ -23,7 +23,7 @@ type WatchlistDetailBannerProps = {
   scrollY: SharedValue<number>;
   backgroundColor: string;
   textColor: string;
-  pillBackgroundColor: string;
+  pillBackgroundColor: ColorValue;
 };
 
 export default function WatchlistDetailBanner({
@@ -230,9 +230,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
     fontFamily: FONTS.abril,
-    textShadowColor: "rgba(0,0,0,0.45)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 16,
   },
   countPill: {
     paddingHorizontal: 18,
@@ -244,8 +241,5 @@ const styles = StyleSheet.create({
     fontSize: TOKENS.font.lg,
     fontFamily: FONTS.medium,
     letterSpacing: 0.2,
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 8,
   },
 });

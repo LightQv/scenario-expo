@@ -13,16 +13,19 @@ import {
 import { useEffect, useState, useRef } from "react";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
+import { useThemeContext } from "@/contexts/ThemeContext";
 import { TOKENS, FONTS } from "@/constants/theme";
 import ViewMediaCard from "@/components/views/ViewMediaCard";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import ViewHeaderMenu from "@/components/views/ViewHeaderMenu";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 
 export default function ViewTypeScreen() {
   const { viewType } = useLocalSearchParams<{ viewType: string }>();
+  const { colors, isDark } = useThemeContext();
   const { views, isLoading } = useViewContext();
   const [filteredViews, setFilteredViews] = useState<APIMedia[]>([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
@@ -101,8 +104,18 @@ export default function ViewTypeScreen() {
     setFilteredViews((prev) => prev.filter((view) => view.id !== id));
   };
 
+  const backgroundColor = colors.background;
+  const textColor = colors.text;
+  const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
+
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <ViewMediaCard data={item} onDelete={handleDelete} />
+    <ViewMediaCard
+      data={item}
+      onDelete={handleDelete}
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      secondaryTextColor={secondaryTextColor}
+    />
   );
 
   const renderEmpty = () => {
@@ -112,7 +125,7 @@ export default function ViewTypeScreen() {
     return (
       <View style={styles.emptyContainer}>
         <Text
-          style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+          style={[styles.emptyText, { color: secondaryTextColor }]}
         >
           {i18n.t("screen.watchlist.detail.empty")}
         </Text>
@@ -122,7 +135,7 @@ export default function ViewTypeScreen() {
 
   const renderItemSeparator = () => (
     <View
-      style={{ height: 2, backgroundColor: PlatformColor("systemBackground") }}
+      style={{ height: 2, backgroundColor }}
     />
   );
 
@@ -132,9 +145,10 @@ export default function ViewTypeScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor },
       ]}
     >
+      <GoBackButton />
       <ViewHeaderMenu
         mediaType={viewType}
         sortType={sortType}
