@@ -41,6 +41,7 @@ const CLOSE_BUTTON_SIZE = 42;
 const DEFAULT_HEADER_HEIGHT = 94;
 const ACTIVE_HEADER_HEIGHT = 90;
 const HEADER_ANIMATION_DURATION = 190;
+const CONTENT_TOP_GAP = 16;
 
 export default function SearchScreen() {
   const { totalGenres, loading } = useGenreContext();
@@ -184,9 +185,11 @@ export default function SearchScreen() {
     setMediaType(type);
   };
 
-  const renderGenreItem = ({ item }: { item: { id: number; name: string } }) => (
-    <GenreCard id={item.id} name={item.name} />
-  );
+  const renderGenreItem = ({
+    item,
+  }: {
+    item: { id: number; name: string };
+  }) => <GenreCard id={item.id} name={item.name} />;
 
   if (loading) {
     return <FullScreenLoader />;
@@ -218,14 +221,19 @@ export default function SearchScreen() {
           columnWrapperStyle={styles.genreRow}
           contentContainerStyle={[
             styles.genreContent,
-            { paddingTop: headerHeight + 4 },
+            { paddingTop: headerHeight + CONTENT_TOP_GAP },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           onScrollBeginDrag={Keyboard.dismiss}
         />
       ) : query.trim() ? (
-        <View style={[styles.activeContent, { paddingTop: headerHeight + 4 }]}>
+        <View
+          style={[
+            styles.activeContent,
+            { paddingTop: headerHeight + CONTENT_TOP_GAP },
+          ]}
+        >
           <SearchPreviewResults
             results={previewResults}
             mediaType={mediaType}
@@ -235,7 +243,12 @@ export default function SearchScreen() {
           />
         </View>
       ) : (
-        <View style={[styles.activeContent, { paddingTop: headerHeight + 4 }]}>
+        <View
+          style={[
+            styles.activeContent,
+            { paddingTop: headerHeight + CONTENT_TOP_GAP },
+          ]}
+        >
           <SearchHistory
             history={history}
             onItemPress={handleHistoryItemPress}
@@ -311,7 +324,6 @@ function SearchHeader({
         styles.header,
         {
           paddingTop: contentTop + 2,
-          backgroundColor: PlatformColor("systemBackground"),
         },
       ]}
     >
@@ -337,11 +349,7 @@ function SearchHeader({
       >
         <View style={styles.searchRow}>
           <GlassView style={styles.searchInputContainer}>
-            <Ionicons
-              name="search"
-              size={18}
-              color={PlatformColor("label")}
-            />
+            <Ionicons name="search" size={18} color={PlatformColor("label")} />
             <TextInput
               ref={inputRef}
               value={query}
