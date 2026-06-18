@@ -103,9 +103,11 @@ export default function WatchlistMediaCard({
           }}
           asChild
           push
-          style={styles.textTouchable}
         >
-          <TouchableOpacity activeOpacity={BUTTON.opacity}>
+          <TouchableOpacity
+            activeOpacity={BUTTON.opacity}
+            style={styles.textTouchable}
+          >
             <View style={styles.textContainer}>
               <Text
                 style={[styles.title, { color: textColor || PlatformColor("label") }]}
@@ -132,6 +134,7 @@ export default function WatchlistMediaCard({
           watchlistId={watchlistId}
           watchlistType={watchlistType}
           onDelete={onDelete}
+          textColor={textColor}
         />
       </View>
     </View>
@@ -174,6 +177,7 @@ const styles = StyleSheet.create({
   textTouchable: {
     flex: 1,
     marginLeft: 14,
+    marginRight: 4,
   },
   textContainer: {
     gap: 4,

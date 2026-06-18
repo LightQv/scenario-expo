@@ -114,7 +114,7 @@ export default function WatchlistDetailScreen() {
 
   // Status bar - follows app theme because watchlist colors are theme-driven.
   const statusStyle = isDark ? "light" : "dark";
-  const backgroundColor = colors.background;
+  const backgroundColor = isDark ? "#000" : "#fff";
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
   const pillBackgroundColor = PlatformColor("secondarySystemBackground");
