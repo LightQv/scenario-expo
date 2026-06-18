@@ -24,6 +24,8 @@ type Hsl = {
   l: number;
 };
 
+const detailPaletteCache = new Map<string, DetailPalette>();
+
 export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
   const background = isDark ? "#171719" : "#f7f3ed";
   const surface = isDark ? "#232326" : "#fffaf2";
@@ -46,6 +48,13 @@ export async function getDetailPaletteFromImage(
   imageUrl: string,
   isDark: boolean,
 ): Promise<DetailPalette> {
+  const cacheKey = `${isDark ? "dark" : "light"}:${imageUrl}`;
+  const cachedPalette = detailPaletteCache.get(cacheKey);
+
+  if (cachedPalette) {
+    return cachedPalette;
+  }
+
   const result = await getColors(imageUrl, {
     cache: true,
     fallback: isDark ? "#171719" : "#f7f3ed",
@@ -60,6 +69,7 @@ export async function getDetailPaletteFromImage(
   }
 
   const palette = createDetailPalette(result, isDark, imageUrl);
+  detailPaletteCache.set(cacheKey, palette);
 
   return palette;
 }

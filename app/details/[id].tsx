@@ -39,63 +39,57 @@ export default function DetailsScreen() {
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
 
-  // Fetch data based on type and id
   useEffect(() => {
-    if (type && id) {
+    if (!type || !id) return;
+
+    let isMounted = true;
+
+    async function loadDetails() {
       setLoading(true);
       setData(null);
       scrollY.value = 0;
 
-      // Different append_to_response for person vs media
       const appendParams =
         type === "person"
           ? "movie_credits,tv_credits,images"
           : "videos,credits,images";
 
-      tmdbFetch(
-        `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
-      )
-        .then((response) => {
-          setData(response);
-          setLoading(false);
-        })
-        .catch(() => {
+      try {
+        const response = await tmdbFetch(
+          `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
+        );
+
+        if (!isMounted) return;
+
+        const imagePath = getDetailImagePath(response, type);
+        const nextPalette = imagePath
+          ? await getDetailPaletteFromImage(
+              `${TMDB_IMAGE_BASE_URL}/${imagePath}`,
+              isDark,
+            ).catch(() => getFallbackDetailPalette(isDark))
+          : getFallbackDetailPalette(isDark);
+
+        if (!isMounted) return;
+
+        setPalette(nextPalette);
+        setData(response);
+      } catch {
+        if (isMounted) {
           notifyError(i18n.t("toast.errorTMDB"));
+        }
+      } finally {
+        if (isMounted) {
           setLoading(false);
-        });
+        }
+      }
     }
-  }, [type, id]);
 
-  useEffect(() => {
-    setPalette(getFallbackDetailPalette(isDark));
-  }, [isDark, id, type]);
-
-  useEffect(() => {
-    if (!data) return;
-
-    const imagePath = getDetailImagePath(data, type);
-
-    if (!imagePath) return;
-
-    let isMounted = true;
-    const imageUrl = `${TMDB_IMAGE_BASE_URL}/${imagePath}`;
-
-    getDetailPaletteFromImage(imageUrl, isDark)
-      .then((nextPalette) => {
-        if (isMounted) {
-          setPalette(nextPalette);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setPalette(getFallbackDetailPalette(isDark));
-        }
-      });
+    loadDetails();
 
     return () => {
       isMounted = false;
     };
-  }, [data, isDark, type]);
+  }, [type, id, isDark]);
 
   const statusStyle = "light";
 
@@ -129,7 +123,7 @@ export default function DetailsScreen() {
         entering={FadeInLeft}
         exiting={FadeOutRight}
       >
-        {data && (
+        {!loading && data && (
           <>
             <Banner
               src={getDetailImagePath(data, type)}
