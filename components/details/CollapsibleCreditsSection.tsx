@@ -23,6 +23,8 @@ type CollapsibleCreditsSectionProps = {
   credits: (PersonMovieCredit | PersonTvCredit)[];
   mediaType: "movie" | "tv";
   backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function CollapsibleCreditsSection({
@@ -30,6 +32,8 @@ export default function CollapsibleCreditsSection({
   credits,
   mediaType,
   backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: CollapsibleCreditsSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { colors } = useThemeContext();
@@ -49,13 +53,23 @@ export default function CollapsibleCreditsSection({
   const renderItem: ListRenderItem<PersonMovieCredit | PersonTvCredit> = ({
     item,
   }) => {
-    return <HorizontalMediaCard data={item} mediaType={mediaType} />;
+    return (
+      <HorizontalMediaCard
+        data={item}
+        mediaType={mediaType}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+      />
+    );
   };
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text
-        style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+        style={[
+          styles.emptyText,
+          { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+        ]}
       >
         No credits found
       </Text>
@@ -72,7 +86,7 @@ export default function CollapsibleCreditsSection({
     >
       {/* Header with collapse button */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
+        <Text style={[styles.title, { color: textColor || PlatformColor("label") }]}> 
           {title}
         </Text>
         <TouchableOpacity

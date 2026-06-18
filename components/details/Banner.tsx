@@ -201,7 +201,7 @@ export default function Banner({
       >
         {/* Title Section - Centered */}
         <View style={styles.titleSection}>
-          <Text style={styles.title} numberOfLines={2}>
+          <Text style={[styles.title, { color: palette.text }]} numberOfLines={2}>
             {title}
           </Text>
           {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
@@ -216,7 +216,9 @@ export default function Banner({
                       { backgroundColor: palette.pillBackground },
                     ]}
                   >
-                    <Text style={styles.genreText}>{formatGender(gender)}</Text>
+                    <Text style={[styles.genreText, { color: palette.text }]}>
+                      {formatGender(gender)}
+                    </Text>
                   </View>
                 )}
                 {/* Age */}
@@ -227,7 +229,7 @@ export default function Banner({
                       { backgroundColor: palette.pillBackground },
                     ]}
                   >
-                    <Text style={styles.genreText}>
+                    <Text style={[styles.genreText, { color: palette.text }]}>
                       {age} {i18n.t("screen.person.age")}
                     </Text>
                   </View>
@@ -254,14 +256,20 @@ export default function Banner({
                             { backgroundColor: palette.pillBackground },
                           ]}
                         >
-                          <Text style={styles.genreText}>{genre.name}</Text>
+                          <Text style={[styles.genreText, { color: palette.text }]}>
+                            {genre.name}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     </Link>
                   ))}
                 {/* Rating Badge */}
                 {typeof score === "number" && score > 0 && (
-                  <RatingBadge score={score} size="detail" />
+                  <RatingBadge
+                    score={score}
+                    size="detail"
+                    textColor={palette.text}
+                  />
                 )}
               </>
             )}
@@ -278,6 +286,8 @@ export default function Banner({
             birthday,
             placeOfBirth,
             knownForDepartment,
+            textColor: palette.text,
+            secondaryTextColor: palette.text,
           })}
         </View>
       </View>
@@ -297,6 +307,8 @@ function renderMetadata({
   birthday,
   placeOfBirth,
   knownForDepartment,
+  textColor,
+  secondaryTextColor,
 }: {
   type?: string;
   releaseDate?: string;
@@ -309,10 +321,12 @@ function renderMetadata({
   birthday?: string | null;
   placeOfBirth?: string | null;
   knownForDepartment?: string;
+  textColor: string;
+  secondaryTextColor: string;
 }) {
   if (type === "movie" && releaseDate) {
     return (
-      <Text style={styles.metadataText}>
+      <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
         {formatFullDate(releaseDate)}
         {runtime && ` • ${formatRuntime(runtime)}`}
       </Text>
@@ -322,13 +336,15 @@ function renderMetadata({
   if (type === "tv") {
     return (
       <View style={styles.metadataGroup}>
-        {status && <Text style={styles.statusText}>{status}</Text>}
-        <Text style={styles.metadataText}>
+        {status && (
+          <Text style={[styles.statusText, { color: textColor }]}>{status}</Text>
+        )}
+        <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
           {firstAirDate && formatFullDate(firstAirDate)}
           {lastAirDate && ` - ${formatFullDate(lastAirDate)}`}
         </Text>
         {(numberOfSeasons || numberOfEpisodes) && (
-          <Text style={styles.metadataText}>
+          <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
             {numberOfSeasons &&
               `${numberOfSeasons} ${
                 numberOfSeasons > 1
@@ -352,9 +368,11 @@ function renderMetadata({
     return (
       <View style={styles.metadataGroup}>
         {knownForDepartment && (
-          <Text style={styles.statusText}>{knownForDepartment}</Text>
+          <Text style={[styles.statusText, { color: textColor }]}>
+            {knownForDepartment}
+          </Text>
         )}
-        <Text style={styles.metadataText}>
+        <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
           {birthday && formatFullDate(birthday)}
           {birthday && placeOfBirth && " • "}
           {placeOfBirth}
@@ -418,7 +436,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
-    color: "#fff",
     fontFamily: FONTS.abril,
     textShadowColor: "rgba(0,0,0,0.45)",
     textShadowOffset: { width: 0, height: 2 },
@@ -440,14 +457,12 @@ const styles = StyleSheet.create({
     fontSize: TOKENS.font.lg,
     fontFamily: FONTS.medium,
     letterSpacing: 0.2,
-    color: "#fff",
   },
   metadataGroup: {
     alignItems: "center",
     gap: 4,
   },
   metadataText: {
-    color: "rgba(255,255,255,0.76)",
     fontSize: TOKENS.font.md,
     fontFamily: FONTS.regular,
     textAlign: "center",
@@ -456,7 +471,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 8,
   },
   statusText: {
-    color: "rgba(255,255,255,0.92)",
     fontSize: TOKENS.font.sm,
     fontFamily: FONTS.bold,
     textTransform: "uppercase",

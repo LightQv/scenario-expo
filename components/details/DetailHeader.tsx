@@ -21,7 +21,9 @@ type DetailHeaderProps = {
   /* Person type */
   biography?: string;
   backgroundColor?: string;
-  accentColor?: string;
+  textColor?: string;
+  actionBackgroundColor?: string;
+  actionTextColor?: string;
 };
 
 export default function DetailHeader({
@@ -29,7 +31,9 @@ export default function DetailHeader({
   videos,
   biography,
   backgroundColor,
-  accentColor,
+  textColor,
+  actionBackgroundColor,
+  actionTextColor,
 }: DetailHeaderProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
   const { colors } = useThemeContext();
@@ -58,7 +62,7 @@ export default function DetailHeader({
         // Fallback to web browser (in-app)
         await WebBrowser.openBrowserAsync(youtubeUrl, {
           presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-          controlsColor: accentColor || colors.main,
+          controlsColor: actionBackgroundColor || colors.main,
         });
       }
     } catch (error) {
@@ -85,13 +89,19 @@ export default function DetailHeader({
         <TouchableOpacity
           style={[
             styles.trailerButton,
-            { backgroundColor: accentColor || colors.main },
+            { backgroundColor: actionBackgroundColor || colors.main },
           ]}
           activeOpacity={BUTTON.opacity}
           onPress={handleTrailerPress}
         >
-          <Ionicons name="play-circle" size={TOKENS.icon} color="#000" />
-          <Text style={styles.trailerText}>
+          <Ionicons
+            name="play-circle"
+            size={TOKENS.icon}
+            color={actionTextColor || "#000"}
+          />
+          <Text
+            style={[styles.trailerText, { color: actionTextColor || "#000" }]}
+          >
             {i18n.t("screen.detail.media.trailer")}
           </Text>
         </TouchableOpacity>
@@ -99,7 +109,12 @@ export default function DetailHeader({
 
       {/* Synopsis/Biography Section */}
       <View>
-        <Text style={[styles.synopsisText, { color: PlatformColor("label") }]}>
+        <Text
+          style={[
+            styles.synopsisText,
+            { color: textColor || PlatformColor("label") },
+          ]}
+        >
           {renderFormattedText(
             displayText ||
               (isPerson
@@ -131,7 +146,6 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   trailerText: {
-    color: "#000",
     fontSize: 15,
     fontWeight: "600",
   },

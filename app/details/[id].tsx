@@ -157,7 +157,9 @@ export default function DetailsScreen() {
               videos={data.videos?.results}
               biography={data.biography}
               backgroundColor={palette.background}
-              accentColor={palette.accent}
+              textColor={palette.text}
+              actionBackgroundColor={palette.actionBackground}
+              actionTextColor={palette.actionText}
             />
             {type === "person" ? (
               <>
@@ -174,6 +176,8 @@ export default function DetailsScreen() {
                       })}
                     mediaType="movie"
                     backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
                 {/* Person: Show TV Credits */}
@@ -189,6 +193,8 @@ export default function DetailsScreen() {
                       })}
                     mediaType="tv"
                     backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
               </>
@@ -200,6 +206,8 @@ export default function DetailsScreen() {
                     crew={data.credits.crew}
                     mediaType={type}
                     backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.text}
                   />
                 )}
                 {data.credits?.cast && data.credits.cast.length > 0 && (
@@ -207,6 +215,8 @@ export default function DetailsScreen() {
                     title={i18n.t("screen.detail.media.cast")}
                     cast={data.credits.cast}
                     backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.text}
                   />
                 )}
                 {/* TV Shows: Show Seasons */}
@@ -217,6 +227,8 @@ export default function DetailsScreen() {
                     seriesId={id}
                     seriesName={data.name || data.title}
                     backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
               </>

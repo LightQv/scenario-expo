@@ -19,6 +19,8 @@ type SeasonsSectionProps = {
   seriesId: string;
   seriesName: string;
   backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function SeasonsSection({
@@ -27,6 +29,8 @@ export default function SeasonsSection({
   seriesId,
   seriesName,
   backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: SeasonsSectionProps) {
   const renderItem: ListRenderItem<Season> = ({ item }) => {
     const posterUrl = item.poster_path
@@ -78,18 +82,33 @@ export default function SeasonsSection({
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.seasonName} numberOfLines={1}>
+            <Text
+              style={[styles.seasonName, { color: textColor || PlatformColor("label") }]}
+              numberOfLines={1}
+            >
               {item.name}
             </Text>
 
             <View style={styles.metaRow}>
               {item.air_date && (
-                <Text style={styles.metaText} numberOfLines={1}>
+                <Text
+                  style={[
+                    styles.metaText,
+                    { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+                  ]}
+                  numberOfLines={1}
+                >
                   {formatFullDate(item.air_date)}
                 </Text>
               )}
               {item.episode_count !== null && item.episode_count > 0 && (
-                <Text style={styles.metaText} numberOfLines={1}>
+                <Text
+                  style={[
+                    styles.metaText,
+                    { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+                  ]}
+                  numberOfLines={1}
+                >
                   {item.episode_count}{" "}
                   {item.episode_count > 1
                     ? i18n.t("screen.detail.media.seasons.episode.plurial")
@@ -108,7 +127,10 @@ export default function SeasonsSection({
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text
-        style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+        style={[
+          styles.emptyText,
+          { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+        ]}
       >
         {i18n.t("screen.detail.media.seasons.empty")}
       </Text>
@@ -124,7 +146,7 @@ export default function SeasonsSection({
       style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
+        <Text style={[styles.title, { color: textColor || PlatformColor("label") }]}> 
           {title}
         </Text>
       </View>
@@ -189,7 +211,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
     lineHeight: 18,
-    color: PlatformColor("label"),
   },
   metaRow: {
     flexDirection: "column",
@@ -198,7 +219,6 @@ const styles = StyleSheet.create({
   metaText: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xs,
-    color: PlatformColor("secondaryLabel"),
   },
   emptyContainer: {
     paddingVertical: 40,

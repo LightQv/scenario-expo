@@ -14,11 +14,15 @@ import useGenre from "@/hooks/useGenre";
 type HorizontalMediaCardProps = {
   data: PersonMovieCredit | PersonTvCredit;
   mediaType: "movie" | "tv";
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function HorizontalMediaCard({
   data,
   mediaType,
+  textColor,
+  secondaryTextColor,
 }: HorizontalMediaCardProps) {
   const genre = useGenre(
     {
@@ -84,7 +88,7 @@ export default function HorizontalMediaCard({
         {/* Content on the right */}
         <View style={styles.content}>
           <Text
-            style={[styles.title, { color: PlatformColor("label") }]}
+            style={[styles.title, { color: textColor || PlatformColor("label") }]}
             numberOfLines={2}
           >
             {title}
@@ -95,7 +99,7 @@ export default function HorizontalMediaCard({
               <Text
                 style={[
                   styles.genre,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >
@@ -106,7 +110,7 @@ export default function HorizontalMediaCard({
               <Text
                 style={[
                   styles.year,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >

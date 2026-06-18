@@ -5,6 +5,10 @@ export type DetailPalette = {
   surface: string;
   tint: string;
   accent: string;
+  text: string;
+  secondaryText: string;
+  actionBackground: string;
+  actionText: string;
   pillBackground: string;
 };
 
@@ -30,6 +34,10 @@ export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
     surface,
     tint,
     accent: isDark ? "#f9cd4a" : "#eab208",
+    text: isDark ? "#ffffff" : "#000000",
+    secondaryText: isDark ? "#c9c9ce" : "#6f6f78",
+    actionBackground: isDark ? "#f9cd4a" : "#eab208",
+    actionText: "#000000",
     pillBackground: isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.45)",
   };
 }
@@ -71,6 +79,10 @@ function createDetailPalette(
   isDark: boolean,
   imageUrl?: string,
 ): DetailPalette {
+  if (colors.platform === "ios") {
+    return createIOSDetailPalette(colors, isDark, imageUrl);
+  }
+
   const base = pickBaseColor(colors);
   const accent = pickAccentColor(colors, base);
   const fallback = getFallbackDetailPalette(isDark);
@@ -84,6 +96,10 @@ function createDetailPalette(
     surface,
     tint,
     accent: safeAccent,
+    text: fallback.text,
+    secondaryText: fallback.secondaryText,
+    actionBackground: safeAccent,
+    actionText: getReadableTextColor(safeAccent),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
   };
 
@@ -94,6 +110,48 @@ function createDetailPalette(
       selected: {
         base,
         accent,
+      },
+      palette,
+    });
+  }
+
+  return palette;
+}
+
+function createIOSDetailPalette(
+  colors: Extract<ImageColorsResult, { platform: "ios" }>,
+  isDark: boolean,
+  imageUrl?: string,
+): DetailPalette {
+  const fallback = getFallbackDetailPalette(isDark);
+  const background = normalizeHex(colors.background) || fallback.background;
+  const rawText = normalizeHex(colors.detail) || fallback.text;
+  const actionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
+  const secondaryText = lightenColor(rawText, isDark ? 0.22 : 0.34) || fallback.secondaryText;
+  const tint = deriveTint(colors.secondary || background, isDark) || fallback.tint;
+
+  const palette = {
+    background,
+    surface: deriveSurface(background, isDark) || fallback.surface,
+    tint,
+    accent: deriveAccent(actionBackground, isDark) || fallback.accent,
+    text: rawText,
+    secondaryText,
+    actionBackground,
+    actionText: rawText,
+    pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
+  };
+
+  if (__DEV__) {
+    console.log("[DetailPalette] derived palette", {
+      imageUrl,
+      platform: colors.platform,
+      selected: {
+        background: colors.background,
+        text: colors.detail,
+        secondaryTextSource: colors.detail,
+        actionBackground: colors.primary,
+        actionText: colors.detail,
       },
       palette,
     });
@@ -265,6 +323,46 @@ function hexToRgb(hex: string): Rgb | null {
     g: (int >> 8) & 255,
     b: int & 255,
   };
+}
+
+function normalizeHex(color: string | undefined): string | null {
+  if (!color) {
+    return null;
+  }
+
+  const rgb = hexToRgb(color);
+
+  if (!rgb) {
+    return null;
+  }
+
+  return rgbToHex(rgb);
+}
+
+function lightenColor(color: string, amount: number): string | null {
+  const hsl = hexToHsl(color);
+
+  if (!hsl) {
+    return null;
+  }
+
+  return hslToHex({
+    h: hsl.h,
+    s: hsl.s,
+    l: clamp(hsl.l + amount, 0, 1),
+  });
+}
+
+function getReadableTextColor(background: string): string {
+  const rgb = hexToRgb(background);
+
+  if (!rgb) {
+    return "#000000";
+  }
+
+  const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+
+  return luminance > 0.62 ? "#000000" : "#ffffff";
 }
 
 function rgbToHex({ r, g, b }: Rgb): string {

@@ -11,9 +11,15 @@ import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 
 type CastCardProps = {
   data: Cast;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
-export default function CastCard({ data }: CastCardProps) {
+export default function CastCard({
+  data,
+  textColor,
+  secondaryTextColor,
+}: CastCardProps) {
   const profileUrl = data.profile_path
     ? `https://image.tmdb.org/t/p/w342/${data.profile_path}`
     : null;
@@ -59,11 +65,20 @@ export default function CastCard({ data }: CastCardProps) {
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.actorName} numberOfLines={1}>
+          <Text
+            style={[styles.actorName, { color: textColor || PlatformColor("label") }]}
+            numberOfLines={1}
+          >
             {data.name}
           </Text>
           {data.character && (
-            <Text style={styles.characterName} numberOfLines={1}>
+            <Text
+              style={[
+                styles.characterName,
+                { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+              ]}
+              numberOfLines={1}
+            >
               {data.character}
             </Text>
           )}
@@ -104,11 +119,9 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
     lineHeight: 18,
-    color: PlatformColor("label"),
   },
   characterName: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xs,
-    color: PlatformColor("secondaryLabel"),
   },
 });

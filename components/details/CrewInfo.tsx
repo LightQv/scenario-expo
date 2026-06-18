@@ -13,12 +13,16 @@ type CrewInfoProps = {
   crew: Crew[];
   mediaType?: string;
   backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function CrewInfo({
   crew,
   mediaType,
   backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: CrewInfoProps) {
   // Find director (only for movies)
   const director = crew.find((member) => member.job === "Director");
@@ -39,7 +43,10 @@ export default function CrewInfo({
       {mediaType === "movie" && director && (
         <View style={styles.crewRow}>
           <Text
-            style={[styles.label, { color: PlatformColor("secondaryLabel") }]}
+            style={[
+              styles.label,
+              { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+            ]}
           >
             {i18n.t("screen.detail.crew.director")}
           </Text>
@@ -52,7 +59,9 @@ export default function CrewInfo({
             push
           >
             <TouchableOpacity activeOpacity={BUTTON.opacity}>
-              <Text style={[styles.name, { color: PlatformColor("label") }]}>
+              <Text
+                style={[styles.name, { color: textColor || PlatformColor("label") }]}
+              >
                 {director.name}
               </Text>
             </TouchableOpacity>
@@ -63,7 +72,10 @@ export default function CrewInfo({
       {composer && (
         <View style={styles.crewRow}>
           <Text
-            style={[styles.label, { color: PlatformColor("secondaryLabel") }]}
+            style={[
+              styles.label,
+              { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+            ]}
           >
             {i18n.t("screen.detail.crew.composer")}
           </Text>
@@ -76,7 +88,9 @@ export default function CrewInfo({
             push
           >
             <TouchableOpacity activeOpacity={BUTTON.opacity}>
-              <Text style={[styles.name, { color: PlatformColor("label") }]}>
+              <Text
+                style={[styles.name, { color: textColor || PlatformColor("label") }]}
+              >
                 {composer.name}
               </Text>
             </TouchableOpacity>

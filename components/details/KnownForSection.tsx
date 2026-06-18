@@ -16,12 +16,16 @@ type KnownForSectionProps = {
   title: string;
   credits: PersonDatasList;
   backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function KnownForSection({
   title,
   credits,
   backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: KnownForSectionProps) {
   // Sort by vote count and filter popular items
   const creditsByPopularity = credits.cast
@@ -79,19 +83,34 @@ export default function KnownForSection({
 
           <View style={styles.content}>
             {/* Character name as title */}
-            <Text style={styles.characterName} numberOfLines={1}>
+            <Text
+              style={[styles.characterName, { color: textColor || PlatformColor("label") }]}
+              numberOfLines={1}
+            >
               {item.character || "—"}
             </Text>
 
             {/* Media title and year as metadata */}
             <View style={styles.metaRow}>
               {mediaTitle && (
-                <Text style={styles.mediaTitle} numberOfLines={1}>
+                <Text
+                  style={[
+                    styles.mediaTitle,
+                    { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+                  ]}
+                  numberOfLines={1}
+                >
                   {mediaTitle}
                 </Text>
               )}
               {releaseDate && (
-                <Text style={styles.year} numberOfLines={1}>
+                <Text
+                  style={[
+                    styles.year,
+                    { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+                  ]}
+                  numberOfLines={1}
+                >
                   {formatYear(releaseDate)}
                 </Text>
               )}
@@ -107,7 +126,10 @@ export default function KnownForSection({
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text
-        style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+        style={[
+          styles.emptyText,
+          { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+        ]}
       >
         No credits found
       </Text>
@@ -123,7 +145,7 @@ export default function KnownForSection({
       style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
+        <Text style={[styles.title, { color: textColor || PlatformColor("label") }]}> 
           {title}
         </Text>
       </View>
@@ -188,7 +210,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxl,
     lineHeight: 18,
-    color: PlatformColor("label"),
   },
   metaRow: {
     flexDirection: "row",
@@ -199,12 +220,10 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xs,
     flex: 1,
-    color: PlatformColor("secondaryLabel"),
   },
   year: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xs,
-    color: PlatformColor("secondaryLabel"),
   },
   emptyContainer: {
     paddingVertical: 40,

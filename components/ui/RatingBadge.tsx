@@ -5,9 +5,14 @@ import { useThemeContext } from "@/contexts";
 type RatingBadgeProps = {
   score: number;
   size?: "sm" | "md" | "xl" | "detail";
+  textColor?: string;
 };
 
-export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
+export default function RatingBadge({
+  score,
+  size = "xl",
+  textColor = "#fff",
+}: RatingBadgeProps) {
   const colorScheme = useColorScheme();
   const { colors } = useThemeContext();
   // Convert TMDB score (0-10) to 0-5 scale
@@ -64,7 +69,7 @@ export default function RatingBadge({ score, size = "xl" }: RatingBadgeProps) {
       ]}
     >
       <Ionicons name="star" size={sizeStyles.iconSize} color={colors.main} />
-      <Text style={[styles.scoreText, sizeStyles.text]}>{displayScore}</Text>
+      <Text style={[styles.scoreText, sizeStyles.text, { color: textColor }]}>{displayScore}</Text>
     </View>
   );
 }
