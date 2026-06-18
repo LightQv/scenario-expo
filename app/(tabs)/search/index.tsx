@@ -65,6 +65,11 @@ export default function SearchScreen() {
   useFocusEffect(
     useCallback(() => {
       loadHistory();
+
+      return () => {
+        inputRef.current?.blur();
+        Keyboard.dismiss();
+      };
     }, []),
   );
 
@@ -185,6 +190,11 @@ export default function SearchScreen() {
     setMediaType(type);
   };
 
+  const handleNavigateAway = () => {
+    inputRef.current?.blur();
+    Keyboard.dismiss();
+  };
+
   const renderGenreItem = ({
     item,
   }: {
@@ -240,6 +250,7 @@ export default function SearchScreen() {
             loading={previewLoading}
             query={query.trim()}
             onShowAll={handleShowAllResults}
+            onNavigateAway={handleNavigateAway}
           />
         </View>
       ) : (
@@ -380,13 +391,13 @@ function SearchHeader({
               onPress={onClose}
               style={styles.closeButtonWrapper}
             >
-              <GlassView style={styles.closeButton}>
+              <View style={styles.closeButton}>
                 <Ionicons
                   name="close"
                   size={24}
                   color={PlatformColor("label")}
                 />
-              </GlassView>
+              </View>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -467,6 +478,8 @@ const styles = StyleSheet.create({
   closeButtonWrapper: {
     width: CLOSE_BUTTON_SIZE,
     height: CLOSE_BUTTON_SIZE,
+    borderRadius: TOKENS.radius.full,
+    overflow: "hidden",
   },
   closeButton: {
     width: CLOSE_BUTTON_SIZE,
@@ -474,12 +487,9 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: PlatformColor("primarySystemFill"),
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: PlatformColor("separator"),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
   },
   pickerContainer: {
     height: SEARCH_BAR_HEIGHT,

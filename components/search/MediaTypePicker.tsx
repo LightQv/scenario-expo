@@ -1,9 +1,7 @@
 import { StyleSheet } from "react-native";
 import { Host, Picker, Text } from "@expo/ui/swift-ui";
-import { pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
-import { GlassView } from "expo-glass-effect";
+import { frame, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
-import { TOKENS } from "@/constants/theme";
 
 type MediaType = "movie" | "tv" | "person";
 
@@ -33,32 +31,26 @@ export default function MediaTypePicker({
   };
 
   return (
-    <GlassView style={styles.glassView}>
-      <Host style={styles.picker}>
-        <Picker
-          selection={selectedIndex}
-          onSelectionChange={handleSelectionChange}
-          modifiers={[pickerStyle("segmented")]}
-        >
-          {options.map((option, index) => (
-            <Text key={MEDIA_TYPES[index]} modifiers={[tag(index)]}>
-              {option}
-            </Text>
-          ))}
-        </Picker>
-      </Host>
-    </GlassView>
+    <Host style={styles.picker}>
+      <Picker
+        selection={selectedIndex}
+        onSelectionChange={handleSelectionChange}
+        modifiers={[pickerStyle("segmented"), frame({ height: PICKER_HEIGHT })]}
+      >
+        {options.map((option, index) => (
+          <Text key={MEDIA_TYPES[index]} modifiers={[tag(index)]}>
+            {option}
+          </Text>
+        ))}
+      </Picker>
+    </Host>
   );
 }
 
 const styles = StyleSheet.create({
-  glassView: {
-    borderRadius: TOKENS.radius.full,
-    height: PICKER_HEIGHT,
-    width: "100%",
-  },
   picker: {
     height: PICKER_HEIGHT,
+    width: "100%",
     flex: 1,
   },
 });

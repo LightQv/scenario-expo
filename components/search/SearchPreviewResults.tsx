@@ -22,6 +22,7 @@ type SearchPreviewResultsProps = {
   loading: boolean;
   query: string;
   onShowAll: () => void;
+  onNavigateAway?: () => void;
 };
 
 export default function SearchPreviewResults({
@@ -30,13 +31,17 @@ export default function SearchPreviewResults({
   loading,
   query,
   onShowAll,
+  onNavigateAway,
 }: SearchPreviewResultsProps) {
   const handlePress = (item: TmdbData) => {
     const type = item.media_type || mediaType;
+    onNavigateAway?.();
 
-    router.push({
-      pathname: "/details/[id]",
-      params: { id: item.id.toString(), type },
+    requestAnimationFrame(() => {
+      router.push({
+        pathname: "/details/[id]",
+        params: { id: item.id.toString(), type },
+      });
     });
   };
 
