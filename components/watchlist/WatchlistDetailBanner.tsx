@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: 16,
+    paddingBottom: 40,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,

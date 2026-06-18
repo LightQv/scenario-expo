@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 20,
-    marginLeft: "auto",
   },
   containerSm: {
     gap: 3,

@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 16,
+    paddingBottom: 40,
     zIndex: 2,
   },
   titleSection: {

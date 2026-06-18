@@ -102,6 +102,7 @@ export default function ProfileScreen() {
   const backgroundColor = colors.background;
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
+  const pillBackgroundColor = isDark ? "#1C1C1E" : "#F2F2F7";
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -146,6 +147,8 @@ export default function ProfileScreen() {
                 tvCount={statistics.tvCount}
                 movieRuntime={statistics.movieRuntime}
                 tvEpisodesCount={statistics.tvEpisodesCount}
+                pillBackgroundColor={pillBackgroundColor}
+                textColor={textColor}
               />
             </View>
             {/* Additional profile content will be added here later */}

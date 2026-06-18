@@ -1,7 +1,6 @@
 import {
   View,
   StyleSheet,
-  PlatformColor,
   ColorValue,
   FlatList,
   ListRenderItem,
@@ -117,7 +116,7 @@ export default function WatchlistDetailScreen() {
   const backgroundColor = isDark ? "#000" : "#fff";
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
-  const pillBackgroundColor = PlatformColor("secondarySystemBackground");
+  const pillBackgroundColor = isDark ? "#1C1C1E" : "#F2F2F7";
 
   // Optimized scroll handler using worklet
   const scrollHandler = useAnimatedScrollHandler(
