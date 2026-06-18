@@ -33,6 +33,7 @@ import { BUTTON, FONTS, TOKENS } from "@/constants/theme";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 type MediaType = "movie" | "tv" | "person";
+type ContentMode = "genres" | "search";
 
 const PREVIEW_LIMIT = 10;
 const SEARCH_BAR_HEIGHT = 42;
@@ -46,6 +47,7 @@ export default function SearchScreen() {
   const { mediaType, setMediaType, setSearch } = useSearchContext();
   const insets = useSafeAreaInsets();
   const [active, setActive] = useState(false);
+  const [contentMode, setContentMode] = useState<ContentMode>("genres");
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
   const [previewResults, setPreviewResults] = useState<TmdbData[]>([]);
@@ -53,9 +55,11 @@ export default function SearchScreen() {
   const animation = useRef(new Animated.Value(0)).current;
   const requestIdRef = useRef(0);
   const inputRef = useRef<TextInput>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const headerHeight =
-    insets.top + (active ? ACTIVE_HEADER_HEIGHT : DEFAULT_HEADER_HEIGHT);
+    insets.top +
+    (contentMode === "search" ? ACTIVE_HEADER_HEIGHT : DEFAULT_HEADER_HEIGHT);
 
   useFocusEffect(
     useCallback(() => {
@@ -72,13 +76,25 @@ export default function SearchScreen() {
   }, [active, animation]);
 
   useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const trimmedQuery = query.trim();
     const requestId = requestIdRef.current + 1;
     requestIdRef.current = requestId;
 
-    if (!active || !trimmedQuery) {
+    if (contentMode !== "search" || !trimmedQuery) {
       setPreviewResults([]);
       setPreviewLoading(false);
+      return;
+    }
+
+    if (!active) {
       return;
     }
 
@@ -109,7 +125,7 @@ export default function SearchScreen() {
     }, 250);
 
     return () => clearTimeout(timeout);
-  }, [active, query, mediaType]);
+  }, [active, contentMode, query, mediaType]);
 
   const loadHistory = async () => {
     const savedHistory = await getSearchHistory();
@@ -122,6 +138,11 @@ export default function SearchScreen() {
   };
 
   const handleHistoryItemPress = (item: SearchHistoryItem) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setContentMode("search");
     setActive(true);
     setQuery(item.query);
     setSearch(item.query);
@@ -129,14 +150,25 @@ export default function SearchScreen() {
     inputRef.current?.focus();
   };
 
-  const handleCloseSearch = () => {
-    Keyboard.dismiss();
-    setActive(false);
-    setSearch("");
-    setPreviewResults([]);
+  const handleFocusSearch = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setContentMode("search");
+    setActive(true);
+  };
 
-    setTimeout(() => {
+  const handleCloseSearch = () => {
+    setActive(false);
+
+    closeTimeoutRef.current = setTimeout(() => {
+      Keyboard.dismiss();
+      setContentMode("genres");
       setQuery("");
+      setSearch("");
+      setPreviewResults([]);
+      closeTimeoutRef.current = null;
     }, HEADER_ANIMATION_DURATION);
   };
 
@@ -169,14 +201,15 @@ export default function SearchScreen() {
         query={query}
         inputRef={inputRef}
         mediaType={mediaType}
-        onFocus={() => setActive(true)}
+        closeVisible={contentMode === "search"}
+        onFocus={handleFocusSearch}
         onChangeText={setQuery}
         onSubmit={handleShowAllResults}
         onClose={handleCloseSearch}
         onMediaTypeChange={handleMediaTypeChange}
       />
 
-      {!active ? (
+      {contentMode === "genres" ? (
         <FlatList
           data={totalGenres}
           renderItem={renderGenreItem}
@@ -221,6 +254,7 @@ type SearchHeaderProps = {
   query: string;
   inputRef: RefObject<TextInput | null>;
   mediaType: MediaType;
+  closeVisible: boolean;
   onFocus: () => void;
   onChangeText: (value: string) => void;
   onSubmit: () => void;
@@ -235,6 +269,7 @@ function SearchHeader({
   query,
   inputRef,
   mediaType,
+  closeVisible,
   onFocus,
   onChangeText,
   onSubmit,
@@ -325,7 +360,9 @@ function SearchHeader({
           <Animated.View
             style={[
               styles.closeContainer,
-              active ? styles.closeContainerVisible : styles.closeContainerHidden,
+              closeVisible
+                ? styles.closeContainerVisible
+                : styles.closeContainerHidden,
               { opacity: closeOpacity, transform: [{ scale: closeScale }] },
             ]}
             pointerEvents={active ? "auto" : "none"}
