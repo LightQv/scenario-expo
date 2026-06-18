@@ -4,25 +4,29 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  useColorScheme,
 } from "react-native";
 import { Image } from "expo-image";
+import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   interpolate,
-  Extrapolation,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BLURHASH, TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import RatingBadge from "@/components/ui/RatingBadge";
-import { calculateAge, formatGender } from "@/services/utils";
+import {
+  calculateAge,
+  formatFullDate,
+  formatGender,
+  formatRuntime,
+} from "@/services/utils";
 import i18n from "@/services/i18n";
+import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 650;
+const BANNER_HEIGHT = 600;
 
 type BannerProps = {
   src: string | undefined;
@@ -36,6 +40,15 @@ type BannerProps = {
   birthday?: string | null;
   deathday?: string | null;
   knownForDepartment?: string;
+  releaseDate?: string;
+  runtime?: number;
+  status?: string;
+  firstAirDate?: string;
+  lastAirDate?: string | null;
+  numberOfSeasons?: number;
+  numberOfEpisodes?: number;
+  placeOfBirth?: string | null;
+  palette: DetailPalette;
 };
 
 export default function Banner({
@@ -48,13 +61,24 @@ export default function Banner({
   gender,
   birthday,
   deathday,
+  knownForDepartment,
+  releaseDate,
+  runtime,
+  status,
+  firstAirDate,
+  lastAirDate,
+  numberOfSeasons,
+  numberOfEpisodes,
+  placeOfBirth,
+  palette,
 }: BannerProps) {
-  const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type: string }>();
-  const colorScheme = useColorScheme();
 
   const isPerson = type === "person";
   const age = birthday ? calculateAge(birthday, deathday) : null;
+  const imageSource = src
+    ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
+    : undefined;
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -78,30 +102,12 @@ export default function Banner({
     };
   });
 
-  // Fade out gradient as user scrolls
-  const animatedGradientStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      scrollY.value,
-      [0, BANNER_HEIGHT * 0.5],
-      [1, 0],
-      Extrapolation.CLAMP,
-    );
-
-    return { opacity };
-  });
-
-  const getBackgroundColor = () => {
-    return colorScheme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.5)";
-  };
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
       <View style={styles.imageWrapper}>
         <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
           <Image
-            source={{
-              uri: `https://image.tmdb.org/t/p/original/${src}`,
-            }}
+            source={imageSource}
             alt={alt}
             style={styles.image}
             contentFit="cover"
@@ -111,21 +117,86 @@ export default function Banner({
         </Animated.View>
       </View>
 
-      {/* Gradient overlay for better text readability */}
-      <Animated.View style={[styles.gradientContainer, animatedGradientStyle]}>
+      {/* Bottom-only blurred fade from the image into the adaptive page background. */}
+      <View pointerEvents="none" style={styles.gradientContainer}>
+        <MaskedView
+          style={StyleSheet.absoluteFill}
+          maskElement={
+            <LinearGradient
+              colors={[
+                "rgba(0,0,0,0)",
+                "rgba(0,0,0,0)",
+                "rgba(0,0,0,0.28)",
+                "rgba(0,0,0,0.74)",
+                "rgba(0,0,0,0.96)",
+                "rgba(0,0,0,1)",
+              ]}
+              locations={[0, 0.44, 0.56, 0.7, 0.86, 1]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+            />
+          }
+        >
+          <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
+            <Image
+              source={imageSource}
+              alt={alt}
+              style={styles.image}
+              contentFit="cover"
+              blurRadius={136}
+            />
+          </Animated.View>
+        </MaskedView>
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]}
-          style={styles.gradient}
+          colors={[
+            "transparent",
+            "transparent",
+            colorWithAlpha(palette.background, 0.28),
+            colorWithAlpha(palette.background, 0.48),
+            colorWithAlpha(palette.background, 0.72),
+            colorWithAlpha(palette.background, 0.9),
+            palette.background,
+          ]}
+          locations={[0, 0.52, 0.64, 0.74, 0.84, 0.94, 1]}
+          style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         />
-      </Animated.View>
+        <LinearGradient
+          colors={[
+            "transparent",
+            "transparent",
+            "rgba(255,255,255,0.1)",
+            "rgba(255,255,255,0.26)",
+            "rgba(255,255,255,0.12)",
+            "transparent",
+          ]}
+          locations={[0, 0.5, 0.62, 0.76, 0.9, 1]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        />
+        <LinearGradient
+          colors={[
+            "transparent",
+            "transparent",
+            "rgba(0,0,0,0.16)",
+            "rgba(0,0,0,0.26)",
+            "transparent",
+          ]}
+          locations={[0, 0.38, 0.58, 0.74, 1]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        />
+      </View>
 
       {/* Content Section */}
       <View
         style={[
           styles.contentSection,
-          { paddingBottom: insets.bottom / 2 || 16 },
+          { paddingBottom: 16 },
         ]}
       >
         {/* Title Section - Centered */}
@@ -142,7 +213,7 @@ export default function Banner({
                   <View
                     style={[
                       styles.genrePill,
-                      { backgroundColor: getBackgroundColor() },
+                      { backgroundColor: palette.pillBackground },
                     ]}
                   >
                     <Text style={styles.genreText}>{formatGender(gender)}</Text>
@@ -153,7 +224,7 @@ export default function Banner({
                   <View
                     style={[
                       styles.genrePill,
-                      { backgroundColor: getBackgroundColor() },
+                      { backgroundColor: palette.pillBackground },
                     ]}
                   >
                     <Text style={styles.genreText}>
@@ -180,7 +251,7 @@ export default function Banner({
                         <View
                           style={[
                             styles.genrePill,
-                            { backgroundColor: getBackgroundColor() },
+                            { backgroundColor: palette.pillBackground },
                           ]}
                         >
                           <Text style={styles.genreText}>{genre.name}</Text>
@@ -189,14 +260,110 @@ export default function Banner({
                     </Link>
                   ))}
                 {/* Rating Badge */}
-                {score && <RatingBadge score={score} size="detail" />}
+                {typeof score === "number" && score > 0 && (
+                  <RatingBadge score={score} size="detail" />
+                )}
               </>
             )}
           </View>
+          {renderMetadata({
+            type,
+            releaseDate,
+            runtime,
+            status,
+            firstAirDate,
+            lastAirDate,
+            numberOfSeasons,
+            numberOfEpisodes,
+            birthday,
+            placeOfBirth,
+            knownForDepartment,
+          })}
         </View>
       </View>
     </View>
   );
+}
+
+function renderMetadata({
+  type,
+  releaseDate,
+  runtime,
+  status,
+  firstAirDate,
+  lastAirDate,
+  numberOfSeasons,
+  numberOfEpisodes,
+  birthday,
+  placeOfBirth,
+  knownForDepartment,
+}: {
+  type?: string;
+  releaseDate?: string;
+  runtime?: number;
+  status?: string;
+  firstAirDate?: string;
+  lastAirDate?: string | null;
+  numberOfSeasons?: number;
+  numberOfEpisodes?: number;
+  birthday?: string | null;
+  placeOfBirth?: string | null;
+  knownForDepartment?: string;
+}) {
+  if (type === "movie" && releaseDate) {
+    return (
+      <Text style={styles.metadataText}>
+        {formatFullDate(releaseDate)}
+        {runtime && ` • ${formatRuntime(runtime)}`}
+      </Text>
+    );
+  }
+
+  if (type === "tv") {
+    return (
+      <View style={styles.metadataGroup}>
+        {status && <Text style={styles.statusText}>{status}</Text>}
+        <Text style={styles.metadataText}>
+          {firstAirDate && formatFullDate(firstAirDate)}
+          {lastAirDate && ` - ${formatFullDate(lastAirDate)}`}
+        </Text>
+        {(numberOfSeasons || numberOfEpisodes) && (
+          <Text style={styles.metadataText}>
+            {numberOfSeasons &&
+              `${numberOfSeasons} ${
+                numberOfSeasons > 1
+                  ? i18n.t("screen.detail.media.seasons.season.plurial")
+                  : i18n.t("screen.detail.media.seasons.season.singular")
+              }`}
+            {numberOfSeasons && numberOfEpisodes && " • "}
+            {numberOfEpisodes &&
+              `${numberOfEpisodes} ${
+                numberOfEpisodes > 1
+                  ? i18n.t("screen.detail.media.seasons.episode.plurial")
+                  : i18n.t("screen.detail.media.seasons.episode.singular")
+              }`}
+          </Text>
+        )}
+      </View>
+    );
+  }
+
+  if (type === "person") {
+    return (
+      <View style={styles.metadataGroup}>
+        {knownForDepartment && (
+          <Text style={styles.statusText}>{knownForDepartment}</Text>
+        )}
+        <Text style={styles.metadataText}>
+          {birthday && formatFullDate(birthday)}
+          {birthday && placeOfBirth && " • "}
+          {placeOfBirth}
+        </Text>
+      </View>
+    );
+  }
+
+  return null;
 }
 
 const styles = StyleSheet.create({
@@ -222,13 +389,11 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
-    height: "70%",
-  },
-  gradient: {
-    flex: 1,
+    bottom: 0,
+    overflow: "hidden",
   },
   contentSection: {
     position: "absolute",
@@ -244,7 +409,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   titleSection: {
-    gap: 8,
+    gap: 10,
     alignItems: "center",
   },
   title: {
@@ -255,6 +420,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: TOKENS.margin.horizontal / 2,
     color: "#fff",
     fontFamily: FONTS.abril,
+    textShadowColor: "rgba(0,0,0,0.45)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 16,
   },
   genreContainer: {
     flexDirection: "row",
@@ -273,5 +441,27 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.medium,
     letterSpacing: 0.2,
     color: "#fff",
+  },
+  metadataGroup: {
+    alignItems: "center",
+    gap: 4,
+  },
+  metadataText: {
+    color: "rgba(255,255,255,0.76)",
+    fontSize: TOKENS.font.md,
+    fontFamily: FONTS.regular,
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 8,
+  },
+  statusText: {
+    color: "rgba(255,255,255,0.92)",
+    fontSize: TOKENS.font.sm,
+    fontFamily: FONTS.bold,
+    textTransform: "uppercase",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 8,
   },
 });

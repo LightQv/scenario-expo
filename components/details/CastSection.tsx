@@ -13,9 +13,14 @@ import i18n from "@/services/i18n";
 type CastSectionProps = {
   title: string;
   cast: Cast[];
+  backgroundColor?: string;
 };
 
-export default function CastSection({ title, cast }: CastSectionProps) {
+export default function CastSection({
+  title,
+  cast,
+  backgroundColor,
+}: CastSectionProps) {
   const renderItem: ListRenderItem<Cast> = ({ item }) => (
     <CastCard data={item} />
   );
@@ -33,7 +38,7 @@ export default function CastSection({ title, cast }: CastSectionProps) {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: PlatformColor("label") }]}>
           {title}

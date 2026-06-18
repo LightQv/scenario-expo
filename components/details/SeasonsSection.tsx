@@ -18,6 +18,7 @@ type SeasonsSectionProps = {
   seasons: Season[];
   seriesId: string;
   seriesName: string;
+  backgroundColor?: string;
 };
 
 export default function SeasonsSection({
@@ -25,6 +26,7 @@ export default function SeasonsSection({
   seasons,
   seriesId,
   seriesName,
+  backgroundColor,
 }: SeasonsSectionProps) {
   const renderItem: ListRenderItem<Season> = ({ item }) => {
     const posterUrl = item.poster_path
@@ -118,7 +120,9 @@ export default function SeasonsSection({
   }
 
   return (
-    <View style={styles.sectionContainer}>
+    <View
+      style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
+    >
       <View style={styles.header}>
         <Text style={[styles.title, { color: PlatformColor("label") }]}>
           {title}

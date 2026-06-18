@@ -1,11 +1,10 @@
-import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
-import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
 import CrewInfo from "@/components/details/CrewInfo";
 import CastSection from "@/components/details/CastSection";
@@ -19,11 +18,22 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
+import { useThemeContext } from "@/contexts";
+import {
+  getDetailPaletteFromImage,
+  getFallbackDetailPalette,
+  type DetailPalette,
+} from "@/services/detailPalette";
+
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
-  const colorScheme = useColorScheme();
+  const { isDark } = useThemeContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
+  const [palette, setPalette] = useState<DetailPalette>(() =>
+    getFallbackDetailPalette(isDark),
+  );
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
@@ -56,8 +66,38 @@ export default function DetailsScreen() {
     }
   }, [type, id]);
 
-  // Status bar - always light for now (over the image)
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  useEffect(() => {
+    setPalette(getFallbackDetailPalette(isDark));
+  }, [isDark, id, type]);
+
+  useEffect(() => {
+    if (!data) return;
+
+    const imagePath = getDetailImagePath(data, type);
+
+    if (!imagePath) return;
+
+    let isMounted = true;
+    const imageUrl = `${TMDB_IMAGE_BASE_URL}/${imagePath}`;
+
+    getDetailPaletteFromImage(imageUrl, isDark)
+      .then((nextPalette) => {
+        if (isMounted) {
+          setPalette(nextPalette);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setPalette(getFallbackDetailPalette(isDark));
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [data, isDark, type]);
+
+  const statusStyle = "light";
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -75,12 +115,7 @@ export default function DetailsScreen() {
   }, [navigation]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
       {(type === "movie" || type === "tv") && data && (
         <DetailsHeaderActions data={data} mediaType={type} tmdbId={id} />
       )}
@@ -97,7 +132,7 @@ export default function DetailsScreen() {
         {data && (
           <>
             <Banner
-              src={type === "person" ? data.profile_path : data.backdrop_path}
+              src={getDetailImagePath(data, type)}
               alt={data.title || data.name}
               score={data.vote_average}
               title={data.title || data.name}
@@ -107,11 +142,6 @@ export default function DetailsScreen() {
               birthday={data.birthday}
               deathday={data.deathday}
               knownForDepartment={data.known_for_department}
-            />
-            <GradientTransition />
-            <DetailHeader
-              overview={data.overview}
-              videos={data.videos?.results}
               releaseDate={data.release_date}
               runtime={data.runtime}
               status={data.status}
@@ -119,10 +149,15 @@ export default function DetailsScreen() {
               lastAirDate={data.last_air_date}
               numberOfSeasons={data.number_of_seasons}
               numberOfEpisodes={data.number_of_episodes}
-              biography={data.biography}
-              birthday={data.birthday}
               placeOfBirth={data.place_of_birth}
-              knownForDepartment={data.known_for_department}
+              palette={palette}
+            />
+            <DetailHeader
+              overview={data.overview}
+              videos={data.videos?.results}
+              biography={data.biography}
+              backgroundColor={palette.background}
+              accentColor={palette.accent}
             />
             {type === "person" ? (
               <>
@@ -138,6 +173,7 @@ export default function DetailsScreen() {
                         return dateB.getTime() - dateA.getTime();
                       })}
                     mediaType="movie"
+                    backgroundColor={palette.background}
                   />
                 )}
                 {/* Person: Show TV Credits */}
@@ -152,6 +188,7 @@ export default function DetailsScreen() {
                         return dateB.getTime() - dateA.getTime();
                       })}
                     mediaType="tv"
+                    backgroundColor={palette.background}
                   />
                 )}
               </>
@@ -159,12 +196,17 @@ export default function DetailsScreen() {
               <>
                 {/* Media: Show Crew and Cast */}
                 {data.credits?.crew && data.credits.crew.length > 0 && (
-                  <CrewInfo crew={data.credits.crew} mediaType={type} />
+                  <CrewInfo
+                    crew={data.credits.crew}
+                    mediaType={type}
+                    backgroundColor={palette.background}
+                  />
                 )}
                 {data.credits?.cast && data.credits.cast.length > 0 && (
                   <CastSection
                     title={i18n.t("screen.detail.media.cast")}
                     cast={data.credits.cast}
+                    backgroundColor={palette.background}
                   />
                 )}
                 {/* TV Shows: Show Seasons */}
@@ -174,6 +216,7 @@ export default function DetailsScreen() {
                     seasons={data.seasons}
                     seriesId={id}
                     seriesName={data.name || data.title}
+                    backgroundColor={palette.background}
                   />
                 )}
               </>
@@ -183,6 +226,17 @@ export default function DetailsScreen() {
       </Animated.ScrollView>
     </View>
   );
+}
+
+function getDetailImagePath(
+  data: TmdbDetails,
+  type: string | undefined,
+): string | undefined {
+  if (type === "person") {
+    return data.profile_path || data.backdrop_path || data.poster_path;
+  }
+
+  return data.backdrop_path || data.poster_path || data.profile_path;
 }
 
 const styles = StyleSheet.create({

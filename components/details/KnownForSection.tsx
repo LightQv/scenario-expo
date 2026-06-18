@@ -15,11 +15,13 @@ import { formatYear } from "@/services/utils";
 type KnownForSectionProps = {
   title: string;
   credits: PersonDatasList;
+  backgroundColor?: string;
 };
 
 export default function KnownForSection({
   title,
   credits,
+  backgroundColor,
 }: KnownForSectionProps) {
   // Sort by vote count and filter popular items
   const creditsByPopularity = credits.cast
@@ -117,7 +119,9 @@ export default function KnownForSection({
   }
 
   return (
-    <View style={styles.sectionContainer}>
+    <View
+      style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
+    >
       <View style={styles.header}>
         <Text style={[styles.title, { color: PlatformColor("label") }]}>
           {title}

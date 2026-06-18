@@ -10,7 +10,6 @@ import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { TOKENS, FONTS, BUTTON } from "@/constants/theme";
-import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts";
 
@@ -19,38 +18,18 @@ type DetailHeaderProps = {
   overview?: string;
   videos?: Video[];
 
-  /* Movie type */
-  releaseDate?: string;
-  runtime?: number;
-
-  /* TV type */
-  status?: string;
-  firstAirDate?: string;
-  lastAirDate?: string | null;
-  numberOfSeasons?: number;
-  numberOfEpisodes?: number;
-
   /* Person type */
   biography?: string;
-  birthday?: string | null;
-  placeOfBirth?: string | null;
-  knownForDepartment?: string;
+  backgroundColor?: string;
+  accentColor?: string;
 };
 
 export default function DetailHeader({
   overview,
   videos,
-  releaseDate,
-  runtime,
-  status,
-  firstAirDate,
-  lastAirDate,
-  numberOfSeasons,
-  numberOfEpisodes,
   biography,
-  birthday,
-  placeOfBirth,
-  knownForDepartment,
+  backgroundColor,
+  accentColor,
 }: DetailHeaderProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
   const { colors } = useThemeContext();
@@ -79,7 +58,7 @@ export default function DetailHeader({
         // Fallback to web browser (in-app)
         await WebBrowser.openBrowserAsync(youtubeUrl, {
           presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-          controlsColor: colors.main,
+          controlsColor: accentColor || colors.main,
         });
       }
     } catch (error) {
@@ -100,97 +79,18 @@ export default function DetailHeader({
   };
 
   return (
-    <View style={styles.container}>
-      {/* Metadata Section */}
-      <View style={styles.metadataSection}>
-        {type === "movie" && releaseDate && (
-          <View style={styles.metadataRow}>
-            <Text
-              style={[
-                styles.metadataText,
-                { color: PlatformColor("secondaryLabel") },
-              ]}
-            >
-              {formatFullDate(releaseDate)}
-              {runtime && ` • ${formatRuntime(runtime)}`}
-            </Text>
-          </View>
-        )}
-
-        {type === "tv" && (
-          <View style={styles.metadataRow}>
-            {status && (
-              <Text
-                style={[styles.statusBadge, { color: PlatformColor("label") }]}
-              >
-                {status}
-              </Text>
-            )}
-            <Text
-              style={[
-                styles.metadataText,
-                { color: PlatformColor("secondaryLabel") },
-              ]}
-            >
-              {firstAirDate && formatFullDate(firstAirDate)}
-              {lastAirDate && ` - ${formatFullDate(lastAirDate)}`}
-            </Text>
-            {(numberOfSeasons || numberOfEpisodes) && (
-              <Text
-                style={[
-                  styles.metadataText,
-                  { color: PlatformColor("secondaryLabel") },
-                ]}
-              >
-                {numberOfSeasons &&
-                  `${numberOfSeasons} ${
-                    numberOfSeasons > 1
-                      ? i18n.t("screen.detail.media.seasons.season.plurial")
-                      : i18n.t("screen.detail.media.seasons.season.singular")
-                  }`}
-                {numberOfSeasons && numberOfEpisodes && " • "}
-                {numberOfEpisodes &&
-                  `${numberOfEpisodes} ${
-                    numberOfEpisodes > 1
-                      ? i18n.t("screen.detail.media.seasons.episode.plurial")
-                      : i18n.t("screen.detail.media.seasons.episode.singular")
-                  }`}
-              </Text>
-            )}
-          </View>
-        )}
-
-        {type === "person" && (
-          <View style={styles.metadataRow}>
-            {knownForDepartment && (
-              <Text
-                style={[styles.statusBadge, { color: PlatformColor("label") }]}
-              >
-                {knownForDepartment}
-              </Text>
-            )}
-            <Text
-              style={[
-                styles.metadataText,
-                { color: PlatformColor("secondaryLabel") },
-              ]}
-            >
-              {birthday && formatFullDate(birthday)}
-              {birthday && placeOfBirth && " • "}
-              {placeOfBirth}
-            </Text>
-          </View>
-        )}
-      </View>
-
+    <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       {/* Trailer Button */}
       {hasTrailer && (
         <TouchableOpacity
-          style={[styles.trailerButton, { backgroundColor: colors.main }]}
+          style={[
+            styles.trailerButton,
+            { backgroundColor: accentColor || colors.main },
+          ]}
           activeOpacity={BUTTON.opacity}
           onPress={handleTrailerPress}
         >
-          <Ionicons name="play-circle" size={TOKENS.icon} color="#fffff" />
+          <Ionicons name="play-circle" size={TOKENS.icon} color="#000" />
           <Text style={styles.trailerText}>
             {i18n.t("screen.detail.media.trailer")}
           </Text>
@@ -215,27 +115,10 @@ export default function DetailHeader({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: TOKENS.margin.horizontal,
+    paddingTop: 0,
     paddingBottom: TOKENS.margin.vertical * 2,
     gap: 16,
     backgroundColor: PlatformColor("systemBackground"),
-  },
-  metadataSection: {
-    gap: 4,
-  },
-  metadataRow: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 6,
-  },
-  metadataText: {
-    fontSize: TOKENS.font.md,
-    fontFamily: FONTS.regular,
-  },
-  statusBadge: {
-    fontSize: TOKENS.font.sm,
-    fontFamily: FONTS.bold,
-    textTransform: "uppercase",
   },
   trailerButton: {
     flexDirection: "row",

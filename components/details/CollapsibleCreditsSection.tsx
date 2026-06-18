@@ -22,12 +22,14 @@ type CollapsibleCreditsSectionProps = {
   title: string;
   credits: (PersonMovieCredit | PersonTvCredit)[];
   mediaType: "movie" | "tv";
+  backgroundColor?: string;
 };
 
 export default function CollapsibleCreditsSection({
   title,
   credits,
   mediaType,
+  backgroundColor,
 }: CollapsibleCreditsSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { colors } = useThemeContext();
@@ -65,7 +67,9 @@ export default function CollapsibleCreditsSection({
   }
 
   return (
-    <View style={styles.sectionContainer}>
+    <View
+      style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
+    >
       {/* Header with collapse button */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: PlatformColor("label") }]}>
