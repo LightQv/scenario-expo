@@ -126,12 +126,12 @@ export default function Banner({
               colors={[
                 "rgba(0,0,0,0)",
                 "rgba(0,0,0,0)",
-                "rgba(0,0,0,0.28)",
-                "rgba(0,0,0,0.74)",
-                "rgba(0,0,0,0.96)",
+                "rgba(0,0,0,0.06)",
+                "rgba(0,0,0,0.3)",
+                "rgba(0,0,0,0.66)",
                 "rgba(0,0,0,1)",
               ]}
-              locations={[0, 0.44, 0.56, 0.7, 0.86, 1]}
+              locations={[0, 0.38, 0.54, 0.72, 0.92, 1]}
               style={StyleSheet.absoluteFill}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
@@ -144,7 +144,7 @@ export default function Banner({
               alt={alt}
               style={styles.image}
               contentFit="cover"
-              blurRadius={136}
+              blurRadius={340}
             />
           </Animated.View>
         </MaskedView>
@@ -152,13 +152,13 @@ export default function Banner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(palette.background, 0.28),
-            colorWithAlpha(palette.background, 0.48),
-            colorWithAlpha(palette.background, 0.72),
-            colorWithAlpha(palette.background, 0.9),
+            colorWithAlpha(palette.background, 0.22),
+            colorWithAlpha(palette.background, 0.54),
+            colorWithAlpha(palette.background, 0.82),
+            colorWithAlpha(palette.background, 0.96),
             palette.background,
           ]}
-          locations={[0, 0.52, 0.64, 0.74, 0.84, 0.94, 1]}
+          locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -167,25 +167,11 @@ export default function Banner({
           colors={[
             "transparent",
             "transparent",
-            "rgba(255,255,255,0.1)",
-            "rgba(255,255,255,0.26)",
-            "rgba(255,255,255,0.12)",
-            "transparent",
-          ]}
-          locations={[0, 0.5, 0.62, 0.76, 0.9, 1]}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-        />
-        <LinearGradient
-          colors={[
-            "transparent",
-            "transparent",
+            "rgba(0,0,0,0.1)",
             "rgba(0,0,0,0.16)",
-            "rgba(0,0,0,0.26)",
             "transparent",
           ]}
-          locations={[0, 0.38, 0.58, 0.74, 1]}
+          locations={[0, 0.44, 0.62, 0.78, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
