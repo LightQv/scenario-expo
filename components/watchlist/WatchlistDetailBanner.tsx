@@ -1,31 +1,44 @@
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, Text } from "react-native";
 import { Image } from "expo-image";
+import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   interpolate,
-  Extrapolation,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BLURHASH } from "@/constants/theme";
+import { BLURHASH, FONTS, TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
 import { useMemo } from "react";
+import { colorWithAlpha } from "@/services/detailPalette";
+import i18n from "@/services/i18n";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 650;
+const BANNER_HEIGHT = 600;
 
 type WatchlistDetailBannerProps = {
   medias: APIMedia[];
+  title: string;
+  mediaCount: number;
   scrollY: SharedValue<number>;
+  backgroundColor: string;
+  textColor: string;
+  pillBackgroundColor: string;
 };
 
 export default function WatchlistDetailBanner({
   medias,
+  title,
+  mediaCount,
   scrollY,
+  backgroundColor,
+  textColor,
+  pillBackgroundColor,
 }: WatchlistDetailBannerProps) {
-  const insets = useSafeAreaInsets();
   const { colors } = useThemeContext();
+
+  const displayTitle =
+    title === "toWatch" ? i18n.t("screen.watchlist.system.title") : title;
 
   // Randomly select one media on component mount - using useMemo to maintain same selection during component lifecycle
   const randomMedia = useMemo(() => {
@@ -56,26 +69,14 @@ export default function WatchlistDetailBanner({
     };
   });
 
-  // Fade out gradient as user scrolls
-  const animatedGradientStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      scrollY.value,
-      [0, BANNER_HEIGHT * 0.5],
-      [1, 0],
-      Extrapolation.CLAMP,
-    );
-
-    return { opacity };
-  });
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.imageWrapper}>
         {randomMedia ? (
           <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
             <Image
               source={{
-                uri: `https://image.tmdb.org/t/p/original/${randomMedia.backdrop_path}`,
+                uri: `https://image.tmdb.org/t/p/original/${randomMedia.backdrop_path || randomMedia.poster_path}`,
               }}
               alt={randomMedia.title}
               style={styles.image}
@@ -95,23 +96,85 @@ export default function WatchlistDetailBanner({
         )}
       </View>
 
-      {/* Gradient overlay for better text readability */}
-      <Animated.View style={[styles.gradientContainer, animatedGradientStyle]}>
+      <View pointerEvents="none" style={styles.gradientContainer}>
+        {randomMedia && (
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={[
+                  "rgba(0,0,0,0)",
+                  "rgba(0,0,0,0)",
+                  "rgba(0,0,0,0.06)",
+                  "rgba(0,0,0,0.3)",
+                  "rgba(0,0,0,0.66)",
+                  "rgba(0,0,0,1)",
+                ]}
+                locations={[0, 0.38, 0.54, 0.72, 0.92, 1]}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+              />
+            }
+          >
+            <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
+              <Image
+                source={{
+                  uri: `https://image.tmdb.org/t/p/original/${randomMedia.backdrop_path || randomMedia.poster_path}`,
+                }}
+                alt={randomMedia.title}
+                style={styles.image}
+                contentFit="cover"
+                blurRadius={340}
+              />
+            </Animated.View>
+          </MaskedView>
+        )}
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]}
-          style={styles.gradient}
+          colors={[
+            "transparent",
+            "transparent",
+            colorWithAlpha(backgroundColor, 0.22),
+            colorWithAlpha(backgroundColor, 0.54),
+            colorWithAlpha(backgroundColor, 0.82),
+            colorWithAlpha(backgroundColor, 0.96),
+            backgroundColor,
+          ]}
+          locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
+          style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         />
-      </Animated.View>
+        <LinearGradient
+          colors={[
+            "transparent",
+            "transparent",
+            "rgba(0,0,0,0.1)",
+            "rgba(0,0,0,0.16)",
+            "transparent",
+          ]}
+          locations={[0, 0.44, 0.62, 0.78, 1]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        />
+      </View>
 
-      {/* Bottom spacing for content overlap */}
-      <View
-        style={[
-          styles.contentSpacer,
-          { paddingBottom: insets.bottom / 2 || 16 },
-        ]}
-      />
+      <View style={styles.contentSection}>
+        <View style={styles.titleSection}>
+          <Text style={[styles.title, { color: textColor }]} numberOfLines={2}>
+            {displayTitle}
+          </Text>
+          <View style={[styles.countPill, { backgroundColor: pillBackgroundColor }]}> 
+            <Text style={[styles.countText, { color: textColor }]}> 
+              {mediaCount} {" "}
+              {mediaCount > 1
+                ? i18n.t("screen.watchlist.count.plurial")
+                : i18n.t("screen.watchlist.count.singular")}
+            </Text>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -139,18 +202,50 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
-    height: "70%",
+    bottom: 0,
+    overflow: "hidden",
   },
-  gradient: {
-    flex: 1,
-  },
-  contentSpacer: {
+  contentSection: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
+    paddingHorizontal: TOKENS.margin.horizontal,
+    paddingBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  titleSection: {
+    gap: 8,
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 34,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+    textAlign: "center",
+    paddingHorizontal: TOKENS.margin.horizontal / 2,
+    fontFamily: FONTS.abril,
+    textShadowColor: "rgba(0,0,0,0.45)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 16,
+  },
+  countPill: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: TOKENS.radius.full,
+    alignSelf: "center",
+  },
+  countText: {
+    fontSize: TOKENS.font.lg,
+    fontFamily: FONTS.medium,
+    letterSpacing: 0.2,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 8,
   },
 });

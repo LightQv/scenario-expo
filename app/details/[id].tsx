@@ -6,6 +6,7 @@ import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
 import DetailHeader from "@/components/details/DetailHeader";
+import DetailsMediaControls from "@/components/details/DetailsMediaControls";
 import CrewInfo from "@/components/details/CrewInfo";
 import CastSection from "@/components/details/CastSection";
 import CollapsibleCreditsSection from "@/components/details/CollapsibleCreditsSection";
@@ -145,15 +146,23 @@ export default function DetailsScreen() {
               numberOfEpisodes={data.number_of_episodes}
               placeOfBirth={data.place_of_birth}
               palette={palette}
+              controls={
+                (type === "movie" || type === "tv") ? (
+                  <DetailsMediaControls
+                    data={data}
+                    mediaType={type}
+                    tmdbId={id}
+                    videos={data.videos?.results}
+                    actionColor={palette.actionBackground}
+                  />
+                ) : undefined
+              }
             />
             <DetailHeader
               overview={data.overview}
-              videos={data.videos?.results}
               biography={data.biography}
               backgroundColor={palette.background}
               textColor={palette.text}
-              actionBackgroundColor={palette.actionBackground}
-              actionTextColor={palette.actionText}
             />
             {type === "person" ? (
               <>
@@ -171,7 +180,7 @@ export default function DetailsScreen() {
                     mediaType="movie"
                     backgroundColor={palette.background}
                     textColor={palette.text}
-                    secondaryTextColor={palette.secondaryText}
+                    secondaryTextColor={palette.text}
                   />
                 )}
                 {/* Person: Show TV Credits */}
@@ -222,7 +231,7 @@ export default function DetailsScreen() {
                     seriesName={data.name || data.title}
                     backgroundColor={palette.background}
                     textColor={palette.text}
-                    secondaryTextColor={palette.secondaryText}
+                    secondaryTextColor={palette.text}
                   />
                 )}
               </>

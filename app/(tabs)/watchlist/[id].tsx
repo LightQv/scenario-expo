@@ -1,9 +1,7 @@
 import {
   View,
   StyleSheet,
-  PlatformColor,
   FlatList,
-  useColorScheme,
   ListRenderItem,
   Text,
 } from "react-native";
@@ -17,10 +15,10 @@ import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import WatchlistDetailBanner from "@/components/watchlist/WatchlistDetailBanner";
-import WatchlistDetailHeader from "@/components/watchlist/WatchlistDetailHeader";
-import GradientTransition from "@/components/details/GradientTransition";
 import WatchlistMediaCard from "@/components/watchlist/WatchlistMediaCard";
 import WatchlistDetailMenu from "@/components/watchlist/WatchlistDetailMenu";
+import { useThemeContext } from "@/contexts";
+import { colorWithAlpha } from "@/services/detailPalette";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -42,22 +40,35 @@ const MemoizedWatchlistMediaCard = memo(WatchlistMediaCard);
 
 // Memoize the list header
 const ListHeader = memo(
-  ({ watchlist, scrollY }: { watchlist: Watchlist; scrollY: any }) => (
-    <View>
-      <WatchlistDetailBanner medias={watchlist.medias} scrollY={scrollY} />
-      <WatchlistDetailHeader
-        title={watchlist.title}
-        mediaCount={watchlist.medias_count}
-      />
-      <GradientTransition />
-    </View>
+  ({
+    watchlist,
+    scrollY,
+    backgroundColor,
+    textColor,
+    pillBackgroundColor,
+  }: {
+    watchlist: Watchlist;
+    scrollY: any;
+    backgroundColor: string;
+    textColor: string;
+    pillBackgroundColor: string;
+  }) => (
+    <WatchlistDetailBanner
+      medias={watchlist.medias}
+      title={watchlist.title}
+      mediaCount={watchlist.medias_count}
+      scrollY={scrollY}
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      pillBackgroundColor={pillBackgroundColor}
+    />
   ),
 );
 
 ListHeader.displayName = "ListHeader";
 
 export default function WatchlistDetailScreen() {
-  const colorScheme = useColorScheme();
+  const { colors, isDark } = useThemeContext();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,8 +111,12 @@ export default function WatchlistDetailScreen() {
     }, [id, fetchWatchlistDetail]),
   );
 
-  // Status bar - always light (over the image)
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+  // Status bar - follows app theme because watchlist colors are theme-driven.
+  const statusStyle = isDark ? "light" : "dark";
+  const backgroundColor = colors.background;
+  const textColor = colors.text;
+  const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
+  const pillBackgroundColor = colorWithAlpha(colors.main, isDark ? 0.34 : 0.28);
 
   // Optimized scroll handler using worklet
   const scrollHandler = useAnimatedScrollHandler(
@@ -187,9 +202,19 @@ export default function WatchlistDetailScreen() {
         watchlistId={id}
         watchlistType={watchlist?.type}
         onDelete={fetchWatchlistDetail}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
       />
     ),
-    [id, watchlist?.type, fetchWatchlistDetail],
+    [
+      id,
+      watchlist?.type,
+      fetchWatchlistDetail,
+      backgroundColor,
+      textColor,
+      secondaryTextColor,
+    ],
   );
 
   // Empty state
@@ -197,20 +222,32 @@ export default function WatchlistDetailScreen() {
     if (loading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <Text
-          style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
-        >
+        <Text style={[styles.emptyText, { color: secondaryTextColor }]}> 
           {i18n.t("screen.watchlist.detail.empty")}
         </Text>
       </View>
     );
-  }, [loading]);
+  }, [loading, secondaryTextColor]);
 
   // List header with banner and title
   const renderListHeader = useCallback(() => {
     if (!watchlist) return null;
-    return <ListHeader watchlist={watchlist} scrollY={scrollY} />;
-  }, [watchlist, scrollY]);
+    return (
+      <ListHeader
+        watchlist={watchlist}
+        scrollY={scrollY}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        pillBackgroundColor={pillBackgroundColor}
+      />
+    );
+  }, [
+    watchlist,
+    scrollY,
+    backgroundColor,
+    textColor,
+    pillBackgroundColor,
+  ]);
 
   // Item separator for list
   const renderItemSeparator = useCallback(
@@ -218,11 +255,11 @@ export default function WatchlistDetailScreen() {
       <View
         style={{
           height: 2,
-          backgroundColor: PlatformColor("systemBackground"),
+          backgroundColor,
         }}
       />
     ),
-    [],
+    [backgroundColor],
   );
 
   // Key extractor
@@ -232,7 +269,7 @@ export default function WatchlistDetailScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor },
       ]}
     >
       {watchlist && (
@@ -279,7 +316,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-    backgroundColor: PlatformColor("systemBackground"),
   },
   emptyContainer: {
     flex: 1,

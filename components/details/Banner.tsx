@@ -14,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams } from "expo-router";
+import type { ReactNode } from "react";
 import { BLURHASH, TOKENS, FONTS, BUTTON } from "@/constants/theme";
 import RatingBadge from "@/components/ui/RatingBadge";
 import {
@@ -49,6 +50,7 @@ type BannerProps = {
   numberOfEpisodes?: number;
   placeOfBirth?: string | null;
   palette: DetailPalette;
+  controls?: ReactNode;
 };
 
 export default function Banner({
@@ -71,6 +73,7 @@ export default function Banner({
   numberOfEpisodes,
   placeOfBirth,
   palette,
+  controls,
 }: BannerProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
 
@@ -190,6 +193,7 @@ export default function Banner({
           <Text style={[styles.title, { color: palette.text }]} numberOfLines={2}>
             {title}
           </Text>
+          {controls}
           {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
           <View style={styles.genreContainer}>
             {isPerson ? (
@@ -413,7 +417,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   titleSection: {
-    gap: 10,
+    gap: 4,
     alignItems: "center",
   },
   title: {
@@ -432,6 +436,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     justifyContent: "center",
+    marginBottom: 4,
   },
   genrePill: {
     paddingHorizontal: 18,

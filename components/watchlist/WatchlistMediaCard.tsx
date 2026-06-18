@@ -20,6 +20,9 @@ type WatchlistMediaCardProps = {
   watchlistId: string;
   watchlistType?: string;
   onDelete?: () => void;
+  backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function WatchlistMediaCard({
@@ -27,6 +30,9 @@ export default function WatchlistMediaCard({
   watchlistId,
   watchlistType,
   onDelete,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: WatchlistMediaCardProps) {
   const { colors } = useThemeContext();
   const { isViewed } = useViewContext();
@@ -50,7 +56,7 @@ export default function WatchlistMediaCard({
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor: backgroundColor || PlatformColor("systemBackground") },
       ]}
     >
       {/* Viewed indicator on left center outside card */}
@@ -102,7 +108,7 @@ export default function WatchlistMediaCard({
           <TouchableOpacity activeOpacity={BUTTON.opacity}>
             <View style={styles.textContainer}>
               <Text
-                style={[styles.title, { color: PlatformColor("label") }]}
+                style={[styles.title, { color: textColor || PlatformColor("label") }]}
                 numberOfLines={2}
               >
                 {data.title}
@@ -110,7 +116,7 @@ export default function WatchlistMediaCard({
               <Text
                 style={[
                   styles.subtitle,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >
