@@ -1,16 +1,10 @@
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
-import { BUTTON } from "@/constants/theme";
+import NativeCardMenu, {
+  NativeCardMenuAction,
+} from "@/components/ui/NativeCardMenu";
 
 type ViewMediaCardMenuProps = {
   media: APIMedia;
@@ -53,55 +47,28 @@ export default function ViewMediaCardMenu({
     });
   };
 
-  const openMenu = () => {
-    const addToWatchlistLabel = i18n.t("screen.detail.actions.addToWatchlist");
-    const unviewLabel = i18n.t("screen.watchlist.detail.menu.unview");
-    const cancelLabel = i18n.t("form.watchlist.cancel");
-
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: [addToWatchlistLabel, unviewLabel, cancelLabel],
-          cancelButtonIndex: 2,
-          destructiveButtonIndex: 1,
-        },
-        (buttonIndex) => {
-          if (buttonIndex === 0) handleAddToWatchlist();
-          if (buttonIndex === 1) handleUnview();
-        },
-      );
-      return;
-    }
-
-    Alert.alert("", "", [
-      { text: addToWatchlistLabel, onPress: handleAddToWatchlist },
-      { text: unviewLabel, onPress: handleUnview, style: "destructive" },
-      { text: cancelLabel, style: "cancel" },
-    ]);
-  };
+  const actions: NativeCardMenuAction[] = [
+    {
+      id: "add-to-watchlist",
+      label: i18n.t("screen.detail.actions.addToWatchlist"),
+      systemImage: "text.badge.plus",
+      onPress: handleAddToWatchlist,
+    },
+    {
+      id: "unview",
+      label: i18n.t("screen.watchlist.detail.menu.unview"),
+      systemImage: "eye.slash",
+      destructive: true,
+      separatorBefore: true,
+      onPress: handleUnview,
+    },
+  ];
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
+    <NativeCardMenu
       accessibilityLabel="View actions"
-      activeOpacity={BUTTON.opacity}
-      onPress={openMenu}
-      style={styles.container}
-    >
-      <Ionicons
-        name="ellipsis-horizontal"
-        size={22}
-        color={textColor || "#000"}
-      />
-    </TouchableOpacity>
+      actions={actions}
+      textColor={textColor}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 44,
-    width: 44,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

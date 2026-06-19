@@ -1,10 +1,3 @@
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
@@ -14,8 +7,9 @@ import { notifyError } from "@/components/toasts/Toast";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useBookmarkContext } from "@/contexts/BookmarkContext";
-import { Ionicons } from "@expo/vector-icons";
-import { BUTTON } from "@/constants/theme";
+import NativeCardMenu, {
+  NativeCardMenuAction,
+} from "@/components/ui/NativeCardMenu";
 
 type WatchlistMediaCardMenuProps = {
   media: APIMedia;
@@ -110,64 +104,36 @@ export default function WatchlistMediaCardMenu({
     });
   };
 
-  const openMenu = () => {
-    const viewLabel = viewed
-      ? i18n.t("screen.watchlist.detail.menu.unview")
-      : i18n.t("screen.watchlist.detail.menu.view");
-    const moveLabel = i18n.t("screen.watchlist.detail.menu.move");
-    const deleteLabel = i18n.t("screen.watchlist.detail.menu.delete");
-
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: [
-            viewLabel,
-            moveLabel,
-            deleteLabel,
-            i18n.t("form.watchlist.cancel"),
-          ],
-          cancelButtonIndex: 3,
-          destructiveButtonIndex: 2,
-        },
-        (buttonIndex) => {
-          if (buttonIndex === 0) handleToggleView();
-          if (buttonIndex === 1) handleMoveToWatchlist();
-          if (buttonIndex === 2) handleDeleteMedia();
-        },
-      );
-      return;
-    }
-
-    Alert.alert("", "", [
-      { text: viewLabel, onPress: handleToggleView },
-      { text: moveLabel, onPress: handleMoveToWatchlist },
-      { text: deleteLabel, onPress: handleDeleteMedia, style: "destructive" },
-      { text: i18n.t("form.watchlist.cancel"), style: "cancel" },
-    ]);
-  };
+  const actions: NativeCardMenuAction[] = [
+    {
+      id: "toggle-view",
+      label: viewed
+        ? i18n.t("screen.watchlist.detail.menu.unview")
+        : i18n.t("screen.watchlist.detail.menu.view"),
+      systemImage: viewed ? "eye.slash" : "eye",
+      onPress: handleToggleView,
+    },
+    {
+      id: "move",
+      label: i18n.t("screen.watchlist.detail.menu.move"),
+      systemImage: "arrow.right.arrow.left",
+      onPress: handleMoveToWatchlist,
+    },
+    {
+      id: "delete",
+      label: i18n.t("screen.watchlist.detail.menu.delete"),
+      systemImage: "trash",
+      destructive: true,
+      separatorBefore: true,
+      onPress: handleDeleteMedia,
+    },
+  ];
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
+    <NativeCardMenu
       accessibilityLabel="Media actions"
-      activeOpacity={BUTTON.opacity}
-      onPress={openMenu}
-      style={styles.container}
-    >
-      <Ionicons
-        name="ellipsis-horizontal"
-        size={22}
-        color={textColor || "#000"}
-      />
-    </TouchableOpacity>
+      actions={actions}
+      textColor={textColor}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 44,
-    width: 44,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
