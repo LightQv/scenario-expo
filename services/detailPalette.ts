@@ -27,7 +27,9 @@ type Hsl = {
 const detailPaletteCache = new Map<string, DetailPalette>();
 const DETAIL_TEXT_COLOR = "#ffffff";
 const DETAIL_BACKGROUND_MIN_CONTRAST = 3.8;
+const DETAIL_PRIMARY_TEXT_MIN_CONTRAST = 6;
 const DETAIL_TEXT_MIN_CONTRAST = 4.5;
+const DETAIL_ACTION_MIN_CONTRAST = 3.2;
 
 export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
   const background = isDark ? "#171719" : "#f7f3ed";
@@ -99,21 +101,24 @@ function createDetailPalette(
   const base = pickBaseColor(colors);
   const accent = pickAccentColor(colors, base);
   const fallback = getFallbackDetailPalette(isDark);
-  const background = deriveBackground(base, isDark) || fallback.background;
+  const background = pickReadableBackground(colors, isDark) || fallback.background;
   const surface = deriveSurface(background, isDark) || fallback.surface;
   const tint = deriveTint(base, isDark) || fallback.tint;
   const safeAccent = deriveAccent(accent, isDark) || fallback.accent;
+  const text = derivePrimaryText(background) || fallback.text;
   const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
+  const actionBackground =
+    deriveActionColor(background, safeAccent) || safeAccent;
 
   const palette = {
     background,
     surface,
     tint,
     accent: safeAccent,
-    text: fallback.text,
+    text,
     secondaryText,
-    actionBackground: safeAccent,
-    actionText: getReadableTextColor(safeAccent),
+    actionBackground,
+    actionText: getReadableTextColor(actionBackground),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
   };
 
@@ -138,17 +143,21 @@ function createIOSDetailPalette(
   imageUrl?: string,
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
-  const background = deriveBackground(colors.background, isDark) || fallback.background;
-  const actionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
+  const background = pickReadableBackground(colors, isDark) || fallback.background;
+  const rawActionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
   const tint = deriveTint(colors.secondary || background, isDark) || fallback.tint;
+  const text = derivePrimaryText(background) || fallback.text;
   const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
+  const safeAccent = deriveAccent(rawActionBackground, isDark) || fallback.accent;
+  const actionBackground =
+    deriveActionColor(background, safeAccent) || safeAccent;
 
   const palette = {
     background,
     surface: deriveSurface(background, isDark) || fallback.surface,
     tint,
-    accent: deriveAccent(actionBackground, isDark) || fallback.accent,
-    text: fallback.text,
+    accent: safeAccent,
+    text,
     secondaryText,
     actionBackground,
     actionText: getReadableTextColor(actionBackground),
@@ -185,6 +194,56 @@ function pickAccentColor(colors: ImageColorsResult, fallback: string): string {
   }
 
   return colors.vibrant || colors.lightVibrant || colors.muted || fallback;
+}
+
+function pickReadableBackground(
+  colors: ImageColorsResult,
+  isDark: boolean,
+): string | null {
+  const candidates = getBackgroundCandidates(colors)
+    .map((color) => deriveBackground(color, isDark))
+    .filter((color): color is string => Boolean(color));
+
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  return candidates.sort((first, second) => {
+    return scoreBackgroundCandidate(second) - scoreBackgroundCandidate(first);
+  })[0];
+}
+
+function getBackgroundCandidates(colors: ImageColorsResult): string[] {
+  const candidates =
+    colors.platform === "ios"
+      ? [colors.background, colors.secondary, colors.primary, colors.detail]
+      : [
+          colors.darkMuted,
+          colors.muted,
+          colors.dominant,
+          colors.vibrant,
+          colors.darkVibrant,
+          colors.lightVibrant,
+        ];
+
+  return candidates.filter((color): color is string => Boolean(normalizeHex(color)));
+}
+
+function scoreBackgroundCandidate(color: string): number {
+  const hsl = hexToHsl(color);
+
+  if (!hsl) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  const contrast = getContrastRatio(DETAIL_TEXT_COLOR, color);
+  const contrastScore = clamp(contrast / DETAIL_BACKGROUND_MIN_CONTRAST, 0, 1.35) * 34;
+  const lightnessScore = (1 - Math.abs(hsl.l - 0.24) / 0.22) * 30;
+  const saturationScore = (1 - Math.abs(hsl.s - 0.32) / 0.32) * 24;
+  const grayPenalty = hsl.s < 0.08 ? 12 : 0;
+  const neonPenalty = hsl.s > 0.58 && hsl.l > 0.28 ? 10 : 0;
+
+  return contrastScore + lightnessScore + saturationScore - grayPenalty - neonPenalty;
 }
 
 function deriveBackground(color: string, isDark: boolean): string | null {
@@ -287,6 +346,101 @@ function deriveAccent(color: string, isDark: boolean): string | null {
     s: clamp(hsl.s, 0.28, 0.62),
     l: isDark ? clamp(hsl.l + 0.16, 0.48, 0.68) : clamp(hsl.l - 0.1, 0.34, 0.52),
   });
+}
+
+function deriveActionColor(background: string, accent: string): string | null {
+  const backgroundHsl = hexToHsl(background);
+  const accentHsl = hexToHsl(accent);
+
+  if (!backgroundHsl || !accentHsl) {
+    return null;
+  }
+
+  const hueDistance = getHueDistance(backgroundHsl.h, accentHsl.h);
+  const hue = hueDistance < 0.18 ? blendHue(backgroundHsl.h, accentHsl.h, 0.35) : backgroundHsl.h;
+  const candidate = hslToHex({
+    h: hue,
+    s: clamp(Math.max(backgroundHsl.s, accentHsl.s) * 1.08, 0.24, 0.58),
+    l: clamp(backgroundHsl.l + 0.38, 0.56, 0.74),
+  });
+
+  return ensureActionContrast(candidate, background);
+}
+
+function ensureActionContrast(color: string, background: string): string | null {
+  const hsl = hexToHsl(color);
+
+  if (!hsl) {
+    return null;
+  }
+
+  let candidate = color;
+  let candidateHsl = hsl;
+
+  for (let index = 0; index < 8; index += 1) {
+    if (getContrastRatio(candidate, background) >= DETAIL_ACTION_MIN_CONTRAST) {
+      return candidate;
+    }
+
+    candidateHsl = {
+      ...candidateHsl,
+      s: clamp(candidateHsl.s + 0.03, 0, 0.68),
+      l: clamp(candidateHsl.l + 0.035, 0, 0.84),
+    };
+    candidate = hslToHex(candidateHsl);
+  }
+
+  return getContrastRatio(candidate, background) >= DETAIL_ACTION_MIN_CONTRAST
+    ? candidate
+    : null;
+}
+
+function derivePrimaryText(background: string): string | null {
+  const hsl = hexToHsl(background);
+
+  if (!hsl) {
+    return null;
+  }
+
+  const candidate = hslToHex({
+    h: hsl.h,
+    s: clamp(hsl.s * 0.18, 0.02, 0.07),
+    l: 0.94,
+  });
+
+  return ensurePrimaryTextContrast(candidate, background);
+}
+
+function ensurePrimaryTextContrast(color: string, background: string): string | null {
+  const hsl = hexToHsl(color);
+
+  if (!hsl) {
+    return null;
+  }
+
+  let candidate = color;
+  let candidateHsl = hsl;
+
+  for (let index = 0; index < 6; index += 1) {
+    if (
+      getContrastRatio(candidate, background) >=
+      DETAIL_PRIMARY_TEXT_MIN_CONTRAST
+    ) {
+      return candidate;
+    }
+
+    candidateHsl = {
+      ...candidateHsl,
+      s: clamp(candidateHsl.s - 0.01, 0, 1),
+      l: clamp(candidateHsl.l + 0.01, 0, 1),
+    };
+    candidate = hslToHex(candidateHsl);
+  }
+
+  return getContrastRatio(DETAIL_TEXT_COLOR, background) >=
+    DETAIL_PRIMARY_TEXT_MIN_CONTRAST
+    ? DETAIL_TEXT_COLOR
+    : null;
 }
 
 function deriveSecondaryText(background: string): string | null {
@@ -412,6 +566,28 @@ function hslToHex({ h, s, l }: Hsl): string {
     g: Math.round(g * 255),
     b: Math.round(b * 255),
   });
+}
+
+function getHueDistance(first: number, second: number): number {
+  const distance = Math.abs(first - second);
+
+  return Math.min(distance, 1 - distance);
+}
+
+function blendHue(first: number, second: number, amount: number): number {
+  let delta = second - first;
+
+  if (delta > 0.5) {
+    delta -= 1;
+  }
+
+  if (delta < -0.5) {
+    delta += 1;
+  }
+
+  const blended = first + delta * amount;
+
+  return (blended + 1) % 1;
 }
 
 function hexToRgb(hex: string): Rgb | null {
