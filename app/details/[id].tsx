@@ -147,7 +147,7 @@ export default function DetailsScreen() {
               placeOfBirth={data.place_of_birth}
               palette={palette}
               controls={
-                (type === "movie" || type === "tv") ? (
+                type === "movie" || type === "tv" ? (
                   <DetailsMediaControls
                     data={data}
                     mediaType={type}

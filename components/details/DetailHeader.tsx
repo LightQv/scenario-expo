@@ -1,9 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  PlatformColor,
-} from "react-native";
+import { StyleSheet, Text, View, PlatformColor } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { TOKENS, FONTS } from "@/constants/theme";
 import i18n from "@/services/i18n";
@@ -65,7 +60,6 @@ export default function DetailHeader({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingTop: 0,
     paddingBottom: TOKENS.margin.vertical * 2,
     gap: 16,
     backgroundColor: PlatformColor("systemBackground"),

@@ -85,7 +85,9 @@ export default function Banner({
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
     : undefined;
-  const imageUrl = src ? `https://image.tmdb.org/t/p/original/${src}` : undefined;
+  const imageUrl = src
+    ? `https://image.tmdb.org/t/p/original/${src}`
+    : undefined;
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -110,7 +112,7 @@ export default function Banner({
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: palette.background }]}> 
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
       <View pointerEvents="none" style={styles.visualStage}>
         <AppleMusicArtworkWash
           imageUrl={imageUrl}
@@ -219,25 +221,35 @@ export default function Banner({
         ]}
       >
         {/* Title Section - Centered */}
-        <View style={[styles.titleSection, isPerson && styles.personTitleSection]}>
-          <Text style={[styles.title, { color: palette.text }]} numberOfLines={2}>
+        <View
+          style={[styles.titleSection, isPerson && styles.personTitleSection]}
+        >
+          <Text
+            style={[styles.title, { color: palette.text }]}
+            numberOfLines={2}
+          >
             {title}
           </Text>
           {controls}
           {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
-          <View style={[styles.genreContainer, isPerson && styles.personGenreContainer]}>
+          <View
+            style={[
+              styles.genreContainer,
+              isPerson && styles.personGenreContainer,
+            ]}
+          >
             {isPerson ? (
               <>
                 {/* Gender */}
                 {gender !== undefined && (
                   <View
-                      style={[
-                        styles.genrePill,
-                        {
-                          backgroundColor: detailPillBackground,
-                          borderColor: detailPillBorder,
-                        },
-                      ]}
+                    style={[
+                      styles.genrePill,
+                      {
+                        backgroundColor: detailPillBackground,
+                        borderColor: detailPillBorder,
+                      },
+                    ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {formatGender(gender)}
@@ -247,13 +259,13 @@ export default function Banner({
                 {/* Age */}
                 {age !== null && (
                   <View
-                      style={[
-                        styles.genrePill,
-                        {
-                          backgroundColor: detailPillBackground,
-                          borderColor: detailPillBorder,
-                        },
-                      ]}
+                    style={[
+                      styles.genrePill,
+                      {
+                        backgroundColor: detailPillBackground,
+                        borderColor: detailPillBorder,
+                      },
+                    ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {age} {i18n.t("screen.person.age")}
@@ -285,7 +297,9 @@ export default function Banner({
                             },
                           ]}
                         >
-                          <Text style={[styles.genreText, { color: palette.text }]}>
+                          <Text
+                            style={[styles.genreText, { color: palette.text }]}
+                          >
                             {genre.name}
                           </Text>
                         </View>
@@ -371,7 +385,9 @@ function renderMetadata({
     return (
       <View style={styles.metadataGroup}>
         {status && (
-          <Text style={[styles.statusText, { color: textColor }]}>{status}</Text>
+          <Text style={[styles.statusText, { color: textColor }]}>
+            {status}
+          </Text>
         )}
         <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
           {firstAirDate && formatFullDate(firstAirDate)}
@@ -472,14 +488,14 @@ const styles = StyleSheet.create({
   },
   mediaContentSection: {
     paddingTop: 360,
-    paddingBottom: 28,
+    paddingBottom: 22,
   },
   personContentSection: {
     paddingTop: 440,
     paddingBottom: 24,
   },
   titleSection: {
-    gap: 4,
+    gap: 6,
     alignItems: "center",
     width: "100%",
   },
@@ -502,7 +518,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: "100%",
     alignSelf: "center",
-    marginBottom: 10,
   },
   personGenreContainer: {
     marginTop: 2,
@@ -516,8 +531,8 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   mediaMetadataSlot: {
+    marginTop: 8,
     width: "100%",
-    marginTop: 10,
     alignItems: "center",
   },
   genreText: {
