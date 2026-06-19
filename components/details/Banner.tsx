@@ -208,30 +208,12 @@ export default function Banner({
             ),
             palette.background,
           ]}
-          locations={[0, 0.42, 0.52, 0.62, 0.72, 0.82, 0.92, 1]}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-        />
-        <LinearGradient
-          colors={[
-            "transparent",
-            "transparent",
-            "rgba(0,0,0,0.08)",
-            "rgba(0,0,0,0.13)",
-            "transparent",
-          ]}
-          locations={[0, 0.44, 0.6, 0.76, 1]}
+          locations={[0, 0.38, 0.52, 0.66, 0.78, 0.88, 0.96, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         />
       </View>
-
-      <View
-        pointerEvents="none"
-        style={[styles.bottomSeam, { backgroundColor: palette.background }]}
-      />
 
       {/* Content Section */}
       <View
@@ -473,14 +455,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: BANNER_HEIGHT,
-  },
-  bottomSeam: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 28,
-    zIndex: 1,
   },
   imageWrapper: {
     position: "absolute",
