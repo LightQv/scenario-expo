@@ -25,6 +25,7 @@ import {
 } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
+import AppleMusicArtworkWash from "@/components/details/AppleMusicArtworkWash";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 600;
@@ -84,6 +85,7 @@ export default function Banner({
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
     : undefined;
+  const imageUrl = src ? `https://image.tmdb.org/t/p/original/${src}` : undefined;
 
   // Parallax animation for the banner image (same formula as previous version)
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -110,6 +112,14 @@ export default function Banner({
   return (
     <View style={[styles.container, { backgroundColor: palette.background }]}> 
       <View pointerEvents="none" style={styles.visualStage}>
+        <AppleMusicArtworkWash
+          imageUrl={imageUrl}
+          palette={palette}
+          scrollY={scrollY}
+          width={width}
+          height={BANNER_HEIGHT}
+        />
+
         <View style={styles.imageWrapper}>
           <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
             <Image
@@ -119,6 +129,18 @@ export default function Banner({
               contentFit="cover"
               placeholder={BLURHASH.hash}
               transition={BLURHASH.transition}
+            />
+            <LinearGradient
+              colors={[
+                "transparent",
+                "transparent",
+                colorWithAlpha(palette.tint, 0.08),
+                colorWithAlpha(palette.background, 0.18),
+              ]}
+              locations={[0, 0.46, 0.72, 1]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
             />
           </Animated.View>
         </View>
@@ -449,12 +471,12 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   mediaContentSection: {
-    paddingTop: 332,
-    paddingBottom: 20,
+    paddingTop: 360,
+    paddingBottom: 28,
   },
   personContentSection: {
-    paddingTop: 420,
-    paddingBottom: 16,
+    paddingTop: 440,
+    paddingBottom: 24,
   },
   titleSection: {
     gap: 4,
