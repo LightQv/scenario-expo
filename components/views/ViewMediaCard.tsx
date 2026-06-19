@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
+  ColorValue,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -15,7 +16,7 @@ import ViewMediaCardMenu from "./ViewMediaCardMenu";
 type ViewMediaCardProps = {
   data: APIMedia;
   onDelete?: (id: string) => void;
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   textColor?: string;
   secondaryTextColor?: string;
 };
@@ -109,7 +110,11 @@ export default function ViewMediaCard({
         </Link>
 
         {/* Menu on the right */}
-        <ViewMediaCardMenu viewId={data.id} onDelete={onDelete} />
+        <ViewMediaCardMenu
+          media={data}
+          onDelete={onDelete}
+          textColor={textColor}
+        />
       </View>
     </View>
   );

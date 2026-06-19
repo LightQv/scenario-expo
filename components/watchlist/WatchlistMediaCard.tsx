@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
+  ColorValue,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -20,7 +21,7 @@ type WatchlistMediaCardProps = {
   watchlistId: string;
   watchlistType?: string;
   onDelete?: () => void;
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   textColor?: string;
   secondaryTextColor?: string;
 };

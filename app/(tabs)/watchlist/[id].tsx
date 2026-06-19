@@ -1,6 +1,7 @@
 import {
   View,
   StyleSheet,
+  PlatformColor,
   ColorValue,
   FlatList,
   ListRenderItem,
@@ -44,12 +45,14 @@ const ListHeader = memo(
     watchlist,
     scrollY,
     backgroundColor,
+    fadeBackgroundColor,
     textColor,
     pillBackgroundColor,
   }: {
     watchlist: Watchlist;
     scrollY: any;
-    backgroundColor: string;
+    backgroundColor: ColorValue;
+    fadeBackgroundColor: string;
     textColor: string;
     pillBackgroundColor: ColorValue;
   }) => (
@@ -59,6 +62,7 @@ const ListHeader = memo(
       mediaCount={watchlist.medias_count}
       scrollY={scrollY}
       backgroundColor={backgroundColor}
+      fadeBackgroundColor={fadeBackgroundColor}
       textColor={textColor}
       pillBackgroundColor={pillBackgroundColor}
     />
@@ -113,7 +117,8 @@ export default function WatchlistDetailScreen() {
 
   // Status bar - follows app theme because watchlist colors are theme-driven.
   const statusStyle = isDark ? "light" : "dark";
-  const backgroundColor = isDark ? "#000" : "#fff";
+  const backgroundColor = PlatformColor("systemBackground");
+  const fadeBackgroundColor = isDark ? "#000" : "#fff";
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
   const pillBackgroundColor = isDark ? "#1C1C1E" : "#F2F2F7";
@@ -237,6 +242,7 @@ export default function WatchlistDetailScreen() {
         watchlist={watchlist}
         scrollY={scrollY}
         backgroundColor={backgroundColor}
+        fadeBackgroundColor={fadeBackgroundColor}
         textColor={textColor}
         pillBackgroundColor={pillBackgroundColor}
       />
@@ -245,6 +251,7 @@ export default function WatchlistDetailScreen() {
     watchlist,
     scrollY,
     backgroundColor,
+    fadeBackgroundColor,
     textColor,
     pillBackgroundColor,
   ]);

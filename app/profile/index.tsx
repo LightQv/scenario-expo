@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { PlatformColor, View, StyleSheet } from "react-native";
 import { useEffect, useState, useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "expo-router";
@@ -99,7 +99,8 @@ export default function ProfileScreen() {
   );
 
   const statusStyle = isDark ? "light" : "dark";
-  const backgroundColor = colors.background;
+  const backgroundColor = PlatformColor("systemBackground");
+  const fadeBackgroundColor = isDark ? "#000" : "#fff";
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
   const pillBackgroundColor = isDark ? "#1C1C1E" : "#F2F2F7";
@@ -138,6 +139,7 @@ export default function ProfileScreen() {
               email={user.email}
               scrollY={scrollY}
               backgroundColor={backgroundColor}
+              fadeBackgroundColor={fadeBackgroundColor}
               textColor={textColor}
               secondaryTextColor={secondaryTextColor}
             />

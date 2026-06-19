@@ -21,7 +21,8 @@ type WatchlistDetailBannerProps = {
   title: string;
   mediaCount: number;
   scrollY: SharedValue<number>;
-  backgroundColor: string;
+  backgroundColor: ColorValue;
+  fadeBackgroundColor: string;
   textColor: string;
   pillBackgroundColor: ColorValue;
 };
@@ -32,6 +33,7 @@ export default function WatchlistDetailBanner({
   mediaCount,
   scrollY,
   backgroundColor,
+  fadeBackgroundColor,
   textColor,
   pillBackgroundColor,
 }: WatchlistDetailBannerProps) {
@@ -134,11 +136,11 @@ export default function WatchlistDetailBanner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(backgroundColor, 0.22),
-            colorWithAlpha(backgroundColor, 0.54),
-            colorWithAlpha(backgroundColor, 0.82),
-            colorWithAlpha(backgroundColor, 0.96),
-            backgroundColor,
+            colorWithAlpha(fadeBackgroundColor, 0.22),
+            colorWithAlpha(fadeBackgroundColor, 0.54),
+            colorWithAlpha(fadeBackgroundColor, 0.82),
+            colorWithAlpha(fadeBackgroundColor, 0.96),
+            fadeBackgroundColor,
           ]}
           locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
           style={StyleSheet.absoluteFill}

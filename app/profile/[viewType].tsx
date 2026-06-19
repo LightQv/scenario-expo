@@ -104,7 +104,7 @@ export default function ViewTypeScreen() {
     setFilteredViews((prev) => prev.filter((view) => view.id !== id));
   };
 
-  const backgroundColor = colors.background;
+  const backgroundColor = PlatformColor("systemBackground");
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
 

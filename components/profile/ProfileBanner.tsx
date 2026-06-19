@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions, Text } from "react-native";
+import { StyleSheet, View, Dimensions, Text, ColorValue } from "react-native";
 import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
@@ -19,7 +19,8 @@ type ProfileBannerProps = {
   username: string;
   email: string;
   scrollY: SharedValue<number>;
-  backgroundColor: string;
+  backgroundColor: ColorValue;
+  fadeBackgroundColor: string;
   textColor: string;
   secondaryTextColor: string;
 };
@@ -30,6 +31,7 @@ export default function ProfileBanner({
   email,
   scrollY,
   backgroundColor,
+  fadeBackgroundColor,
   textColor,
   secondaryTextColor,
 }: ProfileBannerProps) {
@@ -116,11 +118,11 @@ export default function ProfileBanner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(backgroundColor, 0.22),
-            colorWithAlpha(backgroundColor, 0.54),
-            colorWithAlpha(backgroundColor, 0.82),
-            colorWithAlpha(backgroundColor, 0.96),
-            backgroundColor,
+            colorWithAlpha(fadeBackgroundColor, 0.22),
+            colorWithAlpha(fadeBackgroundColor, 0.54),
+            colorWithAlpha(fadeBackgroundColor, 0.82),
+            colorWithAlpha(fadeBackgroundColor, 0.96),
+            fadeBackgroundColor,
           ]}
           locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
           style={StyleSheet.absoluteFill}

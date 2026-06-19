@@ -1,32 +1,39 @@
-import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host, Image } from "@expo/ui/swift-ui";
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import i18n from "@/services/i18n";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { useViewContext } from "@/contexts/ViewContext";
+import { BUTTON } from "@/constants/theme";
 
 type ViewMediaCardMenuProps = {
-  viewId: string;
+  media: APIMedia;
   onDelete?: (id: string) => void;
+  textColor?: string;
 };
 
 export default function ViewMediaCardMenu({
-  viewId,
+  media,
   onDelete,
+  textColor,
 }: ViewMediaCardMenuProps) {
-  const { colors } = useThemeContext();
   const { removeView } = useViewContext();
 
   const handleUnview = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      await removeView(viewId);
+      await removeView(media.id);
 
       // Call the onDelete callback to remove from local state
       if (onDelete) {
-        onDelete(viewId);
+        onDelete(media.id);
       }
     } catch (err) {
       console.error("Error removing view:", err);
@@ -34,28 +41,67 @@ export default function ViewMediaCardMenu({
     }
   };
 
+  const handleAddToWatchlist = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push({
+      pathname: "/(modal)/watchlist-add",
+      params: {
+        tmdbId: media.tmdb_id.toString(),
+        mediaType: media.media_type,
+        title: media.title,
+      },
+    });
+  };
+
+  const openMenu = () => {
+    const addToWatchlistLabel = i18n.t("screen.detail.actions.addToWatchlist");
+    const unviewLabel = i18n.t("screen.watchlist.detail.menu.unview");
+    const cancelLabel = i18n.t("form.watchlist.cancel");
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [addToWatchlistLabel, unviewLabel, cancelLabel],
+          cancelButtonIndex: 2,
+          destructiveButtonIndex: 1,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) handleAddToWatchlist();
+          if (buttonIndex === 1) handleUnview();
+        },
+      );
+      return;
+    }
+
+    Alert.alert("", "", [
+      { text: addToWatchlistLabel, onPress: handleAddToWatchlist },
+      { text: unviewLabel, onPress: handleUnview, style: "destructive" },
+      { text: cancelLabel, style: "cancel" },
+    ]);
+  };
+
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Button
-            onPress={handleUnview}
-            systemImage="eye.slash"
-            role="destructive"
-            label={i18n.t("screen.watchlist.detail.menu.unview")}
-          />
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Image systemName="ellipsis" color={colors.text} />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel="View actions"
+      activeOpacity={BUTTON.opacity}
+      onPress={openMenu}
+      style={styles.container}
+    >
+      <Ionicons
+        name="ellipsis-horizontal"
+        size={22}
+        color={textColor || "#000"}
+      />
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 34,
+    height: 44,
+    width: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
