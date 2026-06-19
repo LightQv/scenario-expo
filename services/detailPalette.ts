@@ -25,6 +25,7 @@ type Hsl = {
 };
 
 const detailPaletteCache = new Map<string, DetailPalette>();
+const DETAIL_TEXT_MIN_CONTRAST = 4.5;
 
 export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
   const background = isDark ? "#171719" : "#f7f3ed";
@@ -36,7 +37,7 @@ export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
     surface,
     tint,
     accent: isDark ? "#f9cd4a" : "#eab208",
-    text: isDark ? "#ffffff" : "#000000",
+    text: "#ffffff",
     secondaryText: isDark ? "#c9c9ce" : "#6f6f78",
     actionBackground: isDark ? "#f9cd4a" : "#eab208",
     actionText: "#000000",
@@ -100,6 +101,7 @@ function createDetailPalette(
   const surface = deriveSurface(background, isDark) || fallback.surface;
   const tint = deriveTint(base, isDark) || fallback.tint;
   const safeAccent = deriveAccent(accent, isDark) || fallback.accent;
+  const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
 
   const palette = {
     background,
@@ -107,7 +109,7 @@ function createDetailPalette(
     tint,
     accent: safeAccent,
     text: fallback.text,
-    secondaryText: fallback.secondaryText,
+    secondaryText,
     actionBackground: safeAccent,
     actionText: getReadableTextColor(safeAccent),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
@@ -135,20 +137,19 @@ function createIOSDetailPalette(
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
   const background = normalizeHex(colors.background) || fallback.background;
-  const rawText = normalizeHex(colors.detail) || fallback.text;
   const actionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
-  const secondaryText = lightenColor(rawText, isDark ? 0.22 : 0.34) || fallback.secondaryText;
   const tint = deriveTint(colors.secondary || background, isDark) || fallback.tint;
+  const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
 
   const palette = {
     background,
     surface: deriveSurface(background, isDark) || fallback.surface,
     tint,
     accent: deriveAccent(actionBackground, isDark) || fallback.accent,
-    text: rawText,
+    text: fallback.text,
     secondaryText,
     actionBackground,
-    actionText: rawText,
+    actionText: getReadableTextColor(actionBackground),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
   };
 
@@ -158,10 +159,8 @@ function createIOSDetailPalette(
       platform: colors.platform,
       selected: {
         background: colors.background,
-        text: colors.detail,
-        secondaryTextSource: colors.detail,
         actionBackground: colors.primary,
-        actionText: colors.detail,
+        secondaryTextSource: "background",
       },
       palette,
     });
@@ -240,6 +239,61 @@ function deriveAccent(color: string, isDark: boolean): string | null {
     s: clamp(hsl.s, 0.28, 0.62),
     l: isDark ? clamp(hsl.l + 0.16, 0.48, 0.68) : clamp(hsl.l - 0.1, 0.34, 0.52),
   });
+}
+
+function deriveSecondaryText(background: string): string | null {
+  const hsl = hexToHsl(background);
+  const backgroundRgb = hexToRgb(background);
+
+  if (!hsl || !backgroundRgb) {
+    return null;
+  }
+
+  const backgroundLuminance = getRelativeLuminance(backgroundRgb);
+  const shouldDarken = backgroundLuminance > 0.5;
+  const targetLightness = shouldDarken
+    ? clamp(hsl.l - 0.38, 0.24, 0.46)
+    : clamp(hsl.l + 0.44, 0.58, 0.76);
+  const candidate = hslToHex({
+    h: hsl.h,
+    s: clamp(hsl.s * 0.85, 0.1, 0.34),
+    l: targetLightness,
+  });
+
+  return ensureContrast(candidate, background, shouldDarken);
+}
+
+function ensureContrast(
+  color: string,
+  background: string,
+  darken: boolean,
+): string | null {
+  const colorHsl = hexToHsl(color);
+
+  if (!colorHsl) {
+    return null;
+  }
+
+  let candidate = color;
+  let candidateHsl = colorHsl;
+
+  for (let index = 0; index < 12; index += 1) {
+    if (getContrastRatio(candidate, background) >= DETAIL_TEXT_MIN_CONTRAST) {
+      return candidate;
+    }
+
+    candidateHsl = {
+      ...candidateHsl,
+      l: darken
+        ? clamp(candidateHsl.l - 0.04, 0.12, 1)
+        : clamp(candidateHsl.l + 0.04, 0, 0.9),
+    };
+    candidate = hslToHex(candidateHsl);
+  }
+
+  return getContrastRatio(candidate, background) >= DETAIL_TEXT_MIN_CONTRAST
+    ? candidate
+    : null;
 }
 
 function hexToHsl(hex: string): Hsl | null {
@@ -349,20 +403,6 @@ function normalizeHex(color: string | undefined): string | null {
   return rgbToHex(rgb);
 }
 
-function lightenColor(color: string, amount: number): string | null {
-  const hsl = hexToHsl(color);
-
-  if (!hsl) {
-    return null;
-  }
-
-  return hslToHex({
-    h: hsl.h,
-    s: hsl.s,
-    l: clamp(hsl.l + amount, 0, 1),
-  });
-}
-
 function getReadableTextColor(background: string): string {
   const rgb = hexToRgb(background);
 
@@ -373,6 +413,34 @@ function getReadableTextColor(background: string): string {
   const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
 
   return luminance > 0.62 ? "#000000" : "#ffffff";
+}
+
+function getContrastRatio(foreground: string, background: string): number {
+  const foregroundRgb = hexToRgb(foreground);
+  const backgroundRgb = hexToRgb(background);
+
+  if (!foregroundRgb || !backgroundRgb) {
+    return 0;
+  }
+
+  const foregroundLuminance = getRelativeLuminance(foregroundRgb);
+  const backgroundLuminance = getRelativeLuminance(backgroundRgb);
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function getRelativeLuminance({ r, g, b }: Rgb): number {
+  const [red, green, blue] = [r, g, b].map((channel) => {
+    const value = channel / 255;
+
+    return value <= 0.03928
+      ? value / 12.92
+      : ((value + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
 function rgbToHex({ r, g, b }: Rgb): string {

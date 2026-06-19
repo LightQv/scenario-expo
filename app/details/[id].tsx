@@ -197,7 +197,7 @@ export default function DetailsScreen() {
                     mediaType="tv"
                     backgroundColor={palette.background}
                     textColor={palette.text}
-                    secondaryTextColor={palette.secondaryText}
+                    secondaryTextColor={palette.text}
                   />
                 )}
               </>
@@ -219,7 +219,7 @@ export default function DetailsScreen() {
                     cast={data.credits.cast}
                     backgroundColor={palette.background}
                     textColor={palette.text}
-                    secondaryTextColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
                 {/* TV Shows: Show Seasons */}
@@ -231,7 +231,7 @@ export default function DetailsScreen() {
                     seriesName={data.name || data.title}
                     backgroundColor={palette.background}
                     textColor={palette.text}
-                    secondaryTextColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
               </>
