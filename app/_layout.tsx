@@ -107,6 +107,14 @@ function ThemeWrapper() {
                 name="profile"
                 options={{ headerShown: false, presentation: "card" }}
               />
+              <Stack.Screen
+                name="genre/[genreId]"
+                options={{
+                  headerTransparent: true,
+                  headerShadowVisible: false,
+                  headerTitle: "",
+                }}
+              />
             </Stack>
           </GenreProvider>
         </BookmarkProvider>
