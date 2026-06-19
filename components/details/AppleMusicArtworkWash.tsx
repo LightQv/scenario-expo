@@ -71,6 +71,11 @@ export default function AppleMusicArtworkWash({
   const motionB = useSharedValue(0);
   const motionC = useSharedValue(0);
   const image = useImage(imageUrl ?? null);
+  const tintOpacity = palette.mood === "vibrant" ? 0.62 : palette.mood === "muted" ? 0.28 : 0.18;
+  const surfaceOpacity = palette.mood === "vibrant" ? 0.42 : palette.mood === "muted" ? 0.26 : 0.22;
+  const backgroundStartOpacity = palette.mood === "vibrant" ? 0.12 : palette.mood === "muted" ? 0.3 : 0.34;
+  const bottomFadeStartOpacity = palette.mood === "vibrant" ? 0.24 : palette.mood === "muted" ? 0.44 : 0.48;
+  const bottomFadeEndOpacity = palette.mood === "vibrant" ? 0.7 : palette.mood === "muted" ? 0.86 : 0.88;
 
   useEffect(() => {
     if (reducedMotion) {
@@ -180,9 +185,9 @@ export default function AppleMusicArtworkWash({
             start={vec(width * 0.16, 0)}
             end={vec(width * 0.9, height)}
             colors={[
-              colorWithAlpha(palette.tint, 0.5),
-              colorWithAlpha(palette.surface, 0.34),
-              colorWithAlpha(palette.background, 0.22),
+              colorWithAlpha(palette.tint, tintOpacity),
+              colorWithAlpha(palette.surface, surfaceOpacity),
+              colorWithAlpha(palette.background, backgroundStartOpacity),
             ]}
             positions={[0, 0.52, 1]}
           />
@@ -195,8 +200,8 @@ export default function AppleMusicArtworkWash({
             colors={[
               colorWithAlpha(palette.background, 0),
               colorWithAlpha(palette.background, 0),
-              colorWithAlpha(palette.background, 0.36),
-              colorWithAlpha(palette.background, 0.82),
+              colorWithAlpha(palette.background, bottomFadeStartOpacity),
+              colorWithAlpha(palette.background, bottomFadeEndOpacity),
               palette.background,
             ]}
             positions={[0, 0.46, 0.68, 0.9, 1]}

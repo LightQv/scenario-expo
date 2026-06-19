@@ -10,7 +10,10 @@ export type DetailPalette = {
   actionBackground: string;
   actionText: string;
   pillBackground: string;
+  mood: PaletteMood;
 };
+
+type PaletteMood = "vibrant" | "muted" | "neutral";
 
 type Rgb = {
   r: number;
@@ -22,6 +25,12 @@ type Hsl = {
   h: number;
   s: number;
   l: number;
+};
+
+type BackgroundCandidate = {
+  source: string;
+  background: string;
+  mood: PaletteMood;
 };
 
 const detailPaletteCache = new Map<string, DetailPalette>();
@@ -46,6 +55,7 @@ export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
     actionBackground: isDark ? "#f9cd4a" : "#eab208",
     actionText: "#000000",
     pillBackground: isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.45)",
+    mood: "neutral",
   };
 }
 
@@ -101,10 +111,11 @@ function createDetailPalette(
   const base = pickBaseColor(colors);
   const accent = pickAccentColor(colors, base);
   const fallback = getFallbackDetailPalette(isDark);
+  const mood = getPaletteMood(colors);
   const background =
-    pickReadableBackground(colors, isDark) || fallback.background;
-  const surface = deriveSurface(background) || fallback.surface;
-  const tint = deriveTint(background) || fallback.tint;
+    pickReadableBackground(colors, isDark, mood) || fallback.background;
+  const surface = deriveSurface(background, mood) || fallback.surface;
+  const tint = deriveTint(background, mood) || fallback.tint;
   const safeAccent = deriveAccent(accent, isDark) || fallback.accent;
   const text = derivePrimaryText(background) || fallback.text;
   const secondaryText =
@@ -122,6 +133,7 @@ function createDetailPalette(
     actionBackground,
     actionText: getReadableTextColor(actionBackground),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
+    mood,
   };
 
   if (__DEV__) {
@@ -131,6 +143,7 @@ function createDetailPalette(
       selected: {
         base,
         accent,
+        mood,
       },
       palette,
     });
@@ -145,12 +158,13 @@ function createIOSDetailPalette(
   imageUrl?: string,
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
+  const mood = getPaletteMood(colors);
   const background =
-    pickReadableBackground(colors, isDark) || fallback.background;
+    pickReadableBackground(colors, isDark, mood) || fallback.background;
   const rawActionBackground =
     normalizeHex(colors.primary) || fallback.actionBackground;
-  const surface = deriveSurface(background) || fallback.surface;
-  const tint = deriveTint(background) || fallback.tint;
+  const surface = deriveSurface(background, mood) || fallback.surface;
+  const tint = deriveTint(background, mood) || fallback.tint;
   const text = derivePrimaryText(background) || fallback.text;
   const secondaryText =
     deriveSecondaryText(background) || fallback.secondaryText;
@@ -169,6 +183,7 @@ function createIOSDetailPalette(
     actionBackground,
     actionText: getReadableTextColor(actionBackground),
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
+    mood,
   };
 
   if (__DEV__) {
@@ -179,6 +194,7 @@ function createIOSDetailPalette(
         background: colors.background,
         actionBackground: colors.primary,
         secondaryTextSource: "background",
+        mood,
       },
       palette,
     });
@@ -208,10 +224,13 @@ function pickAccentColor(colors: ImageColorsResult, fallback: string): string {
 function pickReadableBackground(
   colors: ImageColorsResult,
   isDark: boolean,
+  mood: PaletteMood,
 ): string | null {
   const candidates = getBackgroundCandidates(colors)
-    .map((color) => deriveBackground(color, isDark))
-    .filter((color): color is string => Boolean(color));
+    .map((color) => createBackgroundCandidate(color, isDark, mood))
+    .filter((candidate): candidate is BackgroundCandidate =>
+      Boolean(candidate),
+    );
 
   if (candidates.length === 0) {
     return null;
@@ -219,7 +238,7 @@ function pickReadableBackground(
 
   return candidates.sort((first, second) => {
     return scoreBackgroundCandidate(second) - scoreBackgroundCandidate(first);
-  })[0];
+  })[0].background;
 }
 
 function getBackgroundCandidates(colors: ImageColorsResult): string[] {
@@ -240,37 +259,133 @@ function getBackgroundCandidates(colors: ImageColorsResult): string[] {
   );
 }
 
-function scoreBackgroundCandidate(color: string): number {
-  const hsl = hexToHsl(color);
+function getPaletteMood(colors: ImageColorsResult): PaletteMood {
+  const hsls = getBackgroundCandidates(colors)
+    .map((color) => hexToHsl(color))
+    .filter((hsl): hsl is Hsl => Boolean(hsl));
 
-  if (!hsl) {
+  if (hsls.length === 0) {
+    return "neutral";
+  }
+
+  const colorfulColors = hsls.filter(
+    (hsl) => hsl.s >= 0.28 && hsl.l >= 0.12 && hsl.l <= 0.72,
+  );
+  const meaningfulColors = hsls.filter(
+    (hsl) => hsl.s >= 0.16 && hsl.l >= 0.1 && hsl.l <= 0.78,
+  );
+  const skinToneColors = hsls.filter(isSkinToneLike);
+  const averageSaturation =
+    hsls.reduce((total, hsl) => total + hsl.s, 0) / hsls.length;
+  const hasHueContrast = hasMeaningfulHueContrast(colorfulColors);
+
+  if (
+    colorfulColors.length >= 2 &&
+    hasHueContrast &&
+    skinToneColors.length < colorfulColors.length
+  ) {
+    return "vibrant";
+  }
+
+  if (
+    colorfulColors.length >= 1 &&
+    averageSaturation >= 0.22 &&
+    skinToneColors.length <= Math.floor(hsls.length / 2)
+  ) {
+    return "muted";
+  }
+
+  if (meaningfulColors.length >= 2 && averageSaturation >= 0.16) {
+    return "muted";
+  }
+
+  return "neutral";
+}
+
+function hasMeaningfulHueContrast(hsls: Hsl[]): boolean {
+  for (let firstIndex = 0; firstIndex < hsls.length; firstIndex += 1) {
+    for (let secondIndex = firstIndex + 1; secondIndex < hsls.length; secondIndex += 1) {
+      if (getHueDistance(hsls[firstIndex].h, hsls[secondIndex].h) >= 0.12) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function createBackgroundCandidate(
+  color: string,
+  isDark: boolean,
+  mood: PaletteMood,
+): BackgroundCandidate | null {
+  const background = deriveBackground(color, isDark, mood);
+
+  if (!background) {
+    return null;
+  }
+
+  return {
+    source: color,
+    background,
+    mood,
+  };
+}
+
+function scoreBackgroundCandidate(candidate: BackgroundCandidate): number {
+  const hsl = hexToHsl(candidate.background);
+  const sourceHsl = hexToHsl(candidate.source);
+
+  if (!hsl || !sourceHsl) {
     return Number.NEGATIVE_INFINITY;
   }
 
-  const contrast = getContrastRatio(DETAIL_TEXT_COLOR, color);
+  const contrast = getContrastRatio(DETAIL_TEXT_COLOR, candidate.background);
   const contrastScore =
     clamp(contrast / DETAIL_BACKGROUND_MIN_CONTRAST, 0, 1.35) * 34;
-  const lightnessScore = (1 - Math.abs(hsl.l - 0.24) / 0.22) * 30;
-  const saturationScore = (1 - Math.abs(hsl.s - 0.32) / 0.32) * 24;
-  const grayPenalty = hsl.s < 0.08 ? 12 : 0;
-  const neonPenalty = hsl.s > 0.58 && hsl.l > 0.28 ? 10 : 0;
+  const targetSaturation = getTargetBackgroundSaturation(candidate.mood);
+  const targetLightness = getTargetBackgroundLightness(candidate.mood);
+  const lightnessScore = (1 - Math.abs(hsl.l - targetLightness) / 0.2) * 32;
+  const saturationScore =
+    (1 - Math.abs(hsl.s - targetSaturation) / 0.22) * 18;
+  const neutralBonus = sourceHsl.s < 0.08 ? 14 : 0;
+  const weakColorPenalty = sourceHsl.s < 0.08 && hsl.s > 0.08 ? 26 : 0;
+  const grayPenalty = hsl.s < 0.025 ? 4 : 0;
+  const vividBackgroundPenalty =
+    candidate.mood === "neutral" && hsl.s > 0.22 ? 18 : 0;
+  const neonPenalty = hsl.s > 0.48 && hsl.l > 0.3 ? 18 : 0;
+  const skinTonePenalty = isSkinToneLike(sourceHsl) ? 24 : 0;
 
   return (
-    contrastScore + lightnessScore + saturationScore - grayPenalty - neonPenalty
+    contrastScore +
+    lightnessScore +
+    saturationScore +
+    neutralBonus -
+    weakColorPenalty -
+    grayPenalty -
+    vividBackgroundPenalty -
+    neonPenalty -
+    skinTonePenalty
   );
 }
 
-function deriveBackground(color: string, isDark: boolean): string | null {
+function deriveBackground(
+  color: string,
+  isDark: boolean,
+  mood: PaletteMood,
+): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
     return null;
   }
 
+  const saturationBounds = getBackgroundSaturationBounds(hsl, mood);
+  const lightnessBounds = getBackgroundLightnessBounds(isDark, mood);
   const sourceLike = hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.9, 0.08, isDark ? 0.44 : 0.4),
-    l: clamp(hsl.l, isDark ? 0.14 : 0.16, isDark ? 0.34 : 0.36),
+    s: clamp(hsl.s * 0.82, saturationBounds.min, saturationBounds.max),
+    l: clamp(hsl.l, lightnessBounds.min, lightnessBounds.max),
   });
 
   if (
@@ -282,11 +397,77 @@ function deriveBackground(color: string, isDark: boolean): string | null {
 
   const softened = hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.75, 0.08, isDark ? 0.38 : 0.34),
-    l: clamp(hsl.l, isDark ? 0.14 : 0.16, isDark ? 0.34 : 0.36),
+    s: clamp(hsl.s * 0.62, saturationBounds.min, saturationBounds.max),
+    l: clamp(hsl.l, lightnessBounds.min, lightnessBounds.max),
   });
 
   return ensureReadableBackground(softened) || sourceLike;
+}
+
+function getBackgroundSaturationBounds(
+  hsl: Hsl,
+  mood: PaletteMood,
+): { min: number; max: number } {
+  if (hsl.s < 0.08) {
+    return { min: 0, max: 0.025 };
+  }
+
+  if (isSkinToneLike(hsl)) {
+    return { min: 0.025, max: 0.09 };
+  }
+
+  if (mood === "vibrant") {
+    return { min: 0.18, max: 0.58 };
+  }
+
+  if (mood === "muted") {
+    return { min: 0.055, max: 0.26 };
+  }
+
+  return { min: 0.035, max: 0.18 };
+}
+
+function getBackgroundLightnessBounds(
+  isDark: boolean,
+  mood: PaletteMood,
+): { min: number; max: number } {
+  if (mood === "vibrant") {
+    return { min: isDark ? 0.12 : 0.14, max: isDark ? 0.3 : 0.32 };
+  }
+
+  if (mood === "muted") {
+    return { min: isDark ? 0.13 : 0.15, max: isDark ? 0.31 : 0.33 };
+  }
+
+  return { min: isDark ? 0.12 : 0.14, max: isDark ? 0.28 : 0.3 };
+}
+
+function getTargetBackgroundSaturation(mood: PaletteMood): number {
+  if (mood === "vibrant") {
+    return 0.42;
+  }
+
+  if (mood === "muted") {
+    return 0.18;
+  }
+
+  return 0.12;
+}
+
+function getTargetBackgroundLightness(mood: PaletteMood): number {
+  if (mood === "vibrant") {
+    return 0.22;
+  }
+
+  if (mood === "muted") {
+    return 0.22;
+  }
+
+  return 0.2;
+}
+
+function isSkinToneLike(hsl: Hsl): boolean {
+  return hsl.h >= 0.035 && hsl.h <= 0.13 && hsl.s >= 0.12 && hsl.l >= 0.18;
 }
 
 function ensureReadableBackground(background: string): string | null {
@@ -320,31 +501,38 @@ function ensureReadableBackground(background: string): string | null {
     : null;
 }
 
-function deriveSurface(color: string): string | null {
+function deriveSurface(color: string, mood: PaletteMood): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
     return null;
   }
 
+  const maxSaturation = mood === "vibrant" ? 0.5 : mood === "muted" ? 0.24 : 0.16;
+  const lightnessBoost = mood === "vibrant" ? 0.045 : mood === "muted" ? 0.045 : 0.035;
+
   return hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.9, 0.08, 0.36),
-    l: clamp(hsl.l + 0.055, 0.2, 0.4),
+    s: clamp(hsl.s * 0.85, 0.025, maxSaturation),
+    l: clamp(hsl.l + lightnessBoost, 0.16, mood === "vibrant" ? 0.36 : 0.34),
   });
 }
 
-function deriveTint(color: string): string | null {
+function deriveTint(color: string, mood: PaletteMood): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
     return null;
   }
 
+  const minSaturation = mood === "vibrant" ? 0.12 : mood === "muted" ? 0.07 : 0.04;
+  const maxSaturation = mood === "vibrant" ? 0.72 : mood === "muted" ? 0.34 : 0.22;
+  const lightnessBoost = mood === "vibrant" ? 0.09 : mood === "muted" ? 0.095 : 0.075;
+
   return hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 1.12, 0.14, 0.48),
-    l: clamp(hsl.l + 0.12, 0.28, 0.5),
+    s: clamp(hsl.s * 1.08, minSaturation, maxSaturation),
+    l: clamp(hsl.l + lightnessBoost, 0.2, mood === "vibrant" ? 0.44 : 0.4),
   });
 }
 

@@ -81,7 +81,7 @@ export default function CollapsibleCreditsSection({
         >
           <Ionicons
             name={isCollapsed ? "chevron-down" : "chevron-up"}
-            size={24}
+            size={18}
             color={textColor || PlatformColor("label")}
           />
         </TouchableOpacity>

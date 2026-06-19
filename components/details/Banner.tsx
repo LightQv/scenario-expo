@@ -82,6 +82,12 @@ export default function Banner({
   const age = birthday ? calculateAge(birthday, deathday) : null;
   const detailPillBackground = colorWithAlpha(palette.surface, 0.68);
   const detailPillBorder = colorWithAlpha(palette.tint, 0.55);
+  const imageTintOpacity =
+    palette.mood === "vibrant" ? 0.16 : palette.mood === "muted" ? 0.06 : 0.04;
+  const fadeTintOpacity =
+    palette.mood === "vibrant" ? 0.34 : palette.mood === "muted" ? 0.1 : 0.06;
+  const firstBackgroundFade =
+    palette.mood === "vibrant" ? 0.2 : palette.mood === "muted" ? 0.38 : 0.42;
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
     : undefined;
@@ -136,8 +142,8 @@ export default function Banner({
               colors={[
                 "transparent",
                 "transparent",
-                colorWithAlpha(palette.tint, 0.08),
-                colorWithAlpha(palette.background, 0.18),
+                colorWithAlpha(palette.tint, imageTintOpacity),
+                colorWithAlpha(palette.background, 0.24),
               ]}
               locations={[0, 0.46, 0.72, 1]}
               style={StyleSheet.absoluteFill}
@@ -186,11 +192,20 @@ export default function Banner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(palette.tint, 0.16),
-            colorWithAlpha(palette.tint, 0.34),
-            colorWithAlpha(palette.background, 0.64),
-            colorWithAlpha(palette.background, 0.86),
-            colorWithAlpha(palette.background, 0.97),
+            colorWithAlpha(palette.tint, fadeTintOpacity),
+            colorWithAlpha(palette.background, firstBackgroundFade),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.58 : 0.72,
+            ),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.82 : 0.9,
+            ),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.95 : 0.98,
+            ),
             palette.background,
           ]}
           locations={[0, 0.42, 0.52, 0.62, 0.72, 0.82, 0.92, 1]}
@@ -212,6 +227,11 @@ export default function Banner({
           end={{ x: 0.5, y: 1 }}
         />
       </View>
+
+      <View
+        pointerEvents="none"
+        style={[styles.bottomSeam, { backgroundColor: palette.background }]}
+      />
 
       {/* Content Section */}
       <View
@@ -452,7 +472,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    height: BANNER_HEIGHT,
+  },
+  bottomSeam: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     bottom: 0,
+    height: 28,
+    zIndex: 1,
   },
   imageWrapper: {
     position: "absolute",
