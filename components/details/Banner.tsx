@@ -4,7 +4,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  useColorScheme,
 } from "react-native";
 import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
@@ -77,12 +76,11 @@ export default function Banner({
   controls,
 }: BannerProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
-  const colorScheme = useColorScheme();
 
   const isPerson = type === "person";
   const age = birthday ? calculateAge(birthday, deathday) : null;
-  const detailPillBackground =
-    colorScheme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.5)";
+  const detailPillBackground = colorWithAlpha(palette.surface, 0.68);
+  const detailPillBorder = colorWithAlpha(palette.tint, 0.55);
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
     : undefined;
@@ -164,9 +162,9 @@ export default function Banner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(palette.background, 0.14),
-            colorWithAlpha(palette.background, 0.38),
-            colorWithAlpha(palette.background, 0.66),
+            colorWithAlpha(palette.tint, 0.16),
+            colorWithAlpha(palette.tint, 0.34),
+            colorWithAlpha(palette.background, 0.64),
             colorWithAlpha(palette.background, 0.86),
             colorWithAlpha(palette.background, 0.97),
             palette.background,
@@ -211,10 +209,13 @@ export default function Banner({
                 {/* Gender */}
                 {gender !== undefined && (
                   <View
-                    style={[
-                      styles.genrePill,
-                      { backgroundColor: detailPillBackground },
-                    ]}
+                      style={[
+                        styles.genrePill,
+                        {
+                          backgroundColor: detailPillBackground,
+                          borderColor: detailPillBorder,
+                        },
+                      ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {formatGender(gender)}
@@ -224,10 +225,13 @@ export default function Banner({
                 {/* Age */}
                 {age !== null && (
                   <View
-                    style={[
-                      styles.genrePill,
-                      { backgroundColor: detailPillBackground },
-                    ]}
+                      style={[
+                        styles.genrePill,
+                        {
+                          backgroundColor: detailPillBackground,
+                          borderColor: detailPillBorder,
+                        },
+                      ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {age} {i18n.t("screen.person.age")}
@@ -253,7 +257,10 @@ export default function Banner({
                         <View
                           style={[
                             styles.genrePill,
-                            { backgroundColor: detailPillBackground },
+                            {
+                              backgroundColor: detailPillBackground,
+                              borderColor: detailPillBorder,
+                            },
                           ]}
                         >
                           <Text style={[styles.genreText, { color: palette.text }]}>
@@ -269,6 +276,9 @@ export default function Banner({
                     score={score}
                     size="detail"
                     textColor={palette.text}
+                    iconColor={palette.text}
+                    backgroundColor={detailPillBackground}
+                    borderColor={detailPillBorder}
                   />
                 )}
               </>
@@ -481,6 +491,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     alignSelf: "center",
+    borderWidth: StyleSheet.hairlineWidth,
   },
   mediaMetadataSlot: {
     width: "100%",
