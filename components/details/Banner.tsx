@@ -51,6 +51,7 @@ type BannerProps = {
   numberOfEpisodes?: number;
   placeOfBirth?: string | null;
   palette: DetailPalette;
+  availabilityLabel?: string;
   controls?: ReactNode;
 };
 
@@ -74,6 +75,7 @@ export default function Banner({
   numberOfEpisodes,
   placeOfBirth,
   palette,
+  availabilityLabel,
   controls,
 }: BannerProps) {
   const { type } = useLocalSearchParams<{ type: string }>();
@@ -226,6 +228,22 @@ export default function Banner({
         <View
           style={[styles.titleSection, isPerson && styles.personTitleSection]}
         >
+          {availabilityLabel && (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.availabilityTag,
+                {
+                  backgroundColor: detailPillBackground,
+                  borderColor: detailPillBorder,
+                },
+              ]}
+            >
+              <Text style={[styles.availabilityText, { color: palette.text }]}>
+                {availabilityLabel}
+              </Text>
+            </View>
+          )}
           <Text
             style={[styles.title, { color: palette.text }]}
             numberOfLines={2}
@@ -500,6 +518,7 @@ const styles = StyleSheet.create({
     gap: 6,
     alignItems: "center",
     width: "100%",
+    position: "relative",
   },
   personTitleSection: {
     gap: 10,
@@ -511,6 +530,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: TOKENS.margin.horizontal / 2,
     fontFamily: FONTS.abril,
+  },
+  availabilityTag: {
+    position: "absolute",
+    top: -40,
+    alignSelf: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: TOKENS.radius.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  availabilityText: {
+    fontSize: TOKENS.font.sm,
+    fontFamily: FONTS.bold,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
   },
   genreContainer: {
     flexDirection: "row",

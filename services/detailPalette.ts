@@ -76,12 +76,6 @@ export async function getDetailPaletteFromImage(
     key: imageUrl,
     quality: "low",
   });
-  if (__DEV__) {
-    console.log("[DetailPalette] raw image colors", {
-      imageUrl,
-      result,
-    });
-  }
 
   const palette = createDetailPalette(result, isDark, imageUrl);
   detailPaletteCache.set(cacheKey, palette);
@@ -136,19 +130,6 @@ function createDetailPalette(
     mood,
   };
 
-  if (__DEV__) {
-    console.log("[DetailPalette] derived palette", {
-      imageUrl,
-      platform: colors.platform,
-      selected: {
-        base,
-        accent,
-        mood,
-      },
-      palette,
-    });
-  }
-
   return palette;
 }
 
@@ -185,20 +166,6 @@ function createIOSDetailPalette(
     pillBackground: colorWithAlpha(isDark ? "#ffffff" : "#000000", 0.38),
     mood,
   };
-
-  if (__DEV__) {
-    console.log("[DetailPalette] derived palette", {
-      imageUrl,
-      platform: colors.platform,
-      selected: {
-        background: colors.background,
-        actionBackground: colors.primary,
-        secondaryTextSource: "background",
-        mood,
-      },
-      palette,
-    });
-  }
 
   return palette;
 }

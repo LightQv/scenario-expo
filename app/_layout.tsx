@@ -9,6 +9,7 @@ import {
   UserProvider,
   ViewProvider,
   BookmarkProvider,
+  OwnedMediaProvider,
   useThemeContext,
 } from "@/contexts";
 import { Appearance, Dimensions } from "react-native";
@@ -92,31 +93,33 @@ function ThemeWrapper() {
     <UserProvider>
       <ViewProvider>
         <BookmarkProvider>
-          <GenreProvider>
-            <Stack
-              screenOptions={{
-                headerBackButtonDisplayMode: "minimal",
-              }}
-            >
-              <Stack.Screen
-                name="(modal)"
-                options={{ presentation: "modal", headerShown: false }}
-              />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="profile"
-                options={{ headerShown: false, presentation: "card" }}
-              />
-              <Stack.Screen
-                name="genre/[genreId]"
-                options={{
-                  headerTransparent: true,
-                  headerShadowVisible: false,
-                  headerTitle: "",
+          <OwnedMediaProvider>
+            <GenreProvider>
+              <Stack
+                screenOptions={{
+                  headerBackButtonDisplayMode: "minimal",
                 }}
-              />
-            </Stack>
-          </GenreProvider>
+              >
+                <Stack.Screen
+                  name="(modal)"
+                  options={{ presentation: "modal", headerShown: false }}
+                />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="profile"
+                  options={{ headerShown: false, presentation: "card" }}
+                />
+                <Stack.Screen
+                  name="genre/[genreId]"
+                  options={{
+                    headerTransparent: true,
+                    headerShadowVisible: false,
+                    headerTitle: "",
+                  }}
+                />
+              </Stack>
+            </GenreProvider>
+          </OwnedMediaProvider>
         </BookmarkProvider>
       </ViewProvider>
       <ToastManager

@@ -290,6 +290,7 @@
       },
       "media": {
         "trailer": "Voir la bande-annonce",
+        "ready": "Disponible",
         "cast": "Casting",
         "castEmpty": "Aucune information sur le casting",
         "seasons": {
@@ -450,7 +451,8 @@
       },
       "menu": {
         "editBanner": "Modifier la bannière",
-        "editProfile": "Modifier le profil"
+        "editProfile": "Modifier le profil",
+        "syncOwnedMovies": "Synchroniser les films possédés"
       }
     }
   },
@@ -465,7 +467,9 @@
     "durationDays": "jours",
     "movieRuntime": "de Films cumulés",
     "tvRuntime": "Épisode vu",
-    "tvsRuntime": "Épisodes vus"
+    "tvsRuntime": "Épisodes vus",
+    "ownedMovie": "Disponible",
+    "ownedMovies": "Disponibles"
   },
   "toast": {
     "promise": {
@@ -488,6 +492,9 @@
       },
       "settings": {
         "reset": "Paramètres réinitialisés avec succès"
+      },
+      "ownedMedia": {
+        "sync": "{{count}} films possédés synchronisés"
       }
     },
     "error": "Oops, quelque chose a échoué",

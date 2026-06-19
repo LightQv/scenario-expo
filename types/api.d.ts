@@ -69,3 +69,10 @@ interface SearchHistory {
   query: string;
   total_results: number;
 }
+
+interface OwnedMedia {
+  tmdb_id: number;
+  media_type: string;
+  source: string;
+  last_synced_at: string;
+}
