@@ -25,6 +25,8 @@ type Hsl = {
 };
 
 const detailPaletteCache = new Map<string, DetailPalette>();
+const DETAIL_TEXT_COLOR = "#ffffff";
+const DETAIL_BACKGROUND_MIN_CONTRAST = 3.8;
 const DETAIL_TEXT_MIN_CONTRAST = 4.5;
 
 export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
@@ -37,7 +39,7 @@ export function getFallbackDetailPalette(isDark: boolean): DetailPalette {
     surface,
     tint,
     accent: isDark ? "#f9cd4a" : "#eab208",
-    text: "#ffffff",
+    text: DETAIL_TEXT_COLOR,
     secondaryText: isDark ? "#c9c9ce" : "#6f6f78",
     actionBackground: isDark ? "#f9cd4a" : "#eab208",
     actionText: "#000000",
@@ -136,7 +138,7 @@ function createIOSDetailPalette(
   imageUrl?: string,
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
-  const background = normalizeHex(colors.background) || fallback.background;
+  const background = deriveBackground(colors.background, isDark) || fallback.background;
   const actionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
   const tint = deriveTint(colors.secondary || background, isDark) || fallback.tint;
   const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
@@ -192,11 +194,57 @@ function deriveBackground(color: string, isDark: boolean): string | null {
     return null;
   }
 
-  return hslToHex({
+  const sourceLike = hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.42, 0.08, isDark ? 0.34 : 0.28),
-    l: isDark ? clamp(hsl.l * 0.34, 0.11, 0.2) : clamp(0.9 + hsl.l * 0.05, 0.88, 0.95),
+    s: clamp(hsl.s * 0.9, 0.08, isDark ? 0.44 : 0.4),
+    l: clamp(hsl.l, isDark ? 0.14 : 0.16, isDark ? 0.34 : 0.36),
   });
+
+  if (
+    getContrastRatio(DETAIL_TEXT_COLOR, sourceLike) >=
+    DETAIL_BACKGROUND_MIN_CONTRAST
+  ) {
+    return sourceLike;
+  }
+
+  const softened = hslToHex({
+    h: hsl.h,
+    s: clamp(hsl.s * 0.75, 0.08, isDark ? 0.38 : 0.34),
+    l: clamp(hsl.l, isDark ? 0.14 : 0.16, isDark ? 0.34 : 0.36),
+  });
+
+  return ensureReadableBackground(softened) || sourceLike;
+}
+
+function ensureReadableBackground(background: string): string | null {
+  const hsl = hexToHsl(background);
+
+  if (!hsl) {
+    return null;
+  }
+
+  let candidate = background;
+  let candidateHsl = hsl;
+
+  for (let index = 0; index < 12; index += 1) {
+    if (
+      getContrastRatio(DETAIL_TEXT_COLOR, candidate) >=
+      DETAIL_BACKGROUND_MIN_CONTRAST
+    ) {
+      return candidate;
+    }
+
+    candidateHsl = {
+      ...candidateHsl,
+      l: clamp(candidateHsl.l - 0.025, 0.14, 1),
+    };
+    candidate = hslToHex(candidateHsl);
+  }
+
+  return getContrastRatio(DETAIL_TEXT_COLOR, candidate) >=
+    DETAIL_BACKGROUND_MIN_CONTRAST
+    ? candidate
+    : null;
 }
 
 function deriveSurface(color: string, isDark: boolean): string | null {
