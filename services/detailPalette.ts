@@ -101,12 +101,14 @@ function createDetailPalette(
   const base = pickBaseColor(colors);
   const accent = pickAccentColor(colors, base);
   const fallback = getFallbackDetailPalette(isDark);
-  const background = pickReadableBackground(colors, isDark) || fallback.background;
+  const background =
+    pickReadableBackground(colors, isDark) || fallback.background;
   const surface = deriveSurface(background) || fallback.surface;
   const tint = deriveTint(background) || fallback.tint;
   const safeAccent = deriveAccent(accent, isDark) || fallback.accent;
   const text = derivePrimaryText(background) || fallback.text;
-  const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
+  const secondaryText =
+    deriveSecondaryText(background) || fallback.secondaryText;
   const actionBackground =
     deriveActionColor(background, safeAccent) || safeAccent;
 
@@ -143,13 +145,17 @@ function createIOSDetailPalette(
   imageUrl?: string,
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
-  const background = pickReadableBackground(colors, isDark) || fallback.background;
-  const rawActionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
+  const background =
+    pickReadableBackground(colors, isDark) || fallback.background;
+  const rawActionBackground =
+    normalizeHex(colors.primary) || fallback.actionBackground;
   const surface = deriveSurface(background) || fallback.surface;
   const tint = deriveTint(background) || fallback.tint;
   const text = derivePrimaryText(background) || fallback.text;
-  const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
-  const safeAccent = deriveAccent(rawActionBackground, isDark) || fallback.accent;
+  const secondaryText =
+    deriveSecondaryText(background) || fallback.secondaryText;
+  const safeAccent =
+    deriveAccent(rawActionBackground, isDark) || fallback.accent;
   const actionBackground =
     deriveActionColor(background, safeAccent) || safeAccent;
 
@@ -183,7 +189,9 @@ function createIOSDetailPalette(
 
 function pickBaseColor(colors: ImageColorsResult): string {
   if (colors.platform === "ios") {
-    return colors.background || colors.secondary || colors.primary || colors.detail;
+    return (
+      colors.background || colors.secondary || colors.primary || colors.detail
+    );
   }
 
   return colors.dominant || colors.muted || colors.darkMuted || colors.vibrant;
@@ -227,7 +235,9 @@ function getBackgroundCandidates(colors: ImageColorsResult): string[] {
           colors.lightVibrant,
         ];
 
-  return candidates.filter((color): color is string => Boolean(normalizeHex(color)));
+  return candidates.filter((color): color is string =>
+    Boolean(normalizeHex(color)),
+  );
 }
 
 function scoreBackgroundCandidate(color: string): number {
@@ -238,13 +248,16 @@ function scoreBackgroundCandidate(color: string): number {
   }
 
   const contrast = getContrastRatio(DETAIL_TEXT_COLOR, color);
-  const contrastScore = clamp(contrast / DETAIL_BACKGROUND_MIN_CONTRAST, 0, 1.35) * 34;
+  const contrastScore =
+    clamp(contrast / DETAIL_BACKGROUND_MIN_CONTRAST, 0, 1.35) * 34;
   const lightnessScore = (1 - Math.abs(hsl.l - 0.24) / 0.22) * 30;
   const saturationScore = (1 - Math.abs(hsl.s - 0.32) / 0.32) * 24;
   const grayPenalty = hsl.s < 0.08 ? 12 : 0;
   const neonPenalty = hsl.s > 0.58 && hsl.l > 0.28 ? 10 : 0;
 
-  return contrastScore + lightnessScore + saturationScore - grayPenalty - neonPenalty;
+  return (
+    contrastScore + lightnessScore + saturationScore - grayPenalty - neonPenalty
+  );
 }
 
 function deriveBackground(color: string, isDark: boolean): string | null {
@@ -345,7 +358,9 @@ function deriveAccent(color: string, isDark: boolean): string | null {
   return hslToHex({
     h: hsl.h,
     s: clamp(hsl.s, 0.28, 0.62),
-    l: isDark ? clamp(hsl.l + 0.16, 0.48, 0.68) : clamp(hsl.l - 0.1, 0.34, 0.52),
+    l: isDark
+      ? clamp(hsl.l + 0.16, 0.48, 0.68)
+      : clamp(hsl.l - 0.1, 0.34, 0.52),
   });
 }
 
@@ -358,7 +373,10 @@ function deriveActionColor(background: string, accent: string): string | null {
   }
 
   const hueDistance = getHueDistance(backgroundHsl.h, accentHsl.h);
-  const hue = hueDistance < 0.18 ? blendHue(backgroundHsl.h, accentHsl.h, 0.35) : backgroundHsl.h;
+  const hue =
+    hueDistance < 0.18
+      ? blendHue(backgroundHsl.h, accentHsl.h, 0.35)
+      : backgroundHsl.h;
   const candidate = hslToHex({
     h: hue,
     s: clamp(Math.max(backgroundHsl.s, accentHsl.s) * 1.08, 0.24, 0.58),
@@ -368,7 +386,10 @@ function deriveActionColor(background: string, accent: string): string | null {
   return ensureActionContrast(candidate, background);
 }
 
-function ensureActionContrast(color: string, background: string): string | null {
+function ensureActionContrast(
+  color: string,
+  background: string,
+): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
@@ -412,7 +433,10 @@ function derivePrimaryText(background: string): string | null {
   return ensurePrimaryTextContrast(candidate, background);
 }
 
-function ensurePrimaryTextContrast(color: string, background: string): string | null {
+function ensurePrimaryTextContrast(
+  color: string,
+  background: string,
+): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
@@ -660,9 +684,7 @@ function getRelativeLuminance({ r, g, b }: Rgb): number {
   const [red, green, blue] = [r, g, b].map((channel) => {
     const value = channel / 255;
 
-    return value <= 0.03928
-      ? value / 12.92
-      : ((value + 0.055) / 1.055) ** 2.4;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
   });
 
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
