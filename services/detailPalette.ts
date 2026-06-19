@@ -102,8 +102,8 @@ function createDetailPalette(
   const accent = pickAccentColor(colors, base);
   const fallback = getFallbackDetailPalette(isDark);
   const background = pickReadableBackground(colors, isDark) || fallback.background;
-  const surface = deriveSurface(background, isDark) || fallback.surface;
-  const tint = deriveTint(base, isDark) || fallback.tint;
+  const surface = deriveSurface(background) || fallback.surface;
+  const tint = deriveTint(background) || fallback.tint;
   const safeAccent = deriveAccent(accent, isDark) || fallback.accent;
   const text = derivePrimaryText(background) || fallback.text;
   const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
@@ -145,7 +145,8 @@ function createIOSDetailPalette(
   const fallback = getFallbackDetailPalette(isDark);
   const background = pickReadableBackground(colors, isDark) || fallback.background;
   const rawActionBackground = normalizeHex(colors.primary) || fallback.actionBackground;
-  const tint = deriveTint(colors.secondary || background, isDark) || fallback.tint;
+  const surface = deriveSurface(background) || fallback.surface;
+  const tint = deriveTint(background) || fallback.tint;
   const text = derivePrimaryText(background) || fallback.text;
   const secondaryText = deriveSecondaryText(background) || fallback.secondaryText;
   const safeAccent = deriveAccent(rawActionBackground, isDark) || fallback.accent;
@@ -154,7 +155,7 @@ function createIOSDetailPalette(
 
   const palette = {
     background,
-    surface: deriveSurface(background, isDark) || fallback.surface,
+    surface,
     tint,
     accent: safeAccent,
     text,
@@ -306,7 +307,7 @@ function ensureReadableBackground(background: string): string | null {
     : null;
 }
 
-function deriveSurface(color: string, isDark: boolean): string | null {
+function deriveSurface(color: string): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
@@ -315,12 +316,12 @@ function deriveSurface(color: string, isDark: boolean): string | null {
 
   return hslToHex({
     h: hsl.h,
-    s: hsl.s,
-    l: isDark ? clamp(hsl.l + 0.05, 0.16, 0.26) : clamp(hsl.l + 0.04, 0.92, 0.98),
+    s: clamp(hsl.s * 0.9, 0.08, 0.36),
+    l: clamp(hsl.l + 0.055, 0.2, 0.4),
   });
 }
 
-function deriveTint(color: string, isDark: boolean): string | null {
+function deriveTint(color: string): string | null {
   const hsl = hexToHsl(color);
 
   if (!hsl) {
@@ -329,8 +330,8 @@ function deriveTint(color: string, isDark: boolean): string | null {
 
   return hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.7, 0.12, 0.42),
-    l: isDark ? clamp(hsl.l * 0.48, 0.18, 0.3) : clamp(0.78 + hsl.l * 0.08, 0.76, 0.88),
+    s: clamp(hsl.s * 1.12, 0.14, 0.48),
+    l: clamp(hsl.l + 0.12, 0.28, 0.5),
   });
 }
 
