@@ -13,9 +13,11 @@ import { useUserContext } from "./UserContext";
 
 interface OwnedMediaContextValue {
   ownedMedia: OwnedMedia[];
+  syncStatus: OwnedMediaSyncStatus | null;
   isLoading: boolean;
   isSyncing: boolean;
   refreshOwnedMedia: () => Promise<void>;
+  refreshSyncStatus: () => Promise<OwnedMediaSyncStatus | null>;
   syncRadarrOwnedMovies: () => Promise<void>;
   isOwned: (tmdbId: number, mediaType: string) => boolean;
 }
@@ -37,6 +39,7 @@ export function useOwnedMediaContext() {
 export function OwnedMediaProvider({ children }: ContextProps) {
   const { authState } = useUserContext();
   const [ownedMedia, setOwnedMedia] = useState<OwnedMedia[]>([]);
+  const [syncStatus, setSyncStatus] = useState<OwnedMediaSyncStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -61,6 +64,25 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     }
   }, [authState.authenticated]);
 
+  const refreshSyncStatus = useCallback(async () => {
+    if (!authState.authenticated) {
+      setSyncStatus(null);
+      return null;
+    }
+
+    try {
+      const response = await apiFetch("/api/v1/owned-media/sync/status");
+      setSyncStatus(response || null);
+      return response || null;
+    } catch (error: any) {
+      if (!error.message?.includes("403")) {
+        console.error("Error fetching owned media sync status:", error);
+      }
+      setSyncStatus(null);
+      return null;
+    }
+  }, [authState.authenticated]);
+
   const refreshOwnedMedia = useCallback(async () => {
     await fetchOwnedMedia();
   }, [fetchOwnedMedia]);
@@ -68,25 +90,34 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   const syncRadarrOwnedMovies = useCallback(async () => {
     if (isSyncing) return;
 
+    const latestSyncStatus = await refreshSyncStatus();
+    if (latestSyncStatus?.status === "running") return;
+
     try {
       setIsSyncing(true);
       const response = await apiFetch("/api/v1/owned-media/sync/radarr", {
         method: "POST",
       });
       await fetchOwnedMedia();
+      await refreshSyncStatus();
       notifySuccess(
         i18n.t("toast.success.ownedMedia.sync", {
           count: response?.owned_count ?? 0,
         }),
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error syncing Radarr owned movies:", error);
-      notifyError(i18n.t("toast.error"));
+      await refreshSyncStatus();
+      notifyError(
+        error.message?.includes("409")
+          ? i18n.t("toast.errorOwnedMediaSyncRunning")
+          : i18n.t("toast.error"),
+      );
       throw error;
     } finally {
       setIsSyncing(false);
     }
-  }, [fetchOwnedMedia, isSyncing]);
+  }, [fetchOwnedMedia, isSyncing, refreshSyncStatus]);
 
   const isOwned = useCallback(
     (tmdbId: number, mediaType: string) => {
@@ -102,23 +133,28 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       fetchOwnedMedia();
     } else {
       setOwnedMedia([]);
+      setSyncStatus(null);
     }
   }, [authState.authenticated, fetchOwnedMedia]);
 
   const value = useMemo(
     () => ({
       ownedMedia,
+      syncStatus,
       isLoading,
       isSyncing,
       refreshOwnedMedia,
+      refreshSyncStatus,
       syncRadarrOwnedMovies,
       isOwned,
     }),
     [
       ownedMedia,
+      syncStatus,
       isLoading,
       isSyncing,
       refreshOwnedMedia,
+      refreshSyncStatus,
       syncRadarrOwnedMovies,
       isOwned,
     ],

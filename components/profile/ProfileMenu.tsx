@@ -5,7 +5,9 @@ import HeaderMenu from "@/components/ui/HeaderMenu";
 import { useOwnedMediaContext } from "@/contexts";
 
 export default function ProfileMenu() {
-  const { syncRadarrOwnedMovies, isSyncing } = useOwnedMediaContext();
+  const { syncRadarrOwnedMovies, refreshSyncStatus, syncStatus, isSyncing } =
+    useOwnedMediaContext();
+  const syncRunning = isSyncing || syncStatus?.status === "running";
 
   const handleEditBanner = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -18,7 +20,8 @@ export default function ProfileMenu() {
   };
 
   const handleSyncOwnedMovies = async () => {
-    if (isSyncing) return;
+    const latestSyncStatus = await refreshSyncStatus();
+    if (isSyncing || latestSyncStatus?.status === "running") return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
@@ -46,8 +49,13 @@ export default function ProfileMenu() {
         },
         {
           id: "syncOwnedMovies",
-          title: i18n.t("screen.profile.menu.syncOwnedMovies"),
+          title: i18n.t(
+            syncRunning
+              ? "screen.profile.menu.syncOwnedMoviesRunning"
+              : "screen.profile.menu.syncOwnedMovies",
+          ),
           icon: "arrow.triangle.2.circlepath",
+          disabled: syncRunning,
           onPress: handleSyncOwnedMovies,
         },
       ]}

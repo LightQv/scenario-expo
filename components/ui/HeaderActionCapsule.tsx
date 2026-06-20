@@ -6,6 +6,7 @@ export type HeaderMenuItem = {
   icon?: string;
   selected?: boolean;
   destructive?: boolean;
+  disabled?: boolean;
   displayInline?: boolean;
   onPress?: () => void;
   children?: HeaderMenuItem[];
@@ -81,7 +82,8 @@ function renderMenuItems(items: HeaderMenuItem[]) {
         destructive={item.destructive}
         icon={item.icon as never}
         isOn={item.selected}
-        onPress={item.onPress}
+        disabled={item.disabled}
+        onPress={item.disabled ? undefined : item.onPress}
       >
         {item.title}
       </Stack.Toolbar.MenuAction>

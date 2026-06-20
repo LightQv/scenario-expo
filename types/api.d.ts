@@ -76,3 +76,14 @@ interface OwnedMedia {
   source: string;
   last_synced_at: string;
 }
+
+interface OwnedMediaSyncStatus {
+  source: string;
+  media_type: string;
+  status: "idle" | "running" | "success" | "failed";
+  trigger?: "manual" | "scheduled" | null;
+  started_at?: string | null;
+  finished_at?: string | null;
+  owned_count?: number | null;
+  error_message?: string | null;
+}

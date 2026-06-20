@@ -14,6 +14,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import StatisticsPills from "@/components/profile/StatisticsPills";
+import OwnedMediaSyncStatusCard from "@/components/profile/OwnedMediaSyncStatusCard";
 import ProfileMenu from "@/components/profile/ProfileMenu";
 import GoBackButton from "@/components/ui/GoBackButton";
 
@@ -27,7 +28,7 @@ type Statistics = {
 export default function ProfileScreen() {
   const { colors, isDark } = useThemeContext();
   const { user, refreshUser } = useUserContext();
-  const { ownedMedia } = useOwnedMediaContext();
+  const { ownedMedia, refreshSyncStatus, syncStatus } = useOwnedMediaContext();
   const [statistics, setStatistics] = useState<Statistics>({
     movieCount: 0,
     tvCount: 0,
@@ -95,6 +96,7 @@ export default function ProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       refreshUser();
+      refreshSyncStatus();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
@@ -157,6 +159,7 @@ export default function ProfileScreen() {
                 pillBackgroundColor={pillBackgroundColor}
                 textColor={textColor}
               />
+              <OwnedMediaSyncStatusCard syncStatus={syncStatus} />
             </View>
             {/* Additional profile content will be added here later */}
           </>

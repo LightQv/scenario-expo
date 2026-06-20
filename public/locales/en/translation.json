@@ -451,7 +451,23 @@
       "menu": {
         "editBanner": "Edit Banner",
         "editProfile": "Edit Profile",
-        "syncOwnedMovies": "Sync owned movies"
+        "syncOwnedMovies": "Sync owned movies",
+        "syncOwnedMoviesRunning": "Sync in progress"
+      },
+      "syncStatus": {
+        "title": "Available Movies",
+        "noSync": "No sync yet",
+        "running": "Sync in progress...",
+        "success": "Last sync {{date}}",
+        "todayAt": "Today at {{time}}",
+        "yesterdayAt": "Yesterday at {{time}}",
+        "failed": "Last sync failed",
+        "manual": "Manual",
+        "scheduled": "Scheduled",
+        "runningBadge": "Running",
+        "notSynced": "Not synced",
+        "syncedCount": "{{count}} synced",
+        "failedBadge": "Failed"
       }
     }
   },
@@ -478,6 +494,7 @@
     "login": "Email or password invalid",
     "register": "Username or Email already taken",
     "expired": "Session expired",
+    "errorOwnedMediaSyncRunning": "Owned movies sync is already running",
     "success": {
       "forgot": "Email sent",
       "urlCopied": "URL copied to clipboard",

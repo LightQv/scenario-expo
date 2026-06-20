@@ -452,7 +452,23 @@
       "menu": {
         "editBanner": "Modifier la bannière",
         "editProfile": "Modifier le profil",
-        "syncOwnedMovies": "Synchroniser les films possédés"
+        "syncOwnedMovies": "Synchroniser les films possédés",
+        "syncOwnedMoviesRunning": "Synchronisation en cours"
+      },
+      "syncStatus": {
+        "title": "Films disponibles",
+        "noSync": "Aucune synchronisation",
+        "running": "Synchronisation en cours...",
+        "success": "Dernière synchro {{date}}",
+        "todayAt": "Aujourd'hui à {{time}}",
+        "yesterdayAt": "Hier à {{time}}",
+        "failed": "Dernière synchro échouée",
+        "manual": "Manuelle",
+        "scheduled": "Planifiée",
+        "runningBadge": "En cours",
+        "notSynced": "Non synchronisé",
+        "syncedCount": "{{count}} synchronisés",
+        "failedBadge": "Échec"
       }
     }
   },
@@ -479,6 +495,7 @@
     "login": "Email ou mot de passe invalide",
     "register": "Pseudo ou Email déjà prit",
     "expired": "Session expirée",
+    "errorOwnedMediaSyncRunning": "La synchronisation des films possédés est déjà en cours",
     "success": {
       "forgot": "Email envoyé",
       "urlCopied": "URL copiée dans le presse-papiers",
