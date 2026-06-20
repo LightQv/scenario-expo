@@ -232,6 +232,10 @@
         "movies": "Movies",
         "tv": "TV Shows"
       },
+      "owned": {
+        "title": "Owned",
+        "movies": "Movies"
+      },
       "settings": {
         "title": "Account Settings"
       },
@@ -438,6 +442,13 @@
           "tv": "Watched TV Shows"
         }
       },
+      "owned": {
+        "header": {
+          "movie": "Available Movies",
+          "default": "Available Media"
+        },
+        "empty": "No available movie yet"
+      },
       "settings": {
         "header": "Settings",
         "description": "Edit here your banner, pseudo, mail or password.",
@@ -510,7 +521,8 @@
         "reset": "Settings reset successfully"
       },
       "ownedMedia": {
-        "sync": "{{count}} owned movies synced"
+        "sync": "{{count}} owned movies synced",
+        "syncStarted": "Owned movies sync started"
       }
     },
     "error": "Oops, something went wrong",

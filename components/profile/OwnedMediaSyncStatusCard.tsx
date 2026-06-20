@@ -4,10 +4,12 @@ import i18n from "@/services/i18n";
 
 type OwnedMediaSyncStatusCardProps = {
   syncStatus: OwnedMediaSyncStatus | null;
+  compact?: boolean;
 };
 
 export default function OwnedMediaSyncStatusCard({
   syncStatus,
+  compact = false,
 }: OwnedMediaSyncStatusCardProps) {
   const status = syncStatus?.status || "idle";
   const isFailed = status === "failed";
@@ -20,6 +22,7 @@ export default function OwnedMediaSyncStatusCard({
     <View
       style={[
         styles.container,
+        compact && styles.compactContainer,
         { backgroundColor: PlatformColor("secondarySystemGroupedBackground") },
       ]}
     >
@@ -160,6 +163,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 14,
+  },
+  compactContainer: {
+    marginTop: 0,
   },
   copyContainer: {
     flex: 1,

@@ -17,6 +17,13 @@ export default function ProfileLayout() {
           headerTitle: "",
         }}
       />
+      <Stack.Screen
+        name="owned/[mediaType]"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+      />
     </Stack>
   );
 }

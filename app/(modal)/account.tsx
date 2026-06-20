@@ -39,6 +39,11 @@ export default function AccountScreen() {
     router.push(`/profile/${type}`);
   };
 
+  const handleOwnedMediaPress = (type: "movie") => {
+    router.back();
+    router.push(`/profile/owned/${type}`);
+  };
+
   const handleAccountSettingsPress = () => {
     router.push("/(modal)/account-settings");
   };
@@ -151,6 +156,38 @@ export default function AccountScreen() {
                 style={[styles.cardText, { color: PlatformColor("label") }]}
               >
                 {i18n.t("screen.account.views.tv")}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={PlatformColor("secondaryLabel")}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Owned Media Section */}
+        <View style={styles.section}>
+          <Text
+            style={[styles.sectionTitle, { color: PlatformColor("label") }]}
+          >
+            {i18n.t("screen.account.owned.title")}
+          </Text>
+          <View
+            style={[
+              styles.viewsContainer,
+              { backgroundColor: PlatformColor("systemGray5") },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={() => handleOwnedMediaPress("movie")}
+              style={styles.viewsOption}
+              activeOpacity={BUTTON.opacity}
+            >
+              <Text
+                style={[styles.cardText, { color: PlatformColor("label") }]}
+              >
+                {i18n.t("screen.account.owned.movies")}
               </Text>
               <Ionicons
                 name="chevron-forward"

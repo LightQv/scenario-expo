@@ -98,12 +98,14 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       const response = await apiFetch("/api/v1/owned-media/sync/radarr", {
         method: "POST",
       });
-      await fetchOwnedMedia();
       await refreshSyncStatus();
       notifySuccess(
-        i18n.t("toast.success.ownedMedia.sync", {
-          count: response?.owned_count ?? 0,
-        }),
+        i18n.t(
+          response?.status === "running"
+            ? "toast.success.ownedMedia.syncStarted"
+            : "toast.success.ownedMedia.sync",
+          { count: response?.owned_count ?? 0 },
+        ),
       );
     } catch (error: any) {
       console.error("Error syncing Radarr owned movies:", error);

@@ -71,10 +71,19 @@ interface SearchHistory {
 }
 
 interface OwnedMedia {
+  id: string;
   tmdb_id: number;
+  genre_ids: number[];
+  poster_path: string;
+  backdrop_path: string;
+  release_date: string;
+  release_year: string;
+  runtime: number;
+  title: string;
   media_type: string;
   source: string;
   last_synced_at: string;
+  metadata_synced_at?: string | null;
 }
 
 interface OwnedMediaSyncStatus {

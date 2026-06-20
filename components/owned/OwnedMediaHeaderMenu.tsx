@@ -1,0 +1,117 @@
+import * as Haptics from "expo-haptics";
+import i18n from "@/services/i18n";
+import HeaderActionCapsule, {
+  HeaderMenuItem,
+} from "@/components/ui/HeaderActionCapsule";
+import { useGenreContext, useOwnedMediaContext } from "@/contexts";
+
+type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+
+type OwnedMediaHeaderMenuProps = {
+  mediaType: string;
+  sortType: SortType;
+  genreId: number | null;
+  onSortChange: (sort: SortType) => void;
+  onGenreChange: (genreId: number | null) => void;
+};
+
+const SORT_OPTIONS: { value: SortType; label: string }[] = [
+  { value: "title_asc", label: i18n.t("screen.watchlist.detail.sort.titleAsc") },
+  { value: "title_desc", label: i18n.t("screen.watchlist.detail.sort.titleDesc") },
+  { value: "date_asc", label: i18n.t("screen.watchlist.detail.sort.dateAsc") },
+  { value: "date_desc", label: i18n.t("screen.watchlist.detail.sort.dateDesc") },
+];
+
+export default function OwnedMediaHeaderMenu({
+  mediaType,
+  sortType,
+  genreId,
+  onSortChange,
+  onGenreChange,
+}: OwnedMediaHeaderMenuProps) {
+  const { movieGenres, tvGenres } = useGenreContext();
+  const { syncRadarrOwnedMovies, refreshSyncStatus, syncStatus, isSyncing } =
+    useOwnedMediaContext();
+  const syncRunning = isSyncing || syncStatus?.status === "running";
+  const genres = mediaType === "movie" ? movieGenres : tvGenres;
+  const genreOptions = [
+    { id: null, name: i18n.t("filter.genre.all") },
+    ...(genres || []),
+  ];
+
+  const handleSyncOwnedMovies = async () => {
+    const latestSyncStatus = await refreshSyncStatus();
+    if (isSyncing || latestSyncStatus?.status === "running") return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    try {
+      await syncRadarrOwnedMovies();
+    } catch {
+      // Error toast is handled by OwnedMediaContext.
+    }
+  };
+
+  const handlePressAction = (id: string) => {
+    const [kind, value] = id.split(":");
+    if (!value) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    if (kind === "genre") {
+      onGenreChange(value === "all" ? null : Number(value));
+    }
+
+    if (kind === "sort") {
+      onSortChange(value as SortType);
+    }
+  };
+
+  const filterActions: HeaderMenuItem[] = [
+    {
+      id: "genre",
+      title: i18n.t("filter.genre.title"),
+      icon: "tag",
+      children: genreOptions.map((option) => ({
+        id: `genre:${option.id ?? "all"}`,
+        title: option.name,
+        selected: genreId === option.id,
+        onPress: () => handlePressAction(`genre:${option.id ?? "all"}`),
+      })),
+    },
+    {
+      id: "sort",
+      title: i18n.t("screen.watchlist.detail.menu.sort"),
+      icon: "arrow.up.arrow.down",
+      children: SORT_OPTIONS.map((option) => ({
+        id: `sort:${option.value}`,
+        title: option.label,
+        selected: sortType === option.value,
+        onPress: () => handlePressAction(`sort:${option.value}`),
+      })),
+    },
+  ];
+
+  return (
+    <HeaderActionCapsule
+      actions={[
+        {
+          id: "syncOwnedMovies",
+          label: i18n.t(
+            syncRunning
+              ? "screen.profile.menu.syncOwnedMoviesRunning"
+              : "screen.profile.menu.syncOwnedMovies",
+          ),
+          icon: "arrow.triangle.2.circlepath",
+          disabled: syncRunning,
+          onPress: handleSyncOwnedMovies,
+        },
+        {
+          id: "ownedMediaFilters",
+          label: "Owned media filters",
+          icon: "ellipsis",
+          menu: filterActions,
+        },
+      ]}
+    />
+  );
+}

@@ -17,6 +17,7 @@ export type HeaderCapsuleAction = {
   icon: string;
   label: string;
   active?: boolean;
+  disabled?: boolean;
   onPress?: () => void;
   menu?: HeaderMenuItem[];
 };
@@ -47,11 +48,12 @@ export default function HeaderActionCapsule({
         return (
           <Stack.Toolbar.Button
             key={action.id}
-            accessibilityLabel={action.label}
-            icon={action.icon as never}
-            onPress={action.onPress}
-            selected={action.active}
-          >
+              accessibilityLabel={action.label}
+              icon={action.icon as never}
+              disabled={action.disabled}
+              onPress={action.disabled ? undefined : action.onPress}
+              selected={action.active}
+            >
             {action.label}
           </Stack.Toolbar.Button>
         );

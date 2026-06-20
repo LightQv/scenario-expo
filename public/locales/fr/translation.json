@@ -233,6 +233,10 @@
         "movies": "Films",
         "tv": "Séries TV"
       },
+      "owned": {
+        "title": "Disponibles",
+        "movies": "Films"
+      },
       "settings": {
         "title": "Paramètres du compte"
       },
@@ -433,11 +437,18 @@
         "header": "Statistiques",
         "description": "Retrouvez ici toutes vos statistiques de visionnage."
       },
-      "views": {
+      "view": {
         "header": {
           "movie": "Films vus",
           "tv": "Séries TV vues"
         }
+      },
+      "owned": {
+        "header": {
+          "movie": "Films disponibles",
+          "default": "Médias disponibles"
+        },
+        "empty": "Aucun film disponible"
       },
       "settings": {
         "header": "Paramètres",
@@ -511,7 +522,8 @@
         "reset": "Paramètres réinitialisés avec succès"
       },
       "ownedMedia": {
-        "sync": "{{count}} films possédés synchronisés"
+        "sync": "{{count}} films possédés synchronisés",
+        "syncStarted": "Synchronisation des films possédés lancée"
       }
     },
     "error": "Oops, quelque chose a échoué",
