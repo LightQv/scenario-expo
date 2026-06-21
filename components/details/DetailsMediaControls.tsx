@@ -1,6 +1,5 @@
 import {
   Linking,
-  PlatformColor,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -15,6 +14,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
+import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
 
 type DetailsMediaControlsProps = {
   data: TmdbDetails;
@@ -23,6 +23,7 @@ type DetailsMediaControlsProps = {
   videos?: Video[];
   backgroundColor?: string;
   actionColor: string;
+  palette: DetailPalette;
 };
 
 function getMediaRuntime(data: TmdbDetails, type: string): number {
@@ -40,6 +41,7 @@ export default function DetailsMediaControls({
   videos,
   backgroundColor,
   actionColor,
+  palette,
 }: DetailsMediaControlsProps) {
   const numericTmdbId = Number(tmdbId);
   const title = data.title || data.name || "";
@@ -147,6 +149,7 @@ export default function DetailsMediaControls({
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
           active={bookmarked}
           onPress={handleBookmark}
+          palette={palette}
         />
       )}
 
@@ -164,6 +167,7 @@ export default function DetailsMediaControls({
           icon={viewed ? "eye" : "eye-outline"}
           active={viewed}
           onPress={handleView}
+          palette={palette}
         />
       )}
     </View>
@@ -174,20 +178,29 @@ type GlassIconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
   active: boolean;
   onPress: () => void;
+  palette: DetailPalette;
 };
 
-function GlassIconButton({ icon, active, onPress }: GlassIconButtonProps) {
+function GlassIconButton({ icon, active, onPress, palette }: GlassIconButtonProps) {
   return (
     <TouchableOpacity
       activeOpacity={BUTTON.opacity}
       onPress={onPress}
       style={styles.glassButtonWrapper}
     >
-      <GlassView style={styles.glassButton}>
+      <GlassView
+        style={[
+          styles.glassButton,
+          {
+            backgroundColor: colorWithAlpha(palette.surface, active ? 0.76 : 0.58),
+            borderColor: colorWithAlpha(palette.tint, active ? 0.7 : 0.45),
+          },
+        ]}
+      >
         <Ionicons
           name={icon}
           size={22}
-          color={active ? PlatformColor("label") : PlatformColor("label")}
+          color={palette.text}
         />
       </GlassView>
     </TouchableOpacity>
@@ -216,9 +229,7 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: PlatformColor("primarySystemFill"),
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PlatformColor("separator"),
   },
   trailerButton: {
     width: 84,

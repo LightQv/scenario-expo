@@ -153,7 +153,8 @@ export default function DetailsScreen() {
                     mediaType={type}
                     tmdbId={id}
                     videos={data.videos?.results}
-                    actionColor={palette.actionBackground}
+                    actionColor={palette.text}
+                    palette={palette}
                   />
                 ) : undefined
               }

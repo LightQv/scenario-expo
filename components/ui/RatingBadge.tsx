@@ -6,12 +6,18 @@ type RatingBadgeProps = {
   score: number;
   size?: "sm" | "md" | "xl" | "detail";
   textColor?: string;
+  iconColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
 };
 
 export default function RatingBadge({
   score,
   size = "xl",
   textColor = "#fff",
+  iconColor,
+  backgroundColor,
+  borderColor,
 }: RatingBadgeProps) {
   const colorScheme = useColorScheme();
   const { colors } = useThemeContext();
@@ -20,6 +26,10 @@ export default function RatingBadge({
 
   // Theme-based background color for detail size
   const getBackgroundColor = () => {
+    if (backgroundColor) {
+      return backgroundColor;
+    }
+
     if (size === "detail") {
       return colorScheme === "dark"
         ? "rgba(255,255,255,0.2)" // Same as genre pills in dark mode
@@ -65,10 +75,18 @@ export default function RatingBadge({
       style={[
         styles.container,
         sizeStyles.container,
-        { backgroundColor: getBackgroundColor() },
+        {
+          backgroundColor: getBackgroundColor(),
+          borderColor,
+          borderWidth: borderColor ? StyleSheet.hairlineWidth : 0,
+        },
       ]}
     >
-      <Ionicons name="star" size={sizeStyles.iconSize} color={colors.main} />
+      <Ionicons
+        name="star"
+        size={sizeStyles.iconSize}
+        color={iconColor || colors.main}
+      />
       <Text style={[styles.scoreText, sizeStyles.text, { color: textColor }]}>{displayScore}</Text>
     </View>
   );
