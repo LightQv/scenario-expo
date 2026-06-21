@@ -115,6 +115,7 @@ interface DownloadRequest {
   source: string;
   status: DownloadRequestStatus;
   radarr_movie_id?: number | null;
+  radarr_search_command_id?: number | null;
   genre_ids: number[];
   poster_path: string;
   backdrop_path: string;

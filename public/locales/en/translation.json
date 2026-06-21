@@ -338,6 +338,10 @@
         "body": "Request a movie from its detail page and it will appear here while Radarr searches."
       },
       "remaining": "{{size}} remaining",
+      "actions": {
+        "retry": "Retry",
+        "cancel": "Cancel"
+      },
       "status": {
         "requested": "Requested",
         "sent_to_radarr": "Sent to Radarr",

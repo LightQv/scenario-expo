@@ -21,6 +21,8 @@ interface DownloadRequestContextValue {
     mediaType: string,
   ) => Promise<DownloadRequest | null>;
   requestMovieDownload: (tmdbId: number) => Promise<DownloadRequest | null>;
+  retryRequest: (requestId: string) => Promise<DownloadRequest | null>;
+  cancelRequest: (requestId: string) => Promise<DownloadRequest | null>;
   getRequest: (tmdbId: number, mediaType: string) => DownloadRequest | null;
   isRequesting: (tmdbId: number) => boolean;
 }
@@ -126,6 +128,44 @@ export function DownloadRequestProvider({ children }: ContextProps) {
     [authState.authenticated, requestingTmdbIds, upsertRequest],
   );
 
+  const retryRequest = useCallback(
+    async (requestId: string) => {
+      if (!authState.authenticated) return null;
+
+      try {
+        const response = await apiFetch(`/api/v1/downloads/${requestId}/retry`, {
+          method: "POST",
+        });
+        upsertRequest(response || null);
+        return response || null;
+      } catch (error) {
+        console.error("Error retrying download request:", error);
+        notifyError(i18n.t("toast.error"));
+        return null;
+      }
+    },
+    [authState.authenticated, upsertRequest],
+  );
+
+  const cancelRequest = useCallback(
+    async (requestId: string) => {
+      if (!authState.authenticated) return null;
+
+      try {
+        const response = await apiFetch(`/api/v1/downloads/${requestId}/cancel`, {
+          method: "POST",
+        });
+        upsertRequest(response || null);
+        return response || null;
+      } catch (error) {
+        console.error("Error cancelling download request:", error);
+        notifyError(i18n.t("toast.error"));
+        return null;
+      }
+    },
+    [authState.authenticated, upsertRequest],
+  );
+
   const getRequest = useCallback(
     (tmdbId: number, mediaType: string) => {
       return (
@@ -158,6 +198,8 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       refreshRequests,
       refreshRequestStatus,
       requestMovieDownload,
+      retryRequest,
+      cancelRequest,
       getRequest,
       isRequesting,
     }),
@@ -168,6 +210,8 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       refreshRequests,
       refreshRequestStatus,
       requestMovieDownload,
+      retryRequest,
+      cancelRequest,
       getRequest,
       isRequesting,
     ],

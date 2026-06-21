@@ -32,6 +32,7 @@ export default function DetailsHeaderActions({
     isRequesting,
     refreshRequestStatus,
     requestMovieDownload,
+    retryRequest,
   } = useDownloadRequestContext();
 
   const isAuthenticated = authState.authenticated;
@@ -83,6 +84,10 @@ export default function DetailsHeaderActions({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
+      if (canRetryDownload && downloadRequest) {
+        await retryRequest(downloadRequest.id);
+        return;
+      }
       await requestMovieDownload(numericTmdbId);
     } catch {
       // Context already displays the error toast.

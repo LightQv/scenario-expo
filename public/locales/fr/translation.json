@@ -339,6 +339,10 @@
         "body": "Demandez un film depuis sa fiche et il apparaîtra ici pendant la recherche Radarr."
       },
       "remaining": "{{size}} restants",
+      "actions": {
+        "retry": "Réessayer",
+        "cancel": "Annuler"
+      },
       "status": {
         "requested": "Demandé",
         "sent_to_radarr": "Envoyé à Radarr",
