@@ -237,6 +237,10 @@
         "title": "Disponibles",
         "movies": "Films"
       },
+      "downloads": {
+        "title": "Téléchargements",
+        "requests": "Demandes"
+      },
       "settings": {
         "title": "Paramètres du compte"
       },
@@ -288,6 +292,14 @@
         "copy": "Copier l'URL",
         "addToWatchlist": "Ajouter à une liste"
       },
+      "download": {
+        "action": "Télécharger",
+        "requesting": "Demande...",
+        "requested": "Demandé",
+        "downloading": "Téléchargement",
+        "available": "Disponible",
+        "retry": "Réessayer"
+      },
       "crew": {
         "director": "Réalisateur",
         "composer": "Compositeur"
@@ -316,6 +328,26 @@
           "subtitle2": "Acheter"
         },
         "recommandations": "Recommandations"
+      }
+    },
+    "downloads": {
+      "title": "Téléchargements",
+      "subtitle": "Demandes envoyées à Radarr. La disponibilité se met à jour après import.",
+      "empty": "Aucune demande de téléchargement pour le moment.",
+      "emptyState": {
+        "title": "Aucune demande",
+        "body": "Demandez un film depuis sa fiche et il apparaîtra ici pendant la recherche Radarr."
+      },
+      "remaining": "{{size}} restants",
+      "status": {
+        "requested": "Demandé",
+        "sent_to_radarr": "Envoyé à Radarr",
+        "searching": "Recherche en cours",
+        "downloading": "Téléchargement",
+        "not_found": "Introuvable",
+        "failed": "Échec",
+        "available": "Disponible",
+        "cancelled": "Annulé"
       }
     },
     "person": {
@@ -524,6 +556,9 @@
       "ownedMedia": {
         "sync": "{{count}} films possédés synchronisés",
         "syncStarted": "Synchronisation des films possédés lancée"
+      },
+      "download": {
+        "requested": "Téléchargement demandé"
       }
     },
     "error": "Oops, quelque chose a échoué",

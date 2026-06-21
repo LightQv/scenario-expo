@@ -236,6 +236,10 @@
         "title": "Owned",
         "movies": "Movies"
       },
+      "downloads": {
+        "title": "Downloads",
+        "requests": "Requests"
+      },
       "settings": {
         "title": "Account Settings"
       },
@@ -287,6 +291,14 @@
         "copy": "Copy URL",
         "addToWatchlist": "Add to Watchlist"
       },
+      "download": {
+        "action": "Download",
+        "requesting": "Requesting...",
+        "requested": "Requested",
+        "downloading": "Downloading",
+        "available": "Available",
+        "retry": "Retry"
+      },
       "crew": {
         "director": "Director",
         "composer": "Composer"
@@ -315,6 +327,26 @@
           "subtitle2": "Buy"
         },
         "recommandations": "Recommandations"
+      }
+    },
+    "downloads": {
+      "title": "Downloads",
+      "subtitle": "Requests sent to Radarr. Availability updates when imports finish.",
+      "empty": "No download requests yet.",
+      "emptyState": {
+        "title": "No requests yet",
+        "body": "Request a movie from its detail page and it will appear here while Radarr searches."
+      },
+      "remaining": "{{size}} remaining",
+      "status": {
+        "requested": "Requested",
+        "sent_to_radarr": "Sent to Radarr",
+        "searching": "Searching",
+        "downloading": "Downloading",
+        "not_found": "Not found",
+        "failed": "Failed",
+        "available": "Available",
+        "cancelled": "Cancelled"
       }
     },
     "person": {
@@ -523,6 +555,9 @@
       "ownedMedia": {
         "sync": "{{count}} owned movies synced",
         "syncStarted": "Owned movies sync started"
+      },
+      "download": {
+        "requested": "Download requested"
       }
     },
     "error": "Oops, something went wrong",
