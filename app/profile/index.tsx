@@ -8,7 +8,7 @@ import Animated, {
   FadeInLeft,
   FadeOutRight,
 } from "react-native-reanimated";
-import { useThemeContext, useUserContext } from "@/contexts";
+import { useOwnedMediaContext, useThemeContext, useUserContext } from "@/contexts";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
@@ -27,6 +27,7 @@ type Statistics = {
 export default function ProfileScreen() {
   const { colors, isDark } = useThemeContext();
   const { user, refreshUser } = useUserContext();
+  const { ownedMedia } = useOwnedMediaContext();
   const [statistics, setStatistics] = useState<Statistics>({
     movieCount: 0,
     tvCount: 0,
@@ -104,6 +105,9 @@ export default function ProfileScreen() {
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
   const pillBackgroundColor = isDark ? "#1C1C1E" : "#F2F2F7";
+  const ownedMovieCount = ownedMedia.filter(
+    (item) => item.media_type === "movie",
+  ).length;
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -149,6 +153,7 @@ export default function ProfileScreen() {
                 tvCount={statistics.tvCount}
                 movieRuntime={statistics.movieRuntime}
                 tvEpisodesCount={statistics.tvEpisodesCount}
+                ownedMovieCount={ownedMovieCount}
                 pillBackgroundColor={pillBackgroundColor}
                 textColor={textColor}
               />

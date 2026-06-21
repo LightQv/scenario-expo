@@ -17,6 +17,20 @@ export default function ProfileLayout() {
           headerTitle: "",
         }}
       />
+      <Stack.Screen
+        name="owned/[mediaType]"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name="downloads"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+      />
     </Stack>
   );
 }

@@ -9,8 +9,10 @@ import {
   UserProvider,
   ViewProvider,
   BookmarkProvider,
-  useThemeContext,
-} from "@/contexts";
+    OwnedMediaProvider,
+    DownloadRequestProvider,
+    useThemeContext,
+  } from "@/contexts";
 import { Appearance, Dimensions } from "react-native";
 import ToastManager from "toastify-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -92,31 +94,35 @@ function ThemeWrapper() {
     <UserProvider>
       <ViewProvider>
         <BookmarkProvider>
-          <GenreProvider>
-            <Stack
-              screenOptions={{
-                headerBackButtonDisplayMode: "minimal",
-              }}
-            >
-              <Stack.Screen
-                name="(modal)"
-                options={{ presentation: "modal", headerShown: false }}
-              />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="profile"
-                options={{ headerShown: false, presentation: "card" }}
-              />
-              <Stack.Screen
-                name="genre/[genreId]"
-                options={{
-                  headerTransparent: true,
-                  headerShadowVisible: false,
-                  headerTitle: "",
-                }}
-              />
-            </Stack>
-          </GenreProvider>
+          <OwnedMediaProvider>
+            <DownloadRequestProvider>
+              <GenreProvider>
+                <Stack
+                  screenOptions={{
+                    headerBackButtonDisplayMode: "minimal",
+                  }}
+                >
+                  <Stack.Screen
+                    name="(modal)"
+                    options={{ presentation: "modal", headerShown: false }}
+                  />
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="profile"
+                    options={{ headerShown: false, presentation: "card" }}
+                  />
+                  <Stack.Screen
+                    name="genre/[genreId]"
+                    options={{
+                      headerTransparent: true,
+                      headerShadowVisible: false,
+                      headerTitle: "",
+                    }}
+                  />
+                </Stack>
+              </GenreProvider>
+            </DownloadRequestProvider>
+          </OwnedMediaProvider>
         </BookmarkProvider>
       </ViewProvider>
       <ToastManager

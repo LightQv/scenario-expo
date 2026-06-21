@@ -1,8 +1,14 @@
 import { router } from "expo-router";
+import { useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import {
+  useDownloadRequestContext,
+  useOwnedMediaContext,
+  useUserContext,
+} from "@/contexts";
 import { CONFIG } from "@/services/config";
 import i18n from "@/services/i18n";
 
@@ -18,6 +24,33 @@ export default function DetailsHeaderActions({
   tmdbId,
 }: DetailsHeaderActionsProps) {
   const title = data.title || data.name || "";
+  const numericTmdbId = Number(tmdbId);
+  const { authState } = useUserContext();
+  const { isOwned } = useOwnedMediaContext();
+  const {
+    getRequest,
+    isRequesting,
+    refreshRequestStatus,
+    requestMovieDownload,
+    retryRequest,
+  } = useDownloadRequestContext();
+
+  const isAuthenticated = authState.authenticated;
+  const owned = isOwned(numericTmdbId, mediaType);
+  const downloadRequest = getRequest(numericTmdbId, mediaType);
+  const downloadSubmitting = isRequesting(numericTmdbId);
+  const canRetryDownload =
+    downloadRequest?.status === "failed" || downloadRequest?.status === "not_found";
+  const downloadDisabled =
+    owned ||
+    downloadSubmitting ||
+    (!!downloadRequest && !canRetryDownload && downloadRequest.status !== "cancelled");
+
+  useEffect(() => {
+    if (isAuthenticated && mediaType === "movie") {
+      refreshRequestStatus(numericTmdbId, mediaType);
+    }
+  }, [isAuthenticated, mediaType, numericTmdbId, refreshRequestStatus]);
 
   const handleCopy = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -40,6 +73,65 @@ export default function DetailsHeaderActions({
     });
   };
 
+  const handleDownload = async () => {
+    if (!authState.authenticated) {
+      router.push("/(modal)/login");
+      return;
+    }
+
+    if (downloadDisabled && !canRetryDownload) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      if (canRetryDownload && downloadRequest) {
+        await retryRequest(downloadRequest.id);
+        return;
+      }
+      await requestMovieDownload(numericTmdbId);
+    } catch {
+      // Context already displays the error toast.
+    }
+  };
+
+  const getDownloadActionTitle = () => {
+    if (owned) return i18n.t("screen.detail.download.available");
+    if (downloadSubmitting) return i18n.t("screen.detail.download.requesting");
+    if (canRetryDownload) return i18n.t("screen.detail.download.retry");
+    if (downloadRequest?.status === "downloading") {
+      return i18n.t("screen.detail.download.downloading");
+    }
+    if (downloadRequest) return i18n.t("screen.detail.download.requested");
+    return i18n.t("screen.detail.download.action");
+  };
+
+  const getDownloadActionIcon = () => {
+    if (owned) return "checkmark.circle";
+    if (downloadSubmitting || downloadRequest) return "clock";
+    if (canRetryDownload) return "arrow.clockwise";
+    return "tray.and.arrow.down";
+  };
+
+  const moreActions = [
+    ...(mediaType === "movie"
+      ? [
+          {
+            id: "download",
+            title: getDownloadActionTitle(),
+            icon: getDownloadActionIcon(),
+            disabled: downloadDisabled && !canRetryDownload,
+            onPress: handleDownload,
+          },
+        ]
+      : []),
+    {
+      id: "addToWatchlist",
+      title: i18n.t("screen.detail.actions.addToWatchlist"),
+      icon: "plus.square.on.square",
+      onPress: handleAddToWatchlist,
+    },
+  ];
+
   return (
     <HeaderActionCapsule
       actions={[
@@ -53,14 +145,7 @@ export default function DetailsHeaderActions({
           id: "more",
           label: "More actions",
           icon: "ellipsis",
-          menu: [
-            {
-              id: "addToWatchlist",
-              title: i18n.t("screen.detail.actions.addToWatchlist"),
-              icon: "plus.square.on.square",
-              onPress: handleAddToWatchlist,
-            },
-          ],
+          menu: moreActions,
         },
       ]}
     />

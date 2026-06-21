@@ -19,7 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
-import { useThemeContext } from "@/contexts";
+import { useOwnedMediaContext, useThemeContext } from "@/contexts";
 import {
   getDetailPaletteFromImage,
   getFallbackDetailPalette,
@@ -30,6 +30,7 @@ const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
   const { isDark } = useThemeContext();
+  const { isOwned } = useOwnedMediaContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [palette, setPalette] = useState<DetailPalette>(() =>
@@ -93,6 +94,8 @@ export default function DetailsScreen() {
   }, [type, id, isDark]);
 
   const statusStyle = "light";
+  const isMediaOwned =
+    type === "movie" || type === "tv" ? isOwned(Number(id), type) : false;
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -146,6 +149,9 @@ export default function DetailsScreen() {
               numberOfEpisodes={data.number_of_episodes}
               placeOfBirth={data.place_of_birth}
               palette={palette}
+              availabilityLabel={
+                isMediaOwned ? i18n.t("screen.detail.media.ready") : undefined
+              }
               controls={
                 type === "movie" || type === "tv" ? (
                   <DetailsMediaControls

@@ -233,6 +233,14 @@
         "movies": "Films",
         "tv": "Séries TV"
       },
+      "owned": {
+        "title": "Disponibles",
+        "movies": "Films"
+      },
+      "downloads": {
+        "title": "Téléchargements",
+        "requests": "Demandes"
+      },
       "settings": {
         "title": "Paramètres du compte"
       },
@@ -284,12 +292,21 @@
         "copy": "Copier l'URL",
         "addToWatchlist": "Ajouter à une liste"
       },
+      "download": {
+        "action": "Télécharger",
+        "requesting": "Demande...",
+        "requested": "Demandé",
+        "downloading": "Téléchargement",
+        "available": "Disponible",
+        "retry": "Réessayer"
+      },
       "crew": {
         "director": "Réalisateur",
         "composer": "Compositeur"
       },
       "media": {
         "trailer": "Voir la bande-annonce",
+        "ready": "Disponible",
         "cast": "Casting",
         "castEmpty": "Aucune information sur le casting",
         "seasons": {
@@ -311,6 +328,30 @@
           "subtitle2": "Acheter"
         },
         "recommandations": "Recommandations"
+      }
+    },
+    "downloads": {
+      "title": "Téléchargements",
+      "subtitle": "Demandes envoyées à Radarr. La disponibilité se met à jour après import.",
+      "empty": "Aucune demande de téléchargement pour le moment.",
+      "emptyState": {
+        "title": "Aucune demande",
+        "body": "Demandez un film depuis sa fiche et il apparaîtra ici pendant la recherche Radarr."
+      },
+      "remaining": "{{size}} restants",
+      "actions": {
+        "retry": "Réessayer",
+        "cancel": "Annuler"
+      },
+      "status": {
+        "requested": "Demandé",
+        "sent_to_radarr": "Envoyé à Radarr",
+        "searching": "Recherche en cours",
+        "downloading": "Téléchargement",
+        "not_found": "Introuvable",
+        "failed": "Échec",
+        "available": "Disponible",
+        "cancelled": "Annulé"
       }
     },
     "person": {
@@ -432,11 +473,18 @@
         "header": "Statistiques",
         "description": "Retrouvez ici toutes vos statistiques de visionnage."
       },
-      "views": {
+      "view": {
         "header": {
           "movie": "Films vus",
           "tv": "Séries TV vues"
         }
+      },
+      "owned": {
+        "header": {
+          "movie": "Films disponibles",
+          "default": "Médias disponibles"
+        },
+        "empty": "Aucun film disponible"
       },
       "settings": {
         "header": "Paramètres",
@@ -450,7 +498,24 @@
       },
       "menu": {
         "editBanner": "Modifier la bannière",
-        "editProfile": "Modifier le profil"
+        "editProfile": "Modifier le profil",
+        "syncOwnedMovies": "Synchroniser les films possédés",
+        "syncOwnedMoviesRunning": "Synchronisation en cours"
+      },
+      "syncStatus": {
+        "title": "Films disponibles",
+        "noSync": "Aucune synchronisation",
+        "running": "Synchronisation en cours...",
+        "success": "Dernière synchro {{date}}",
+        "todayAt": "Aujourd'hui à {{time}}",
+        "yesterdayAt": "Hier à {{time}}",
+        "failed": "Dernière synchro échouée",
+        "manual": "Manuelle",
+        "scheduled": "Planifiée",
+        "runningBadge": "En cours",
+        "notSynced": "Non synchronisé",
+        "syncedCount": "{{count}} synchronisés",
+        "failedBadge": "Échec"
       }
     }
   },
@@ -465,7 +530,9 @@
     "durationDays": "jours",
     "movieRuntime": "de Films cumulés",
     "tvRuntime": "Épisode vu",
-    "tvsRuntime": "Épisodes vus"
+    "tvsRuntime": "Épisodes vus",
+    "ownedMovie": "Disponible",
+    "ownedMovies": "Disponibles"
   },
   "toast": {
     "promise": {
@@ -475,6 +542,7 @@
     "login": "Email ou mot de passe invalide",
     "register": "Pseudo ou Email déjà prit",
     "expired": "Session expirée",
+    "errorOwnedMediaSyncRunning": "La synchronisation des films possédés est déjà en cours",
     "success": {
       "forgot": "Email envoyé",
       "urlCopied": "URL copiée dans le presse-papiers",
@@ -488,6 +556,13 @@
       },
       "settings": {
         "reset": "Paramètres réinitialisés avec succès"
+      },
+      "ownedMedia": {
+        "sync": "{{count}} films possédés synchronisés",
+        "syncStarted": "Synchronisation des films possédés lancée"
+      },
+      "download": {
+        "requested": "Téléchargement demandé"
       }
     },
     "error": "Oops, quelque chose a échoué",

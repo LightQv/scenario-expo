@@ -11,7 +11,11 @@ import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 import { BUTTON, TOKENS } from "@/constants/theme";
 import { notifyError } from "@/components/toasts/Toast";
-import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
+import {
+  useBookmarkContext,
+  useUserContext,
+  useViewContext,
+} from "@/contexts";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";

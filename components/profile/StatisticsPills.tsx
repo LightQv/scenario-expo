@@ -8,6 +8,7 @@ type StatisticsPillsProps = {
   tvCount: number;
   movieRuntime: number; // in minutes
   tvEpisodesCount: number;
+  ownedMovieCount: number;
   pillBackgroundColor?: ColorValue;
   textColor?: ColorValue;
 };
@@ -17,6 +18,7 @@ export default function StatisticsPills({
   tvCount,
   movieRuntime,
   tvEpisodesCount,
+  ownedMovieCount,
   pillBackgroundColor = PlatformColor("secondarySystemBackground"),
   textColor = PlatformColor("label"),
 }: StatisticsPillsProps) {
@@ -41,6 +43,12 @@ export default function StatisticsPills({
     if (tvEpisodesCount === 1)
       return `${tvEpisodesCount} ${i18n.t("stats.tvRuntime")}`;
     return `${tvEpisodesCount} ${i18n.t("stats.tvsRuntime")}`;
+  };
+
+  const formatOwnedMovies = () => {
+    if (ownedMovieCount === 1)
+      return `${ownedMovieCount} ${i18n.t("stats.ownedMovie")}`;
+    return `${ownedMovieCount} ${i18n.t("stats.ownedMovies")}`;
   };
 
   return (
@@ -90,6 +98,18 @@ export default function StatisticsPills({
       >
         <Text style={[styles.pillText, { color: textColor }]}> 
           {formatTvEpisodes()}
+        </Text>
+      </View>
+
+      {/* Owned Movie Count */}
+      <View
+        style={[
+          styles.pill,
+          { backgroundColor: pillBackgroundColor },
+        ]}
+      >
+        <Text style={[styles.pillText, { color: textColor }]}> 
+          {formatOwnedMovies()}
         </Text>
       </View>
     </View>

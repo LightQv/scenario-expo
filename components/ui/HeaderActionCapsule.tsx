@@ -6,6 +6,7 @@ export type HeaderMenuItem = {
   icon?: string;
   selected?: boolean;
   destructive?: boolean;
+  disabled?: boolean;
   displayInline?: boolean;
   onPress?: () => void;
   children?: HeaderMenuItem[];
@@ -16,6 +17,7 @@ export type HeaderCapsuleAction = {
   icon: string;
   label: string;
   active?: boolean;
+  disabled?: boolean;
   onPress?: () => void;
   menu?: HeaderMenuItem[];
 };
@@ -46,11 +48,12 @@ export default function HeaderActionCapsule({
         return (
           <Stack.Toolbar.Button
             key={action.id}
-            accessibilityLabel={action.label}
-            icon={action.icon as never}
-            onPress={action.onPress}
-            selected={action.active}
-          >
+              accessibilityLabel={action.label}
+              icon={action.icon as never}
+              disabled={action.disabled}
+              onPress={action.disabled ? undefined : action.onPress}
+              selected={action.active}
+            >
             {action.label}
           </Stack.Toolbar.Button>
         );
@@ -81,7 +84,8 @@ function renderMenuItems(items: HeaderMenuItem[]) {
         destructive={item.destructive}
         icon={item.icon as never}
         isOn={item.selected}
-        onPress={item.onPress}
+        disabled={item.disabled}
+        onPress={item.disabled ? undefined : item.onPress}
       >
         {item.title}
       </Stack.Toolbar.MenuAction>

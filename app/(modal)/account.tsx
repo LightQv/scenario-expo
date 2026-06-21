@@ -39,6 +39,16 @@ export default function AccountScreen() {
     router.push(`/profile/${type}`);
   };
 
+  const handleOwnedMediaPress = (type: "movie") => {
+    router.back();
+    router.push(`/profile/owned/${type}`);
+  };
+
+  const handleDownloadsPress = () => {
+    router.back();
+    router.push("/profile/downloads");
+  };
+
   const handleAccountSettingsPress = () => {
     router.push("/(modal)/account-settings");
   };
@@ -54,175 +64,239 @@ export default function AccountScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
-      <View style={styles.container}>
-        {/* User Profile Card */}
-        <View style={styles.profileSection}>
-          <TouchableOpacity
-            onPress={handleProfilePress}
-            style={[
-              styles.card,
-              { backgroundColor: PlatformColor("systemGray5") },
-            ]}
-            activeOpacity={BUTTON.opacity}
-          >
-            <View style={styles.cardContent}>
-              <View
-                style={[styles.avatarLarge, { backgroundColor: colors.main }]}
-              >
-                <Text style={styles.avatarLargeText}>
-                  {user?.username.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-              <View style={styles.textContent}>
-                <Text
-                  style={[styles.username, { color: PlatformColor("label") }]}
-                >
-                  {user?.username}
-                </Text>
-                <Text
-                  style={[
-                    styles.viewProfile,
-                    { color: PlatformColor("secondaryLabel") },
-                  ]}
-                >
-                  {i18n.t("screen.account.viewProfile")}
-                </Text>
-              </View>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={PlatformColor("secondaryLabel")}
-            />
-          </TouchableOpacity>
-          <Text
-            style={[
-              styles.profileDescription,
-              { color: PlatformColor("secondaryLabel") },
-            ]}
-          >
-            {i18n.t("screen.account.profileDescription")}
-          </Text>
-        </View>
-
-        {/* Views Section */}
-        <View style={styles.section}>
-          <Text
-            style={[styles.sectionTitle, { color: PlatformColor("label") }]}
-          >
-            {i18n.t("screen.account.views.title")}
-          </Text>
-          <View
-            style={[
-              styles.viewsContainer,
-              { backgroundColor: PlatformColor("systemGray5") },
-            ]}
-          >
+        <View style={styles.container}>
+          {/* User Profile Card */}
+          <View style={styles.profileSection}>
             <TouchableOpacity
-              onPress={() => handleViewsPress("movie")}
-              style={styles.viewsOption}
+              onPress={handleProfilePress}
+              style={[
+                styles.card,
+                { backgroundColor: PlatformColor("systemGray5") },
+              ]}
               activeOpacity={BUTTON.opacity}
             >
-              <Text
-                style={[styles.cardText, { color: PlatformColor("label") }]}
-              >
-                {i18n.t("screen.account.views.movies")}
-              </Text>
+              <View style={styles.cardContent}>
+                <View
+                  style={[styles.avatarLarge, { backgroundColor: colors.main }]}
+                >
+                  <Text style={styles.avatarLargeText}>
+                    {user?.username.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+                <View style={styles.textContent}>
+                  <Text
+                    style={[styles.username, { color: PlatformColor("label") }]}
+                  >
+                    {user?.username}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.viewProfile,
+                      { color: PlatformColor("secondaryLabel") },
+                    ]}
+                  >
+                    {i18n.t("screen.account.viewProfile")}
+                  </Text>
+                </View>
+              </View>
               <Ionicons
                 name="chevron-forward"
                 size={20}
                 color={PlatformColor("secondaryLabel")}
               />
             </TouchableOpacity>
+            <Text
+              style={[
+                styles.profileDescription,
+                { color: PlatformColor("secondaryLabel") },
+              ]}
+            >
+              {i18n.t("screen.account.profileDescription")}
+            </Text>
+          </View>
 
+          {/* Views Section */}
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionTitle, { color: PlatformColor("label") }]}
+            >
+              {i18n.t("screen.account.views.title")}
+            </Text>
             <View
               style={[
-                styles.divider,
-                { backgroundColor: PlatformColor("separator") },
+                styles.viewsContainer,
+                { backgroundColor: PlatformColor("systemGray5") },
               ]}
-            />
-
-            <TouchableOpacity
-              onPress={() => handleViewsPress("tv")}
-              style={styles.viewsOption}
-              activeOpacity={BUTTON.opacity}
             >
-              <Text
-                style={[styles.cardText, { color: PlatformColor("label") }]}
+              <TouchableOpacity
+                onPress={() => handleViewsPress("movie")}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
               >
-                {i18n.t("screen.account.views.tv")}
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={PlatformColor("secondaryLabel")}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.views.movies")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
 
-        {/* Application Settings Section */}
-        <View style={styles.section}>
-          <View
+              <View
+                style={[
+                  styles.divider,
+                  { backgroundColor: PlatformColor("separator") },
+                ]}
+              />
+
+              <TouchableOpacity
+                onPress={() => handleViewsPress("tv")}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.views.tv")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Owned Media Section */}
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionTitle, { color: PlatformColor("label") }]}
+            >
+              {i18n.t("screen.account.owned.title")}
+            </Text>
+            <View
+              style={[
+                styles.viewsContainer,
+                { backgroundColor: PlatformColor("systemGray5") },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => handleOwnedMediaPress("movie")}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.owned.movies")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Downloads Section */}
+          <View style={styles.section}>
+            <Text
+              style={[styles.sectionTitle, { color: PlatformColor("label") }]}
+            >
+              {i18n.t("screen.account.downloads.title")}
+            </Text>
+            <View
+              style={[
+                styles.viewsContainer,
+                { backgroundColor: PlatformColor("systemGray5") },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={handleDownloadsPress}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.downloads.requests")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Application Settings Section */}
+          <View style={styles.section}>
+            <View
+              style={[
+                styles.viewsContainer,
+                { backgroundColor: PlatformColor("systemGray5") },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={handleApplicationSettingsPress}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.application.title")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Account Settings Section */}
+          <View style={styles.section}>
+            <View
+              style={[
+                styles.viewsContainer,
+                { backgroundColor: PlatformColor("systemGray5") },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={handleAccountSettingsPress}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text style={[styles.cardText, { color: errorColor }]}>
+                  {i18n.t("screen.account.settings.title")}
+                </Text>
+                <Ionicons name="chevron-forward" size={20} color={errorColor} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Logout Button */}
+          <TouchableOpacity
+            onPress={handleLogout}
             style={[
-              styles.viewsContainer,
+              styles.logoutButton,
               { backgroundColor: PlatformColor("systemGray5") },
             ]}
+            activeOpacity={0.7}
           >
-            <TouchableOpacity
-              onPress={handleApplicationSettingsPress}
-              style={styles.viewsOption}
-              activeOpacity={BUTTON.opacity}
-            >
-              <Text
-                style={[styles.cardText, { color: PlatformColor("label") }]}
-              >
-                {i18n.t("screen.account.application.title")}
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={PlatformColor("secondaryLabel")}
-              />
-            </TouchableOpacity>
-          </View>
+            <Text style={[styles.logoutButtonText, { color: errorColor }]}>
+              {i18n.t("form.auth.submit.logout")}
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        {/* Account Settings Section */}
-        <View style={styles.section}>
-          <View
-            style={[
-              styles.viewsContainer,
-              { backgroundColor: PlatformColor("systemGray5") },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={handleAccountSettingsPress}
-              style={styles.viewsOption}
-              activeOpacity={BUTTON.opacity}
-            >
-              <Text style={[styles.cardText, { color: errorColor }]}>
-                {i18n.t("screen.account.settings.title")}
-              </Text>
-              <Ionicons name="chevron-forward" size={20} color={errorColor} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Logout Button */}
-        <TouchableOpacity
-          onPress={handleLogout}
-          style={[
-            styles.logoutButton,
-            { backgroundColor: PlatformColor("systemGray5") },
-          ]}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.logoutButtonText, { color: errorColor }]}>
-            {i18n.t("form.auth.submit.logout")}
-          </Text>
-        </TouchableOpacity>
-      </View>
       </ScrollView>
     </>
   );
@@ -236,6 +310,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: TOKENS.margin.horizontal,
     paddingTop: TOKENS.modal.paddingTop,
+    paddingBottom: 60,
   },
   container: {
     gap: 28,
