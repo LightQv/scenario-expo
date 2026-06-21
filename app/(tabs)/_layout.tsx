@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  NativeTabs,
-  Icon,
-  Label,
-  Badge,
-} from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import {
   useThemeContext,
   useUserContext,
@@ -20,23 +15,35 @@ export default function TabLayout() {
   return (
     <NativeTabs tintColor={colors.main} minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="discover">
-        <Icon sf="film" />
-        <Label>{i18n.t("navigation.tabs.discover")}</Label>
+        <NativeTabs.Trigger.Icon sf="film" />
+        <NativeTabs.Trigger.Label>
+          {i18n.t("navigation.tabs.discover")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="top">
-        <Icon sf="star.fill" />
-        <Label>{i18n.t("navigation.tabs.top")}</Label>
+        <NativeTabs.Trigger.Icon sf="star.fill" />
+        <NativeTabs.Trigger.Label>
+          {i18n.t("navigation.tabs.top")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       {authState.authenticated && (
         <NativeTabs.Trigger name="watchlist">
-          <Icon sf="list.bullet" />
-          <Label>{i18n.t("navigation.tabs.watchlist")}</Label>
-          {bookmarkCount > 0 && <Badge>{bookmarkCount.toString()}</Badge>}
+          <NativeTabs.Trigger.Icon sf="list.bullet" />
+          <NativeTabs.Trigger.Label>
+            {i18n.t("navigation.tabs.watchlist")}
+          </NativeTabs.Trigger.Label>
+          {bookmarkCount > 0 && (
+            <NativeTabs.Trigger.Badge>
+              {bookmarkCount.toString()}
+            </NativeTabs.Trigger.Badge>
+          )}
         </NativeTabs.Trigger>
       )}
       <NativeTabs.Trigger name="search" role="search">
-        <Icon sf="magnifyingglass" />
-        <Label>{i18n.t("navigation.tabs.search")}</Label>
+        <NativeTabs.Trigger.Icon sf="magnifyingglass" />
+        <NativeTabs.Trigger.Label>
+          {i18n.t("navigation.tabs.search")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

@@ -1,11 +1,11 @@
-import { StyleSheet, Alert } from "react-native";
-import { Button, ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
+import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
+import type { HeaderMenuItem } from "@/components/ui/HeaderActionCapsule";
+import HeaderMenu from "@/components/ui/HeaderMenu";
 
 type SortType =
   | "default"
@@ -69,16 +69,6 @@ export default function WatchlistDetailMenu({
 }: WatchlistDetailMenuProps) {
   const isSystemWatchlist = watchlistType === "SYSTEM";
 
-  // Build option arrays
-  const sortLabels = SORT_OPTIONS.map((s) => s.label);
-  const filterLabels = FILTER_OPTIONS.map((f) => f.label);
-
-  // Calculate selected indices
-  const selectedSortIndex = SORT_OPTIONS.findIndex((s) => s.value === sortType);
-  const selectedFilterIndex = FILTER_OPTIONS.findIndex(
-    (f) => f.value === filterType,
-  );
-
   const handleEdit = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push({
@@ -121,65 +111,75 @@ export default function WatchlistDetailMenu({
     }
   };
 
-  const handleSortSelect = (index: number) => {
+  const handlePressAction = (id: string) => {
+    const [kind, value] = id.split(":");
+
+    if (id === "edit") {
+      handleEdit();
+      return;
+    }
+
+    if (id === "delete") {
+      openDeleteConfirmation();
+      return;
+    }
+
+    if (!value) return;
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onSortChange(SORT_OPTIONS[index].value);
+
+    if (kind === "filter") {
+      onFilterChange(value as FilterType);
+    }
+
+    if (kind === "sort") {
+      onSortChange(value as SortType);
+    }
   };
 
-  const handleFilterSelect = (index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onFilterChange(FILTER_OPTIONS[index].value);
-  };
+  const actions: HeaderMenuItem[] = [
+    {
+      id: "filter",
+      title: i18n.t("screen.watchlist.detail.menu.filter"),
+      icon: "line.3.horizontal.decrease",
+      children: FILTER_OPTIONS.map((option) => ({
+        id: `filter:${option.value}`,
+        title: option.label,
+        selected: filterType === option.value,
+        onPress: () => handlePressAction(`filter:${option.value}`),
+      })),
+    },
+    {
+      id: "sort",
+      title: i18n.t("screen.watchlist.detail.menu.sort"),
+      icon: "arrow.up.arrow.down",
+      children: SORT_OPTIONS.map((option) => ({
+        id: `sort:${option.value}`,
+        title: option.label,
+        selected: sortType === option.value,
+        onPress: () => handlePressAction(`sort:${option.value}`),
+      })),
+    },
+    ...(!isSystemWatchlist
+      ? [
+          {
+            id: "edit",
+            title: i18n.t("form.watchlist.edit.title"),
+            icon: "pencil",
+            onPress: handleEdit,
+          } satisfies HeaderMenuItem,
+          {
+            id: "delete",
+            title: i18n.t("form.watchlist.delete.title"),
+            icon: "trash",
+            destructive: true,
+            onPress: openDeleteConfirmation,
+          } satisfies HeaderMenuItem,
+        ]
+      : []),
+  ];
 
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Picker
-            label={i18n.t("screen.watchlist.detail.menu.filter")}
-            options={filterLabels}
-            variant="inline"
-            selectedIndex={selectedFilterIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleFilterSelect(index)
-            }
-          />
-          <Picker
-            label={i18n.t("screen.watchlist.detail.menu.sort")}
-            options={sortLabels}
-            variant="inline"
-            selectedIndex={selectedSortIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleSortSelect(index)
-            }
-          />
-          {!isSystemWatchlist && (
-            <>
-              <Button onPress={handleEdit} systemImage="pencil">
-                {i18n.t("form.watchlist.edit.title")}
-              </Button>
-              <Button
-                onPress={openDeleteConfirmation}
-                systemImage="trash"
-                role="destructive"
-              >
-                {i18n.t("form.watchlist.delete.title")}
-              </Button>
-            </>
-          )}
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Image systemName="ellipsis" />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <HeaderMenu label="Watchlist actions" actions={actions} />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 26,
-    width: 20,
-    marginLeft: 8,
-  },
-});

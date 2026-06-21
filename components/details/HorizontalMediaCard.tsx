@@ -14,16 +14,31 @@ import useGenre from "@/hooks/useGenre";
 type HorizontalMediaCardProps = {
   data: PersonMovieCredit | PersonTvCredit;
   mediaType: "movie" | "tv";
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function HorizontalMediaCard({
   data,
   mediaType,
+  textColor,
+  secondaryTextColor,
 }: HorizontalMediaCardProps) {
-  const genre = useGenre(data, mediaType);
+  const genre = useGenre(
+    {
+      genre_ids: data.genre_ids,
+      media_type: mediaType,
+    } as TmdbData,
+    mediaType,
+  );
   const releaseDate =
-    "release_date" in data ? data.release_date : data.first_air_date;
-  const title = "title" in data ? data.title : data.name;
+    mediaType === "movie"
+      ? (data as PersonMovieCredit).release_date
+      : (data as PersonTvCredit).first_air_date;
+  const title =
+    mediaType === "movie"
+      ? (data as PersonMovieCredit).title
+      : (data as PersonTvCredit).name;
 
   const posterUrl = data.poster_path
     ? `https://image.tmdb.org/t/p/w342/${data.poster_path}`
@@ -73,7 +88,7 @@ export default function HorizontalMediaCard({
         {/* Content on the right */}
         <View style={styles.content}>
           <Text
-            style={[styles.title, { color: PlatformColor("label") }]}
+            style={[styles.title, { color: textColor || PlatformColor("label") }]}
             numberOfLines={2}
           >
             {title}
@@ -84,7 +99,7 @@ export default function HorizontalMediaCard({
               <Text
                 style={[
                   styles.genre,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >
@@ -95,7 +110,7 @@ export default function HorizontalMediaCard({
               <Text
                 style={[
                   styles.year,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >

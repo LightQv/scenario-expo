@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   PlatformColor,
+  ColorValue,
 } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -20,6 +21,9 @@ type WatchlistMediaCardProps = {
   watchlistId: string;
   watchlistType?: string;
   onDelete?: () => void;
+  backgroundColor?: ColorValue;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function WatchlistMediaCard({
@@ -27,6 +31,9 @@ export default function WatchlistMediaCard({
   watchlistId,
   watchlistType,
   onDelete,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: WatchlistMediaCardProps) {
   const { colors } = useThemeContext();
   const { isViewed } = useViewContext();
@@ -50,7 +57,7 @@ export default function WatchlistMediaCard({
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor: backgroundColor || PlatformColor("systemBackground") },
       ]}
     >
       {/* Viewed indicator on left center outside card */}
@@ -97,12 +104,14 @@ export default function WatchlistMediaCard({
           }}
           asChild
           push
-          style={styles.textTouchable}
         >
-          <TouchableOpacity activeOpacity={BUTTON.opacity}>
+          <TouchableOpacity
+            activeOpacity={BUTTON.opacity}
+            style={styles.textTouchable}
+          >
             <View style={styles.textContainer}>
               <Text
-                style={[styles.title, { color: PlatformColor("label") }]}
+                style={[styles.title, { color: textColor || PlatformColor("label") }]}
                 numberOfLines={2}
               >
                 {data.title}
@@ -110,7 +119,7 @@ export default function WatchlistMediaCard({
               <Text
                 style={[
                   styles.subtitle,
-                  { color: PlatformColor("secondaryLabel") },
+                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
                 ]}
                 numberOfLines={1}
               >
@@ -126,6 +135,7 @@ export default function WatchlistMediaCard({
           watchlistId={watchlistId}
           watchlistType={watchlistType}
           onDelete={onDelete}
+          textColor={textColor}
         />
       </View>
     </View>
@@ -168,6 +178,7 @@ const styles = StyleSheet.create({
   textTouchable: {
     flex: 1,
     marginLeft: 14,
+    marginRight: 4,
   },
   textContainer: {
     gap: 4,

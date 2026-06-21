@@ -9,15 +9,15 @@ import {
   Animated,
   Text,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import {
   useState,
   useEffect,
   useRef,
   useCallback,
-  useLayoutEffect,
 } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation, Redirect, useFocusEffect } from "expo-router";
+import { router, Redirect, useFocusEffect } from "expo-router";
 import { apiFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -25,8 +25,7 @@ import { TOKENS } from "@/constants/theme";
 import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import { useUserContext } from "@/contexts/UserContext";
 import WatchlistCard from "@/components/watchlist/WatchlistCard";
-import WatchlistMenu from "@/components/watchlist/WatchlistMenu";
-import WatchlistCreateButton from "@/components/watchlist/WatchlistCreateButton";
+import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 
 type SortType =
   | "default"
@@ -35,9 +34,16 @@ type SortType =
   | "count_asc"
   | "count_desc";
 
+const SORT_OPTIONS: { value: SortType; label: string }[] = [
+  { value: "default", label: i18n.t("screen.watchlist.sort.default") },
+  { value: "title_asc", label: i18n.t("screen.watchlist.sort.titleAsc") },
+  { value: "title_desc", label: i18n.t("screen.watchlist.sort.titleDesc") },
+  { value: "count_asc", label: i18n.t("screen.watchlist.sort.itemsAsc") },
+  { value: "count_desc", label: i18n.t("screen.watchlist.sort.itemsDesc") },
+];
+
 export default function WatchlistIndexScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
   const { user, authState } = useUserContext();
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
   const [sortedWatchlists, setSortedWatchlists] = useState<Watchlist[]>([]);
@@ -52,18 +58,6 @@ export default function WatchlistIndexScreen() {
   if (!authState.loading && !authState.authenticated) {
     return <Redirect href="/(modal)/login" />;
   }
-
-  // Configure header with menu in headerRight
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <WatchlistCreateButton />
-          <WatchlistMenu sortType={sortType} onSortChange={setSortType} />
-        </View>
-      ),
-    });
-  }, [navigation, sortType]);
 
   // Fetch watchlists from API
   const fetchWatchlists = async () => {
@@ -151,6 +145,33 @@ export default function WatchlistIndexScreen() {
 
   return (
     <View style={styles.wrapper}>
+      <HeaderActionCapsule
+        actions={[
+          {
+            id: "create",
+            label: i18n.t("form.watchlist.create.title"),
+            icon: "plus",
+            onPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push("/(modal)/watchlist-create");
+            },
+          },
+          {
+            id: "sort",
+            label: i18n.t("screen.watchlist.menu.sort"),
+            icon: "arrow.up.arrow.down",
+            menu: SORT_OPTIONS.map((option) => ({
+              id: option.value,
+              title: option.label,
+              selected: sortType === option.value,
+              onPress: () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setSortType(option.value);
+              },
+            })),
+          },
+        ]}
+      />
       <AnimatedHeader
         title={i18n.t("screen.watchlist.title")}
         scrollY={scrollY}
@@ -198,12 +219,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  headerRight: {
-    flexDirection: "row",
-    gap: 22,
-    marginHorizontal: 8,
-    alignItems: "center",
   },
   emptyContainer: {
     flex: 1,

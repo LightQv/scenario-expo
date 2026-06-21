@@ -18,6 +18,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function WatchlistCreateModal() {
   const { user } = useUserContext();
@@ -47,10 +48,12 @@ export default function WatchlistCreateModal() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -149,7 +152,8 @@ export default function WatchlistCreateModal() {
           }}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

@@ -1,10 +1,8 @@
-import { StyleSheet } from "react-native";
-import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import i18n from "@/services/i18n";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { useGenreContext } from "@/contexts/GenreContext";
+import type { HeaderMenuItem } from "@/components/ui/HeaderActionCapsule";
+import HeaderMenu from "@/components/ui/HeaderMenu";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 
@@ -44,7 +42,6 @@ export default function ViewHeaderMenu({
   onSortChange,
   onGenreChange,
 }: ViewHeaderMenuProps) {
-  const { colors } = useThemeContext();
   const { movieGenres, tvGenres } = useGenreContext();
 
   // Get genres based on media type
@@ -56,60 +53,47 @@ export default function ViewHeaderMenu({
     ...(genres || []),
   ];
 
-  const genreLabels = genreOptions.map((g) => g.name);
+  const actions: HeaderMenuItem[] = [
+    {
+      id: "genre",
+      title: i18n.t("filter.genre.title"),
+      icon: "tag",
+      children: genreOptions.map((option) => ({
+        id: `genre:${option.id ?? "all"}`,
+        title: option.name,
+        selected: genreId === option.id,
+        onPress: () => handlePressAction(`genre:${option.id ?? "all"}`),
+      })),
+    },
+    {
+      id: "sort",
+      title: i18n.t("screen.watchlist.detail.menu.sort"),
+      icon: "arrow.up.arrow.down",
+      children: SORT_OPTIONS.map((option) => ({
+        id: `sort:${option.value}`,
+        title: option.label,
+        selected: sortType === option.value,
+        onPress: () => handlePressAction(`sort:${option.value}`),
+      })),
+    },
+  ];
 
-  // Calculate selected indices
-  const selectedSortIndex = SORT_OPTIONS.findIndex((s) => s.value === sortType);
-  const selectedGenreIndex = genreOptions.findIndex((g) => g.id === genreId);
+  const handlePressAction = (id: string) => {
+    const [kind, value] = id.split(":");
+    if (!value) return;
 
-  // Build sort labels
-  const sortLabels = SORT_OPTIONS.map((s) => s.label);
-
-  const handleSortSelect = (index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onSortChange(SORT_OPTIONS[index].value);
-  };
 
-  const handleGenreSelect = (index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onGenreChange(genreOptions[index].id);
+    if (kind === "genre") {
+      onGenreChange(value === "all" ? null : Number(value));
+    }
+
+    if (kind === "sort") {
+      onSortChange(value as SortType);
+    }
   };
 
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Picker
-            label={i18n.t("filter.genre.title")}
-            options={genreLabels}
-            variant="menu"
-            selectedIndex={selectedGenreIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleGenreSelect(index)
-            }
-          />
-          <Picker
-            label={i18n.t("screen.watchlist.detail.menu.sort")}
-            options={sortLabels}
-            variant="menu"
-            selectedIndex={selectedSortIndex}
-            onOptionSelected={({ nativeEvent: { index } }) =>
-              handleSortSelect(index)
-            }
-          />
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Image systemName="ellipsis" />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <HeaderMenu label="View filters" actions={actions} />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 26,
-    width: 20,
-    marginLeft: 8,
-  },
-});

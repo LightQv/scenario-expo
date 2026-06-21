@@ -6,23 +6,27 @@ import {
   FlatList,
   ListRenderItem,
 } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { useScrollToTop } from "@react-navigation/native";
+import {
+  useLocalSearchParams,
+  useScrollToTop,
+} from "expo-router";
+import { useEffect, useState, useRef } from "react";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
+import { useThemeContext } from "@/contexts/ThemeContext";
 import { TOKENS, FONTS } from "@/constants/theme";
 import ViewMediaCard from "@/components/views/ViewMediaCard";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import ViewHeaderMenu from "@/components/views/ViewHeaderMenu";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
 
 export default function ViewTypeScreen() {
   const { viewType } = useLocalSearchParams<{ viewType: string }>();
+  const { colors, isDark } = useThemeContext();
   const { views, isLoading } = useViewContext();
-  const navigation = useNavigation();
   const [filteredViews, setFilteredViews] = useState<APIMedia[]>([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
@@ -48,21 +52,6 @@ export default function ViewTypeScreen() {
   const handleGenreChange = (genre: number | null) => {
     setGenreId(genre);
   };
-
-  // Configure header with menu
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <ViewHeaderMenu
-          mediaType={viewType}
-          sortType={sortType}
-          genreId={genreId}
-          onSortChange={handleSortChange}
-          onGenreChange={handleGenreChange}
-        />
-      ),
-    });
-  }, [navigation, viewType, sortType, genreId]);
 
   // Filter, sort and process views
   useEffect(() => {
@@ -115,8 +104,18 @@ export default function ViewTypeScreen() {
     setFilteredViews((prev) => prev.filter((view) => view.id !== id));
   };
 
+  const backgroundColor = PlatformColor("systemBackground");
+  const textColor = colors.text;
+  const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
+
   const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <ViewMediaCard data={item} onDelete={handleDelete} />
+    <ViewMediaCard
+      data={item}
+      onDelete={handleDelete}
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      secondaryTextColor={secondaryTextColor}
+    />
   );
 
   const renderEmpty = () => {
@@ -126,7 +125,7 @@ export default function ViewTypeScreen() {
     return (
       <View style={styles.emptyContainer}>
         <Text
-          style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+          style={[styles.emptyText, { color: secondaryTextColor }]}
         >
           {i18n.t("screen.watchlist.detail.empty")}
         </Text>
@@ -136,7 +135,7 @@ export default function ViewTypeScreen() {
 
   const renderItemSeparator = () => (
     <View
-      style={{ height: 2, backgroundColor: PlatformColor("systemBackground") }}
+      style={{ height: 2, backgroundColor }}
     />
   );
 
@@ -146,9 +145,17 @@ export default function ViewTypeScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor },
       ]}
     >
+      <GoBackButton />
+      <ViewHeaderMenu
+        mediaType={viewType}
+        sortType={sortType}
+        genreId={genreId}
+        onSortChange={handleSortChange}
+        onGenreChange={handleGenreChange}
+      />
       <FlatList
         ref={listRef}
         data={filteredViews}

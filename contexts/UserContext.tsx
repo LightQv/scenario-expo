@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
-import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import { notifyError } from "@/components/toasts/Toast";
 import { apiFetch } from "@/services/instances";
 import { CONFIG } from "@/services/config";
 
@@ -119,13 +119,14 @@ export function UserProvider({ children }: ContextProps) {
       // Auto-login after successful registration
       await login(email, password);
     } catch (err: any) {
-      console.error("Registration error:", err);
-      if (err.message.includes("400")) {
-        notifyError(i18n.t("toast.register"));
-      } else {
-        notifyError(i18n.t("toast.error"));
+      const isExpectedAuthError = err.message.includes("400");
+      if (!isExpectedAuthError) {
+        console.error("Registration error:", err);
       }
       setLoader(false);
+      throw new Error(
+        isExpectedAuthError ? i18n.t("toast.register") : i18n.t("toast.error"),
+      );
     }
   };
 
@@ -148,13 +149,15 @@ export function UserProvider({ children }: ContextProps) {
         setLoader(false);
       }
     } catch (err: any) {
-      console.error("Login error:", err);
-      if (err.message.includes("401") || err.message.includes("403")) {
-        notifyError(i18n.t("toast.login"));
-      } else {
-        notifyError(i18n.t("toast.error"));
+      const isExpectedAuthError =
+        err.message.includes("401") || err.message.includes("403");
+      if (!isExpectedAuthError) {
+        console.error("Login error:", err);
       }
       setLoader(false);
+      throw new Error(
+        isExpectedAuthError ? i18n.t("toast.login") : i18n.t("toast.error"),
+      );
     }
   };
 
@@ -165,12 +168,11 @@ export function UserProvider({ children }: ContextProps) {
         method: "POST",
         body: JSON.stringify({ email }),
       });
-      notifySuccess(i18n.t("toast.success.forgot"));
       setLoader(false);
     } catch (err: any) {
       console.error("Forgot password error:", err);
-      notifyError(i18n.t("toast.error"));
       setLoader(false);
+      throw new Error(i18n.t("toast.error"));
     }
   };
 

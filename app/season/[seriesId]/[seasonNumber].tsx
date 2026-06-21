@@ -16,7 +16,6 @@ import { formatFullDate, formatRuntime } from "@/services/utils";
 import { StatusBar } from "expo-status-bar";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function SeasonDetailScreen() {
@@ -58,7 +57,6 @@ export default function SeasonDetailScreen() {
       headerTitle:
         seriesName || i18n.t("screen.detail.media.seasons.season.singular"),
       headerTintColor: colors.text,
-      headerLeft: () => <GoBackButton />,
     });
   }, [navigation, colors.text, seriesName]);
 
@@ -68,7 +66,7 @@ export default function SeasonDetailScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
+        { backgroundColor: colors.background },
       ]}
     >
       <StatusBar style={statusStyle} animated />
@@ -99,7 +97,7 @@ export default function SeasonDetailScreen() {
 
               <View style={styles.headerInfo}>
                 <Text
-                  style={[styles.seasonName, { color: PlatformColor("label") }]}
+                  style={[styles.seasonName, { color: colors.text }]}
                 >
                   {data.name}
                 </Text>
@@ -108,7 +106,7 @@ export default function SeasonDetailScreen() {
                   <Text
                     style={[
                       styles.metadataText,
-                      { color: PlatformColor("secondaryLabel") },
+                      { color: isDark ? "#c9c9ce" : "#8e8e93" },
                     ]}
                   >
                     {data.air_date && formatFullDate(data.air_date)}
@@ -131,7 +129,7 @@ export default function SeasonDetailScreen() {
                   <Text
                     style={[
                       styles.overview,
-                      { color: PlatformColor("secondaryLabel") },
+                      { color: isDark ? "#c9c9ce" : "#8e8e93" },
                     ]}
                     numberOfLines={6}
                   >
@@ -147,7 +145,7 @@ export default function SeasonDetailScreen() {
                 <Text
                   style={[
                     styles.sectionTitle,
-                    { color: PlatformColor("label") },
+                    { color: colors.text },
                   ]}
                 >
                   {i18n.t("screen.detail.media.seasons.episode.plurial")}

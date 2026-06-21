@@ -9,22 +9,28 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useState } from "react";
 import { Formik } from "formik";
 import { forgottenSchema } from "@/services/validators";
 import i18n from "@/services/i18n";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { router } from "expo-router";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function ForgotPasswordScreen() {
   const { forgotPassword, loader } = useUserContext();
   const { colors } = useThemeContext();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -45,8 +51,17 @@ export default function ForgotPasswordScreen() {
         <Formik
           initialValues={{ email: "" }}
           validationSchema={forgottenSchema}
-          onSubmit={(values) => {
-            forgotPassword(values.email);
+          onSubmit={async (values) => {
+            try {
+              setFormError(null);
+              setFormSuccess(null);
+              await forgotPassword(values.email);
+              setFormSuccess(i18n.t("toast.success.forgot"));
+            } catch (error) {
+              setFormError(
+                error instanceof Error ? error.message : i18n.t("toast.error"),
+              );
+            }
           }}
         >
           {({
@@ -95,7 +110,11 @@ export default function ForgotPasswordScreen() {
                     autoCapitalize="none"
                     autoComplete="email"
                     keyboardType="email-address"
-                    onChangeText={handleChange("email")}
+                    onChangeText={(value) => {
+                      setFormError(null);
+                      setFormSuccess(null);
+                      handleChange("email")(value);
+                    }}
                     onBlur={handleBlur("email")}
                     value={values.email}
                     placeholder={i18n.t("form.auth.placeholder.email")}
@@ -113,6 +132,29 @@ export default function ForgotPasswordScreen() {
                   </Text>
                 )}
               </View>
+
+              {(formError || formSuccess) && (
+                <View
+                  style={[
+                    styles.inlineMessage,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor: formError ? colors.error : colors.main,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.inlineMessageText,
+                      { color: formError ? colors.error : colors.main },
+                    ]}
+                  >
+                    {formError || formSuccess}
+                  </Text>
+                </View>
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity
@@ -173,7 +215,8 @@ export default function ForgotPasswordScreen() {
           )}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 
@@ -239,6 +282,17 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
     marginTop: -4,
+  },
+  inlineMessage: {
+    borderWidth: 1,
+    borderRadius: TOKENS.radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  inlineMessageText: {
+    fontFamily: FONTS.medium,
+    fontSize: TOKENS.font.md,
+    lineHeight: 18,
   },
   submitButton: {
     height: 52,

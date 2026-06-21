@@ -15,6 +15,7 @@ import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function WatchlistMoveModal() {
   const { user } = useUserContext();
@@ -90,13 +91,15 @@ export default function WatchlistMoveModal() {
     .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-      contentContainerStyle={styles.scrollContent}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: PlatformColor("systemBackground") },
+        ]}
+        contentContainerStyle={styles.scrollContent}
+      >
       <Text
         style={[styles.subtitle, { color: PlatformColor("secondaryLabel") }]}
       >
@@ -168,7 +171,8 @@ export default function WatchlistMoveModal() {
           })
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 

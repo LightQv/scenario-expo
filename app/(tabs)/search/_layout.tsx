@@ -1,6 +1,5 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { useState, createContext, useContext } from "react";
-import GoBackButton from "@/components/ui/GoBackButton";
 
 type MediaType = "movie" | "tv" | "person";
 
@@ -32,23 +31,10 @@ export default function SearchLayout() {
         <Stack.Screen
           name="index"
           options={{
-            headerLargeTitle: false,
+            headerLargeTitleEnabled: false,
             headerTransparent: true,
             headerShadowVisible: false,
             headerTitle: "",
-            headerSearchBarOptions: {
-              placement: "automatic",
-              placeholder: "Search",
-              onFocus: () => router.setParams({ showHistory: "true" }),
-              onCancelButtonPress: () =>
-                router.setParams({ showHistory: "false" }),
-              onChangeText: (event) => setSearch(event.nativeEvent.text),
-              onSearchButtonPress: () => {
-                if (search.trim()) {
-                  router.push("/(tabs)/search/query");
-                }
-              },
-            },
           }}
         />
         <Stack.Screen
@@ -57,7 +43,6 @@ export default function SearchLayout() {
             headerTransparent: true,
             headerShadowVisible: false,
             headerTitle: "",
-            headerLeft: () => <GoBackButton />,
           }}
         />
         <Stack.Screen
@@ -66,7 +51,6 @@ export default function SearchLayout() {
             headerTransparent: true,
             headerShadowVisible: false,
             headerTitle: "",
-            headerLeft: () => <GoBackButton />,
           }}
         />
       </Stack>

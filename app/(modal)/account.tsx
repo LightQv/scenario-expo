@@ -12,6 +12,7 @@ import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
@@ -47,10 +48,12 @@ export default function AccountScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollContent}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
       <View style={styles.container}>
         {/* User Profile Card */}
         <View style={styles.profileSection}>
@@ -220,7 +223,8 @@ export default function AccountScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 

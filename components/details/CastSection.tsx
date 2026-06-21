@@ -13,11 +13,24 @@ import i18n from "@/services/i18n";
 type CastSectionProps = {
   title: string;
   cast: Cast[];
+  backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
-export default function CastSection({ title, cast }: CastSectionProps) {
+export default function CastSection({
+  title,
+  cast,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
+}: CastSectionProps) {
   const renderItem: ListRenderItem<Cast> = ({ item }) => (
-    <CastCard data={item} />
+    <CastCard
+      data={item}
+      textColor={textColor}
+      secondaryTextColor={secondaryTextColor}
+    />
   );
 
   const renderSeparator = () => <View style={{ width: 14 }} />;
@@ -25,7 +38,10 @@ export default function CastSection({ title, cast }: CastSectionProps) {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text
-        style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+        style={[
+          styles.emptyText,
+          { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+        ]}
       >
         {i18n.t("screen.detail.media.castEmpty")}
       </Text>
@@ -33,9 +49,9 @@ export default function CastSection({ title, cast }: CastSectionProps) {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
+        <Text style={[styles.title, { color: textColor || PlatformColor("label") }]}> 
           {title}
         </Text>
       </View>

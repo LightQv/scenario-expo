@@ -17,6 +17,7 @@ import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import { CONFIG } from "@/services/config";
 import { Ionicons } from "@expo/vector-icons";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 const { width, height } = Dimensions.get("window");
 // Banner preview with vertical aspect ratio for modal display
@@ -120,10 +121,12 @@ export default function ProfileBannerEditScreen() {
   const displayBannerUrl = selectedImage || user.profileBanner || null;
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollContent}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
       <View style={styles.container}>
         {/* Clickable Banner Preview */}
         <TouchableOpacity
@@ -158,7 +161,8 @@ export default function ProfileBannerEditScreen() {
           </View>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 

@@ -21,6 +21,7 @@ import { router, useNavigation } from "expo-router";
 import { apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function ProfileEditScreen() {
   const { user, logout } = useUserContext();
@@ -87,10 +88,12 @@ export default function ProfileEditScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -395,7 +398,8 @@ export default function ProfileEditScreen() {
           }}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

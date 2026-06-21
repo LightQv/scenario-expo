@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import GoBackButton from "@/components/ui/GoBackButton";
 import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
@@ -15,7 +14,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.login.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -27,7 +25,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.register.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -39,7 +36,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.forgotPassword.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -51,7 +47,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.account.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -63,7 +58,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.watchlistCreate.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -75,7 +69,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.watchlistEdit.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -87,7 +80,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.watchlist.move.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -99,7 +91,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.watchlist.add.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -111,7 +102,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("form.profile.update.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -123,7 +113,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("form.profile.update.banner.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -135,7 +124,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.account.settings.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}
@@ -147,7 +135,6 @@ export default function ModalLayout() {
           headerShown: true,
           headerTitle: i18n.t("screen.applicationSettings.title"),
           headerTintColor: colors.text,
-          headerLeft: () => <GoBackButton variant="close" />,
           headerShadowVisible: false,
           headerTransparent: true,
         }}

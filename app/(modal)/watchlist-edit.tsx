@@ -19,6 +19,7 @@ import { useThemeContext } from "@/contexts";
 import { FONTS, TOKENS } from "@/constants/theme";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 import FullScreenLoader from "@/components/ui/FullScreenLoader";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function WatchlistEditModal() {
   const { colors } = useThemeContext();
@@ -67,10 +68,12 @@ export default function WatchlistEditModal() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -170,7 +173,8 @@ export default function WatchlistEditModal() {
           }}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

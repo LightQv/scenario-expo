@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, PlatformColor } from "react-native";
+import { ColorValue, StyleSheet, View, Text, PlatformColor } from "react-native";
 import { TOKENS, FONTS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { formatTotalRuntime } from "@/services/utils";
@@ -8,6 +8,8 @@ type StatisticsPillsProps = {
   tvCount: number;
   movieRuntime: number; // in minutes
   tvEpisodesCount: number;
+  pillBackgroundColor?: ColorValue;
+  textColor?: ColorValue;
 };
 
 export default function StatisticsPills({
@@ -15,6 +17,8 @@ export default function StatisticsPills({
   tvCount,
   movieRuntime,
   tvEpisodesCount,
+  pillBackgroundColor = PlatformColor("secondarySystemBackground"),
+  textColor = PlatformColor("label"),
 }: StatisticsPillsProps) {
   const formatMovieCount = () => {
     if (movieCount === 0) return `0 ${i18n.t("stats.movies")}`;
@@ -45,10 +49,10 @@ export default function StatisticsPills({
       <View
         style={[
           styles.pill,
-          { backgroundColor: PlatformColor("secondarySystemBackground") },
+          { backgroundColor: pillBackgroundColor },
         ]}
       >
-        <Text style={[styles.pillText, { color: PlatformColor("label") }]}>
+        <Text style={[styles.pillText, { color: textColor }]}> 
           {formatMovieCount()}
         </Text>
       </View>
@@ -57,10 +61,10 @@ export default function StatisticsPills({
       <View
         style={[
           styles.pill,
-          { backgroundColor: PlatformColor("secondarySystemBackground") },
+          { backgroundColor: pillBackgroundColor },
         ]}
       >
-        <Text style={[styles.pillText, { color: PlatformColor("label") }]}>
+        <Text style={[styles.pillText, { color: textColor }]}> 
           {formatTvCount()}
         </Text>
       </View>
@@ -69,10 +73,10 @@ export default function StatisticsPills({
       <View
         style={[
           styles.pill,
-          { backgroundColor: PlatformColor("secondarySystemBackground") },
+          { backgroundColor: pillBackgroundColor },
         ]}
       >
-        <Text style={[styles.pillText, { color: PlatformColor("label") }]}>
+        <Text style={[styles.pillText, { color: textColor }]}> 
           {formatMovieRuntime()}
         </Text>
       </View>
@@ -81,10 +85,10 @@ export default function StatisticsPills({
       <View
         style={[
           styles.pill,
-          { backgroundColor: PlatformColor("secondarySystemBackground") },
+          { backgroundColor: pillBackgroundColor },
         ]}
       >
-        <Text style={[styles.pillText, { color: PlatformColor("label") }]}>
+        <Text style={[styles.pillText, { color: textColor }]}> 
           {formatTvEpisodes()}
         </Text>
       </View>

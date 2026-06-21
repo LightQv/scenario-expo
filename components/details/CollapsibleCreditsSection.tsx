@@ -11,49 +11,50 @@ import { useState } from "react";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import HorizontalMediaCard from "./HorizontalMediaCard";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeContext } from "@/contexts";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
 
 type CollapsibleCreditsSectionProps = {
   title: string;
   credits: (PersonMovieCredit | PersonTvCredit)[];
   mediaType: "movie" | "tv";
+  backgroundColor?: string;
+  textColor?: string;
+  secondaryTextColor?: string;
 };
 
 export default function CollapsibleCreditsSection({
   title,
   credits,
   mediaType,
+  backgroundColor,
+  textColor,
+  secondaryTextColor,
 }: CollapsibleCreditsSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { colors } = useThemeContext();
-  const rotation = useSharedValue(0);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
-    rotation.value = withTiming(isCollapsed ? 0 : -90, { duration: 200 });
   };
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotate: `${rotation.value}deg` }],
-    };
-  });
 
   const renderItem: ListRenderItem<PersonMovieCredit | PersonTvCredit> = ({
     item,
   }) => {
-    return <HorizontalMediaCard data={item} mediaType={mediaType} />;
+    return (
+      <HorizontalMediaCard
+        data={item}
+        mediaType={mediaType}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+      />
+    );
   };
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Text
-        style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
+        style={[
+          styles.emptyText,
+          { color: secondaryTextColor || PlatformColor("secondaryLabel") },
+        ]}
       >
         No credits found
       </Text>
@@ -65,23 +66,24 @@ export default function CollapsibleCreditsSection({
   }
 
   return (
-    <View style={styles.sectionContainer}>
+    <View
+      style={[styles.sectionContainer, backgroundColor && { backgroundColor }]}
+    >
       {/* Header with collapse button */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
+        <Text style={[styles.title, { color: textColor || PlatformColor("label") }]}> 
           {title}
         </Text>
         <TouchableOpacity
           onPress={toggleCollapse}
-          style={[
-            styles.collapseButton,
-            { backgroundColor: PlatformColor("systemGray5") },
-          ]}
+          style={styles.collapseButton}
           activeOpacity={BUTTON.opacity}
         >
-          <Animated.View style={animatedIconStyle}>
-            <Ionicons name="chevron-down" size={16} color={colors.main} />
-          </Animated.View>
+          <Ionicons
+            name={isCollapsed ? "chevron-down" : "chevron-up"}
+            size={24}
+            color={textColor || PlatformColor("label")}
+          />
         </TouchableOpacity>
       </View>
 
@@ -110,16 +112,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: TOKENS.margin.horizontal,
     marginBottom: 12,
+    minHeight: 40,
   },
   title: {
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.xxxl,
+    lineHeight: 40,
     flex: 1,
   },
   collapseButton: {
-    width: 24,
-    height: 24,
-    borderRadius: TOKENS.radius.full,
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
   },

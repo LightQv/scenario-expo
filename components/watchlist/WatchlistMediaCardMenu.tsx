@@ -1,22 +1,28 @@
-import { StyleSheet } from "react-native";
-import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import * as Haptics from "expo-haptics";
-import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { formatYear } from "@/services/utils";
 import { notifyError } from "@/components/toasts/Toast";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useBookmarkContext } from "@/contexts/BookmarkContext";
+import { Ionicons } from "@expo/vector-icons";
+import { BUTTON } from "@/constants/theme";
 
 type WatchlistMediaCardMenuProps = {
   media: APIMedia;
   watchlistId: string;
   watchlistType?: string;
   onDelete?: () => void;
+  textColor?: string;
 };
 
 export default function WatchlistMediaCardMenu({
@@ -24,8 +30,8 @@ export default function WatchlistMediaCardMenu({
   watchlistId,
   watchlistType,
   onDelete,
+  textColor,
 }: WatchlistMediaCardMenuProps) {
-  const { colors } = useThemeContext();
   const { user } = useUserContext();
   const { isViewed, getViewByTmdbId, addView, removeView } = useViewContext();
   const { refreshBookmarks } = useBookmarkContext();
@@ -104,40 +110,64 @@ export default function WatchlistMediaCardMenu({
     });
   };
 
+  const openMenu = () => {
+    const viewLabel = viewed
+      ? i18n.t("screen.watchlist.detail.menu.unview")
+      : i18n.t("screen.watchlist.detail.menu.view");
+    const moveLabel = i18n.t("screen.watchlist.detail.menu.move");
+    const deleteLabel = i18n.t("screen.watchlist.detail.menu.delete");
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [
+            viewLabel,
+            moveLabel,
+            deleteLabel,
+            i18n.t("form.watchlist.cancel"),
+          ],
+          cancelButtonIndex: 3,
+          destructiveButtonIndex: 2,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) handleToggleView();
+          if (buttonIndex === 1) handleMoveToWatchlist();
+          if (buttonIndex === 2) handleDeleteMedia();
+        },
+      );
+      return;
+    }
+
+    Alert.alert("", "", [
+      { text: viewLabel, onPress: handleToggleView },
+      { text: moveLabel, onPress: handleMoveToWatchlist },
+      { text: deleteLabel, onPress: handleDeleteMedia, style: "destructive" },
+      { text: i18n.t("form.watchlist.cancel"), style: "cancel" },
+    ]);
+  };
+
   return (
-    <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("plain")]}>
-        <ContextMenu.Items>
-          <Button
-            onPress={handleToggleView}
-            systemImage={viewed ? "eye.slash" : "eye"}
-          >
-            {viewed
-              ? i18n.t("screen.watchlist.detail.menu.unview")
-              : i18n.t("screen.watchlist.detail.menu.view")}
-          </Button>
-          <Button onPress={handleMoveToWatchlist} systemImage="folder">
-            {i18n.t("screen.watchlist.detail.menu.move")}
-          </Button>
-          <Button
-            onPress={handleDeleteMedia}
-            systemImage="trash"
-            role="destructive"
-          >
-            {i18n.t("screen.watchlist.detail.menu.delete")}
-          </Button>
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <Button systemImage="ellipsis" color={colors.text} />
-        </ContextMenu.Trigger>
-      </ContextMenu>
-    </Host>
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel="Media actions"
+      activeOpacity={BUTTON.opacity}
+      onPress={openMenu}
+      style={styles.container}
+    >
+      <Ionicons
+        name="ellipsis-horizontal"
+        size={22}
+        color={textColor || "#000"}
+      />
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 34,
+    height: 44,
+    width: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

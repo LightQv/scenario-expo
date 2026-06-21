@@ -327,6 +327,7 @@
       "title": "Search",
       "placeholder": "Movies, TV shows, actors, directors...",
       "cancel": "Cancel",
+      "showAllResults": "Show all results",
       "history": {
         "title": "Recently searched",
         "clear": "Clear"

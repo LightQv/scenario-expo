@@ -17,17 +17,21 @@ import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import GoBackButton from "@/components/ui/GoBackButton";
 
 export default function RegisterScreen() {
   const { register, loader } = useUserContext();
   const { colors } = useThemeContext();
   const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <>
+      <GoBackButton variant="close" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -41,13 +45,20 @@ export default function RegisterScreen() {
             confirmPassword: "",
           }}
           validationSchema={registerSchema}
-          onSubmit={(values) => {
-            register(
-              values.username,
-              values.email,
-              values.password,
-              values.confirmPassword
-            );
+          onSubmit={async (values) => {
+            try {
+              setAuthError(null);
+              await register(
+                values.username,
+                values.email,
+                values.password,
+                values.confirmPassword,
+              );
+            } catch (error) {
+              setAuthError(
+                error instanceof Error ? error.message : i18n.t("toast.error"),
+              );
+            }
           }}
         >
           {({
@@ -95,7 +106,10 @@ export default function RegisterScreen() {
                   <TextInput
                     autoCapitalize="none"
                     autoComplete="username"
-                    onChangeText={handleChange("username")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("username")(value);
+                    }}
                     onBlur={handleBlur("username")}
                     value={values.username}
                     placeholder={i18n.t("form.auth.placeholder.username")}
@@ -151,7 +165,10 @@ export default function RegisterScreen() {
                     autoCapitalize="none"
                     autoComplete="email"
                     keyboardType="email-address"
-                    onChangeText={handleChange("email")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("email")(value);
+                    }}
                     onBlur={handleBlur("email")}
                     value={values.email}
                     placeholder={i18n.t("form.auth.placeholder.email")}
@@ -206,7 +223,10 @@ export default function RegisterScreen() {
                   <TextInput
                     autoCapitalize="none"
                     autoComplete="password"
-                    onChangeText={handleChange("password")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("password")(value);
+                    }}
                     onBlur={handleBlur("password")}
                     value={values.password}
                     placeholder={i18n.t("form.auth.placeholder.password")}
@@ -273,11 +293,14 @@ export default function RegisterScreen() {
                   <TextInput
                     autoCapitalize="none"
                     autoComplete="password"
-                    onChangeText={handleChange("confirmPassword")}
+                    onChangeText={(value) => {
+                      setAuthError(null);
+                      handleChange("confirmPassword")(value);
+                    }}
                     onBlur={handleBlur("confirmPassword")}
                     value={values.confirmPassword}
                     placeholder={i18n.t(
-                      "form.auth.placeholder.confirmPassword"
+                      "form.auth.placeholder.confirmPassword",
                     )}
                     placeholderTextColor={PlatformColor("placeholderText")}
                     style={[styles.input, { color: PlatformColor("label") }]}
@@ -305,6 +328,31 @@ export default function RegisterScreen() {
                   </Text>
                 )}
               </View>
+
+              {authError && (
+                <View
+                  style={[
+                    styles.inlineMessage,
+                    {
+                      backgroundColor: PlatformColor(
+                        "secondarySystemBackground",
+                      ),
+                      borderColor: colors.error,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="alert-circle"
+                    size={18}
+                    color={colors.error}
+                  />
+                  <Text
+                    style={[styles.inlineMessageText, { color: colors.error }]}
+                  >
+                    {authError}
+                  </Text>
+                </View>
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity
@@ -365,7 +413,8 @@ export default function RegisterScreen() {
           )}
         </Formik>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 
@@ -420,6 +469,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
     marginTop: -4,
+  },
+  inlineMessage: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderRadius: TOKENS.radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  inlineMessageText: {
+    flex: 1,
+    fontFamily: FONTS.medium,
+    fontSize: TOKENS.font.md,
+    lineHeight: 18,
   },
   submitButton: {
     height: 52,

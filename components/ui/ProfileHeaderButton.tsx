@@ -1,12 +1,14 @@
-import { Pressable, Text, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { useUserContext, useThemeContext } from "@/contexts";
-import { FONTS } from "@/constants/theme";
-import { Host, Image } from "@expo/ui/swift-ui";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeContext, useUserContext } from "@/contexts";
+import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
+import { BUTTON, FONTS, TOKENS } from "@/constants/theme";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
   const { colors } = useThemeContext();
+  const insets = useSafeAreaInsets();
 
   const handlePress = () => {
     if (authState.authenticated && user) {
@@ -18,41 +20,55 @@ export default function ProfileHeaderButton() {
 
   const isAuthenticated = authState.authenticated && user;
 
-  return (
-    <Pressable
-      onPress={handlePress}
-      style={[
-        styles.button,
-        isAuthenticated && { backgroundColor: colors.main },
-      ]}
-      hitSlop={10}
-    >
-      {isAuthenticated ? (
+  if (isAuthenticated) {
+    return (
+      <TouchableOpacity
+        activeOpacity={BUTTON.opacity}
+        onPress={handlePress}
+        style={[
+          styles.avatarButton,
+          {
+            top: insets.top + 6,
+            backgroundColor: colors.main,
+          },
+        ]}
+      >
         <Text style={styles.avatarText}>
           {user.username.charAt(0).toUpperCase()}
         </Text>
-      ) : (
-        <Host>
-          <Image systemName="person.crop.circle" />
-        </Host>
-      )}
-    </Pressable>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <HeaderActionCapsule
+      actions={[
+        {
+          id: "profile",
+          label: "Profile",
+          icon: "person.crop.circle",
+          onPress: handlePress,
+        },
+      ]}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: 36,
-    height: 36,
-    borderRadius: 20,
+  avatarButton: {
+    position: "absolute",
+    right: TOKENS.margin.horizontal,
+    zIndex: 100,
+    width: 38,
+    height: 38,
+    borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
   },
-
   avatarText: {
     color: "#fff",
     fontFamily: FONTS.bold,
-    fontSize: 18,
+    fontSize: TOKENS.font.xxl,
+    lineHeight: 20,
   },
 });

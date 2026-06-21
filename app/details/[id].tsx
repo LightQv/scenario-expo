@@ -1,12 +1,12 @@
-import { View, StyleSheet, PlatformColor, useColorScheme } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
 import Banner from "@/components/details/Banner";
-import GradientTransition from "@/components/details/GradientTransition";
 import DetailHeader from "@/components/details/DetailHeader";
+import DetailsMediaControls from "@/components/details/DetailsMediaControls";
 import CrewInfo from "@/components/details/CrewInfo";
 import CastSection from "@/components/details/CastSection";
 import CollapsibleCreditsSection from "@/components/details/CollapsibleCreditsSection";
@@ -18,50 +18,81 @@ import Animated, {
   FadeOutRight,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import GoBackButton from "@/components/ui/GoBackButton";
-import ViewAction from "@/components/actions/ViewAction";
-import DetailsActionsMenu from "@/components/details/DetailsActionsMenu";
-import BookmarkButton from "@/components/ui/BookmarkButton";
-import HeaderRight from "@/components/ui/HeaderRight";
+import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
+import { useThemeContext } from "@/contexts";
+import {
+  getDetailPaletteFromImage,
+  getFallbackDetailPalette,
+  type DetailPalette,
+} from "@/services/detailPalette";
+
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
-  const colorScheme = useColorScheme();
+  const { isDark } = useThemeContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
+  const [palette, setPalette] = useState<DetailPalette>(() =>
+    getFallbackDetailPalette(isDark),
+  );
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
 
-  // Fetch data based on type and id
   useEffect(() => {
-    if (type && id) {
+    if (!type || !id) return;
+
+    let isMounted = true;
+
+    async function loadDetails() {
       setLoading(true);
       setData(null);
       scrollY.value = 0;
 
-      // Different append_to_response for person vs media
       const appendParams =
         type === "person"
           ? "movie_credits,tv_credits,images"
           : "videos,credits,images";
 
-      tmdbFetch(
-        `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
-      )
-        .then((response) => {
-          setData(response);
-          setLoading(false);
-        })
-        .catch(() => {
-          notifyError(i18n.t("toast.errorTMDB"));
-          setLoading(false);
-        });
-    }
-  }, [type, id]);
+      try {
+        const response = await tmdbFetch(
+          `/${type}/${id}?language=${i18n.locale}&append_to_response=${appendParams}`,
+        );
 
-  // Status bar - always light for now (over the image)
-  const statusStyle = colorScheme === "dark" ? "light" : "dark";
+        if (!isMounted) return;
+
+        const imagePath = getDetailImagePath(response, type);
+        const nextPalette = imagePath
+          ? await getDetailPaletteFromImage(
+              `${TMDB_IMAGE_BASE_URL}/${imagePath}`,
+              isDark,
+            ).catch(() => getFallbackDetailPalette(isDark))
+          : getFallbackDetailPalette(isDark);
+
+        if (!isMounted) return;
+
+        setPalette(nextPalette);
+        setData(response);
+      } catch {
+        if (isMounted) {
+          notifyError(i18n.t("toast.errorTMDB"));
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadDetails();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [type, id, isDark]);
+
+  const statusStyle = "light";
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -75,43 +106,14 @@ export default function DetailsScreen() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
-      headerLeft: () => <GoBackButton />,
-      // Only show actions for movie and tv, not for person
-      headerRight:
-        type === "movie" || type === "tv"
-          ? () =>
-              data && (
-                <HeaderRight>
-                  <BookmarkButton
-                    tmdbId={Number(id)}
-                    mediaType={type}
-                    title={data.title || data.name || ""}
-                    posterPath={data.poster_path || ""}
-                    backdropPath={data.backdrop_path || ""}
-                    releaseDate={data.release_date}
-                    firstAirDate={data.first_air_date}
-                    runtime={data.runtime}
-                    genreIds={data.genres?.map((g) => g.id) || []}
-                  />
-                  <ViewAction data={data} mediaType={type} size="details" />
-                  <DetailsActionsMenu
-                    mediaType={type}
-                    tmdbId={id}
-                    title={data.title || data.name || ""}
-                  />
-                </HeaderRight>
-              )
-          : undefined,
     });
-  }, [navigation, type, data, id]);
+  }, [navigation]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: PlatformColor("systemBackground") },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
+      {(type === "movie" || type === "tv") && data && (
+        <DetailsHeaderActions data={data} mediaType={type} tmdbId={id} />
+      )}
       <StatusBar style={statusStyle} animated />
 
       <Animated.ScrollView
@@ -122,10 +124,10 @@ export default function DetailsScreen() {
         entering={FadeInLeft}
         exiting={FadeOutRight}
       >
-        {data && (
+        {!loading && data && (
           <>
             <Banner
-              src={type === "person" ? data.profile_path : data.backdrop_path}
+              src={getDetailImagePath(data, type)}
               alt={data.title || data.name}
               score={data.vote_average}
               title={data.title || data.name}
@@ -135,11 +137,6 @@ export default function DetailsScreen() {
               birthday={data.birthday}
               deathday={data.deathday}
               knownForDepartment={data.known_for_department}
-            />
-            <GradientTransition />
-            <DetailHeader
-              overview={data.overview}
-              videos={data.videos?.results}
               releaseDate={data.release_date}
               runtime={data.runtime}
               status={data.status}
@@ -147,10 +144,25 @@ export default function DetailsScreen() {
               lastAirDate={data.last_air_date}
               numberOfSeasons={data.number_of_seasons}
               numberOfEpisodes={data.number_of_episodes}
-              biography={data.biography}
-              birthday={data.birthday}
               placeOfBirth={data.place_of_birth}
-              knownForDepartment={data.known_for_department}
+              palette={palette}
+              controls={
+                (type === "movie" || type === "tv") ? (
+                  <DetailsMediaControls
+                    data={data}
+                    mediaType={type}
+                    tmdbId={id}
+                    videos={data.videos?.results}
+                    actionColor={palette.actionBackground}
+                  />
+                ) : undefined
+              }
+            />
+            <DetailHeader
+              overview={data.overview}
+              biography={data.biography}
+              backgroundColor={palette.background}
+              textColor={palette.text}
             />
             {type === "person" ? (
               <>
@@ -166,6 +178,9 @@ export default function DetailsScreen() {
                         return dateB.getTime() - dateA.getTime();
                       })}
                     mediaType="movie"
+                    backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.text}
                   />
                 )}
                 {/* Person: Show TV Credits */}
@@ -180,6 +195,9 @@ export default function DetailsScreen() {
                         return dateB.getTime() - dateA.getTime();
                       })}
                     mediaType="tv"
+                    backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.text}
                   />
                 )}
               </>
@@ -187,12 +205,21 @@ export default function DetailsScreen() {
               <>
                 {/* Media: Show Crew and Cast */}
                 {data.credits?.crew && data.credits.crew.length > 0 && (
-                  <CrewInfo crew={data.credits.crew} mediaType={type} />
+                  <CrewInfo
+                    crew={data.credits.crew}
+                    mediaType={type}
+                    backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.text}
+                  />
                 )}
                 {data.credits?.cast && data.credits.cast.length > 0 && (
                   <CastSection
                     title={i18n.t("screen.detail.media.cast")}
                     cast={data.credits.cast}
+                    backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
                 {/* TV Shows: Show Seasons */}
@@ -202,6 +229,9 @@ export default function DetailsScreen() {
                     seasons={data.seasons}
                     seriesId={id}
                     seriesName={data.name || data.title}
+                    backgroundColor={palette.background}
+                    textColor={palette.text}
+                    secondaryTextColor={palette.secondaryText}
                   />
                 )}
               </>
@@ -211,6 +241,17 @@ export default function DetailsScreen() {
       </Animated.ScrollView>
     </View>
   );
+}
+
+function getDetailImagePath(
+  data: TmdbDetails,
+  type: string | undefined,
+): string | undefined {
+  if (type === "person") {
+    return data.profile_path || data.backdrop_path || data.poster_path;
+  }
+
+  return data.backdrop_path || data.poster_path || data.profile_path;
 }
 
 const styles = StyleSheet.create({
