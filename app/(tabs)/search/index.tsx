@@ -391,13 +391,13 @@ function SearchHeader({
               onPress={onClose}
               style={styles.closeButtonWrapper}
             >
-              <View style={styles.closeButton}>
+              <GlassView style={styles.closeButton}>
                 <Ionicons
                   name="close"
                   size={24}
                   color={PlatformColor("label")}
                 />
-              </View>
+              </GlassView>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 100,
-    paddingHorizontal: 14,
+    paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: 8,
   },
   headerTitle: {
@@ -447,7 +447,6 @@ const styles = StyleSheet.create({
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
   },
   searchInputContainer: {
     flex: 1,
@@ -471,6 +470,7 @@ const styles = StyleSheet.create({
   },
   closeContainerVisible: {
     width: CLOSE_BUTTON_SIZE,
+    marginLeft: 10,
   },
   closeContainerHidden: {
     width: 0,
@@ -487,9 +487,6 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: PlatformColor("primarySystemFill"),
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PlatformColor("separator"),
   },
   pickerContainer: {
     height: SEARCH_BAR_HEIGHT,

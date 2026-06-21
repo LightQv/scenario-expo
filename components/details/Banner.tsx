@@ -25,6 +25,7 @@ import {
 } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
+import AppleMusicArtworkWash from "@/components/details/AppleMusicArtworkWash";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 600;
@@ -81,8 +82,17 @@ export default function Banner({
   const age = birthday ? calculateAge(birthday, deathday) : null;
   const detailPillBackground = colorWithAlpha(palette.surface, 0.68);
   const detailPillBorder = colorWithAlpha(palette.tint, 0.55);
+  const imageTintOpacity =
+    palette.mood === "vibrant" ? 0.16 : palette.mood === "muted" ? 0.06 : 0.04;
+  const fadeTintOpacity =
+    palette.mood === "vibrant" ? 0.34 : palette.mood === "muted" ? 0.1 : 0.06;
+  const firstBackgroundFade =
+    palette.mood === "vibrant" ? 0.2 : palette.mood === "muted" ? 0.38 : 0.42;
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
+    : undefined;
+  const imageUrl = src
+    ? `https://image.tmdb.org/t/p/original/${src}`
     : undefined;
 
   // Parallax animation for the banner image (same formula as previous version)
@@ -108,8 +118,16 @@ export default function Banner({
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: palette.background }]}> 
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
       <View pointerEvents="none" style={styles.visualStage}>
+        <AppleMusicArtworkWash
+          imageUrl={imageUrl}
+          palette={palette}
+          scrollY={scrollY}
+          width={width}
+          height={BANNER_HEIGHT}
+        />
+
         <View style={styles.imageWrapper}>
           <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
             <Image
@@ -119,6 +137,18 @@ export default function Banner({
               contentFit="cover"
               placeholder={BLURHASH.hash}
               transition={BLURHASH.transition}
+            />
+            <LinearGradient
+              colors={[
+                "transparent",
+                "transparent",
+                colorWithAlpha(palette.tint, imageTintOpacity),
+                colorWithAlpha(palette.background, 0.24),
+              ]}
+              locations={[0, 0.46, 0.72, 1]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
             />
           </Animated.View>
         </View>
@@ -162,27 +192,23 @@ export default function Banner({
           colors={[
             "transparent",
             "transparent",
-            colorWithAlpha(palette.tint, 0.16),
-            colorWithAlpha(palette.tint, 0.34),
-            colorWithAlpha(palette.background, 0.64),
-            colorWithAlpha(palette.background, 0.86),
-            colorWithAlpha(palette.background, 0.97),
+            colorWithAlpha(palette.tint, fadeTintOpacity),
+            colorWithAlpha(palette.background, firstBackgroundFade),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.58 : 0.72,
+            ),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.82 : 0.9,
+            ),
+            colorWithAlpha(
+              palette.background,
+              palette.mood === "vibrant" ? 0.95 : 0.98,
+            ),
             palette.background,
           ]}
-          locations={[0, 0.42, 0.52, 0.62, 0.72, 0.82, 0.92, 1]}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-        />
-        <LinearGradient
-          colors={[
-            "transparent",
-            "transparent",
-            "rgba(0,0,0,0.08)",
-            "rgba(0,0,0,0.13)",
-            "transparent",
-          ]}
-          locations={[0, 0.44, 0.6, 0.76, 1]}
+          locations={[0, 0.38, 0.52, 0.66, 0.78, 0.88, 0.96, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -197,25 +223,35 @@ export default function Banner({
         ]}
       >
         {/* Title Section - Centered */}
-        <View style={[styles.titleSection, isPerson && styles.personTitleSection]}>
-          <Text style={[styles.title, { color: palette.text }]} numberOfLines={2}>
+        <View
+          style={[styles.titleSection, isPerson && styles.personTitleSection]}
+        >
+          <Text
+            style={[styles.title, { color: palette.text }]}
+            numberOfLines={2}
+          >
             {title}
           </Text>
           {controls}
           {/* Genre Pills and Rating Badge - Centered on same row (or Gender/Age for person) */}
-          <View style={[styles.genreContainer, isPerson && styles.personGenreContainer]}>
+          <View
+            style={[
+              styles.genreContainer,
+              isPerson && styles.personGenreContainer,
+            ]}
+          >
             {isPerson ? (
               <>
                 {/* Gender */}
                 {gender !== undefined && (
                   <View
-                      style={[
-                        styles.genrePill,
-                        {
-                          backgroundColor: detailPillBackground,
-                          borderColor: detailPillBorder,
-                        },
-                      ]}
+                    style={[
+                      styles.genrePill,
+                      {
+                        backgroundColor: detailPillBackground,
+                        borderColor: detailPillBorder,
+                      },
+                    ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {formatGender(gender)}
@@ -225,13 +261,13 @@ export default function Banner({
                 {/* Age */}
                 {age !== null && (
                   <View
-                      style={[
-                        styles.genrePill,
-                        {
-                          backgroundColor: detailPillBackground,
-                          borderColor: detailPillBorder,
-                        },
-                      ]}
+                    style={[
+                      styles.genrePill,
+                      {
+                        backgroundColor: detailPillBackground,
+                        borderColor: detailPillBorder,
+                      },
+                    ]}
                   >
                     <Text style={[styles.genreText, { color: palette.text }]}>
                       {age} {i18n.t("screen.person.age")}
@@ -263,7 +299,9 @@ export default function Banner({
                             },
                           ]}
                         >
-                          <Text style={[styles.genreText, { color: palette.text }]}>
+                          <Text
+                            style={[styles.genreText, { color: palette.text }]}
+                          >
                             {genre.name}
                           </Text>
                         </View>
@@ -349,7 +387,9 @@ function renderMetadata({
     return (
       <View style={styles.metadataGroup}>
         {status && (
-          <Text style={[styles.statusText, { color: textColor }]}>{status}</Text>
+          <Text style={[styles.statusText, { color: textColor }]}>
+            {status}
+          </Text>
         )}
         <Text style={[styles.metadataText, { color: secondaryTextColor }]}>
           {firstAirDate && formatFullDate(firstAirDate)}
@@ -414,7 +454,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    height: BANNER_HEIGHT,
   },
   imageWrapper: {
     position: "absolute",
@@ -449,15 +489,15 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   mediaContentSection: {
-    paddingTop: 332,
-    paddingBottom: 20,
+    paddingTop: 360,
+    paddingBottom: 22,
   },
   personContentSection: {
-    paddingTop: 420,
-    paddingBottom: 16,
+    paddingTop: 440,
+    paddingBottom: 24,
   },
   titleSection: {
-    gap: 4,
+    gap: 6,
     alignItems: "center",
     width: "100%",
   },
@@ -480,7 +520,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: "100%",
     alignSelf: "center",
-    marginBottom: 10,
   },
   personGenreContainer: {
     marginTop: 2,
@@ -494,8 +533,8 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   mediaMetadataSlot: {
+    marginTop: 8,
     width: "100%",
-    marginTop: 10,
     alignItems: "center",
   },
   genreText: {
