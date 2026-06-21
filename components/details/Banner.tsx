@@ -283,8 +283,8 @@ export default function Banner({
                   genres.slice(0, 2).map((genre) => (
                     <Link
                       href={{
-                        pathname: "/discover",
-                        params: { type, genreId: genre.id },
+                        pathname: "/genre/[genreId]",
+                        params: { genreId: genre.id, genreName: genre.name },
                       }}
                       key={genre.id}
                       asChild
