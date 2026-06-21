@@ -144,7 +144,6 @@ export function UserProvider({ children }: ContextProps) {
         const transformedUser = transformUserData(result);
         setAuthState({ loading: true, authenticated: null });
         await SecureStore.setItemAsync("user", JSON.stringify(transformedUser));
-        notifySuccess(i18n.t("toast.success.login"));
         router.back(); // Close modal
         setLoader(false);
       }
@@ -180,7 +179,6 @@ export function UserProvider({ children }: ContextProps) {
       await apiFetch("/api/v1/auth/logout");
       setAuthState({ loading: true, authenticated: null });
       await SecureStore.deleteItemAsync("user");
-      notifySuccess(i18n.t("toast.success.logout"));
     } catch (err: any) {
       console.error("Logout error:", err);
       notifyError(i18n.t("toast.error"));

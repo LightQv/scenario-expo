@@ -170,7 +170,7 @@ export default function WatchlistIndexScreen() {
           />
         }
         contentContainerStyle={{
-          paddingTop: TOKENS.margin.horizontal,
+          paddingTop: TOKENS.margin.horizontal - 12,
           paddingBottom: Platform.select({
             android: 100 + insets.bottom,
             default: 20,

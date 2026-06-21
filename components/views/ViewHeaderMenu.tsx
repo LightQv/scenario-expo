@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { ContextMenu, Host, Image, Picker } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import { buttonStyle } from "@expo/ui/swift-ui/modifiers";
@@ -77,7 +77,7 @@ export default function ViewHeaderMenu({
 
   return (
     <Host style={styles.container}>
-      <ContextMenu modifiers={[buttonStyle("glass")]}>
+      <ContextMenu modifiers={[buttonStyle("plain")]}>
         <ContextMenu.Items>
           <Picker
             label={i18n.t("filter.genre.title")}
@@ -99,11 +99,7 @@ export default function ViewHeaderMenu({
           />
         </ContextMenu.Items>
         <ContextMenu.Trigger>
-          <View>
-            <Host style={{ width: 14, height: 22 }}>
-              <Image systemName="ellipsis" color={colors.text} />
-            </Host>
-          </View>
+          <Image systemName="ellipsis" />
         </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
@@ -112,7 +108,8 @@ export default function ViewHeaderMenu({
 
 const styles = StyleSheet.create({
   container: {
-    height: 34,
-    width: 28,
+    height: 26,
+    width: 20,
+    marginLeft: 8,
   },
 });
