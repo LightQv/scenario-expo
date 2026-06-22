@@ -31,6 +31,20 @@ type BackgroundCandidate = {
   source: string;
   background: string;
   mood: PaletteMood;
+  context: PaletteContext;
+};
+
+type PaletteFamily =
+  | "purpleNeon"
+  | "coolShadow"
+  | "warmAmber"
+  | "oliveHaze"
+  | "neutralDark";
+
+type PaletteContext = {
+  family: PaletteFamily;
+  hasPurpleAccent: boolean;
+  hasCoolAccent: boolean;
 };
 
 const detailPaletteCache = new Map<string, DetailPalette>();
@@ -193,8 +207,14 @@ function pickReadableBackground(
   isDark: boolean,
   mood: PaletteMood,
 ): string | null {
-  const candidates = getBackgroundCandidates(colors)
-    .map((color) => createBackgroundCandidate(color, isDark, mood))
+  const rawCandidates = getBackgroundCandidates(colors);
+  const context = getPaletteContext(rawCandidates);
+  const shadowCandidates = rawCandidates.filter(isShadowSourceColor);
+  const backgroundSources = shadowCandidates.length > 0 ? shadowCandidates : rawCandidates;
+  const candidates = backgroundSources
+    .map((color) =>
+      createBackgroundCandidate(color, isDark, mood, context),
+    )
     .filter((candidate): candidate is BackgroundCandidate =>
       Boolean(candidate),
     );
@@ -224,6 +244,67 @@ function getBackgroundCandidates(colors: ImageColorsResult): string[] {
   return candidates.filter((color): color is string =>
     Boolean(normalizeHex(color)),
   );
+}
+
+function getPaletteContext(colors: string[]): PaletteContext {
+  const hsls = colors
+    .map((color) => hexToHsl(color))
+    .filter((hsl): hsl is Hsl => Boolean(hsl));
+
+  if (hsls.length === 0) {
+    return {
+      family: "neutralDark",
+      hasPurpleAccent: false,
+      hasCoolAccent: false,
+    };
+  }
+
+  const purpleColors = hsls.filter(isPurpleNeon);
+  const coolColors = hsls.filter(isCoolShadow);
+  const warmColors = hsls.filter(isWarmAmber);
+  const oliveColors = hsls.filter(isOliveWash);
+  const darkNeutralColors = hsls.filter(
+    (hsl) => hsl.l <= 0.28 && hsl.s < 0.12,
+  );
+  const hasPurpleAccent = purpleColors.length > 0;
+  const hasCoolAccent = coolColors.length > 0;
+  let family: PaletteFamily = "coolShadow";
+
+  if (purpleColors.length > 0 && getFamilyWeight(purpleColors) >= 0.42) {
+    family = "purpleNeon";
+  } else if (
+    coolColors.length > 0 &&
+    getFamilyWeight(coolColors) >= getFamilyWeight(oliveColors) * 0.78
+  ) {
+    family = "coolShadow";
+  } else if (
+    warmColors.length > 0 &&
+    getFamilyWeight(warmColors) > getFamilyWeight(coolColors) * 1.2
+  ) {
+    family = "warmAmber";
+  } else if (
+    oliveColors.length > 0 &&
+    coolColors.length === 0 &&
+    purpleColors.length === 0
+  ) {
+    family = "oliveHaze";
+  } else if (darkNeutralColors.length > 0) {
+    family = "neutralDark";
+  }
+
+  return {
+    family,
+    hasPurpleAccent,
+    hasCoolAccent,
+  };
+}
+
+function getFamilyWeight(hsls: Hsl[]): number {
+  return hsls.reduce((total, hsl) => {
+    const depth = 1 - clamp(hsl.l, 0, 0.72) / 0.72;
+
+    return total + hsl.s * 0.72 + depth * 0.28;
+  }, 0);
 }
 
 function getPaletteMood(colors: ImageColorsResult): PaletteMood {
@@ -296,8 +377,9 @@ function createBackgroundCandidate(
   color: string,
   isDark: boolean,
   mood: PaletteMood,
+  context: PaletteContext,
 ): BackgroundCandidate | null {
-  const background = deriveBackground(color, isDark, mood);
+  const background = deriveBackground(color, isDark, mood, context);
 
   if (!background) {
     return null;
@@ -307,6 +389,7 @@ function createBackgroundCandidate(
     source: color,
     background,
     mood,
+    context,
   };
 }
 
@@ -336,6 +419,8 @@ function scoreBackgroundCandidate(candidate: BackgroundCandidate): number {
   const neonPenalty = hsl.s > 0.56 && hsl.l > 0.26 ? 18 : 0;
   const washedPenalty = hsl.l > 0.24 && hsl.s < 0.2 ? 24 : 0;
   const oliveWashPenalty = isOliveWash(hsl) ? 26 : 0;
+  const familyScore = getPaletteFamilyScore(candidate.context, hsl, sourceHsl);
+  const lightSourcePenalty = isBrightLightSource(sourceHsl) ? 34 : 0;
   const skinTonePenalty =
     isSkinToneLike(sourceHsl) && sourceHsl.l > 0.24 ? 18 : 0;
 
@@ -345,6 +430,7 @@ function scoreBackgroundCandidate(candidate: BackgroundCandidate): number {
     saturationScore +
     darkSourceBonus +
     deepBackgroundBonus +
+    familyScore +
     neutralBonus -
     weakColorPenalty -
     grayPenalty -
@@ -352,14 +438,63 @@ function scoreBackgroundCandidate(candidate: BackgroundCandidate): number {
     neonPenalty -
     washedPenalty -
     oliveWashPenalty -
+    lightSourcePenalty -
     skinTonePenalty
   );
+}
+
+function getPaletteFamilyScore(
+  context: PaletteContext,
+  hsl: Hsl,
+  sourceHsl: Hsl,
+): number {
+  const sourceOrBackground = [hsl, sourceHsl];
+  const { family } = context;
+
+  if (family === "purpleNeon" || context.hasPurpleAccent) {
+    return sourceOrBackground.some(isPurpleNeon)
+      ? 38
+      : sourceOrBackground.some(isIndigoShadow)
+        ? 28
+        : sourceOrBackground.some(isCoolShadow)
+          ? 4
+          : isOliveWash(hsl)
+            ? -46
+            : 0;
+  }
+
+  if (family === "coolShadow") {
+    return sourceOrBackground.some(isCoolShadow)
+      ? 34
+      : isOliveWash(hsl)
+        ? -34
+        : sourceOrBackground.some(isPurpleNeon)
+          ? 10
+          : 0;
+  }
+
+  if (family === "warmAmber") {
+    return sourceOrBackground.some(isWarmAmber)
+      ? 30
+      : sourceOrBackground.some(isCoolShadow)
+        ? 6
+        : isOliveWash(hsl)
+          ? -16
+          : 0;
+  }
+
+  if (family === "oliveHaze") {
+    return isOliveWash(hsl) ? 8 : 0;
+  }
+
+  return hsl.l <= 0.22 && hsl.s < 0.18 ? 18 : 0;
 }
 
 function deriveBackground(
   color: string,
   isDark: boolean,
   mood: PaletteMood,
+  context: PaletteContext,
 ): string | null {
   const hsl = hexToHsl(color);
 
@@ -375,10 +510,11 @@ function deriveBackground(
     lightnessBounds.min,
     lightnessBounds.max,
   );
+  const gradedHsl = gradeShadowHue(hsl, context);
   const sourceLike = hslToHex({
-    h: hsl.h,
+    h: gradedHsl.h,
     s: clamp(
-      hsl.s * getBackgroundSaturationScale(mood),
+      gradedHsl.s * getBackgroundSaturationScale(mood),
       saturationBounds.min,
       saturationBounds.max,
     ),
@@ -393,8 +529,8 @@ function deriveBackground(
   }
 
   const softened = hslToHex({
-    h: hsl.h,
-    s: clamp(hsl.s * 0.9, saturationBounds.min, saturationBounds.max),
+    h: gradedHsl.h,
+    s: clamp(gradedHsl.s * 0.9, saturationBounds.min, saturationBounds.max),
     l: clamp(
       sourceLikeLightness - 0.025,
       lightnessBounds.min,
@@ -486,11 +622,70 @@ function isSkinToneLike(hsl: Hsl): boolean {
 function isOliveWash(hsl: Hsl): boolean {
   return (
     hsl.h >= 0.12 &&
-    hsl.h <= 0.2 &&
-    hsl.s >= 0.14 &&
+    hsl.h <= 0.22 &&
+    hsl.s >= 0.1 &&
     hsl.s <= 0.34 &&
-    hsl.l > 0.2
+    hsl.l > 0.16
   );
+}
+
+function isShadowSourceColor(color: string): boolean {
+  const hsl = hexToHsl(color);
+
+  if (!hsl || isSkinToneLike(hsl) || isBrightLightSource(hsl)) {
+    return false;
+  }
+
+  if (isPurpleNeon(hsl)) {
+    return hsl.l <= 0.46;
+  }
+
+  return hsl.l <= 0.38;
+}
+
+function isBrightLightSource(hsl: Hsl): boolean {
+  return hsl.s >= 0.24 && hsl.l >= 0.42;
+}
+
+function isPurpleNeon(hsl: Hsl): boolean {
+  return (
+    ((hsl.h >= 0.68 && hsl.h <= 0.88) || hsl.h >= 0.92 || hsl.h <= 0.02) &&
+    hsl.s >= 0.24 &&
+    hsl.l >= 0.08 &&
+    hsl.l <= 0.56
+  );
+}
+
+function isCoolShadow(hsl: Hsl): boolean {
+  return hsl.h >= 0.45 && hsl.h <= 0.68 && hsl.s >= 0.06 && hsl.l <= 0.34;
+}
+
+function isIndigoShadow(hsl: Hsl): boolean {
+  return hsl.h >= 0.58 && hsl.h <= 0.78 && hsl.s >= 0.08 && hsl.l <= 0.36;
+}
+
+function isWarmAmber(hsl: Hsl): boolean {
+  return hsl.h >= 0.03 && hsl.h <= 0.12 && hsl.s >= 0.12 && hsl.l <= 0.48;
+}
+
+function gradeShadowHue(hsl: Hsl, context: PaletteContext): Hsl {
+  if (context.hasPurpleAccent && isCoolShadow(hsl)) {
+    return {
+      h: blendHue(hsl.h, 0.72, 0.48),
+      s: clamp(Math.max(hsl.s, 0.18), 0.18, 0.42),
+      l: hsl.l,
+    };
+  }
+
+  if (!context.hasPurpleAccent && context.hasCoolAccent && isOliveWash(hsl)) {
+    return {
+      h: blendHue(hsl.h, 0.56, 0.42),
+      s: clamp(hsl.s * 0.9, 0.1, 0.24),
+      l: hsl.l,
+    };
+  }
+
+  return hsl;
 }
 
 function ensureReadableBackground(background: string): string | null {
