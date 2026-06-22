@@ -1,24 +1,15 @@
-import {
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
-import { GlassView } from "expo-glass-effect";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 import { BUTTON, TOKENS } from "@/constants/theme";
 import { notifyError } from "@/components/toasts/Toast";
-import {
-  useBookmarkContext,
-  useUserContext,
-  useViewContext,
-} from "@/contexts";
+import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
+import LiquidGlassIconButton from "@/components/ui/LiquidGlassIconButton";
 
 type DetailsMediaControlsProps = {
   data: TmdbDetails;
@@ -149,11 +140,22 @@ export default function DetailsMediaControls({
   return (
     <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       {isAuthenticated && (
-        <GlassIconButton
+        <LiquidGlassIconButton
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
+          systemImage={bookmarked ? "bookmark.fill" : "bookmark"}
           active={bookmarked}
           onPress={handleBookmark}
-          palette={palette}
+          tintColor={palette.tint}
+          textColor={palette.text}
+          fallbackBackgroundColor={colorWithAlpha(
+            palette.surface,
+            bookmarked ? 0.76 : 0.58,
+          )}
+          fallbackBorderColor={colorWithAlpha(
+            palette.tint,
+            bookmarked ? 0.7 : 0.45,
+          )}
+          size={48}
         />
       )}
 
@@ -167,47 +169,25 @@ export default function DetailsMediaControls({
       </TouchableOpacity>
 
       {isAuthenticated && (
-        <GlassIconButton
+        <LiquidGlassIconButton
           icon={viewed ? "eye" : "eye-outline"}
+          systemImage={viewed ? "eye.fill" : "eye"}
           active={viewed}
           onPress={handleView}
-          palette={palette}
+          tintColor={palette.tint}
+          textColor={palette.text}
+          fallbackBackgroundColor={colorWithAlpha(
+            palette.surface,
+            viewed ? 0.76 : 0.58,
+          )}
+          fallbackBorderColor={colorWithAlpha(
+            palette.tint,
+            viewed ? 0.7 : 0.45,
+          )}
+          size={48}
         />
       )}
     </View>
-  );
-}
-
-type GlassIconButtonProps = {
-  icon: keyof typeof Ionicons.glyphMap;
-  active: boolean;
-  onPress: () => void;
-  palette: DetailPalette;
-};
-
-function GlassIconButton({ icon, active, onPress, palette }: GlassIconButtonProps) {
-  return (
-    <TouchableOpacity
-      activeOpacity={BUTTON.opacity}
-      onPress={onPress}
-      style={styles.glassButtonWrapper}
-    >
-      <GlassView
-        style={[
-          styles.glassButton,
-          {
-            backgroundColor: colorWithAlpha(palette.surface, active ? 0.76 : 0.58),
-            borderColor: colorWithAlpha(palette.tint, active ? 0.7 : 0.45),
-          },
-        ]}
-      >
-        <Ionicons
-          name={icon}
-          size={22}
-          color={palette.text}
-        />
-      </GlassView>
-    </TouchableOpacity>
   );
 }
 
@@ -220,20 +200,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingTop: 0,
     paddingBottom: 0,
-  },
-  glassButtonWrapper: {
-    width: 44,
-    height: 44,
-    borderRadius: TOKENS.radius.full,
-    overflow: "hidden",
-  },
-  glassButton: {
-    width: "100%",
-    height: "100%",
-    borderRadius: TOKENS.radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: StyleSheet.hairlineWidth,
   },
   trailerButton: {
     width: 84,
