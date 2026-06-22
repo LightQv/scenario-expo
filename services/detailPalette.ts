@@ -211,13 +211,13 @@ function pickReadableBackground(
 function getBackgroundCandidates(colors: ImageColorsResult): string[] {
   const candidates =
     colors.platform === "ios"
-      ? [colors.background, colors.secondary, colors.primary, colors.detail]
+      ? [colors.detail, colors.secondary, colors.background, colors.primary]
       : [
           colors.darkMuted,
+          colors.darkVibrant,
           colors.muted,
           colors.dominant,
           colors.vibrant,
-          colors.darkVibrant,
           colors.lightVibrant,
         ];
 
@@ -240,6 +240,9 @@ function getPaletteMood(colors: ImageColorsResult): PaletteMood {
   );
   const meaningfulColors = hsls.filter(
     (hsl) => hsl.s >= 0.16 && hsl.l >= 0.1 && hsl.l <= 0.78,
+  );
+  const darkCinematicColors = hsls.filter(
+    (hsl) => hsl.s >= 0.12 && hsl.l >= 0.08 && hsl.l <= 0.34,
   );
   const skinToneColors = hsls.filter(isSkinToneLike);
   const averageSaturation =
@@ -266,12 +269,20 @@ function getPaletteMood(colors: ImageColorsResult): PaletteMood {
     return "muted";
   }
 
+  if (darkCinematicColors.length >= 1 && averageSaturation >= 0.12) {
+    return "muted";
+  }
+
   return "neutral";
 }
 
 function hasMeaningfulHueContrast(hsls: Hsl[]): boolean {
   for (let firstIndex = 0; firstIndex < hsls.length; firstIndex += 1) {
-    for (let secondIndex = firstIndex + 1; secondIndex < hsls.length; secondIndex += 1) {
+    for (
+      let secondIndex = firstIndex + 1;
+      secondIndex < hsls.length;
+      secondIndex += 1
+    ) {
       if (getHueDistance(hsls[firstIndex].h, hsls[secondIndex].h) >= 0.12) {
         return true;
       }
@@ -312,26 +323,35 @@ function scoreBackgroundCandidate(candidate: BackgroundCandidate): number {
     clamp(contrast / DETAIL_BACKGROUND_MIN_CONTRAST, 0, 1.35) * 34;
   const targetSaturation = getTargetBackgroundSaturation(candidate.mood);
   const targetLightness = getTargetBackgroundLightness(candidate.mood);
-  const lightnessScore = (1 - Math.abs(hsl.l - targetLightness) / 0.2) * 32;
+  const lightnessScore = (1 - Math.abs(hsl.l - targetLightness) / 0.16) * 38;
   const saturationScore =
-    (1 - Math.abs(hsl.s - targetSaturation) / 0.22) * 18;
-  const neutralBonus = sourceHsl.s < 0.08 ? 14 : 0;
-  const weakColorPenalty = sourceHsl.s < 0.08 && hsl.s > 0.08 ? 26 : 0;
-  const grayPenalty = hsl.s < 0.025 ? 4 : 0;
+    (1 - Math.abs(hsl.s - targetSaturation) / 0.24) * 22;
+  const darkSourceBonus = sourceHsl.l < 0.24 ? 18 : sourceHsl.l < 0.34 ? 8 : 0;
+  const deepBackgroundBonus = hsl.l < 0.19 ? 16 : hsl.l < 0.24 ? 8 : 0;
+  const neutralBonus = sourceHsl.s < 0.08 && sourceHsl.l < 0.26 ? 10 : 0;
+  const weakColorPenalty = sourceHsl.s < 0.08 && hsl.s > 0.08 ? 20 : 0;
+  const grayPenalty = hsl.s < 0.025 && hsl.l > 0.18 ? 8 : 0;
   const vividBackgroundPenalty =
-    candidate.mood === "neutral" && hsl.s > 0.22 ? 18 : 0;
-  const neonPenalty = hsl.s > 0.48 && hsl.l > 0.3 ? 18 : 0;
-  const skinTonePenalty = isSkinToneLike(sourceHsl) ? 24 : 0;
+    candidate.mood === "neutral" && hsl.s > 0.24 ? 18 : 0;
+  const neonPenalty = hsl.s > 0.56 && hsl.l > 0.26 ? 18 : 0;
+  const washedPenalty = hsl.l > 0.24 && hsl.s < 0.2 ? 24 : 0;
+  const oliveWashPenalty = isOliveWash(hsl) ? 26 : 0;
+  const skinTonePenalty =
+    isSkinToneLike(sourceHsl) && sourceHsl.l > 0.24 ? 18 : 0;
 
   return (
     contrastScore +
     lightnessScore +
     saturationScore +
+    darkSourceBonus +
+    deepBackgroundBonus +
     neutralBonus -
     weakColorPenalty -
     grayPenalty -
     vividBackgroundPenalty -
     neonPenalty -
+    washedPenalty -
+    oliveWashPenalty -
     skinTonePenalty
   );
 }
@@ -349,10 +369,20 @@ function deriveBackground(
 
   const saturationBounds = getBackgroundSaturationBounds(hsl, mood);
   const lightnessBounds = getBackgroundLightnessBounds(isDark, mood);
+  const targetLightness = getTargetBackgroundLightness(mood);
+  const sourceLikeLightness = clamp(
+    Math.min(hsl.l * 0.72, targetLightness + 0.025),
+    lightnessBounds.min,
+    lightnessBounds.max,
+  );
   const sourceLike = hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.82, saturationBounds.min, saturationBounds.max),
-    l: clamp(hsl.l, lightnessBounds.min, lightnessBounds.max),
+    s: clamp(
+      hsl.s * getBackgroundSaturationScale(mood),
+      saturationBounds.min,
+      saturationBounds.max,
+    ),
+    l: sourceLikeLightness,
   });
 
   if (
@@ -364,8 +394,12 @@ function deriveBackground(
 
   const softened = hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.62, saturationBounds.min, saturationBounds.max),
-    l: clamp(hsl.l, lightnessBounds.min, lightnessBounds.max),
+    s: clamp(hsl.s * 0.9, saturationBounds.min, saturationBounds.max),
+    l: clamp(
+      sourceLikeLightness - 0.025,
+      lightnessBounds.min,
+      lightnessBounds.max,
+    ),
   });
 
   return ensureReadableBackground(softened) || sourceLike;
@@ -380,18 +414,18 @@ function getBackgroundSaturationBounds(
   }
 
   if (isSkinToneLike(hsl)) {
-    return { min: 0.025, max: 0.09 };
+    return { min: 0.035, max: 0.14 };
   }
 
   if (mood === "vibrant") {
-    return { min: 0.18, max: 0.58 };
+    return { min: 0.24, max: 0.64 };
   }
 
   if (mood === "muted") {
-    return { min: 0.055, max: 0.26 };
+    return { min: 0.12, max: 0.36 };
   }
 
-  return { min: 0.035, max: 0.18 };
+  return { min: 0.055, max: 0.22 };
 }
 
 function getBackgroundLightnessBounds(
@@ -399,42 +433,64 @@ function getBackgroundLightnessBounds(
   mood: PaletteMood,
 ): { min: number; max: number } {
   if (mood === "vibrant") {
-    return { min: isDark ? 0.12 : 0.14, max: isDark ? 0.3 : 0.32 };
+    return { min: isDark ? 0.085 : 0.1, max: isDark ? 0.24 : 0.26 };
   }
 
   if (mood === "muted") {
-    return { min: isDark ? 0.13 : 0.15, max: isDark ? 0.31 : 0.33 };
+    return { min: isDark ? 0.085 : 0.1, max: isDark ? 0.235 : 0.255 };
   }
 
-  return { min: isDark ? 0.12 : 0.14, max: isDark ? 0.28 : 0.3 };
+  return { min: isDark ? 0.08 : 0.095, max: isDark ? 0.22 : 0.24 };
+}
+
+function getBackgroundSaturationScale(mood: PaletteMood): number {
+  if (mood === "vibrant") {
+    return 1.14;
+  }
+
+  if (mood === "muted") {
+    return 1.04;
+  }
+
+  return 0.92;
 }
 
 function getTargetBackgroundSaturation(mood: PaletteMood): number {
   if (mood === "vibrant") {
-    return 0.42;
+    return 0.48;
   }
 
   if (mood === "muted") {
-    return 0.18;
+    return 0.26;
   }
 
-  return 0.12;
+  return 0.16;
 }
 
 function getTargetBackgroundLightness(mood: PaletteMood): number {
   if (mood === "vibrant") {
-    return 0.22;
+    return 0.155;
   }
 
   if (mood === "muted") {
-    return 0.22;
+    return 0.15;
   }
 
-  return 0.2;
+  return 0.135;
 }
 
 function isSkinToneLike(hsl: Hsl): boolean {
-  return hsl.h >= 0.035 && hsl.h <= 0.13 && hsl.s >= 0.12 && hsl.l >= 0.18;
+  return hsl.h >= 0.035 && hsl.h <= 0.13 && hsl.s >= 0.14 && hsl.l >= 0.22;
+}
+
+function isOliveWash(hsl: Hsl): boolean {
+  return (
+    hsl.h >= 0.12 &&
+    hsl.h <= 0.2 &&
+    hsl.s >= 0.14 &&
+    hsl.s <= 0.34 &&
+    hsl.l > 0.2
+  );
 }
 
 function ensureReadableBackground(background: string): string | null {
@@ -457,7 +513,7 @@ function ensureReadableBackground(background: string): string | null {
 
     candidateHsl = {
       ...candidateHsl,
-      l: clamp(candidateHsl.l - 0.025, 0.14, 1),
+      l: clamp(candidateHsl.l - 0.025, 0.08, 1),
     };
     candidate = hslToHex(candidateHsl);
   }
@@ -475,13 +531,13 @@ function deriveSurface(color: string, mood: PaletteMood): string | null {
     return null;
   }
 
-  const maxSaturation = mood === "vibrant" ? 0.5 : mood === "muted" ? 0.24 : 0.16;
-  const lightnessBoost = mood === "vibrant" ? 0.045 : mood === "muted" ? 0.045 : 0.035;
+  const maxSaturation = mood === "vibrant" ? 0.54 : mood === "muted" ? 0.34 : 0.22;
+  const lightnessBoost = mood === "vibrant" ? 0.035 : mood === "muted" ? 0.035 : 0.03;
 
   return hslToHex({
     h: hsl.h,
-    s: clamp(hsl.s * 0.85, 0.025, maxSaturation),
-    l: clamp(hsl.l + lightnessBoost, 0.16, mood === "vibrant" ? 0.36 : 0.34),
+    s: clamp(hsl.s * 0.95, 0.035, maxSaturation),
+    l: clamp(hsl.l + lightnessBoost, 0.12, mood === "vibrant" ? 0.3 : 0.28),
   });
 }
 
@@ -492,14 +548,14 @@ function deriveTint(color: string, mood: PaletteMood): string | null {
     return null;
   }
 
-  const minSaturation = mood === "vibrant" ? 0.12 : mood === "muted" ? 0.07 : 0.04;
-  const maxSaturation = mood === "vibrant" ? 0.72 : mood === "muted" ? 0.34 : 0.22;
-  const lightnessBoost = mood === "vibrant" ? 0.09 : mood === "muted" ? 0.095 : 0.075;
+  const minSaturation = mood === "vibrant" ? 0.18 : mood === "muted" ? 0.12 : 0.06;
+  const maxSaturation = mood === "vibrant" ? 0.76 : mood === "muted" ? 0.44 : 0.28;
+  const lightnessBoost = mood === "vibrant" ? 0.07 : mood === "muted" ? 0.065 : 0.055;
 
   return hslToHex({
     h: hsl.h,
     s: clamp(hsl.s * 1.08, minSaturation, maxSaturation),
-    l: clamp(hsl.l + lightnessBoost, 0.2, mood === "vibrant" ? 0.44 : 0.4),
+    l: clamp(hsl.l + lightnessBoost, 0.16, mood === "vibrant" ? 0.36 : 0.32),
   });
 }
 
