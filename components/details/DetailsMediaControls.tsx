@@ -9,7 +9,6 @@ import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
-import LiquidGlassIconButton from "@/components/ui/LiquidGlassIconButton";
 
 type DetailsMediaControlsProps = {
   data: TmdbDetails;
@@ -140,22 +139,10 @@ export default function DetailsMediaControls({
   return (
     <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       {isAuthenticated && (
-        <LiquidGlassIconButton
+        <DetailIconButton
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
-          systemImage={bookmarked ? "bookmark.fill" : "bookmark"}
-          active={bookmarked}
           onPress={handleBookmark}
-          tintColor={palette.tint}
-          textColor={palette.text}
-          fallbackBackgroundColor={colorWithAlpha(
-            palette.surface,
-            bookmarked ? 0.76 : 0.58,
-          )}
-          fallbackBorderColor={colorWithAlpha(
-            palette.tint,
-            bookmarked ? 0.7 : 0.45,
-          )}
-          size={48}
+          palette={palette}
         />
       )}
 
@@ -169,25 +156,37 @@ export default function DetailsMediaControls({
       </TouchableOpacity>
 
       {isAuthenticated && (
-        <LiquidGlassIconButton
+        <DetailIconButton
           icon={viewed ? "eye" : "eye-outline"}
-          systemImage={viewed ? "eye.fill" : "eye"}
-          active={viewed}
           onPress={handleView}
-          tintColor={palette.tint}
-          textColor={palette.text}
-          fallbackBackgroundColor={colorWithAlpha(
-            palette.surface,
-            viewed ? 0.76 : 0.58,
-          )}
-          fallbackBorderColor={colorWithAlpha(
-            palette.tint,
-            viewed ? 0.7 : 0.45,
-          )}
-          size={48}
+          palette={palette}
         />
       )}
     </View>
+  );
+}
+
+type DetailIconButtonProps = {
+  icon: keyof typeof Ionicons.glyphMap;
+  onPress: () => void;
+  palette: DetailPalette;
+};
+
+function DetailIconButton({ icon, onPress, palette }: DetailIconButtonProps) {
+  return (
+    <TouchableOpacity
+      activeOpacity={BUTTON.opacity}
+      onPress={onPress}
+      style={[
+        styles.iconButton,
+        {
+          backgroundColor: colorWithAlpha(palette.text, 0.06),
+          borderColor: colorWithAlpha(palette.text, 0.25),
+        },
+      ]}
+    >
+      <Ionicons name={icon} size={25} color={palette.text} />
+    </TouchableOpacity>
   );
 }
 
@@ -196,10 +195,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 14,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingTop: 0,
-    paddingBottom: 0,
+    paddingBottom: 8,
+  },
+  iconButton: {
+    width: 48,
+    height: 48,
+    borderRadius: TOKENS.radius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
   },
   trailerButton: {
     width: 84,
