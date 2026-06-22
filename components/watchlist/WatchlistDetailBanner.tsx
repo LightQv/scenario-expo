@@ -14,7 +14,7 @@ import { colorWithAlpha } from "@/services/detailPalette";
 import i18n from "@/services/i18n";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 600;
+const BANNER_HEIGHT = 530;
 
 type WatchlistDetailBannerProps = {
   medias: APIMedia[];
@@ -142,7 +142,7 @@ export default function WatchlistDetailBanner({
             colorWithAlpha(fadeBackgroundColor, 0.96),
             fadeBackgroundColor,
           ]}
-          locations={[0, 0.44, 0.58, 0.7, 0.82, 0.92, 1]}
+          locations={[0, 0.38, 0.52, 0.66, 0.8, 0.92, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -167,9 +167,11 @@ export default function WatchlistDetailBanner({
           <Text style={[styles.title, { color: textColor }]} numberOfLines={2}>
             {displayTitle}
           </Text>
-          <View style={[styles.countPill, { backgroundColor: pillBackgroundColor }]}> 
-            <Text style={[styles.countText, { color: textColor }]}> 
-              {mediaCount} {" "}
+          <View
+            style={[styles.countPill, { backgroundColor: pillBackgroundColor }]}
+          >
+            <Text style={[styles.countText, { color: textColor }]}>
+              {mediaCount}{" "}
               {mediaCount > 1
                 ? i18n.t("screen.watchlist.count.plurial")
                 : i18n.t("screen.watchlist.count.singular")}
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: TOKENS.margin.horizontal,
-    paddingBottom: 40,
+    paddingBottom: 24,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
