@@ -10,7 +10,6 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { BLURHASH, BUTTON, FONTS, TOKENS } from "@/constants/theme";
 import { useDownloadRequestContext } from "@/contexts";
-import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
 
 const ACTIVE_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
@@ -37,87 +36,88 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
   const progress = getProgress(data);
   const canCancel = ACTIVE_DOWNLOAD_STATUSES.includes(data.status);
   const canRetry = RETRYABLE_DOWNLOAD_STATUSES.includes(data.status);
+  const action = canRetry
+    ? {
+        icon: "refresh" as const,
+        label: i18n.t("screen.downloads.actions.retry"),
+        onPress: () => retryRequest(data.id),
+      }
+    : canCancel
+      ? {
+          icon: "close" as const,
+          label: i18n.t("screen.downloads.actions.cancel"),
+          onPress: () => cancelRequest(data.id),
+        }
+      : null;
 
   return (
     <View style={styles.container}>
-      <Link
-        href={{
-          pathname: "/details/[id]",
-          params: { type: data.media_type, id: data.tmdb_id.toString() },
-        }}
-        asChild
-        push
-      >
-        <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.content}>
-          <View style={styles.posterContainer}>
-            <Image
-              source={{ uri: `https://image.tmdb.org/t/p/w342/${data.poster_path}` }}
-              alt={data.title}
-              style={styles.poster}
-              contentFit="cover"
-              placeholder={BLURHASH.hash}
-              transition={BLURHASH.transition}
-            />
-          </View>
-
-          <View style={styles.textContainer}>
-            <Text style={styles.title} numberOfLines={2}>
-              {data.title}
-            </Text>
-            <Text style={styles.subtitle} numberOfLines={1}>
-              {formatFullDate(data.release_date)} • {formatRuntime(data.runtime)}
-            </Text>
-            <View style={styles.statusRow}>
-              <Ionicons name={getStatusIcon(data.status)} size={14} color={statusColor} />
-              <Text style={[styles.status, { color: statusColor }]}>
-                {i18n.t(`screen.downloads.status.${data.status}`)}
-                {!!queueSummary && ` · ${queueSummary}`}
-              </Text>
+      <View style={styles.content}>
+        <Link
+          href={{
+            pathname: "/details/[id]",
+            params: { type: data.media_type, id: data.tmdb_id.toString() },
+          }}
+          asChild
+          push
+        >
+          <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.mainContent}>
+            <View style={styles.posterContainer}>
+              <Image
+                source={{ uri: `https://image.tmdb.org/t/p/w342/${data.poster_path}` }}
+                alt={data.title}
+                style={styles.poster}
+                contentFit="cover"
+                placeholder={BLURHASH.hash}
+                transition={BLURHASH.transition}
+              />
             </View>
-            {!!queueDetails && (
-              <Text style={styles.queueDetails} numberOfLines={1}>
-                {queueDetails}
+
+            <View style={styles.textContainer}>
+              <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+                {data.title}
               </Text>
-            )}
-            {progress !== null && (
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: `${progress}%` }]} />
+              <View style={styles.statusRow}>
+                <Ionicons name={getStatusIcon(data.status)} size={14} color={statusColor} />
+                <Text style={[styles.status, { color: statusColor }]}>
+                  {i18n.t(`screen.downloads.status.${data.status}`)}
+                  {!!queueSummary && ` · ${queueSummary}`}
+                </Text>
               </View>
-            )}
-            {!!data.error_message && (
-              <Text style={styles.error} numberOfLines={2}>
-                {data.error_message}
-              </Text>
-            )}
-            {(canCancel || canRetry) && (
-              <View style={styles.actionRow}>
-                {canRetry && (
-                  <TouchableOpacity
-                    activeOpacity={BUTTON.opacity}
-                    style={styles.actionButton}
-                    onPress={() => retryRequest(data.id)}
-                  >
-                    <Text style={styles.actionButtonText}>
-                      {i18n.t("screen.downloads.actions.retry")}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {canCancel && (
-                  <TouchableOpacity
-                    activeOpacity={BUTTON.opacity}
-                    style={[styles.actionButton, styles.cancelButton]}
-                    onPress={() => cancelRequest(data.id)}
-                  >
-                    <Text style={[styles.actionButtonText, styles.cancelButtonText]}>
-                      {i18n.t("screen.downloads.actions.cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-          </View>
-        </TouchableOpacity>
-      </Link>
+              {progress !== null && (
+                <View style={styles.progressTrack}>
+                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                </View>
+              )}
+              {!!queueDetails && (
+                <Text style={styles.queueDetails} numberOfLines={1}>
+                  {queueDetails}
+                </Text>
+              )}
+              {!!data.error_message && (
+                <Text style={styles.error} numberOfLines={2}>
+                  {data.error_message}
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        </Link>
+        {!!action && (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={action.label}
+            activeOpacity={BUTTON.opacity}
+            style={styles.actionButton}
+            onPress={action.onPress}
+          >
+            <Ionicons
+              name={action.icon}
+              size={18}
+              color={PlatformColor("label")}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
@@ -143,23 +143,32 @@ function getQueueSummary(data: DownloadRequest) {
 }
 
 function getQueueDetails(data: DownloadRequest) {
-  const parts = [data.download_client, formatRemainingSize(data.size_left)].filter(Boolean);
+  const parts = [
+    data.download_client,
+    data.status === "available"
+      ? formatSize(data.size)
+      : formatRemainingSize(data.size_left),
+    data.time_left,
+  ].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
 }
 
+function formatSize(size?: number | null) {
+  if (!size || size <= 0) return null;
+
+  const gigabytes = size / 1024 / 1024 / 1024;
+  if (gigabytes >= 1) return `${gigabytes.toFixed(1)} GB`;
+
+  const megabytes = size / 1024 / 1024;
+  return `${Math.max(1, Math.round(megabytes))} MB`;
+}
+
 function formatRemainingSize(sizeLeft?: number | null) {
-  if (!sizeLeft || sizeLeft <= 0) return null;
+  const size = formatSize(sizeLeft);
+  if (!size) return null;
 
-  const gigabytes = sizeLeft / 1024 / 1024 / 1024;
-  if (gigabytes >= 1) {
-    return i18n.t("screen.downloads.remaining", {
-      size: `${gigabytes.toFixed(1)} GB`,
-    });
-  }
-
-  const megabytes = sizeLeft / 1024 / 1024;
   return i18n.t("screen.downloads.remaining", {
-    size: `${Math.max(1, Math.round(megabytes))} MB`,
+    size,
   });
 }
 
@@ -191,8 +200,13 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: TOKENS.margin.horizontal,
     paddingRight: 8,
+  },
+  mainContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: TOKENS.margin.horizontal,
   },
   posterContainer: {
     width: 70,
@@ -218,12 +232,6 @@ const styles = StyleSheet.create({
     fontSize: TOKENS.font.xxl,
     fontFamily: FONTS.bold,
     lineHeight: 22,
-  },
-  subtitle: {
-    color: PlatformColor("secondaryLabel"),
-    fontSize: TOKENS.font.md,
-    fontFamily: FONTS.regular,
-    lineHeight: 18,
   },
   statusRow: {
     flexDirection: "row",
@@ -252,28 +260,11 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
     backgroundColor: PlatformColor("systemOrange"),
   },
-  actionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 2,
-  },
   actionButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: TOKENS.radius.full,
-    backgroundColor: PlatformColor("systemGray5"),
-  },
-  cancelButton: {
-    backgroundColor: PlatformColor("systemRed"),
-  },
-  actionButtonText: {
-    color: PlatformColor("label"),
-    fontSize: TOKENS.font.sm,
-    fontFamily: FONTS.medium,
-  },
-  cancelButtonText: {
-    color: "#fff",
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   error: {
     color: PlatformColor("secondaryLabel"),
