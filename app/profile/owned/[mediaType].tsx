@@ -1,11 +1,12 @@
 import {
+  Dimensions,
   StyleSheet,
   View,
-  Text,
   PlatformColor,
   FlatList,
   ListRenderItem,
 } from "react-native";
+import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import {
   useFocusEffect,
   useLocalSearchParams,
@@ -14,7 +15,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import i18n from "@/services/i18n";
 import { useOwnedMediaContext, useThemeContext } from "@/contexts";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { TOKENS } from "@/constants/theme";
 import OwnedMediaCard from "@/components/owned/OwnedMediaCard";
 import OwnedMediaHeaderMenu from "@/components/owned/OwnedMediaHeaderMenu";
 import HeaderTitle from "@/components/ui/HeaderTitle";
@@ -23,6 +24,15 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import OwnedMediaSyncStatusCard from "@/components/profile/OwnedMediaSyncStatusCard";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const CONTENT_TOP_PADDING = 200;
+const CONTENT_BOTTOM_PADDING = 86;
+const HEADER_BLOCK_HEIGHT = 168;
+const EMPTY_STATE_HEIGHT = Math.max(
+  240,
+  SCREEN_HEIGHT - CONTENT_TOP_PADDING - CONTENT_BOTTOM_PADDING - HEADER_BLOCK_HEIGHT,
+);
 
 export default function OwnedMediaTypeScreen() {
   const { mediaType } = useLocalSearchParams<{ mediaType: string }>();
@@ -152,11 +162,13 @@ export default function OwnedMediaTypeScreen() {
     if (isLoading) return <FullScreenLoader />;
 
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
-          {i18n.t("screen.profile.owned.empty")}
-        </Text>
-      </View>
+      <Host style={styles.emptyContainer}>
+        <ContentUnavailableView
+          systemImage="film.stack"
+          title={i18n.t("screen.profile.owned.emptyState.title")}
+          description={i18n.t("screen.profile.owned.emptyState.body")}
+        />
+      </Host>
     );
   };
 
@@ -201,22 +213,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingTop: 200,
-    paddingBottom: 86,
+    paddingTop: CONTENT_TOP_PADDING,
+    paddingBottom: CONTENT_BOTTOM_PADDING,
   },
   syncStatusContainer: {
     paddingHorizontal: TOKENS.margin.horizontal,
     marginBottom: 18,
   },
   emptyContainer: {
-    flex: 1,
+    height: EMPTY_STATE_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 50,
-  },
-  emptyText: {
-    fontFamily: FONTS.medium,
-    fontSize: TOKENS.font.md,
-    textAlign: "center",
+    paddingHorizontal: TOKENS.margin.horizontal,
   },
 });

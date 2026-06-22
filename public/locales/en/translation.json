@@ -396,6 +396,10 @@
       "title": "Watchlists",
       "subtitle": "Find here every watchlist you've created.",
       "empty": "No watchlists yet.\nCreate one using the menu above.",
+      "emptyState": {
+        "title": "No Watchlists",
+        "body": "Your To Watch list should appear here. Pull to refresh."
+      },
       "system": {
         "title": "To Watch"
       },
@@ -483,7 +487,11 @@
           "movie": "Available Movies",
           "default": "Available Media"
         },
-        "empty": "No available movie yet"
+        "empty": "No available movie yet",
+        "emptyState": {
+          "title": "No Available Movies",
+          "body": "Sync your library to show available movies here."
+        }
       },
       "settings": {
         "header": "Settings",

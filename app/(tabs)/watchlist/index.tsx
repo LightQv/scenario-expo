@@ -1,4 +1,5 @@
 import {
+  Dimensions,
   StyleSheet,
   View,
   FlatList,
@@ -7,8 +8,8 @@ import {
   ListRenderItem,
   Platform,
   Animated,
-  Text,
 } from "react-native";
+import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import {
   useState,
@@ -41,6 +42,10 @@ const SORT_OPTIONS: { value: SortType; label: string }[] = [
   { value: "count_asc", label: i18n.t("screen.watchlist.sort.itemsAsc") },
   { value: "count_desc", label: i18n.t("screen.watchlist.sort.itemsDesc") },
 ];
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const CONTENT_TOP_PADDING = TOKENS.margin.horizontal - 12;
+const WATCHLIST_HEADER_BLOCK_HEIGHT = 120;
 
 export default function WatchlistIndexScreen() {
   const insets = useSafeAreaInsets();
@@ -132,14 +137,22 @@ export default function WatchlistIndexScreen() {
   // Empty state
   const renderEmpty = () => {
     if (loading || authState.loading) return null;
+    const emptyStateHeight = Math.max(
+      260,
+      SCREEN_HEIGHT -
+        CONTENT_TOP_PADDING -
+        WATCHLIST_HEADER_BLOCK_HEIGHT -
+        insets.bottom,
+    );
+
     return (
-      <View style={styles.emptyContainer}>
-        <Text
-          style={[styles.emptyText, { color: PlatformColor("secondaryLabel") }]}
-        >
-          {i18n.t("screen.watchlist.empty")}
-        </Text>
-      </View>
+      <Host style={[styles.emptyContainer, { height: emptyStateHeight }]}>
+        <ContentUnavailableView
+          systemImage="list.bullet.rectangle.portrait"
+          title={i18n.t("screen.watchlist.emptyState.title")}
+          description={i18n.t("screen.watchlist.emptyState.body")}
+        />
+      </Host>
     );
   };
 
@@ -191,7 +204,7 @@ export default function WatchlistIndexScreen() {
           />
         }
         contentContainerStyle={{
-          paddingTop: TOKENS.margin.horizontal - 12,
+          paddingTop: CONTENT_TOP_PADDING,
           paddingBottom: Platform.select({
             android: 100 + insets.bottom,
             default: 20,
@@ -221,13 +234,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   emptyContainer: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 100,
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: "center",
+    paddingHorizontal: TOKENS.margin.horizontal,
   },
 });

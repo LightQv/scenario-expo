@@ -5,7 +5,7 @@ import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import DownloadRequestCard from "@/components/downloads/DownloadRequestCard";
 import GoBackButton from "@/components/ui/GoBackButton";
 import HeaderTitle from "@/components/ui/HeaderTitle";
-import { FONTS, TOKENS } from "@/constants/theme";
+import { TOKENS } from "@/constants/theme";
 import { useDownloadRequestContext } from "@/contexts";
 import i18n from "@/services/i18n";
 
@@ -14,7 +14,13 @@ const CONTENT_TOP_PADDING = 200;
 const CONTENT_BOTTOM_PADDING = 86;
 const HEADER_BLOCK_HEIGHT = 80;
 const EMPTY_STATE_HEIGHT =
-  SCREEN_HEIGHT - CONTENT_TOP_PADDING - CONTENT_BOTTOM_PADDING - HEADER_BLOCK_HEIGHT;
+  Math.max(
+    240,
+    SCREEN_HEIGHT -
+      CONTENT_TOP_PADDING -
+      CONTENT_BOTTOM_PADDING -
+      HEADER_BLOCK_HEIGHT,
+  );
 const ACTIVE_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
   "requested",
   "sent_to_radarr",
