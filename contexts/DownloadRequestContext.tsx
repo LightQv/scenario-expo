@@ -4,12 +4,14 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import { useUserContext } from "./UserContext";
+import { useOwnedMediaContext } from "./OwnedMediaContext";
 
 interface DownloadRequestContextValue {
   requests: DownloadRequest[];
@@ -43,9 +45,11 @@ export function useDownloadRequestContext() {
 
 export function DownloadRequestProvider({ children }: ContextProps) {
   const { authState } = useUserContext();
+  const { refreshOwnedMedia } = useOwnedMediaContext();
   const [requests, setRequests] = useState<DownloadRequest[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [requestingTmdbIds, setRequestingTmdbIds] = useState<number[]>([]);
+  const availableRequestIdsRef = useRef<Set<string>>(new Set());
 
   const refreshRequests = useCallback(async () => {
     if (!authState.authenticated) {
@@ -187,8 +191,29 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       refreshRequests();
     } else {
       setRequests([]);
+      availableRequestIdsRef.current.clear();
     }
   }, [authState.authenticated, refreshRequests]);
+
+  useEffect(() => {
+    if (!authState.authenticated) return;
+
+    const availableRequestIds = requests
+      .filter((request) => request.status === "available")
+      .map((request) => request.id);
+
+    const hasNewAvailableRequest = availableRequestIds.some(
+      (requestId) => !availableRequestIdsRef.current.has(requestId),
+    );
+
+    if (!hasNewAvailableRequest) return;
+
+    availableRequestIds.forEach((requestId) => {
+      availableRequestIdsRef.current.add(requestId);
+    });
+
+    refreshOwnedMedia();
+  }, [authState.authenticated, refreshOwnedMedia, requests]);
 
   const value = useMemo(
     () => ({
