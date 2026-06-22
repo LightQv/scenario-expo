@@ -140,6 +140,8 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.sm,
     overflow: "hidden",
     backgroundColor: PlatformColor("systemGray5"),
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PlatformColor("separator"),
   },
   poster: {
     width: "100%",

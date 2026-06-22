@@ -190,6 +190,8 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: TOKENS.radius.sm,
     overflow: "hidden",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PlatformColor("separator"),
   },
   thumbnail: {
     width: "100%",
