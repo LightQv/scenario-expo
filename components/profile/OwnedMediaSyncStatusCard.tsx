@@ -27,8 +27,12 @@ export default function OwnedMediaSyncStatusCard({
       ]}
     >
       <View style={styles.copyContainer}>
-        <Text style={[styles.title, { color: PlatformColor("label") }]}>
-          {i18n.t("screen.profile.syncStatus.title")}
+        <Text style={[styles.title, { color: PlatformColor("label") }]}> 
+          {i18n.t(
+            syncStatus?.media_type === "tv"
+              ? "screen.profile.syncStatus.tvTitle"
+              : "screen.profile.syncStatus.title",
+          )}
         </Text>
         <Text
           numberOfLines={1}

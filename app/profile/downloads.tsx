@@ -1,9 +1,10 @@
-import { Dimensions, FlatList, PlatformColor, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, FlatList, PlatformColor, StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import DownloadRequestCard from "@/components/downloads/DownloadRequestCard";
 import GoBackButton from "@/components/ui/GoBackButton";
+import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import { TOKENS } from "@/constants/theme";
 import { useDownloadRequestContext } from "@/contexts";
@@ -27,13 +28,42 @@ const ACTIVE_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
   "searching",
   "downloading",
 ];
+const TERMINAL_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
+  "available",
+  "failed",
+  "not_found",
+  "cancelled",
+];
 const DOWNLOAD_POLLING_INTERVAL = 5000;
 
 export default function DownloadsScreen() {
-  const { requests, refreshRequests } = useDownloadRequestContext();
+  const { requests, refreshRequests, cleanRequests, cancelAllRequests } = useDownloadRequestContext();
   const hasActiveRequests = requests.some((request) =>
     ACTIVE_DOWNLOAD_STATUSES.includes(request.status),
   );
+  const hasTerminalRequests = requests.some((request) =>
+    TERMINAL_DOWNLOAD_STATUSES.includes(request.status),
+  );
+
+  const handleCancelAllPress = useCallback(() => {
+    Alert.alert(
+      i18n.t("screen.downloads.confirmCancelAll.title"),
+      i18n.t("screen.downloads.confirmCancelAll.body"),
+      [
+        {
+          text: i18n.t("screen.downloads.confirmCancelAll.keep"),
+          style: "cancel",
+        },
+        {
+          text: i18n.t("screen.downloads.confirmCancelAll.confirm"),
+          style: "destructive",
+          onPress: () => {
+            cancelAllRequests();
+          },
+        },
+      ],
+    );
+  }, [cancelAllRequests]);
 
   useFocusEffect(
     useCallback(() => {
@@ -52,6 +82,32 @@ export default function DownloadsScreen() {
   return (
     <View style={styles.container}>
       <GoBackButton />
+      <HeaderActionCapsule
+        actions={[
+          {
+            id: "downloads-actions",
+            icon: "ellipsis",
+            label: i18n.t("screen.downloads.actions.more"),
+            menu: [
+              {
+                id: "clean-downloads",
+                title: i18n.t("screen.downloads.actions.clean"),
+                icon: "trash",
+                disabled: !hasTerminalRequests,
+                onPress: cleanRequests,
+              },
+              {
+                id: "cancel-all-downloads",
+                title: i18n.t("screen.downloads.actions.cancelAll"),
+                icon: "xmark.circle",
+                destructive: true,
+                disabled: !hasActiveRequests,
+                onPress: handleCancelAllPress,
+              },
+            ],
+          },
+        ]}
+      />
       <FlatList
         data={requests}
         keyExtractor={(item) => item.id}

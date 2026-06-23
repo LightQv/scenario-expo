@@ -16,6 +16,8 @@ import i18n from "@/services/i18n";
 type SeasonsSectionProps = {
   title: string;
   seasons: Season[];
+  seasonAvailability?: TvSeasonAvailability[];
+  showAvailabilityBadges?: boolean;
   seriesId: string;
   seriesName: string;
   backgroundColor?: string;
@@ -26,6 +28,8 @@ type SeasonsSectionProps = {
 export default function SeasonsSection({
   title,
   seasons,
+  seasonAvailability = [],
+  showAvailabilityBadges = false,
   seriesId,
   seriesName,
   backgroundColor,
@@ -36,6 +40,13 @@ export default function SeasonsSection({
     const posterUrl = item.poster_path
       ? `https://image.tmdb.org/t/p/w342/${item.poster_path}`
       : null;
+    const availability = seasonAvailability.find(
+      (season) => season.season_number === item.season_number,
+    );
+    const shouldShowAvailability =
+      showAvailabilityBadges &&
+      (item.episode_count || 0) > 0 &&
+      (availability?.status === "available" || availability?.status === "partial");
 
     return (
       <Link
@@ -52,6 +63,16 @@ export default function SeasonsSection({
       >
         <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
           <View style={styles.imageContainer}>
+            {shouldShowAvailability && (
+              <View style={styles.availabilityBadge}>
+                <Text style={styles.availabilityBadgeText}>
+                  {availability?.status === "available"
+                    ? i18n.t("screen.detail.media.available")
+                    : i18n.t("screen.detail.media.partial")}
+                </Text>
+              </View>
+            )}
+
             {posterUrl ? (
               <Image
                 source={{ uri: posterUrl }}
@@ -185,6 +206,7 @@ const styles = StyleSheet.create({
     width: 180,
   },
   imageContainer: {
+    position: "relative",
     width: 180,
     height: 265,
     borderRadius: 12,
@@ -194,6 +216,21 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+  },
+  availabilityBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 2,
+    borderRadius: TOKENS.radius.full,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+  },
+  availabilityBadgeText: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.xs,
+    color: "#fff",
   },
   placeholderImage: {
     justifyContent: "center",

@@ -235,7 +235,8 @@
       },
       "owned": {
         "title": "Disponibles",
-        "movies": "Films"
+        "movies": "Films",
+        "tv": "Séries TV"
       },
       "downloads": {
         "title": "Téléchargements",
@@ -294,6 +295,8 @@
       },
       "download": {
         "action": "Télécharger",
+        "seriesAction": "Télécharger la série",
+        "seasonAction": "Télécharger la saison",
         "requesting": "Demande...",
         "requested": "Demandé",
         "downloading": "Téléchargement",
@@ -306,7 +309,8 @@
       },
       "media": {
         "trailer": "Voir la bande-annonce",
-        "ready": "Disponible",
+        "available": "Disponible",
+        "partial": "Partiel",
         "cast": "Casting",
         "castEmpty": "Aucune information sur le casting",
         "seasons": {
@@ -330,18 +334,33 @@
         "recommandations": "Recommandations"
       }
     },
-    "downloads": {
-      "title": "Téléchargements",
-      "subtitle": "Demandes envoyées à Radarr. La disponibilité se met à jour après import.",
-      "empty": "Aucune demande de téléchargement pour le moment.",
-      "emptyState": {
-        "title": "Aucune demande",
-        "body": "Demandez un film depuis sa fiche et il apparaîtra ici pendant la recherche Radarr."
-      },
-      "remaining": "{{size}} restants",
+      "downloads": {
+        "title": "Téléchargements",
+        "subtitle": "Demandes envoyées à Radarr ou Sonarr. La disponibilité se met à jour après import.",
+        "empty": "Aucune demande de téléchargement pour le moment.",
+        "emptyState": {
+          "title": "Aucune demande",
+          "body": "Demandez un film ou une série depuis sa fiche et il apparaîtra ici pendant la recherche."
+        },
+        "remaining": "{{size}} restants",
+        "scope": {
+          "movie": "Film",
+          "series": "Série",
+          "season": "Saison {{season}}",
+          "episode": "S{{season}} · E{{episode}}"
+        },
       "actions": {
         "retry": "Réessayer",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "more": "Actions de téléchargement",
+        "clean": "Nettoyer les terminés",
+        "cancelAll": "Tout annuler"
+      },
+      "confirmCancelAll": {
+        "title": "Annuler tous les téléchargements ?",
+        "body": "Cela annulera toutes les demandes actives et supprimera les éléments de file correspondants si possible.",
+        "keep": "Garder les téléchargements",
+        "confirm": "Tout annuler"
       },
       "status": {
         "requested": "Demandé",
@@ -486,12 +505,16 @@
       "owned": {
         "header": {
           "movie": "Films disponibles",
+          "tv": "Séries disponibles",
           "default": "Médias disponibles"
         },
         "empty": "Aucun film disponible",
+        "episodeCount": "{{count}} épisodes disponibles",
         "emptyState": {
           "title": "Aucun film disponible",
-          "body": "Synchronisez votre bibliothèque pour afficher les films disponibles ici."
+          "body": "Synchronisez votre bibliothèque pour afficher les films disponibles ici.",
+          "tvTitle": "Aucune série disponible",
+          "tvBody": "Synchronisez votre bibliothèque Sonarr pour afficher les séries disponibles ici."
         }
       },
       "settings": {
@@ -508,10 +531,13 @@
         "editBanner": "Modifier la bannière",
         "editProfile": "Modifier le profil",
         "syncOwnedMovies": "Synchroniser les films possédés",
-        "syncOwnedMoviesRunning": "Synchronisation en cours"
+        "syncOwnedMoviesRunning": "Synchronisation en cours",
+        "syncOwnedTv": "Synchroniser les séries possédées",
+        "syncOwnedTvRunning": "Synchronisation en cours"
       },
       "syncStatus": {
         "title": "Films disponibles",
+        "tvTitle": "Séries disponibles",
         "noSync": "Aucune synchronisation",
         "running": "Synchronisation en cours...",
         "success": "Dernière synchro {{date}}",
@@ -570,7 +596,9 @@
         "syncStarted": "Synchronisation des films possédés lancée"
       },
       "download": {
-        "requested": "Téléchargement demandé"
+        "requested": "Téléchargement demandé",
+        "cleaned": "{{count}} demandes nettoyées",
+        "cancelledAll": "{{count}} téléchargements annulés"
       }
     },
     "error": "Oops, quelque chose a échoué",

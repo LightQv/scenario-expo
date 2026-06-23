@@ -17,6 +17,8 @@ import { StatusBar } from "expo-status-bar";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import { useDownloadRequestContext, useOwnedMediaContext } from "@/contexts";
+import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 
 export default function SeasonDetailScreen() {
   const { colors, isDark } = useThemeContext();
@@ -27,8 +29,31 @@ export default function SeasonDetailScreen() {
     seriesName: string;
   }>();
   const [data, setData] = useState<SeasonDetail | null>(null);
+  const [seasonAvailability, setSeasonAvailability] =
+    useState<TvSeasonAvailability | null>(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const {
+    getRequestForScope,
+    isRequestingKey,
+    refreshRequestStatus,
+    requestSeasonDownload,
+    retryRequest,
+  } = useDownloadRequestContext();
+  const { refreshTvSeasonAvailability } = useOwnedMediaContext();
+  const numericSeriesId = Number(seriesId);
+  const numericSeasonNumber = Number(seasonNumber);
+  const seasonRequest = getRequestForScope(
+    numericSeriesId,
+    "tv",
+    "season",
+    numericSeasonNumber,
+  );
+  const isSeasonRequesting = isRequestingKey(
+    `season:${numericSeriesId}:${numericSeasonNumber}`,
+  );
+  const canRetrySeasonRequest =
+    seasonRequest?.status === "failed" || seasonRequest?.status === "not_found";
 
   // Fetch season details
   useEffect(() => {
@@ -50,6 +75,14 @@ export default function SeasonDetailScreen() {
     }
   }, [seriesId, seasonNumber]);
 
+  useEffect(() => {
+    if (!numericSeriesId || !numericSeasonNumber) return;
+    refreshTvSeasonAvailability(numericSeriesId, numericSeasonNumber).then(
+      setSeasonAvailability,
+    );
+    refreshRequestStatus(numericSeriesId, "tv", "season", numericSeasonNumber);
+  }, [numericSeasonNumber, numericSeriesId, refreshRequestStatus, refreshTvSeasonAvailability]);
+
   // Configure header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,6 +93,23 @@ export default function SeasonDetailScreen() {
     });
   }, [navigation, colors.text, seriesName]);
 
+  const handleDownloadSeason = async () => {
+    try {
+      if (canRetrySeasonRequest && seasonRequest) {
+        await retryRequest(seasonRequest.id);
+      } else {
+        await requestSeasonDownload(numericSeriesId, numericSeasonNumber);
+      }
+      const nextAvailability = await refreshTvSeasonAvailability(
+        numericSeriesId,
+        numericSeasonNumber,
+      );
+      setSeasonAvailability(nextAvailability);
+    } catch {
+      // Context already displays the error toast.
+    }
+  };
+
   const statusStyle = isDark ? "light" : "dark";
 
   return (
@@ -69,6 +119,37 @@ export default function SeasonDetailScreen() {
         { backgroundColor: colors.background },
       ]}
     >
+      <HeaderActionCapsule
+        actions={[
+          {
+            id: "more",
+            label: "More actions",
+            icon: "ellipsis",
+            menu: [
+              {
+                id: "download-season",
+                title: getSeasonDownloadTitle(
+                  seasonAvailability,
+                  seasonRequest,
+                  isSeasonRequesting,
+                  canRetrySeasonRequest,
+                ),
+                icon:
+                  seasonAvailability?.status === "available"
+                    ? "checkmark.circle"
+                    : "tray.and.arrow.down",
+                disabled:
+                  seasonAvailability?.status === "available" ||
+                  isSeasonRequesting ||
+                  (!!seasonRequest &&
+                    !canRetrySeasonRequest &&
+                    seasonRequest.status !== "cancelled"),
+                onPress: handleDownloadSeason,
+              },
+            ],
+          },
+        ]}
+      />
       <StatusBar style={statusStyle} animated />
 
       <ScrollView
@@ -96,11 +177,24 @@ export default function SeasonDetailScreen() {
               )}
 
               <View style={styles.headerInfo}>
-                <Text
-                  style={[styles.seasonName, { color: colors.text }]}
-                >
-                  {data.name}
-                </Text>
+                <View style={styles.seasonTitleRow}>
+                  <Text
+                    style={[styles.seasonName, { color: colors.text }]}
+                    numberOfLines={2}
+                  >
+                    {data.name}
+                  </Text>
+
+                  {seasonAvailability?.status && seasonAvailability.status !== "missing" && (
+                    <View style={styles.availabilityBadge}>
+                      <Text style={styles.availabilityBadgeText}>
+                        {seasonAvailability.status === "available"
+                          ? i18n.t("screen.detail.media.available")
+                          : i18n.t("screen.detail.media.partial")}
+                      </Text>
+                    </View>
+                  )}
+                </View>
 
                 {(data.air_date || data.episodes?.length) && (
                   <Text
@@ -153,6 +247,18 @@ export default function SeasonDetailScreen() {
 
                 {data.episodes.map((episode) => (
                   <View key={episode.id} style={styles.episodeCard}>
+                    {seasonAvailability?.status === "partial" &&
+                      getEpisodeStatus(
+                        seasonAvailability,
+                        episode.episode_number,
+                      ) === "available" && (
+                      <View style={styles.episodeAvailabilityBadge}>
+                        <Text style={styles.episodeAvailabilityText}>
+                          {i18n.t("screen.detail.media.available")}
+                        </Text>
+                      </View>
+                    )}
+
                     {/* Visible Episode Image */}
                     <View style={styles.episodeImageContainer}>
                       <Image
@@ -239,6 +345,35 @@ export default function SeasonDetailScreen() {
   );
 }
 
+function getEpisodeStatus(
+  seasonAvailability: TvSeasonAvailability | null,
+  episodeNumber: number,
+) {
+  return (
+    seasonAvailability?.episodes.find(
+      (episode) => episode.episode_number === episodeNumber,
+    )?.status || "unknown"
+  );
+}
+
+function getSeasonDownloadTitle(
+  seasonAvailability: TvSeasonAvailability | null,
+  seasonRequest: DownloadRequest | null,
+  isRequesting: boolean,
+  canRetry: boolean,
+) {
+  if (seasonAvailability?.status === "available") {
+    return i18n.t("screen.detail.download.available");
+  }
+  if (isRequesting) return i18n.t("screen.detail.download.requesting");
+  if (canRetry) return i18n.t("screen.detail.download.retry");
+  if (seasonRequest?.status === "downloading") {
+    return i18n.t("screen.detail.download.downloading");
+  }
+  if (seasonRequest) return i18n.t("screen.detail.download.requested");
+  return i18n.t("screen.detail.download.seasonAction");
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -261,7 +396,14 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 10,
   },
+  seasonTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
   seasonName: {
+    flexShrink: 1,
     fontFamily: FONTS.bold,
     fontSize: TOKENS.font.title,
     lineHeight: 24,
@@ -269,6 +411,18 @@ const styles = StyleSheet.create({
   metadataText: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.md,
+  },
+  availabilityBadge: {
+    alignSelf: "flex-start",
+    borderRadius: TOKENS.radius.full,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: PlatformColor("systemGray5"),
+  },
+  availabilityBadgeText: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.sm,
+    color: PlatformColor("label"),
   },
   overview: {
     fontFamily: FONTS.regular,
@@ -286,6 +440,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   episodeCard: {
+    position: "relative",
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -332,6 +487,21 @@ const styles = StyleSheet.create({
   episodeRuntime: {
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.sm,
+    color: "#fff",
+  },
+  episodeAvailabilityBadge: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 2,
+    borderRadius: TOKENS.radius.full,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+  },
+  episodeAvailabilityText: {
+    fontFamily: FONTS.bold,
+    fontSize: TOKENS.font.xs,
     color: "#fff",
   },
   episodeName: {

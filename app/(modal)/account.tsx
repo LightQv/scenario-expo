@@ -39,7 +39,7 @@ export default function AccountScreen() {
     router.push(`/profile/${type}`);
   };
 
-  const handleOwnedMediaPress = (type: "movie") => {
+  const handleOwnedMediaPress = (type: "movie" | "tv") => {
     router.back();
     router.push(`/profile/owned/${type}`);
   };
@@ -193,6 +193,30 @@ export default function AccountScreen() {
                   style={[styles.cardText, { color: PlatformColor("label") }]}
                 >
                   {i18n.t("screen.account.owned.movies")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={PlatformColor("secondaryLabel")}
+                />
+              </TouchableOpacity>
+
+              <View
+                style={[
+                  styles.divider,
+                  { backgroundColor: PlatformColor("separator") },
+                ]}
+              />
+
+              <TouchableOpacity
+                onPress={() => handleOwnedMediaPress("tv")}
+                style={styles.viewsOption}
+                activeOpacity={BUTTON.opacity}
+              >
+                <Text
+                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                >
+                  {i18n.t("screen.account.owned.tv")}
                 </Text>
                 <Ionicons
                   name="chevron-forward"

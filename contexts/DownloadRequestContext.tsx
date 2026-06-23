@@ -17,16 +17,35 @@ interface DownloadRequestContextValue {
   requests: DownloadRequest[];
   isLoading: boolean;
   requestingTmdbIds: number[];
+  requestingKeys: string[];
   refreshRequests: () => Promise<void>;
   refreshRequestStatus: (
     tmdbId: number,
     mediaType: string,
+    scope?: "movie" | "series" | "season" | "episode",
+    seasonNumber?: number,
+    episodeNumber?: number,
   ) => Promise<DownloadRequest | null>;
   requestMovieDownload: (tmdbId: number) => Promise<DownloadRequest | null>;
+  requestSeriesDownload: (tmdbId: number) => Promise<DownloadRequest | null>;
+  requestSeasonDownload: (
+    tmdbId: number,
+    seasonNumber: number,
+  ) => Promise<DownloadRequest | null>;
   retryRequest: (requestId: string) => Promise<DownloadRequest | null>;
   cancelRequest: (requestId: string) => Promise<DownloadRequest | null>;
+  cleanRequests: () => Promise<number>;
+  cancelAllRequests: () => Promise<number>;
   getRequest: (tmdbId: number, mediaType: string) => DownloadRequest | null;
+  getRequestForScope: (
+    tmdbId: number,
+    mediaType: string,
+    scope: "movie" | "series" | "season" | "episode",
+    seasonNumber?: number,
+    episodeNumber?: number,
+  ) => DownloadRequest | null;
   isRequesting: (tmdbId: number) => boolean;
+  isRequestingKey: (key: string) => boolean;
 }
 
 const DownloadRequestContext = createContext<
@@ -49,6 +68,7 @@ export function DownloadRequestProvider({ children }: ContextProps) {
   const [requests, setRequests] = useState<DownloadRequest[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [requestingTmdbIds, setRequestingTmdbIds] = useState<number[]>([]);
+  const [requestingKeys, setRequestingKeys] = useState<string[]>([]);
   const availableRequestIdsRef = useRef<Set<string>>(new Set());
 
   const refreshRequests = useCallback(async () => {
@@ -86,12 +106,18 @@ export function DownloadRequestProvider({ children }: ContextProps) {
   }, []);
 
   const refreshRequestStatus = useCallback(
-    async (tmdbId: number, mediaType: string) => {
+    async (
+      tmdbId: number,
+      mediaType: string,
+      scope?: "movie" | "series" | "season" | "episode",
+      seasonNumber?: number,
+      episodeNumber?: number,
+    ) => {
       if (!authState.authenticated) return null;
 
       try {
         const response = await apiFetch(
-          `/api/v1/downloads/status?tmdb_id=${tmdbId}&media_type=${mediaType}`,
+          `/api/v1/downloads/status?tmdb_id=${tmdbId}&media_type=${mediaType}${scope ? `&scope=${scope}` : ""}${seasonNumber ? `&season_number=${seasonNumber}` : ""}${episodeNumber ? `&episode_number=${episodeNumber}` : ""}`,
         );
         upsertRequest(response || null);
         return response || null;
@@ -103,6 +129,67 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       }
     },
     [authState.authenticated, upsertRequest],
+  );
+
+  const scheduleRequestRefresh = useCallback(
+    (
+      tmdbId: number,
+      mediaType: string,
+      scope?: "movie" | "series" | "season" | "episode",
+      seasonNumber?: number,
+    ) => {
+      setTimeout(() => {
+        refreshRequestStatus(tmdbId, mediaType, scope, seasonNumber);
+      }, 1200);
+    },
+    [refreshRequestStatus],
+  );
+
+  const requestScopedDownload = useCallback(
+    async (
+      tmdbId: number,
+      scope: "series" | "season",
+      seasonNumber?: number,
+    ) => {
+      if (!authState.authenticated) return null;
+      const requestKey = makeRequestKey(scope, tmdbId, seasonNumber);
+      if (requestingKeys.includes(requestKey)) return null;
+
+      try {
+        setRequestingKeys((current) => [...current, requestKey]);
+        const response = await apiFetch(
+          scope === "series"
+            ? "/api/v1/downloads/sonarr/series"
+            : "/api/v1/downloads/sonarr/seasons",
+          {
+            method: "POST",
+            body: JSON.stringify({ tmdb_id: tmdbId, season_number: seasonNumber }),
+          },
+        );
+        upsertRequest(response || null);
+        notifySuccess(i18n.t("toast.success.download.requested"));
+        scheduleRequestRefresh(tmdbId, "tv", scope, seasonNumber);
+        return response || null;
+      } catch (error) {
+        console.error("Error requesting TV download:", error);
+        notifyError(i18n.t("toast.error"));
+        throw error;
+      } finally {
+        setRequestingKeys((current) => current.filter((item) => item !== requestKey));
+      }
+    },
+    [authState.authenticated, requestingKeys, scheduleRequestRefresh, upsertRequest],
+  );
+
+  const requestSeriesDownload = useCallback(
+    (tmdbId: number) => requestScopedDownload(tmdbId, "series"),
+    [requestScopedDownload],
+  );
+
+  const requestSeasonDownload = useCallback(
+    (tmdbId: number, seasonNumber: number) =>
+      requestScopedDownload(tmdbId, "season", seasonNumber),
+    [requestScopedDownload],
   );
 
   const requestMovieDownload = useCallback(
@@ -118,6 +205,7 @@ export function DownloadRequestProvider({ children }: ContextProps) {
         });
         upsertRequest(response || null);
         notifySuccess(i18n.t("toast.success.download.requested"));
+        scheduleRequestRefresh(tmdbId, "movie", "movie");
         return response || null;
       } catch (error) {
         console.error("Error requesting movie download:", error);
@@ -129,7 +217,7 @@ export function DownloadRequestProvider({ children }: ContextProps) {
         );
       }
     },
-    [authState.authenticated, requestingTmdbIds, upsertRequest],
+    [authState.authenticated, requestingTmdbIds, scheduleRequestRefresh, upsertRequest],
   );
 
   const retryRequest = useCallback(
@@ -170,6 +258,42 @@ export function DownloadRequestProvider({ children }: ContextProps) {
     [authState.authenticated, upsertRequest],
   );
 
+  const cleanRequests = useCallback(async () => {
+    if (!authState.authenticated) return 0;
+
+    try {
+      const response = await apiFetch("/api/v1/downloads/clean", {
+        method: "DELETE",
+      });
+      await refreshRequests();
+      const deletedCount = response?.deleted_count ?? 0;
+      notifySuccess(i18n.t("toast.success.download.cleaned", { count: deletedCount }));
+      return deletedCount;
+    } catch (error) {
+      console.error("Error cleaning download requests:", error);
+      notifyError(i18n.t("toast.error"));
+      return 0;
+    }
+  }, [authState.authenticated, refreshRequests]);
+
+  const cancelAllRequests = useCallback(async () => {
+    if (!authState.authenticated) return 0;
+
+    try {
+      const response = await apiFetch("/api/v1/downloads/cancel-all", {
+        method: "POST",
+      });
+      await refreshRequests();
+      const cancelledCount = response?.cancelled_count ?? 0;
+      notifySuccess(i18n.t("toast.success.download.cancelledAll", { count: cancelledCount }));
+      return cancelledCount;
+    } catch (error) {
+      console.error("Error cancelling all download requests:", error);
+      notifyError(i18n.t("toast.error"));
+      return 0;
+    }
+  }, [authState.authenticated, refreshRequests]);
+
   const getRequest = useCallback(
     (tmdbId: number, mediaType: string) => {
       return (
@@ -181,9 +305,40 @@ export function DownloadRequestProvider({ children }: ContextProps) {
     [requests],
   );
 
+  const getRequestForScope = useCallback(
+    (
+      tmdbId: number,
+      mediaType: string,
+      scope: "movie" | "series" | "season" | "episode",
+      seasonNumber?: number,
+      episodeNumber?: number,
+    ) => {
+      return (
+        requests.find((item) => {
+          if (item.tmdb_id !== tmdbId || item.media_type !== mediaType || item.scope !== scope) {
+            return false;
+          }
+          if (seasonNumber !== undefined && item.season_number !== seasonNumber) {
+            return false;
+          }
+          if (episodeNumber !== undefined && item.episode_number !== episodeNumber) {
+            return false;
+          }
+          return true;
+        }) || null
+      );
+    },
+    [requests],
+  );
+
   const isRequesting = useCallback(
     (tmdbId: number) => requestingTmdbIds.includes(tmdbId),
     [requestingTmdbIds],
+  );
+
+  const isRequestingKey = useCallback(
+    (key: string) => requestingKeys.includes(key),
+    [requestingKeys],
   );
 
   useEffect(() => {
@@ -220,25 +375,39 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       requests,
       isLoading,
       requestingTmdbIds,
+      requestingKeys,
       refreshRequests,
       refreshRequestStatus,
       requestMovieDownload,
+      requestSeriesDownload,
+      requestSeasonDownload,
       retryRequest,
       cancelRequest,
+      cleanRequests,
+      cancelAllRequests,
       getRequest,
+      getRequestForScope,
       isRequesting,
+      isRequestingKey,
     }),
     [
       requests,
       isLoading,
       requestingTmdbIds,
+      requestingKeys,
       refreshRequests,
       refreshRequestStatus,
       requestMovieDownload,
+      requestSeriesDownload,
+      requestSeasonDownload,
       retryRequest,
       cancelRequest,
+      cleanRequests,
+      cancelAllRequests,
       getRequest,
+      getRequestForScope,
       isRequesting,
+      isRequestingKey,
     ],
   );
 
@@ -247,4 +416,15 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       {children}
     </DownloadRequestContext.Provider>
   );
+}
+
+function makeRequestKey(
+  scope: "movie" | "series" | "season" | "episode",
+  tmdbId: number,
+  seasonNumber?: number,
+  episodeNumber?: number,
+) {
+  return [scope, tmdbId, seasonNumber, episodeNumber]
+    .filter((item) => item !== undefined)
+    .join(":");
 }

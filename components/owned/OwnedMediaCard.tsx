@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TOKENS, FONTS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import { useThemeContext, useViewContext } from "@/contexts";
+import i18n from "@/services/i18n";
 
 type OwnedMediaCardProps = {
   data: OwnedMedia;

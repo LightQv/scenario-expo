@@ -33,6 +33,7 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
   const statusColor = getStatusColor(data.status);
   const queueSummary = getQueueSummary(data);
   const queueDetails = getQueueDetails(data);
+  const scopeLabel = getScopeLabel(data);
   const progress = getProgress(data);
   const canCancel = ACTIVE_DOWNLOAD_STATUSES.includes(data.status);
   const canRetry = RETRYABLE_DOWNLOAD_STATUSES.includes(data.status);
@@ -76,6 +77,9 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
             <View style={styles.textContainer}>
               <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
                 {data.title}
+              </Text>
+              <Text style={styles.scope} numberOfLines={1}>
+                {scopeLabel} · {data.source === "SONARR" ? "Sonarr" : "Radarr"}
               </Text>
               <View style={styles.statusRow}>
                 <Ionicons name={getStatusIcon(data.status)} size={14} color={statusColor} />
@@ -151,6 +155,23 @@ function getQueueDetails(data: DownloadRequest) {
     data.time_left,
   ].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
+}
+
+function getScopeLabel(data: DownloadRequest) {
+  if (data.scope === "season") {
+    return i18n.t("screen.downloads.scope.season", {
+      season: data.season_number ?? "-",
+    });
+  }
+
+  if (data.scope === "episode") {
+    return i18n.t("screen.downloads.scope.episode", {
+      season: data.season_number ?? "-",
+      episode: data.episode_number ?? "-",
+    });
+  }
+
+  return i18n.t(`screen.downloads.scope.${data.scope}`);
 }
 
 function formatSize(size?: number | null) {
@@ -241,6 +262,12 @@ const styles = StyleSheet.create({
   status: {
     fontSize: TOKENS.font.md,
     fontFamily: FONTS.medium,
+  },
+  scope: {
+    color: PlatformColor("secondaryLabel"),
+    fontSize: TOKENS.font.sm,
+    fontFamily: FONTS.medium,
+    lineHeight: 16,
   },
   queueDetails: {
     color: PlatformColor("secondaryLabel"),
