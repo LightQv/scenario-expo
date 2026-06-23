@@ -151,6 +151,8 @@ const mediaCardStyles = {
       borderRadius: TOKENS.card.sizes.grid.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: PlatformColor("separator"),
       position: "relative",
     },
     content: {
@@ -190,6 +192,8 @@ const mediaCardStyles = {
       borderRadius: TOKENS.card.sizes.sm.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: PlatformColor("separator"),
       position: "relative",
     },
     content: {
@@ -229,6 +233,8 @@ const mediaCardStyles = {
       borderRadius: TOKENS.card.sizes.md.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: PlatformColor("separator"),
       position: "relative",
     },
     content: {
@@ -268,6 +274,8 @@ const mediaCardStyles = {
       borderRadius: TOKENS.card.sizes.xl.borderRadius,
       overflow: "hidden",
       backgroundColor: PlatformColor("systemGray5"),
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: PlatformColor("separator"),
       position: "relative",
     },
     content: {

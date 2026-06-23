@@ -1,5 +1,6 @@
 import {
   Animated,
+  Easing,
   FlatList,
   Keyboard,
   PlatformColor,
@@ -40,8 +41,9 @@ const SEARCH_BAR_HEIGHT = 42;
 const CLOSE_BUTTON_SIZE = 42;
 const DEFAULT_HEADER_HEIGHT = 94;
 const ACTIVE_HEADER_HEIGHT = 90;
-const HEADER_ANIMATION_DURATION = 190;
+const HEADER_ANIMATION_DURATION = 340;
 const CONTENT_TOP_GAP = 16;
+const HEADER_ANIMATION_EASING = Easing.inOut(Easing.cubic);
 
 export default function SearchScreen() {
   const { totalGenres, loading } = useGenreContext();
@@ -56,11 +58,25 @@ export default function SearchScreen() {
   const animation = useRef(new Animated.Value(0)).current;
   const requestIdRef = useRef(0);
   const inputRef = useRef<TextInput>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const headerHeight =
-    insets.top +
-    (contentMode === "search" ? ACTIVE_HEADER_HEIGHT : DEFAULT_HEADER_HEIGHT);
+  const defaultHeaderHeight = insets.top + DEFAULT_HEADER_HEIGHT;
+  const activeHeaderHeight = insets.top + ACTIVE_HEADER_HEIGHT;
+  const genreOpacity = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+  const genreTranslateY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 10],
+  });
+  const searchOpacity = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+  const searchTranslateY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-10, 0],
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -73,21 +89,28 @@ export default function SearchScreen() {
     }, []),
   );
 
-  useEffect(() => {
-    Animated.timing(animation, {
-      toValue: active ? 1 : 0,
-      duration: HEADER_ANIMATION_DURATION,
-      useNativeDriver: true,
-    }).start();
-  }, [active, animation]);
+  const runSearchAnimation = useCallback(
+    (toValue: number, onComplete?: () => void) => {
+      animation.stopAnimation();
+      Animated.timing(animation, {
+        toValue,
+        duration: HEADER_ANIMATION_DURATION,
+        easing: HEADER_ANIMATION_EASING,
+        useNativeDriver: false,
+      }).start(({ finished }) => {
+        if (finished) {
+          onComplete?.();
+        }
+      });
+    },
+    [animation],
+  );
 
   useEffect(() => {
     return () => {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-      }
+      animation.stopAnimation();
     };
-  }, []);
+  }, [animation]);
 
   useEffect(() => {
     const trimmedQuery = query.trim();
@@ -144,38 +167,32 @@ export default function SearchScreen() {
   };
 
   const handleHistoryItemPress = (item: SearchHistoryItem) => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
     setContentMode("search");
     setActive(true);
     setQuery(item.query);
     setSearch(item.query);
     setMediaType(item.type);
     inputRef.current?.focus();
+    runSearchAnimation(1);
   };
 
   const handleFocusSearch = () => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
     setContentMode("search");
     setActive(true);
+    runSearchAnimation(1);
   };
 
   const handleCloseSearch = () => {
     setActive(false);
+    Keyboard.dismiss();
 
-    closeTimeoutRef.current = setTimeout(() => {
-      Keyboard.dismiss();
+    runSearchAnimation(0, () => {
       setContentMode("genres");
       setQuery("");
       setSearch("");
       setPreviewResults([]);
-      closeTimeoutRef.current = null;
-    }, HEADER_ANIMATION_DURATION);
+      setPreviewLoading(false);
+    });
   };
 
   const handleShowAllResults = () => {
@@ -214,7 +231,6 @@ export default function SearchScreen() {
         query={query}
         inputRef={inputRef}
         mediaType={mediaType}
-        closeVisible={contentMode === "search"}
         onFocus={handleFocusSearch}
         onChangeText={setQuery}
         onSubmit={handleShowAllResults}
@@ -222,7 +238,16 @@ export default function SearchScreen() {
         onMediaTypeChange={handleMediaTypeChange}
       />
 
-      {contentMode === "genres" ? (
+      <Animated.View
+        style={[
+          styles.contentLayer,
+          {
+            opacity: genreOpacity,
+            transform: [{ translateY: genreTranslateY }],
+          },
+        ]}
+        pointerEvents={contentMode === "genres" ? "auto" : "none"}
+      >
         <FlatList
           data={totalGenres}
           renderItem={renderGenreItem}
@@ -231,42 +256,55 @@ export default function SearchScreen() {
           columnWrapperStyle={styles.genreRow}
           contentContainerStyle={[
             styles.genreContent,
-            { paddingTop: headerHeight + CONTENT_TOP_GAP },
+            { paddingTop: defaultHeaderHeight + CONTENT_TOP_GAP },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           onScrollBeginDrag={Keyboard.dismiss}
         />
-      ) : query.trim() ? (
-        <View
-          style={[
-            styles.activeContent,
-            { paddingTop: headerHeight + CONTENT_TOP_GAP },
-          ]}
-        >
-          <SearchPreviewResults
-            results={previewResults}
-            mediaType={mediaType}
-            loading={previewLoading}
-            query={query.trim()}
-            onShowAll={handleShowAllResults}
-            onNavigateAway={handleNavigateAway}
-          />
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.activeContent,
-            { paddingTop: headerHeight + CONTENT_TOP_GAP },
-          ]}
-        >
-          <SearchHistory
-            history={history}
-            onItemPress={handleHistoryItemPress}
-            onClearHistory={handleClearHistory}
-          />
-        </View>
-      )}
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          styles.contentLayer,
+          {
+            opacity: searchOpacity,
+            transform: [{ translateY: searchTranslateY }],
+          },
+        ]}
+        pointerEvents={contentMode === "search" && active ? "auto" : "none"}
+      >
+        {query.trim() ? (
+          <View
+            style={[
+              styles.activeContent,
+              { paddingTop: activeHeaderHeight + CONTENT_TOP_GAP },
+            ]}
+          >
+            <SearchPreviewResults
+              results={previewResults}
+              mediaType={mediaType}
+              loading={previewLoading}
+              query={query.trim()}
+              onShowAll={handleShowAllResults}
+              onNavigateAway={handleNavigateAway}
+            />
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.activeContent,
+              { paddingTop: activeHeaderHeight + CONTENT_TOP_GAP },
+            ]}
+          >
+            <SearchHistory
+              history={history}
+              onItemPress={handleHistoryItemPress}
+              onClearHistory={handleClearHistory}
+            />
+          </View>
+        )}
+      </Animated.View>
     </View>
   );
 }
@@ -278,7 +316,6 @@ type SearchHeaderProps = {
   query: string;
   inputRef: RefObject<TextInput | null>;
   mediaType: MediaType;
-  closeVisible: boolean;
   onFocus: () => void;
   onChangeText: (value: string) => void;
   onSubmit: () => void;
@@ -293,7 +330,6 @@ function SearchHeader({
   query,
   inputRef,
   mediaType,
-  closeVisible,
   onFocus,
   onChangeText,
   onSubmit,
@@ -301,8 +337,8 @@ function SearchHeader({
   onMediaTypeChange,
 }: SearchHeaderProps) {
   const titleOpacity = animation.interpolate({
-    inputRange: [0, 0.55, 1],
-    outputRange: [1, 0, 0],
+    inputRange: [0, 0.85, 1],
+    outputRange: [1, 0.15, 0],
   });
   const titleTranslateY = animation.interpolate({
     inputRange: [0, 1],
@@ -313,15 +349,23 @@ function SearchHeader({
     outputRange: [8, -42],
   });
   const closeOpacity = animation.interpolate({
-    inputRange: [0.45, 1],
+    inputRange: [0, 1],
     outputRange: [0, 1],
   });
   const closeScale = animation.interpolate({
-    inputRange: [0.45, 1],
+    inputRange: [0, 1],
     outputRange: [0.85, 1],
   });
+  const closeWidth = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, CLOSE_BUTTON_SIZE],
+  });
+  const closeMarginLeft = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 10],
+  });
   const pickerOpacity = animation.interpolate({
-    inputRange: [0.55, 1],
+    inputRange: [0, 1],
     outputRange: [0, 1],
   });
   const pickerTranslateY = animation.interpolate({
@@ -359,30 +403,34 @@ function SearchHeader({
         ]}
       >
         <View style={styles.searchRow}>
-          <GlassView style={styles.searchInputContainer}>
-            <Ionicons name="search" size={18} color={PlatformColor("label")} />
-            <TextInput
-              ref={inputRef}
-              value={query}
-              onFocus={onFocus}
-              onChangeText={onChangeText}
-              onSubmitEditing={onSubmit}
-              placeholder={i18n.t("screen.search.placeholder")}
-              placeholderTextColor={PlatformColor("secondaryLabel") as never}
-              returnKeyType="search"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              style={[styles.searchInput, { color: PlatformColor("label") }]}
-            />
-          </GlassView>
+          <View style={[styles.controlChrome, styles.searchInputChrome]}>
+            <GlassView style={styles.searchInputContainer}>
+              <Ionicons name="search" size={18} color={PlatformColor("label")} />
+              <TextInput
+                ref={inputRef}
+                value={query}
+                onFocus={onFocus}
+                onChangeText={onChangeText}
+                onSubmitEditing={onSubmit}
+                placeholder={i18n.t("screen.search.placeholder")}
+                placeholderTextColor={PlatformColor("secondaryLabel") as never}
+                returnKeyType="search"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                style={[styles.searchInput, { color: PlatformColor("label") }]}
+              />
+            </GlassView>
+          </View>
 
           <Animated.View
             style={[
               styles.closeContainer,
-              closeVisible
-                ? styles.closeContainerVisible
-                : styles.closeContainerHidden,
-              { opacity: closeOpacity, transform: [{ scale: closeScale }] },
+              {
+                width: closeWidth,
+                marginLeft: closeMarginLeft,
+                opacity: closeOpacity,
+                transform: [{ scale: closeScale }],
+              },
             ]}
             pointerEvents={active ? "auto" : "none"}
           >
@@ -391,13 +439,15 @@ function SearchHeader({
               onPress={onClose}
               style={styles.closeButtonWrapper}
             >
-              <GlassView style={styles.closeButton}>
-                <Ionicons
-                  name="close"
-                  size={24}
-                  color={PlatformColor("label")}
-                />
-              </GlassView>
+              <View style={[styles.controlChrome, styles.closeButtonChrome]}>
+                <GlassView style={styles.closeButton}>
+                  <Ionicons
+                    name="close"
+                    size={24}
+                    color={PlatformColor("label")}
+                  />
+                </GlassView>
+              </View>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -448,10 +498,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  searchInputContainer: {
+  controlChrome: {
+    borderRadius: TOKENS.radius.full,
+    backgroundColor: PlatformColor("systemFill"),
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: PlatformColor("separator"),
+    overflow: "hidden",
+  },
+  searchInputChrome: {
     flex: 1,
     height: SEARCH_BAR_HEIGHT,
-    borderRadius: TOKENS.radius.full,
+  },
+  searchInputContainer: {
+    width: "100%",
+    height: SEARCH_BAR_HEIGHT,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -468,23 +528,19 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "flex-end",
   },
-  closeContainerVisible: {
-    width: CLOSE_BUTTON_SIZE,
-    marginLeft: 10,
-  },
-  closeContainerHidden: {
-    width: 0,
-  },
   closeButtonWrapper: {
     width: CLOSE_BUTTON_SIZE,
     height: CLOSE_BUTTON_SIZE,
     borderRadius: TOKENS.radius.full,
     overflow: "hidden",
   },
+  closeButtonChrome: {
+    width: CLOSE_BUTTON_SIZE,
+    height: CLOSE_BUTTON_SIZE,
+  },
   closeButton: {
     width: CLOSE_BUTTON_SIZE,
     height: CLOSE_BUTTON_SIZE,
-    borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -493,6 +549,13 @@ const styles = StyleSheet.create({
   },
   genreRow: {
     justifyContent: "space-between",
+  },
+  contentLayer: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   genreContent: {
     paddingHorizontal: TOKENS.margin.horizontal,

@@ -397,6 +397,10 @@
       "title": "Listes de lecture",
       "subtitle": "Retrouvez ici toutes les listes de lecture que vous avez créé(e).",
       "empty": "Aucune liste pour le moment.\nCréez-en une via le menu ci-dessus.",
+      "emptyState": {
+        "title": "Aucune liste",
+        "body": "Votre liste À regarder devrait apparaître ici. Tirez pour actualiser."
+      },
       "system": {
         "title": "À regarder"
       },
@@ -484,7 +488,11 @@
           "movie": "Films disponibles",
           "default": "Médias disponibles"
         },
-        "empty": "Aucun film disponible"
+        "empty": "Aucun film disponible",
+        "emptyState": {
+          "title": "Aucun film disponible",
+          "body": "Synchronisez votre bibliothèque pour afficher les films disponibles ici."
+        }
       },
       "settings": {
         "header": "Paramètres",
