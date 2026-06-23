@@ -234,7 +234,8 @@
       },
       "owned": {
         "title": "Owned",
-        "movies": "Movies"
+        "movies": "Movies",
+        "tv": "TV Shows"
       },
       "downloads": {
         "title": "Downloads",
@@ -293,6 +294,8 @@
       },
       "download": {
         "action": "Download",
+        "seriesAction": "Download series",
+        "seasonAction": "Download season",
         "requesting": "Requesting...",
         "requested": "Requested",
         "downloading": "Downloading",
@@ -305,7 +308,8 @@
       },
       "media": {
         "trailer": "Watch Trailer",
-        "ready": "Available",
+        "available": "Available",
+        "partial": "Partial",
         "cast": "Cast",
         "castEmpty": "No cast information",
         "seasons": {
@@ -329,18 +333,33 @@
         "recommandations": "Recommandations"
       }
     },
-    "downloads": {
-      "title": "Downloads",
-      "subtitle": "Requests sent to Radarr. Availability updates when imports finish.",
-      "empty": "No download requests yet.",
-      "emptyState": {
-        "title": "No requests yet",
-        "body": "Request a movie from its detail page and it will appear here while Radarr searches."
-      },
-      "remaining": "{{size}} remaining",
+      "downloads": {
+        "title": "Downloads",
+        "subtitle": "Requests sent to Radarr or Sonarr. Availability updates when imports finish.",
+        "empty": "No download requests yet.",
+        "emptyState": {
+          "title": "No requests yet",
+          "body": "Request a movie or TV show from its detail page and it will appear here while your media server searches."
+        },
+        "remaining": "{{size}} remaining",
+        "scope": {
+          "movie": "Movie",
+          "series": "Series",
+          "season": "Season {{season}}",
+          "episode": "S{{season}} · E{{episode}}"
+        },
       "actions": {
         "retry": "Retry",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "more": "Download actions",
+        "clean": "Clean completed",
+        "cancelAll": "Cancel all"
+      },
+      "confirmCancelAll": {
+        "title": "Cancel all downloads?",
+        "body": "This will cancel every active request and remove matching queue items when possible.",
+        "keep": "Keep downloads",
+        "confirm": "Cancel all"
       },
       "status": {
         "requested": "Requested",
@@ -485,12 +504,16 @@
       "owned": {
         "header": {
           "movie": "Available Movies",
+          "tv": "Available TV Shows",
           "default": "Available Media"
         },
         "empty": "No available movie yet",
+        "episodeCount": "{{count}} episodes owned",
         "emptyState": {
           "title": "No Available Movies",
-          "body": "Sync your library to show available movies here."
+          "body": "Sync your library to show available movies here.",
+          "tvTitle": "No Available TV Shows",
+          "tvBody": "Sync your Sonarr library to show available TV shows here."
         }
       },
       "settings": {
@@ -507,10 +530,13 @@
         "editBanner": "Edit Banner",
         "editProfile": "Edit Profile",
         "syncOwnedMovies": "Sync owned movies",
-        "syncOwnedMoviesRunning": "Sync in progress"
+        "syncOwnedMoviesRunning": "Sync in progress",
+        "syncOwnedTv": "Sync owned TV shows",
+        "syncOwnedTvRunning": "Sync in progress"
       },
       "syncStatus": {
         "title": "Available Movies",
+        "tvTitle": "Available TV Shows",
         "noSync": "No sync yet",
         "running": "Sync in progress...",
         "success": "Last sync {{date}}",
@@ -569,7 +595,9 @@
         "syncStarted": "Owned movies sync started"
       },
       "download": {
-        "requested": "Download requested"
+        "requested": "Download requested",
+        "cleaned": "{{count}} download requests cleaned",
+        "cancelledAll": "{{count}} downloads cancelled"
       }
     },
     "error": "Oops, something went wrong",

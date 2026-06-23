@@ -81,6 +81,13 @@ interface OwnedMedia {
   runtime: number;
   title: string;
   media_type: string;
+  scope: string;
+  tvdb_id?: number | null;
+  sonarr_series_id?: number | null;
+  season_number?: number | null;
+  episode_number?: number | null;
+  episode_title?: string | null;
+  episode_air_date?: string | null;
   source: string;
   last_synced_at: string;
   metadata_synced_at?: string | null;
@@ -95,6 +102,15 @@ interface OwnedMediaSyncStatus {
   finished_at?: string | null;
   owned_count?: number | null;
   error_message?: string | null;
+}
+
+interface OwnedMediaStatus {
+  tmdb_id: number;
+  media_type: string;
+  owned: boolean;
+  status?: TvAvailabilityStatus | null;
+  available_episode_count?: number | null;
+  aired_episode_count?: number | null;
 }
 
 type DownloadRequestStatus =
@@ -112,10 +128,17 @@ interface DownloadRequest {
   user_id?: string | null;
   tmdb_id: number;
   media_type: string;
+  scope: "movie" | "series" | "season" | "episode";
   source: string;
   status: DownloadRequestStatus;
   radarr_movie_id?: number | null;
   radarr_search_command_id?: number | null;
+  tvdb_id?: number | null;
+  sonarr_series_id?: number | null;
+  sonarr_search_command_id?: number | null;
+  sonarr_episode_id?: number | null;
+  season_number?: number | null;
+  episode_number?: number | null;
   genre_ids: number[];
   poster_path: string;
   backdrop_path: string;
@@ -135,4 +158,28 @@ interface DownloadRequest {
   requested_at: string;
   created_at: string;
   updated_at: string;
+}
+
+type TvAvailabilityStatus = "available" | "partial" | "missing" | "unknown";
+
+interface TvEpisodeAvailability {
+  episode_number: number;
+  status: TvAvailabilityStatus;
+}
+
+interface TvSeasonAvailability {
+  season_number: number;
+  status: TvAvailabilityStatus;
+  available_episode_count: number;
+  aired_episode_count: number;
+  episodes: TvEpisodeAvailability[];
+}
+
+interface TvAvailability {
+  tmdb_id: number;
+  media_type: "tv";
+  status: TvAvailabilityStatus;
+  available_episode_count: number;
+  aired_episode_count: number;
+  seasons: TvSeasonAvailability[];
 }

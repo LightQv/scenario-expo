@@ -24,6 +24,10 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import OwnedMediaSyncStatusCard from "@/components/profile/OwnedMediaSyncStatusCard";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+type OwnedMediaListItem = OwnedMedia & {
+  owned_episode_count?: number;
+  owned_latest_episode_air_date?: string | null;
+};
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const CONTENT_TOP_PADDING = 200;
@@ -44,9 +48,7 @@ export default function OwnedMediaTypeScreen() {
     refreshSyncStatus,
     syncStatus,
   } = useOwnedMediaContext();
-  const [filteredOwnedMedia, setFilteredOwnedMedia] = useState<OwnedMedia[]>(
-    [],
-  );
+  const [filteredOwnedMedia, setFilteredOwnedMedia] = useState<OwnedMediaListItem[]>([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
 
@@ -63,13 +65,20 @@ export default function OwnedMediaTypeScreen() {
     if (mediaType === "movie") {
       return i18n.t("screen.profile.owned.header.movie");
     }
+    if (mediaType === "tv") {
+      return i18n.t("screen.profile.owned.header.tv");
+    }
     return i18n.t("screen.profile.owned.header.default");
   };
 
   useEffect(() => {
-    let processed = ownedMedia.filter(
+    let processed: OwnedMediaListItem[] = ownedMedia.filter(
       (media) => media.media_type === mediaType,
     );
+
+    if (mediaType === "tv") {
+      processed = groupOwnedTvRows(processed);
+    }
 
     if (genreId !== null) {
       processed = processed.filter((media) =>
@@ -86,15 +95,15 @@ export default function OwnedMediaTypeScreen() {
         break;
       case "date_asc":
         processed.sort((a, b) => {
-          const dateA = new Date(a.release_date || "").getTime();
-          const dateB = new Date(b.release_date || "").getTime();
+          const dateA = new Date(getSortDate(a)).getTime();
+          const dateB = new Date(getSortDate(b)).getTime();
           return dateA - dateB;
         });
         break;
       case "date_desc":
         processed.sort((a, b) => {
-          const dateA = new Date(a.release_date || "").getTime();
-          const dateB = new Date(b.release_date || "").getTime();
+          const dateA = new Date(getSortDate(a)).getTime();
+          const dateB = new Date(getSortDate(b)).getTime();
           return dateB - dateA;
         });
         break;
@@ -111,7 +120,10 @@ export default function OwnedMediaTypeScreen() {
       const checkSyncStatus = async () => {
         const previousStatus = lastSyncStatusRef.current;
         const previousFinishedAt = lastSyncFinishedAtRef.current;
-        const latestSyncStatus = await refreshSyncStatus();
+        const latestSyncStatus = await refreshSyncStatus(
+          mediaType === "tv" ? "SONARR" : "RADARR",
+          mediaType === "tv" ? "tv" : "movie",
+        );
         if (cancelled) return;
 
         const nextStatus = latestSyncStatus?.status || "idle";
@@ -142,14 +154,14 @@ export default function OwnedMediaTypeScreen() {
         cancelled = true;
         if (timeoutId) clearTimeout(timeoutId);
       };
-    }, [refreshOwnedMedia, refreshSyncStatus, syncStatus?.status]),
+    }, [mediaType, refreshOwnedMedia, refreshSyncStatus, syncStatus?.status]),
   );
 
   const backgroundColor = PlatformColor("systemBackground");
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
 
-  const renderItem: ListRenderItem<OwnedMedia> = ({ item }) => (
+  const renderItem: ListRenderItem<OwnedMediaListItem> = ({ item }) => (
     <OwnedMediaCard
       data={item}
       backgroundColor={backgroundColor}
@@ -163,10 +175,18 @@ export default function OwnedMediaTypeScreen() {
 
     return (
       <Host style={styles.emptyContainer}>
-        <ContentUnavailableView
-          systemImage="film.stack"
-          title={i18n.t("screen.profile.owned.emptyState.title")}
-          description={i18n.t("screen.profile.owned.emptyState.body")}
+          <ContentUnavailableView
+          systemImage={mediaType === "tv" ? "tv" : "film.stack"}
+          title={i18n.t(
+            mediaType === "tv"
+              ? "screen.profile.owned.emptyState.tvTitle"
+              : "screen.profile.owned.emptyState.title",
+          )}
+          description={i18n.t(
+            mediaType === "tv"
+              ? "screen.profile.owned.emptyState.tvBody"
+              : "screen.profile.owned.emptyState.body",
+          )}
         />
       </Host>
     );
@@ -195,7 +215,9 @@ export default function OwnedMediaTypeScreen() {
         ref={listRef}
         data={filteredOwnedMedia}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) =>
+          item.media_type === "tv" ? `tv-${item.tmdb_id}` : item.id.toString()
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
         ListHeaderComponent={renderHeader}
@@ -227,3 +249,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: TOKENS.margin.horizontal,
   },
 });
+
+function groupOwnedTvRows(rows: OwnedMediaListItem[]): OwnedMediaListItem[] {
+  const grouped = new Map<number, OwnedMediaListItem>();
+
+  rows.forEach((row) => {
+    const existing = grouped.get(row.tmdb_id);
+    const rowAirDate = row.episode_air_date || row.release_date || null;
+
+    if (!existing) {
+      grouped.set(row.tmdb_id, {
+        ...row,
+        owned_episode_count: 1,
+        owned_latest_episode_air_date: rowAirDate,
+      });
+      return;
+    }
+
+    existing.owned_episode_count = (existing.owned_episode_count || 0) + 1;
+    if (isAfter(rowAirDate, existing.owned_latest_episode_air_date)) {
+      existing.owned_latest_episode_air_date = rowAirDate;
+    }
+  });
+
+  return Array.from(grouped.values());
+}
+
+function getSortDate(item: OwnedMediaListItem): string {
+  return item.owned_latest_episode_air_date || item.release_date || "";
+}
+
+function isAfter(candidate?: string | null, current?: string | null): boolean {
+  if (!candidate) return false;
+  if (!current) return true;
+  return new Date(candidate).getTime() > new Date(current).getTime();
+}

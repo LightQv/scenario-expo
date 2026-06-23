@@ -30,7 +30,7 @@ const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
   const { isDark } = useThemeContext();
-  const { isOwned } = useOwnedMediaContext();
+  const { getTvAvailability, isOwned, refreshTvAvailability } = useOwnedMediaContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [palette, setPalette] = useState<DetailPalette>(() =>
@@ -93,9 +93,17 @@ export default function DetailsScreen() {
     };
   }, [type, id, isDark]);
 
+  useEffect(() => {
+    if (type === "tv" && id) {
+      refreshTvAvailability(Number(id));
+    }
+  }, [id, refreshTvAvailability, type]);
+
   const statusStyle = "light";
+  const tvAvailability = type === "tv" ? getTvAvailability(Number(id)) : null;
   const isMediaOwned =
-    type === "movie" || type === "tv" ? isOwned(Number(id), type) : false;
+    type === "movie" ? isOwned(Number(id), type) : tvAvailability?.status === "available";
+  const availabilityLabel = getAvailabilityLabel(isMediaOwned, tvAvailability);
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -149,9 +157,7 @@ export default function DetailsScreen() {
               numberOfEpisodes={data.number_of_episodes}
               placeOfBirth={data.place_of_birth}
               palette={palette}
-              availabilityLabel={
-                isMediaOwned ? i18n.t("screen.detail.media.ready") : undefined
-              }
+              availabilityLabel={availabilityLabel}
               controls={
                 type === "movie" || type === "tv" ? (
                   <DetailsMediaControls
@@ -234,6 +240,8 @@ export default function DetailsScreen() {
                   <SeasonsSection
                     title={i18n.t("screen.detail.media.seasons.title")}
                     seasons={data.seasons}
+                    seasonAvailability={tvAvailability?.seasons || []}
+                    showAvailabilityBadges={tvAvailability?.status === "partial"}
                     seriesId={id}
                     seriesName={data.name || data.title}
                     backgroundColor={palette.background}
@@ -248,6 +256,19 @@ export default function DetailsScreen() {
       </Animated.ScrollView>
     </View>
   );
+}
+
+function getAvailabilityLabel(
+  isMediaOwned: boolean,
+  tvAvailability: TvAvailability | null,
+) {
+  if (tvAvailability?.status === "partial") {
+    return i18n.t("screen.detail.media.partial");
+  }
+  if (isMediaOwned) {
+    return i18n.t("screen.detail.media.available");
+  }
+  return undefined;
 }
 
 function getDetailImagePath(

@@ -30,22 +30,33 @@ export default function OwnedMediaHeaderMenu({
   onGenreChange,
 }: OwnedMediaHeaderMenuProps) {
   const { movieGenres, tvGenres } = useGenreContext();
-  const { syncRadarrOwnedMovies, refreshSyncStatus, syncStatus, isSyncing } =
-    useOwnedMediaContext();
+  const {
+    syncRadarrOwnedMovies,
+    syncSonarrOwnedTv,
+    refreshSyncStatus,
+    syncStatus,
+    isSyncing,
+  } = useOwnedMediaContext();
   const syncRunning = isSyncing || syncStatus?.status === "running";
   const genres = mediaType === "movie" ? movieGenres : tvGenres;
+  const syncSource = mediaType === "tv" ? "SONARR" : "RADARR";
+  const syncMediaType = mediaType === "tv" ? "tv" : "movie";
   const genreOptions = [
     { id: null, name: i18n.t("filter.genre.all") },
     ...(genres || []),
   ];
 
-  const handleSyncOwnedMovies = async () => {
-    const latestSyncStatus = await refreshSyncStatus();
+  const handleSyncOwnedMedia = async () => {
+    const latestSyncStatus = await refreshSyncStatus(syncSource, syncMediaType);
     if (isSyncing || latestSyncStatus?.status === "running") return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
-      await syncRadarrOwnedMovies();
+      if (mediaType === "tv") {
+        await syncSonarrOwnedTv();
+      } else {
+        await syncRadarrOwnedMovies();
+      }
     } catch {
       // Error toast is handled by OwnedMediaContext.
     }
@@ -95,15 +106,19 @@ export default function OwnedMediaHeaderMenu({
     <HeaderActionCapsule
       actions={[
         {
-          id: "syncOwnedMovies",
+          id: "syncOwnedMedia",
           label: i18n.t(
             syncRunning
-              ? "screen.profile.menu.syncOwnedMoviesRunning"
-              : "screen.profile.menu.syncOwnedMovies",
+              ? mediaType === "tv"
+                ? "screen.profile.menu.syncOwnedTvRunning"
+                : "screen.profile.menu.syncOwnedMoviesRunning"
+              : mediaType === "tv"
+                ? "screen.profile.menu.syncOwnedTv"
+                : "screen.profile.menu.syncOwnedMovies",
           ),
           icon: "arrow.triangle.2.circlepath",
           disabled: syncRunning,
-          onPress: handleSyncOwnedMovies,
+          onPress: handleSyncOwnedMedia,
         },
         {
           id: "ownedMediaFilters",

@@ -26,19 +26,30 @@ export default function DetailsHeaderActions({
   const title = data.title || data.name || "";
   const numericTmdbId = Number(tmdbId);
   const { authState } = useUserContext();
-  const { isOwned } = useOwnedMediaContext();
+  const { getTvAvailability, isOwned, refreshTvAvailability } = useOwnedMediaContext();
   const {
     getRequest,
+    getRequestForScope,
     isRequesting,
+    isRequestingKey,
     refreshRequestStatus,
     requestMovieDownload,
+    requestSeriesDownload,
     retryRequest,
   } = useDownloadRequestContext();
 
   const isAuthenticated = authState.authenticated;
-  const owned = isOwned(numericTmdbId, mediaType);
-  const downloadRequest = getRequest(numericTmdbId, mediaType);
-  const downloadSubmitting = isRequesting(numericTmdbId);
+  const tvAvailability = getTvAvailability(numericTmdbId);
+  const owned =
+    mediaType === "tv"
+      ? tvAvailability?.status === "available"
+      : isOwned(numericTmdbId, mediaType);
+  const downloadRequest =
+    mediaType === "tv"
+      ? getRequestForScope(numericTmdbId, mediaType, "series")
+      : getRequest(numericTmdbId, mediaType);
+  const downloadSubmitting =
+    mediaType === "tv" ? isRequestingKey(`series:${numericTmdbId}`) : isRequesting(numericTmdbId);
   const canRetryDownload =
     downloadRequest?.status === "failed" || downloadRequest?.status === "not_found";
   const downloadDisabled =
@@ -47,10 +58,21 @@ export default function DetailsHeaderActions({
     (!!downloadRequest && !canRetryDownload && downloadRequest.status !== "cancelled");
 
   useEffect(() => {
-    if (isAuthenticated && mediaType === "movie") {
+    if (!isAuthenticated) return;
+    if (mediaType === "movie") {
       refreshRequestStatus(numericTmdbId, mediaType);
     }
-  }, [isAuthenticated, mediaType, numericTmdbId, refreshRequestStatus]);
+    if (mediaType === "tv") {
+      refreshTvAvailability(numericTmdbId);
+      refreshRequestStatus(numericTmdbId, mediaType, "series");
+    }
+  }, [
+    isAuthenticated,
+    mediaType,
+    numericTmdbId,
+    refreshRequestStatus,
+    refreshTvAvailability,
+  ]);
 
   const handleCopy = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -88,7 +110,11 @@ export default function DetailsHeaderActions({
         await retryRequest(downloadRequest.id);
         return;
       }
-      await requestMovieDownload(numericTmdbId);
+      if (mediaType === "tv") {
+        await requestSeriesDownload(numericTmdbId);
+      } else {
+        await requestMovieDownload(numericTmdbId);
+      }
     } catch {
       // Context already displays the error toast.
     }
@@ -102,7 +128,9 @@ export default function DetailsHeaderActions({
       return i18n.t("screen.detail.download.downloading");
     }
     if (downloadRequest) return i18n.t("screen.detail.download.requested");
-    return i18n.t("screen.detail.download.action");
+    return mediaType === "tv"
+      ? i18n.t("screen.detail.download.seriesAction")
+      : i18n.t("screen.detail.download.action");
   };
 
   const getDownloadActionIcon = () => {
@@ -113,7 +141,7 @@ export default function DetailsHeaderActions({
   };
 
   const moreActions = [
-    ...(mediaType === "movie"
+    ...(mediaType === "movie" || mediaType === "tv"
       ? [
           {
             id: "download",
