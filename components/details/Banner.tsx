@@ -85,11 +85,11 @@ export default function Banner({
   const detailPillBackground = colorWithAlpha(palette.surface, 0.68);
   const detailPillBorder = colorWithAlpha(palette.tint, 0.55);
   const imageTintOpacity =
-    palette.mood === "vibrant" ? 0.16 : palette.mood === "muted" ? 0.06 : 0.04;
+    palette.mood === "vibrant" ? 0.12 : palette.mood === "muted" ? 0.045 : 0.035;
   const fadeTintOpacity =
-    palette.mood === "vibrant" ? 0.34 : palette.mood === "muted" ? 0.1 : 0.06;
+    palette.mood === "vibrant" ? 0.26 : palette.mood === "muted" ? 0.08 : 0.05;
   const firstBackgroundFade =
-    palette.mood === "vibrant" ? 0.2 : palette.mood === "muted" ? 0.38 : 0.42;
+    palette.mood === "vibrant" ? 0.16 : palette.mood === "muted" ? 0.32 : 0.38;
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
     : undefined;
@@ -145,7 +145,7 @@ export default function Banner({
                 "transparent",
                 "transparent",
                 colorWithAlpha(palette.tint, imageTintOpacity),
-                colorWithAlpha(palette.background, 0.24),
+                colorWithAlpha(palette.background, 0.18),
               ]}
               locations={[0, 0.46, 0.72, 1]}
               style={StyleSheet.absoluteFill}
@@ -198,15 +198,15 @@ export default function Banner({
             colorWithAlpha(palette.background, firstBackgroundFade),
             colorWithAlpha(
               palette.background,
-              palette.mood === "vibrant" ? 0.58 : 0.72,
+              palette.mood === "vibrant" ? 0.52 : 0.68,
             ),
             colorWithAlpha(
               palette.background,
-              palette.mood === "vibrant" ? 0.82 : 0.9,
+              palette.mood === "vibrant" ? 0.78 : 0.88,
             ),
             colorWithAlpha(
               palette.background,
-              palette.mood === "vibrant" ? 0.95 : 0.98,
+              palette.mood === "vibrant" ? 0.94 : 0.97,
             ),
             palette.background,
           ]}

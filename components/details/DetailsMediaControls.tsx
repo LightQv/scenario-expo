@@ -1,21 +1,11 @@
-import {
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
-import { GlassView } from "expo-glass-effect";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 import { BUTTON, TOKENS } from "@/constants/theme";
 import { notifyError } from "@/components/toasts/Toast";
-import {
-  useBookmarkContext,
-  useUserContext,
-  useViewContext,
-} from "@/contexts";
+import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
 import useView from "@/hooks/useView";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
@@ -149,9 +139,8 @@ export default function DetailsMediaControls({
   return (
     <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       {isAuthenticated && (
-        <GlassIconButton
+        <DetailIconButton
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
-          active={bookmarked}
           onPress={handleBookmark}
           palette={palette}
         />
@@ -167,9 +156,8 @@ export default function DetailsMediaControls({
       </TouchableOpacity>
 
       {isAuthenticated && (
-        <GlassIconButton
+        <DetailIconButton
           icon={viewed ? "eye" : "eye-outline"}
-          active={viewed}
           onPress={handleView}
           palette={palette}
         />
@@ -178,35 +166,26 @@ export default function DetailsMediaControls({
   );
 }
 
-type GlassIconButtonProps = {
+type DetailIconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
-  active: boolean;
   onPress: () => void;
   palette: DetailPalette;
 };
 
-function GlassIconButton({ icon, active, onPress, palette }: GlassIconButtonProps) {
+function DetailIconButton({ icon, onPress, palette }: DetailIconButtonProps) {
   return (
     <TouchableOpacity
       activeOpacity={BUTTON.opacity}
       onPress={onPress}
-      style={styles.glassButtonWrapper}
+      style={[
+        styles.iconButton,
+        {
+          backgroundColor: colorWithAlpha(palette.text, 0.06),
+          borderColor: colorWithAlpha(palette.text, 0.25),
+        },
+      ]}
     >
-      <GlassView
-        style={[
-          styles.glassButton,
-          {
-            backgroundColor: colorWithAlpha(palette.surface, active ? 0.76 : 0.58),
-            borderColor: colorWithAlpha(palette.tint, active ? 0.7 : 0.45),
-          },
-        ]}
-      >
-        <Ionicons
-          name={icon}
-          size={22}
-          color={palette.text}
-        />
-      </GlassView>
+      <Ionicons name={icon} size={25} color={palette.text} />
     </TouchableOpacity>
   );
 }
@@ -216,20 +195,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 14,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingTop: 0,
-    paddingBottom: 0,
+    paddingBottom: 8,
   },
-  glassButtonWrapper: {
-    width: 44,
-    height: 44,
-    borderRadius: TOKENS.radius.full,
-    overflow: "hidden",
-  },
-  glassButton: {
-    width: "100%",
-    height: "100%",
+  iconButton: {
+    width: 48,
+    height: 48,
     borderRadius: TOKENS.radius.full,
     alignItems: "center",
     justifyContent: "center",

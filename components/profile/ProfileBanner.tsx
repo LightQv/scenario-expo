@@ -12,7 +12,7 @@ import { useThemeContext } from "@/contexts";
 import { colorWithAlpha } from "@/services/detailPalette";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = 600;
+const BANNER_HEIGHT = 530;
 
 type ProfileBannerProps = {
   bannerUrl: string | undefined;
@@ -60,7 +60,7 @@ export default function ProfileBanner({
   });
 
   return (
-    <View style={[styles.container, { backgroundColor }]}> 
+    <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.imageWrapper}>
         <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
           {bannerUrl ? (
@@ -74,9 +74,7 @@ export default function ProfileBanner({
               cachePolicy="none"
             />
           ) : (
-            <View
-              style={[styles.image, { backgroundColor: colors.main }]}
-            />
+            <View style={[styles.image, { backgroundColor: colors.main }]} />
           )}
         </Animated.View>
       </View>
@@ -151,7 +149,10 @@ export default function ProfileBanner({
           <Text style={[styles.title, { color: textColor }]} numberOfLines={2}>
             {username}
           </Text>
-          <Text style={[styles.email, { color: secondaryTextColor }]} numberOfLines={1}>
+          <Text
+            style={[styles.email, { color: secondaryTextColor }]}
+            numberOfLines={1}
+          >
             {email}
           </Text>
         </View>
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 40,
+    paddingBottom: 24,
     zIndex: 2,
   },
   titleSection: {

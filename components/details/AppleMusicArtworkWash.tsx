@@ -71,11 +71,16 @@ export default function AppleMusicArtworkWash({
   const motionB = useSharedValue(0);
   const motionC = useSharedValue(0);
   const image = useImage(imageUrl ?? null);
-  const tintOpacity = palette.mood === "vibrant" ? 0.62 : palette.mood === "muted" ? 0.28 : 0.18;
-  const surfaceOpacity = palette.mood === "vibrant" ? 0.42 : palette.mood === "muted" ? 0.26 : 0.22;
-  const backgroundStartOpacity = palette.mood === "vibrant" ? 0.12 : palette.mood === "muted" ? 0.3 : 0.34;
-  const bottomFadeStartOpacity = palette.mood === "vibrant" ? 0.24 : palette.mood === "muted" ? 0.44 : 0.48;
-  const bottomFadeEndOpacity = palette.mood === "vibrant" ? 0.7 : palette.mood === "muted" ? 0.86 : 0.88;
+  const tintOpacity =
+    palette.mood === "vibrant" ? 0.48 : palette.mood === "muted" ? 0.2 : 0.14;
+  const surfaceOpacity =
+    palette.mood === "vibrant" ? 0.32 : palette.mood === "muted" ? 0.18 : 0.16;
+  const backgroundStartOpacity =
+    palette.mood === "vibrant" ? 0.08 : palette.mood === "muted" ? 0.22 : 0.28;
+  const bottomFadeStartOpacity =
+    palette.mood === "vibrant" ? 0.2 : palette.mood === "muted" ? 0.38 : 0.44;
+  const bottomFadeEndOpacity =
+    palette.mood === "vibrant" ? 0.66 : palette.mood === "muted" ? 0.82 : 0.86;
 
   useEffect(() => {
     if (reducedMotion) {
