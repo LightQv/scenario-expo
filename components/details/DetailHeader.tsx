@@ -59,6 +59,7 @@ export default function DetailHeader({
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 22,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: TOKENS.margin.vertical * 2,
     gap: 16,

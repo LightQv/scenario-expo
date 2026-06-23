@@ -29,6 +29,7 @@ import AppleMusicArtworkWash from "@/components/details/AppleMusicArtworkWash";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 600;
+const ARTWORK_WASH_HEIGHT = BANNER_HEIGHT + 120;
 
 type BannerProps = {
   src: string | undefined;
@@ -127,7 +128,7 @@ export default function Banner({
           palette={palette}
           scrollY={scrollY}
           width={width}
-          height={BANNER_HEIGHT}
+          height={ARTWORK_WASH_HEIGHT}
         />
 
         <View style={styles.imageWrapper}>
@@ -465,14 +466,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: BANNER_HEIGHT,
+    bottom: 0,
   },
   dynamicFadeContainer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: BANNER_HEIGHT,
+    bottom: 0,
   },
   imageWrapper: {
     position: "absolute",
@@ -508,11 +509,11 @@ const styles = StyleSheet.create({
   },
   mediaContentSection: {
     paddingTop: 360,
-    paddingBottom: 22,
+    paddingBottom: 0,
   },
   personContentSection: {
     paddingTop: 440,
-    paddingBottom: 24,
+    paddingBottom: 0,
   },
   titleSection: {
     gap: 6,
