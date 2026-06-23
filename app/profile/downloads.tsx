@@ -57,11 +57,7 @@ export default function DownloadsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <DownloadRequestCard data={item} />}
         contentContainerStyle={styles.content}
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <HeaderTitle title={i18n.t("screen.downloads.title")} />
-          </View>
-        }
+        ListHeaderComponent={<HeaderTitle title={i18n.t("screen.downloads.title")} />}
         ListEmptyComponent={
           <Host style={styles.emptyContainer}>
             <ContentUnavailableView
@@ -84,9 +80,6 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: CONTENT_TOP_PADDING,
     paddingBottom: CONTENT_BOTTOM_PADDING,
-  },
-  header: {
-    marginBottom: 18,
   },
   emptyContainer: {
     height: EMPTY_STATE_HEIGHT,
