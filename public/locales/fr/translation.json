@@ -297,11 +297,22 @@
         "action": "Télécharger",
         "seriesAction": "Télécharger la série",
         "seasonAction": "Télécharger la saison",
+        "missingEpisodesAction": "Télécharger les épisodes manquants",
         "requesting": "Demande...",
+        "requestingSeries": "Demande de la série...",
+        "requestingSeason": "Demande de la saison...",
         "requested": "Demandé",
+        "searching": "Recherche en cours",
+        "searchingSeries": "Recherche de la série",
+        "searchingSeason": "Recherche de la saison",
         "downloading": "Téléchargement",
+        "downloadingSeries": "Téléchargement de la série",
+        "downloadingSeason": "Téléchargement de la saison",
         "available": "Disponible",
-        "retry": "Réessayer"
+        "seriesAvailable": "Série disponible",
+        "seasonAvailable": "Saison disponible",
+        "retry": "Réessayer",
+        "retrySeason": "Réessayer la saison"
       },
       "crew": {
         "director": "Réalisateur",
@@ -311,6 +322,9 @@
         "trailer": "Voir la bande-annonce",
         "available": "Disponible",
         "partial": "Partiel",
+        "partiallyAvailable": "Partiellement disponible",
+        "missing": "Manquant",
+        "unknown": "Inconnu",
         "cast": "Casting",
         "castEmpty": "Aucune information sur le casting",
         "seasons": {
@@ -347,7 +361,11 @@
           "movie": "Film",
           "series": "Série",
           "season": "Saison {{season}}",
-          "episode": "S{{season}} · E{{episode}}"
+          "episode": "S{{season}} · E{{episode}}",
+          "movieDownload": "Téléchargement du film",
+          "seriesDownload": "Téléchargement de la série",
+          "seasonDownload": "Téléchargement de la saison {{season}}",
+          "episodeDownload": "Téléchargement S{{season}} E{{episode}}"
         },
       "actions": {
         "retry": "Réessayer",
@@ -371,6 +389,48 @@
         "failed": "Échec",
         "available": "Disponible",
         "cancelled": "Annulé"
+      },
+      "statusScoped": {
+        "requested": {
+          "series": "Série demandée",
+          "season": "Saison demandée",
+          "episode": "Épisode demandé"
+        },
+        "sent_to_radarr": {
+          "series": "Envoyé",
+          "season": "Envoyé",
+          "episode": "Envoyé"
+        },
+        "searching": {
+          "series": "Recherche de la série",
+          "season": "Recherche de la saison",
+          "episode": "Recherche de l'épisode"
+        },
+        "downloading": {
+          "series": "Téléchargement de la série",
+          "season": "Téléchargement de la saison",
+          "episode": "Téléchargement de l'épisode"
+        },
+        "not_found": {
+          "series": "Série introuvable",
+          "season": "Saison introuvable",
+          "episode": "Épisode introuvable"
+        },
+        "failed": {
+          "series": "Échec de la série",
+          "season": "Échec de la saison",
+          "episode": "Échec de l'épisode"
+        },
+        "available": {
+          "series": "Série disponible",
+          "season": "Saison disponible",
+          "episode": "Épisode disponible"
+        },
+        "cancelled": {
+          "series": "Série annulée",
+          "season": "Saison annulée",
+          "episode": "Épisode annulé"
+        }
       }
     },
     "person": {

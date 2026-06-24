@@ -263,7 +263,7 @@ function getAvailabilityLabel(
   tvAvailability: TvAvailability | null,
 ) {
   if (tvAvailability?.status === "partial") {
-    return i18n.t("screen.detail.media.partial");
+    return i18n.t("screen.detail.media.partiallyAvailable");
   }
   if (isMediaOwned) {
     return i18n.t("screen.detail.media.available");

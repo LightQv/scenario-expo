@@ -31,9 +31,11 @@ type DownloadRequestCardProps = {
 export default function DownloadRequestCard({ data }: DownloadRequestCardProps) {
   const { retryRequest, cancelRequest } = useDownloadRequestContext();
   const statusColor = getStatusColor(data.status);
+  const statusBackgroundColor = getStatusBackgroundColor(data.status);
   const queueSummary = getQueueSummary(data);
   const queueDetails = getQueueDetails(data);
   const scopeLabel = getScopeLabel(data);
+  const statusLabel = getStatusLabel(data);
   const progress = getProgress(data);
   const canCancel = ACTIVE_DOWNLOAD_STATUSES.includes(data.status);
   const canRetry = RETRYABLE_DOWNLOAD_STATUSES.includes(data.status);
@@ -82,15 +84,34 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
                 {scopeLabel} · {data.source === "SONARR" ? "Sonarr" : "Radarr"}
               </Text>
               <View style={styles.statusRow}>
-                <Ionicons name={getStatusIcon(data.status)} size={14} color={statusColor} />
-                <Text style={[styles.status, { color: statusColor }]}>
-                  {i18n.t(`screen.downloads.status.${data.status}`)}
-                  {!!queueSummary && ` · ${queueSummary}`}
-                </Text>
+                <View
+                  style={[
+                    styles.statusPill,
+                    {
+                      backgroundColor: statusBackgroundColor,
+                      borderColor: statusColor,
+                    },
+                  ]}
+                >
+                  <Ionicons name={getStatusIcon(data.status)} size={13} color={statusColor} />
+                  <Text style={[styles.status, { color: statusColor }]}>
+                    {statusLabel}
+                  </Text>
+                </View>
+                {!!queueSummary && (
+                  <Text style={styles.quality} numberOfLines={1}>
+                    {queueSummary}
+                  </Text>
+                )}
               </View>
               {progress !== null && (
                 <View style={styles.progressTrack}>
-                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${progress}%`, backgroundColor: statusColor },
+                    ]}
+                  />
                 </View>
               )}
               {!!queueDetails && (
@@ -159,19 +180,33 @@ function getQueueDetails(data: DownloadRequest) {
 
 function getScopeLabel(data: DownloadRequest) {
   if (data.scope === "season") {
-    return i18n.t("screen.downloads.scope.season", {
+    return i18n.t("screen.downloads.scope.seasonDownload", {
       season: data.season_number ?? "-",
     });
   }
 
   if (data.scope === "episode") {
-    return i18n.t("screen.downloads.scope.episode", {
+    return i18n.t("screen.downloads.scope.episodeDownload", {
       season: data.season_number ?? "-",
       episode: data.episode_number ?? "-",
     });
   }
 
-  return i18n.t(`screen.downloads.scope.${data.scope}`);
+  return i18n.t(`screen.downloads.scope.${data.scope}Download`);
+}
+
+function getStatusLabel(data: DownloadRequest) {
+  if (data.media_type !== "tv") {
+    return i18n.t(`screen.downloads.status.${data.status}`);
+  }
+
+  const scopeKey =
+    data.scope === "season"
+      ? "season"
+      : data.scope === "episode"
+        ? "episode"
+        : "series";
+  return i18n.t(`screen.downloads.statusScoped.${data.status}.${scopeKey}`);
 }
 
 function formatSize(size?: number | null) {
@@ -204,13 +239,39 @@ function getStatusColor(status: DownloadRequestStatus) {
   switch (status) {
     case "available":
       return PlatformColor("systemGreen");
+    case "searching":
+    case "downloading":
+      return PlatformColor("systemBlue");
     case "failed":
-    case "not_found":
       return PlatformColor("systemRed");
+    case "not_found":
+    case "requested":
+    case "sent_to_radarr":
+      return PlatformColor("systemOrange");
     case "cancelled":
       return PlatformColor("secondaryLabel");
     default:
       return PlatformColor("systemOrange");
+  }
+}
+
+function getStatusBackgroundColor(status: DownloadRequestStatus) {
+  switch (status) {
+    case "available":
+      return "rgba(52, 199, 89, 0.14)";
+    case "searching":
+    case "downloading":
+      return "rgba(0, 122, 255, 0.14)";
+    case "failed":
+      return "rgba(255, 59, 48, 0.14)";
+    case "not_found":
+    case "requested":
+    case "sent_to_radarr":
+      return "rgba(255, 149, 0, 0.14)";
+    case "cancelled":
+      return "rgba(142, 142, 147, 0.14)";
+    default:
+      return "rgba(255, 149, 0, 0.14)";
   }
 }
 
@@ -257,10 +318,26 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
+  },
+  statusPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
     gap: 5,
+    borderRadius: TOKENS.radius.full,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   status: {
     fontSize: TOKENS.font.md,
+    fontFamily: FONTS.bold,
+  },
+  quality: {
+    flex: 1,
+    color: PlatformColor("secondaryLabel"),
+    fontSize: TOKENS.font.sm,
     fontFamily: FONTS.medium,
   },
   scope: {
@@ -285,7 +362,6 @@ const styles = StyleSheet.create({
   progressFill: {
     height: "100%",
     borderRadius: TOKENS.radius.full,
-    backgroundColor: PlatformColor("systemOrange"),
   },
   actionButton: {
     width: 44,
