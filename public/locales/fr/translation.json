@@ -243,7 +243,7 @@
         "requests": "Demandes"
       },
       "settings": {
-        "title": "Paramètres du compte"
+        "title": "Paramètres"
       },
       "application": {
         "title": "Paramètres de l'application"
@@ -533,6 +533,69 @@
         "subtitle": "Sélectionnez une liste de lecture pour ce média"
       }
     },
+    "settings": {
+      "sections": {
+        "appearance": "Apparence",
+        "downloads": "Téléchargements",
+        "account": "Compte",
+        "status": "Statut",
+        "connection": "Connexion",
+        "library": "Bibliothèque",
+        "rootFolders": "Dossiers racine",
+        "profiles": "Profils",
+        "tags": "Tags"
+      },
+      "common": {
+        "comingSoon": "Bientôt disponible",
+        "notConfigured": "Non configuré"
+      },
+      "theme": {
+        "title": "Thème",
+        "description": "Choisissez l'apparence de Scenario et personnalisez les couleurs d'accent."
+      },
+      "downloads": {
+        "title": "Téléchargements",
+        "description": "Configurez les serveurs de téléchargement utilisés par Scenario pour votre compte. Les secrets seront chiffrés et ne seront plus affichés après l'enregistrement.",
+        "footer": "Configurez les intégrations Radarr et Sonarr utilisées par votre compte.",
+        "enable": "Activer les intégrations de téléchargement"
+      },
+      "radarr": {
+        "title": "Radarr",
+        "description": "Radarr sera utilisé pour les téléchargements de films et la synchronisation des films disponibles.",
+        "enable": "Activer Radarr",
+        "testConnection": "Tester la connexion",
+        "syncOwnedMovies": "Synchroniser les films disponibles"
+      },
+      "sonarr": {
+        "title": "Sonarr",
+        "description": "Sonarr sera utilisé pour les téléchargements de séries, de saisons et la synchronisation des épisodes disponibles.",
+        "enable": "Activer Sonarr",
+        "testConnection": "Tester la connexion",
+        "syncOwnedTv": "Synchroniser les séries disponibles",
+        "profilesFooter": "Scenario distingue les séries en cours des saisons terminées. Les saisons en cours utilisent le profil On-air, tandis que les saisons terminées ou archivées utilisent le profil Complete. Cela permet de privilégier le 1080p pour les épisodes récents et des saisons complètes plus légères.",
+        "tagsFooter": "Les tags permettent à Sonarr d'appliquer des profils de release différents. Utilisez tv-onair pour les séries en cours et tv-complete pour les saisons terminées ou archivées."
+      },
+      "deleteAccount": {
+        "title": "Supprimer le compte",
+        "description": "Cette action supprime définitivement votre compte et ne peut pas être annulée."
+      },
+      "fields": {
+        "apiKey": "Clé API",
+        "webhookSecret": "Secret du webhook",
+        "rootFolder": "Chemin du dossier racine",
+        "qualityProfile": "ID du profil de qualité",
+        "minimumAvailability": "Disponibilité minimale",
+        "tvRootFolder": "Chemin du dossier séries",
+        "animeRootFolder": "Chemin du dossier anime",
+        "fallbackQualityProfile": "ID du profil de qualité par défaut",
+        "onAirQualityProfile": "ID du profil On-air",
+        "completeQualityProfile": "ID du profil Complete",
+        "animeQualityProfile": "ID du profil anime",
+        "animeTag": "Tag anime",
+        "onAirTag": "Tag On-air",
+        "completeTag": "Tag Complete"
+      }
+    },
     "applicationSettings": {
       "title": "Paramètres de l'application",
       "theme": {
@@ -542,7 +605,6 @@
         "system": "Système"
       },
       "colors": {
-        "title": "Couleurs d'accent",
         "light": "Mode clair",
         "dark": "Mode sombre"
       },
