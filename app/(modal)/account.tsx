@@ -50,7 +50,8 @@ export default function AccountScreen() {
   };
 
   const handleSettingsPress = () => {
-    router.push("/(modal)/settings");
+    router.back();
+    router.push("/settings");
   };
 
   return (

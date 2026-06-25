@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { notifySuccess } from "@/components/toasts/Toast";
 import { ColorPicker, Host } from "@expo/ui/swift-ui";
 import GoBackButton from "@/components/ui/GoBackButton";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 import SettingsDescriptionCard from "@/components/settings/SettingsDescriptionCard";
 
 type ThemePreference = "light" | "dark" | "system";
@@ -60,7 +61,7 @@ export default function ThemeSettingsScreen() {
 
   return (
     <>
-      <GoBackButton variant="close" />
+      <GoBackButton />
       <ScrollView
         style={[
           styles.container,
@@ -68,13 +69,15 @@ export default function ThemeSettingsScreen() {
         ]}
         contentContainerStyle={styles.content}
       >
-        <SettingsDescriptionCard
-          title={i18n.t("screen.settings.theme.title")}
-          description={i18n.t("screen.settings.theme.description")}
-          icon="color-palette"
-        />
+        <HeaderTitle title={i18n.t("screen.settings.theme.title")} />
+        <View style={styles.groups}>
+          <SettingsDescriptionCard
+            title={i18n.t("screen.settings.theme.title")}
+            description={i18n.t("screen.settings.theme.description")}
+            icon="color-palette"
+          />
 
-        <View style={styles.section}>
+          <View style={styles.section}>
           <View
             style={[
               styles.themeContainer,
@@ -183,9 +186,9 @@ export default function ThemeSettingsScreen() {
               </Text>
             </Pressable>
           </View>
-        </View>
+          </View>
 
-        <View style={styles.section}>
+          <View style={styles.section}>
           <View
             style={[
               styles.colorsContainer,
@@ -225,20 +228,21 @@ export default function ThemeSettingsScreen() {
               </Host>
             </View>
           </View>
-        </View>
+          </View>
 
-        <TouchableOpacity
-          onPress={handleReset}
-          style={[
-            styles.resetButton,
-            { backgroundColor: PlatformColor("secondarySystemGroupedBackground") },
-          ]}
-          activeOpacity={BUTTON.opacity}
-        >
-          <Text style={[styles.resetButtonText, { color: colors.main }]}> 
-            {i18n.t("screen.applicationSettings.reset.button")}
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleReset}
+            style={[
+              styles.resetButton,
+              { backgroundColor: PlatformColor("secondarySystemGroupedBackground") },
+            ]}
+            activeOpacity={BUTTON.opacity}
+          >
+            <Text style={[styles.resetButtonText, { color: colors.main }]}> 
+              {i18n.t("screen.applicationSettings.reset.button")}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </>
   );
@@ -250,9 +254,11 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: TOKENS.margin.horizontal,
-    gap: 28,
-    paddingTop: TOKENS.modal.paddingTop,
+    paddingTop: 200,
     paddingBottom: 60,
+  },
+  groups: {
+    gap: 28,
   },
   section: {
     gap: 12,

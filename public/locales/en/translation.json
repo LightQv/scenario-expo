@@ -534,19 +534,32 @@
     },
     "settings": {
       "sections": {
-        "appearance": "Appearance",
-        "downloads": "Downloads",
-        "account": "Account",
         "status": "Status",
         "connection": "Connection",
+        "actions": "Actions",
         "library": "Library",
+        "folders": "Folders",
         "rootFolders": "Root folders",
         "profiles": "Profiles",
-        "tags": "Tags"
+        "languages": "Languages",
+        "tags": "Tags",
+        "series": "Series",
+        "behavior": "Behavior"
       },
       "common": {
         "comingSoon": "Coming soon",
-        "notConfigured": "Not configured"
+        "notConfigured": "Not configured",
+        "configured": "Configured",
+        "on": "On",
+        "off": "Off",
+        "loading": "Loading",
+        "testConnection": "Test connection",
+        "connectionSuccess": "Connected to {{name}}{{version}}",
+        "connectionFailed": "Connection failed. Check the URL and API key.",
+        "options": "Options",
+        "loadingOptions": "Loading server options...",
+        "optionsError": "Could not load server options. Check the URL, API key, and server configuration.",
+        "configureConnectionFirst": "Enter the URL and API key to load server options."
       },
       "theme": {
         "title": "Theme",
@@ -555,20 +568,19 @@
       "downloads": {
         "title": "Downloads",
         "description": "Configure the download servers used by Scenario for your account. Secrets will be stored encrypted and never shown again after saving.",
-        "footer": "Configure Radarr and Sonarr integrations used by your account.",
         "enable": "Enable download integrations"
       },
       "radarr": {
         "title": "Radarr",
         "description": "Radarr will be used for movie downloads and owned movie sync.",
-        "enable": "Enable Radarr",
+        "serverHint": "Scenario uses the profiles and folders configured on your Radarr server. If an option is missing or wrong, update it in Radarr first.",
         "testConnection": "Test connection",
         "syncOwnedMovies": "Sync owned movies"
       },
       "sonarr": {
         "title": "Sonarr",
         "description": "Sonarr will be used for TV downloads, season downloads, and owned episode sync.",
-        "enable": "Enable Sonarr",
+        "serverHint": "Scenario uses the profiles, folders, and tags configured on your Sonarr server. If an option is missing or wrong, update it in Sonarr first.",
         "testConnection": "Test connection",
         "syncOwnedTv": "Sync owned TV shows",
         "profilesFooter": "Scenario treats current and completed TV differently. Current seasons use the on-air profile; completed or archived seasons use the complete profile. This helps prioritize 1080p episodes while keeping full seasons lighter.",
@@ -590,9 +602,17 @@
         "onAirQualityProfile": "On-air quality profile ID",
         "completeQualityProfile": "Complete quality profile ID",
         "animeQualityProfile": "Anime quality profile ID",
+        "languageProfile": "Language profile ID",
+        "animeLanguageProfile": "Anime language profile ID",
         "animeTag": "Anime tag label",
         "onAirTag": "On-air tag label",
-        "completeTag": "Complete tag label"
+        "completeTag": "Complete tag label",
+        "seriesType": "Series type",
+        "animeSeriesType": "Anime series type",
+        "monitorMode": "Monitor mode",
+        "onAirRecencyDays": "On-air recency days",
+        "seasonFolder": "Season folders",
+        "useAnimeSeriesType": "Use anime series type"
       }
     },
     "applicationSettings": {

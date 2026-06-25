@@ -112,6 +112,10 @@ function ThemeWrapper() {
                     options={{ headerShown: false, presentation: "card" }}
                   />
                   <Stack.Screen
+                    name="settings"
+                    options={{ headerShown: false, presentation: "card" }}
+                  />
+                  <Stack.Screen
                     name="genre/[genreId]"
                     options={{
                       headerTransparent: true,

@@ -1,20 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
+import { PropsWithChildren } from "react";
 import { PlatformColor, StyleSheet, Text, View } from "react-native";
 import { FONTS, TOKENS } from "@/constants/theme";
 import SettingsIcon from "@/components/settings/SettingsIcon";
 
-type SettingsDescriptionCardProps = {
+type SettingsDescriptionCardProps = PropsWithChildren<{
   title: string;
   description: string;
   icon: keyof typeof Ionicons.glyphMap;
   iconColors?: [string, string];
-};
+}>;
 
 export default function SettingsDescriptionCard({
   title,
   description,
   icon,
   iconColors,
+  children,
 }: SettingsDescriptionCardProps) {
   return (
     <View
@@ -34,6 +36,12 @@ export default function SettingsDescriptionCard({
           {description}
         </Text>
       </View>
+      {children ? (
+        <>
+          <View style={[styles.divider, { backgroundColor: PlatformColor("separator") }]} />
+          <View>{children}</View>
+        </>
+      ) : null}
     </View>
   );
 }
@@ -41,7 +49,8 @@ export default function SettingsDescriptionCard({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 28,
-    padding: 22,
+    paddingHorizontal: 22,
+    paddingVertical: 22,
     gap: 16,
   },
   textContainer: {
@@ -56,5 +65,8 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xl,
     lineHeight: 20,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
   },
 });

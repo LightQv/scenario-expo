@@ -17,6 +17,8 @@ type SettingsNavigationRowProps = {
   destructive?: boolean;
   disabled?: boolean;
   showDivider?: boolean;
+  showChevron?: boolean;
+  labelColor?: string;
   onPress?: () => void;
 };
 
@@ -28,6 +30,8 @@ export default function SettingsNavigationRow({
   destructive = false,
   disabled = false,
   showDivider = false,
+  showChevron = true,
+  labelColor,
   onPress,
 }: SettingsNavigationRowProps) {
   return (
@@ -47,7 +51,9 @@ export default function SettingsNavigationRow({
               style={[
                 styles.label,
                 {
-                  color: destructive
+                  color: labelColor
+                    ? labelColor
+                    : destructive
                     ? PlatformColor("systemRed")
                     : disabled
                       ? PlatformColor("tertiaryLabel")
@@ -69,7 +75,7 @@ export default function SettingsNavigationRow({
                   {value}
                 </Text>
               ) : null}
-              {onPress ? (
+              {onPress && showChevron ? (
                 <Ionicons
                   name="chevron-forward"
                   size={16}
@@ -117,17 +123,20 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
   },
   label: {
-    flex: 1,
+    flexShrink: 0,
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xxl,
   },
   trailing: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
     gap: 5,
-    maxWidth: "52%",
+    flexShrink: 1,
+    maxWidth: "68%",
   },
   value: {
+    flexShrink: 1,
     fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xxl,
   },

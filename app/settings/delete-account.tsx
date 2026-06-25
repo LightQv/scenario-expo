@@ -19,6 +19,7 @@ import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import GoBackButton from "@/components/ui/GoBackButton";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 import SettingsDescriptionCard from "@/components/settings/SettingsDescriptionCard";
 
 export default function DeleteAccountSettingsScreen() {
@@ -67,7 +68,7 @@ export default function DeleteAccountSettingsScreen() {
 
   return (
     <>
-      <GoBackButton variant="close" />
+      <GoBackButton />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
@@ -77,6 +78,7 @@ export default function DeleteAccountSettingsScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <HeaderTitle title={i18n.t("screen.settings.deleteAccount.title")} />
           <View style={styles.innerContainer}>
             <SettingsDescriptionCard
               title={i18n.t("screen.settings.deleteAccount.title")}
@@ -166,7 +168,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: TOKENS.margin.horizontal,
-    paddingTop: TOKENS.modal.paddingTop,
+    paddingTop: 200,
     paddingBottom: 60,
   },
   innerContainer: {
