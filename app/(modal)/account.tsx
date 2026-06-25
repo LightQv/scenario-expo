@@ -424,12 +424,13 @@ const styles = StyleSheet.create({
   logoutButton: {
     height: 52,
     borderRadius: TOKENS.radius.xl,
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
+    paddingHorizontal: 16,
     marginTop: 12,
   },
   logoutButtonText: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS.regular,
     fontSize: TOKENS.font.xxl,
   },
 });
