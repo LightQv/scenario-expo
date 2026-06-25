@@ -5,7 +5,6 @@ import { patchSonarrSettings } from "@/services/downloadSettings";
 export default function SonarrWebhookSecretScreen() {
   return (
     <DownloadFieldEditScreen
-      title={i18n.t("screen.settings.fields.webhookSecret")}
       placeholder={i18n.t("screen.settings.fields.webhookSecret")}
       secret
       onSave={async (webhook_secret) => {

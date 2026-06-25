@@ -591,7 +591,13 @@
         "title": "Supprimer le compte",
         "description": "Cette action supprime définitivement votre compte et ne peut pas être annulée."
       },
+      "editTitle": {
+        "url": "URL",
+        "apiKey": "Clé API",
+        "webhookSecret": "Secret du webhook"
+      },
       "fields": {
+        "url": "URL",
         "apiKey": "Clé API",
         "webhookSecret": "Secret du webhook",
         "rootFolder": "Chemin du dossier racine",

@@ -12,8 +12,7 @@ export default function RadarrUrlScreen() {
 
   return (
     <DownloadFieldEditScreen
-      title="URL"
-      placeholder="URL"
+      placeholder={i18n.t("screen.settings.fields.url")}
       initialValue={initialValue}
       keyboard="url"
       onSave={async (url) => {

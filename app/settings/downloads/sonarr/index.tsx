@@ -167,7 +167,7 @@ export default function SonarrSettingsScreen() {
                   <>
                     <SettingsGroup>
                       <SettingsNavigationRow
-                        label="URL"
+                        label={i18n.t("screen.settings.fields.url")}
                         value={settings?.url ?? undefined}
                         showDivider
                         onPress={() => router.push("/settings/downloads/sonarr/url")}

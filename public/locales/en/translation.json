@@ -590,7 +590,13 @@
         "title": "Delete account",
         "description": "This permanently deletes your account and cannot be undone."
       },
+      "editTitle": {
+        "url": "URL",
+        "apiKey": "API key",
+        "webhookSecret": "Webhook secret"
+      },
       "fields": {
+        "url": "URL",
         "apiKey": "API key",
         "webhookSecret": "Webhook secret",
         "rootFolder": "Root folder path",

@@ -14,13 +14,12 @@ import {
   scrollContentBackground,
   submitLabel,
 } from "@expo/ui/swift-ui/modifiers";
-import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { notifyError } from "@/components/toasts/Toast";
+import { TOKENS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 
 type DownloadFieldEditScreenProps = {
-  title: string;
   placeholder: string;
   initialValue?: string;
   secret?: boolean;
@@ -29,7 +28,6 @@ type DownloadFieldEditScreenProps = {
 };
 
 export default function DownloadFieldEditScreen({
-  title,
   placeholder,
   initialValue = "",
   secret = false,
@@ -40,7 +38,9 @@ export default function DownloadFieldEditScreen({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    text.value = initialValue;
+    if (text.value !== initialValue) {
+      text.value = initialValue;
+    }
   }, [initialValue, text]);
 
   const validate = async () => {
@@ -66,16 +66,17 @@ export default function DownloadFieldEditScreen({
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          headerTitle: title,
-          headerTransparent: false,
-          headerLeft: () => <GoBackButton variant="close" />,
-          headerRight: () => (
-            <FormSubmitHeaderButton onPress={validate} disabled={saving} />
-          ),
-        }}
-      />
+      <GoBackButton variant="close" />
+      <Stack.Toolbar placement="right">
+        <Stack.Toolbar.Button
+          accessibilityLabel="Validate"
+          disabled={saving}
+          icon={"checkmark" as never}
+          onPress={validate}
+        >
+          Validate
+        </Stack.Toolbar.Button>
+      </Stack.Toolbar>
       <Host style={styles.host}>
         <Form modifiers={[scrollContentBackground("hidden")]}> 
           <Section>
@@ -102,9 +103,10 @@ export default function DownloadFieldEditScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: PlatformColor("systemGroupedBackground"),
+    backgroundColor: PlatformColor("systemBackground"),
   },
   host: {
     flex: 1,
+    paddingTop: TOKENS.modal.paddingTop,
   },
 });

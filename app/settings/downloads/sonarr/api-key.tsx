@@ -5,7 +5,6 @@ import { patchSonarrSettings } from "@/services/downloadSettings";
 export default function SonarrApiKeyScreen() {
   return (
     <DownloadFieldEditScreen
-      title={i18n.t("screen.settings.fields.apiKey")}
       placeholder={i18n.t("screen.settings.fields.apiKey")}
       secret
       onSave={async (api_key) => {
