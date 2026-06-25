@@ -7,18 +7,28 @@ import {
   ScrollView,
   useColorScheme,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import GoBackButton from "@/components/ui/GoBackButton";
+import {
+  type DownloadSettingsOverview,
+  getDownloadSettingsOverview,
+} from "@/services/downloadSettings";
 
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
   const { colors } = useThemeContext();
   const colorScheme = useColorScheme();
+  const [downloadOverview, setDownloadOverview] =
+    useState<DownloadSettingsOverview | null>(null);
   const isDark = colorScheme === "dark";
+  const radarrEnabled = downloadOverview?.radarr.enabled === true;
+  const sonarrEnabled = downloadOverview?.sonarr.enabled === true;
+  const downloadsEnabled = radarrEnabled || sonarrEnabled;
 
   const errorColor = isDark
     ? TOAST_COLORS.dark.error
@@ -53,6 +63,14 @@ export default function AccountScreen() {
     router.back();
     router.push("/settings");
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getDownloadSettingsOverview()
+        .then(setDownloadOverview)
+        .catch(() => setDownloadOverview(null));
+    }, []),
+  );
 
   return (
     <>
@@ -168,93 +186,108 @@ export default function AccountScreen() {
             </View>
           </View>
 
-          {/* Owned Media Section */}
-          <View style={styles.section}>
-            <Text
-              style={[styles.sectionTitle, { color: PlatformColor("label") }]}
-            >
-              {i18n.t("screen.account.owned.title")}
-            </Text>
-            <View
-              style={[
-                styles.viewsContainer,
-                { backgroundColor: PlatformColor("systemGray5") },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => handleOwnedMediaPress("movie")}
-                style={styles.viewsOption}
-                activeOpacity={BUTTON.opacity}
+          {downloadsEnabled && (
+            <View style={styles.section}>
+              <Text
+                style={[styles.sectionTitle, { color: PlatformColor("label") }]}
               >
-                <Text
-                  style={[styles.cardText, { color: PlatformColor("label") }]}
-                >
-                  {i18n.t("screen.account.owned.movies")}
-                </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={PlatformColor("secondaryLabel")}
-                />
-              </TouchableOpacity>
-
+                {i18n.t("screen.account.owned.title")}
+              </Text>
               <View
                 style={[
-                  styles.divider,
-                  { backgroundColor: PlatformColor("separator") },
+                  styles.viewsContainer,
+                  { backgroundColor: PlatformColor("systemGray5") },
                 ]}
-              />
-
-              <TouchableOpacity
-                onPress={() => handleOwnedMediaPress("tv")}
-                style={styles.viewsOption}
-                activeOpacity={BUTTON.opacity}
               >
-                <Text
-                  style={[styles.cardText, { color: PlatformColor("label") }]}
-                >
-                  {i18n.t("screen.account.owned.tv")}
-                </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={PlatformColor("secondaryLabel")}
-                />
-              </TouchableOpacity>
+                {radarrEnabled && (
+                  <TouchableOpacity
+                    onPress={() => handleOwnedMediaPress("movie")}
+                    style={styles.viewsOption}
+                    activeOpacity={BUTTON.opacity}
+                  >
+                    <Text
+                      style={[
+                        styles.cardText,
+                        { color: PlatformColor("label") },
+                      ]}
+                    >
+                      {i18n.t("screen.account.owned.movies")}
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color={PlatformColor("secondaryLabel")}
+                    />
+                  </TouchableOpacity>
+                )}
+
+                {radarrEnabled && sonarrEnabled && (
+                  <View
+                    style={[
+                      styles.divider,
+                      { backgroundColor: PlatformColor("separator") },
+                    ]}
+                  />
+                )}
+
+                {sonarrEnabled && (
+                  <TouchableOpacity
+                    onPress={() => handleOwnedMediaPress("tv")}
+                    style={styles.viewsOption}
+                    activeOpacity={BUTTON.opacity}
+                  >
+                    <Text
+                      style={[
+                        styles.cardText,
+                        { color: PlatformColor("label") },
+                      ]}
+                    >
+                      {i18n.t("screen.account.owned.tv")}
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color={PlatformColor("secondaryLabel")}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Downloads Section */}
-          <View style={styles.section}>
-            <Text
-              style={[styles.sectionTitle, { color: PlatformColor("label") }]}
-            >
-              {i18n.t("screen.account.downloads.title")}
-            </Text>
-            <View
-              style={[
-                styles.viewsContainer,
-                { backgroundColor: PlatformColor("systemGray5") },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={handleDownloadsPress}
-                style={styles.viewsOption}
-                activeOpacity={BUTTON.opacity}
+          {downloadsEnabled && (
+            <View style={styles.section}>
+              <Text
+                style={[styles.sectionTitle, { color: PlatformColor("label") }]}
               >
-                <Text
-                  style={[styles.cardText, { color: PlatformColor("label") }]}
+                {i18n.t("screen.account.downloads.title")}
+              </Text>
+              <View
+                style={[
+                  styles.viewsContainer,
+                  { backgroundColor: PlatformColor("systemGray5") },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={handleDownloadsPress}
+                  style={styles.viewsOption}
+                  activeOpacity={BUTTON.opacity}
                 >
-                  {i18n.t("screen.account.downloads.requests")}
-                </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={PlatformColor("secondaryLabel")}
-                />
-              </TouchableOpacity>
+                  <Text
+                    style={[styles.cardText, { color: PlatformColor("label") }]}
+                  >
+                    {i18n.t("screen.account.downloads.requests")}
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={PlatformColor("secondaryLabel")}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Settings Section */}
           <View style={styles.section}>
