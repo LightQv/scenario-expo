@@ -35,6 +35,7 @@ export default function SettingsScreen() {
             <SettingsNavigationRow
               label={i18n.t("screen.settings.deleteAccount.title")}
               destructive
+              showChevron={false}
               onPress={() => router.push("/settings/delete-account")}
             />
           </SettingsGroup>
