@@ -239,13 +239,6 @@ export default function RadarrSettingsScreen() {
                         patch({ quality_profile_id })
                       }
                     />
-                    <NativePicker
-                      value={settings?.minimum_availability}
-                      options={options.minimum_availability}
-                      onSelect={(minimum_availability) =>
-                        patch({ minimum_availability })
-                      }
-                    />
                   </Section>
                 </>
               ) : (

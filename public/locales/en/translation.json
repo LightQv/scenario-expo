@@ -601,7 +601,6 @@
         "webhookSecret": "Webhook secret",
         "rootFolder": "Root folder path",
         "qualityProfile": "Quality profile ID",
-        "minimumAvailability": "Minimum availability",
         "tvRootFolder": "TV root folder path",
         "animeRootFolder": "Anime root folder path",
         "fallbackQualityProfile": "Fallback quality profile ID",

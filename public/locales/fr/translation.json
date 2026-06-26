@@ -602,7 +602,6 @@
         "webhookSecret": "Secret du webhook",
         "rootFolder": "Chemin du dossier racine",
         "qualityProfile": "ID du profil de qualité",
-        "minimumAvailability": "Disponibilité minimale",
         "tvRootFolder": "Chemin du dossier séries",
         "animeRootFolder": "Chemin du dossier anime",
         "fallbackQualityProfile": "ID du profil de qualité par défaut",

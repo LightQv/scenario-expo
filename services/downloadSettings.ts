@@ -22,7 +22,6 @@ export type DownloadSettingsOverview = {
 export type RadarrSettings = IntegrationSummary & {
   root_folder_path?: string | null;
   quality_profile_id?: number | null;
-  minimum_availability?: string | null;
 };
 
 export type SonarrSettings = IntegrationSummary & {
@@ -48,7 +47,6 @@ export type SonarrSettings = IntegrationSummary & {
 export type RadarrOptions = {
   quality_profiles: SelectOption[];
   root_folders: SelectOption[];
-  minimum_availability: SelectOption[];
 };
 
 export type SonarrOptions = {
