@@ -1,22 +1,29 @@
 import { PlatformColor } from "react-native";
+import type { ComponentProps } from "react";
 import {
   Button,
   HStack,
   Image,
   Spacer,
   Text as SwiftText,
+  ZStack,
 } from "@expo/ui/swift-ui";
 import {
+  background,
   buttonStyle,
   disabled as disabledModifier,
   foregroundStyle,
+  frame,
   padding,
+  shapes,
 } from "@expo/ui/swift-ui/modifiers";
 
 type NativeSettingsRowProps = {
   label: string;
   value?: string;
   labelColor?: string;
+  systemIcon?: NonNullable<ComponentProps<typeof Image>["systemName"]>;
+  tintColor?: string;
   showChevron?: boolean;
   disabled?: boolean;
   onPress?: () => void;
@@ -26,6 +33,8 @@ export default function NativeSettingsRow({
   label,
   value,
   labelColor,
+  systemIcon,
+  tintColor,
   showChevron,
   disabled = false,
   onPress,
@@ -38,11 +47,32 @@ export default function NativeSettingsRow({
       modifiers={[
         buttonStyle("plain"),
         disabledModifier(disabled || !onPress),
-        padding({ all: 2 }),
+        padding({ all: systemIcon ? 0 : 2 }),
       ]}
     >
       <HStack alignment="center" spacing={8}>
-        <SwiftText modifiers={labelColor ? [foregroundStyle(labelColor)] : []}>
+        {systemIcon ? (
+          <ZStack
+            modifiers={[
+              frame({ width: 28, height: 28 }),
+              background(
+                tintColor as string,
+                shapes.roundedRectangle({
+                  cornerRadius: 8,
+                  roundedCornerStyle: "continuous",
+                }),
+              ),
+            ]}
+          >
+            <Image systemName={systemIcon} color="white" size={14} />
+          </ZStack>
+        ) : null}
+        <SwiftText
+          modifiers={[
+            ...(labelColor ? [foregroundStyle(labelColor)] : []),
+            ...(systemIcon ? [padding({ leading: 4 })] : []),
+          ]}
+        >
           {label}
         </SwiftText>
         <Spacer />

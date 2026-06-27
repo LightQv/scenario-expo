@@ -1,46 +1,50 @@
 import { router } from "expo-router";
-import { PlatformColor, ScrollView, StyleSheet, View } from "react-native";
+import { PlatformColor, StyleSheet, View } from "react-native";
+import { Host, List, Section } from "@expo/ui/swift-ui";
+import { listStyle } from "@expo/ui/swift-ui/modifiers";
+import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsPageTitle from "@/components/settings/SettingsPageTitle";
 import GoBackButton from "@/components/ui/GoBackButton";
-import HeaderTitle from "@/components/ui/HeaderTitle";
-import SettingsGroup from "@/components/settings/SettingsGroup";
-import SettingsNavigationRow from "@/components/settings/SettingsNavigationRow";
-import { TOKENS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
 import i18n from "@/services/i18n";
+import { TOKENS } from "@/constants/theme";
 
 export default function SettingsScreen() {
+  const { colors } = useThemeContext();
+
   return (
     <View style={styles.container}>
       <GoBackButton />
-      <ScrollView
-        contentContainerStyle={styles.content}
-      >
-        <HeaderTitle title={i18n.t("screen.account.settings.title")} />
-
-        <View style={styles.groups}>
-          <SettingsGroup>
-            <SettingsNavigationRow
+      <View style={styles.titleContainer}>
+        <SettingsPageTitle title={i18n.t("screen.account.settings.title")} />
+      </View>
+      <Host style={styles.host}>
+        <List modifiers={[listStyle("insetGrouped")]}>
+          <Section>
+            <NativeSettingsRow
               label={i18n.t("screen.settings.theme.title")}
-              icon="color-palette"
-              showDivider
+              systemIcon="paintpalette"
+              tintColor={colors.main}
               onPress={() => router.push("/settings/theme")}
             />
-            <SettingsNavigationRow
+            <NativeSettingsRow
               label={i18n.t("screen.settings.downloads.title")}
-              icon="arrow-down-circle"
+              systemIcon="arrow.down.circle"
+              tintColor={colors.main}
               onPress={() => router.push("/settings/downloads")}
             />
-          </SettingsGroup>
+          </Section>
 
-          <SettingsGroup>
-            <SettingsNavigationRow
+          <Section>
+            <NativeSettingsRow
               label={i18n.t("screen.settings.deleteAccount.title")}
-              destructive
+              labelColor="red"
               showChevron={false}
               onPress={() => router.push("/settings/delete-account")}
             />
-          </SettingsGroup>
-        </View>
-      </ScrollView>
+          </Section>
+        </List>
+      </Host>
     </View>
   );
 }
@@ -50,12 +54,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: PlatformColor("systemGroupedBackground"),
   },
-  content: {
-    padding: TOKENS.margin.horizontal,
-    paddingTop: 200,
-    paddingBottom: 60,
+  titleContainer: {
+    marginTop: 124,
+    marginLeft: TOKENS.margin.horizontal,
   },
-  groups: {
-    gap: 28,
-  },
+  host: { flex: 1 },
 });
