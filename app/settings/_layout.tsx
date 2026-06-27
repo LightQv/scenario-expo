@@ -83,6 +83,27 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="downloads/radarr/configuration/add"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.radarr.addConfigurationTitle"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="downloads/radarr/configuration/index"
+        options={{
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.radarr.profiles.movie"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
         name="downloads/sonarr/url"
         options={{
           presentation: "modal",

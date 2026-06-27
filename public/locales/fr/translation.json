@@ -581,7 +581,19 @@
         "description": "Radarr sera utilisé pour les téléchargements de films et la synchronisation des films disponibles.",
         "serverHint": "Scenario utilise les profils et dossiers configurés sur votre serveur Radarr. Si une option manque ou semble incorrecte, modifiez-la d'abord dans Radarr.",
         "testConnection": "Tester la connexion",
-        "syncOwnedMovies": "Synchroniser les films disponibles"
+        "syncOwnedMovies": "Synchroniser les films disponibles",
+        "addConfiguration": "Ajouter une configuration de films",
+        "addConfigurationTitle": "Ajouter une configuration",
+        "noConfigurations": "Aucune configuration",
+        "profiles": {
+          "movie": "Film"
+        },
+        "deleteConfiguration": {
+          "row": "Supprimer la configuration",
+          "title": "Supprimer la configuration ?",
+          "message": "Supprimer la configuration films ? Elle sera de nouveau disponible lors de l'ajout d'une configuration Radarr.",
+          "confirm": "Supprimer"
+        }
       },
       "sonarr": {
         "title": "Sonarr",

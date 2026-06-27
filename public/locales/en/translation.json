@@ -580,7 +580,19 @@
         "description": "Radarr will be used for movie downloads and owned movie sync.",
         "serverHint": "Scenario uses the profiles and folders configured on your Radarr server. If an option is missing or wrong, update it in Radarr first.",
         "testConnection": "Test connection",
-        "syncOwnedMovies": "Sync owned movies"
+        "syncOwnedMovies": "Sync owned movies",
+        "addConfiguration": "Add Movie Configuration",
+        "addConfigurationTitle": "Add Configuration",
+        "noConfigurations": "No configurations",
+        "profiles": {
+          "movie": "Movie"
+        },
+        "deleteConfiguration": {
+          "row": "Delete Configuration",
+          "title": "Delete configuration?",
+          "message": "Delete the movie configuration? It will become available again when adding a Radarr configuration.",
+          "confirm": "Delete"
+        }
       },
       "sonarr": {
         "title": "Sonarr",

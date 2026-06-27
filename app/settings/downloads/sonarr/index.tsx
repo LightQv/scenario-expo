@@ -1,36 +1,16 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
+import { Host, List, Section, Text as SwiftText } from "@expo/ui/swift-ui";
 import {
-  Divider,
-  HStack,
-  Host,
-  Image,
-  List,
-  Section,
-  Spacer,
-  Text as SwiftText,
-  Toggle,
-  VStack,
-  ZStack,
-} from "@expo/ui/swift-ui";
-import {
-  background,
   font,
   foregroundStyle,
-  frame,
-  imageScale,
-  lineLimit,
   listRowBackground,
   listStyle,
-  multilineTextAlignment,
   padding,
-  shapes,
-  tint,
-  toggleStyle,
-  truncationMode,
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
+import NativeDownloadIntegrationCard from "@/components/settings/NativeDownloadIntegrationCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
@@ -138,9 +118,10 @@ export default function SonarrSettingsScreen() {
               </SwiftText>
             }
           >
-            <NativeSonarrCard
+            <NativeDownloadIntegrationCard
               title={i18n.t("screen.settings.sonarr.title")}
               description={i18n.t("screen.settings.sonarr.description")}
+              icon="display"
               isOn={isEnabled}
               tintColor={colors.main}
               onIsOnChange={(enabled) =>
@@ -269,85 +250,6 @@ export default function SonarrSettingsScreen() {
         </List>
       </Host>
     </View>
-  );
-}
-
-function NativeSonarrCard({
-  title,
-  description,
-  isOn,
-  tintColor,
-  onIsOnChange,
-}: {
-  title: string;
-  description: string;
-  isOn: boolean;
-  tintColor: string;
-  onIsOnChange: (enabled: boolean) => void;
-}) {
-  return (
-    <VStack
-      alignment="leading"
-      spacing={18}
-      modifiers={[
-        padding({ all: 2 }),
-        background(
-          PlatformColor("secondarySystemGroupedBackground"),
-          shapes.roundedRectangle({
-            cornerRadius: 28,
-            roundedCornerStyle: "continuous",
-          }),
-        ),
-      ]}
-    >
-      <ZStack
-        modifiers={[
-          frame({ width: 72, height: 72 }),
-          background(
-            tintColor,
-            shapes.roundedRectangle({
-              cornerRadius: 16,
-              roundedCornerStyle: "continuous",
-            }),
-          ),
-        ]}
-      >
-        <Image
-          systemName="display"
-          color="white"
-          modifiers={[imageScale("large")]}
-        />
-      </ZStack>
-
-      <VStack alignment="leading" spacing={6}>
-        <SwiftText modifiers={[font({ size: 32, weight: "bold" })]}>
-          {title}
-        </SwiftText>
-        <SwiftText
-          modifiers={[
-            font({ size: 17 }),
-            foregroundStyle({ type: "hierarchical", style: "secondary" }),
-            lineLimit(3),
-            truncationMode("tail"),
-            multilineTextAlignment("leading"),
-          ]}
-        >
-          {description}
-        </SwiftText>
-      </VStack>
-
-      <Divider />
-
-      <HStack alignment="center" spacing={12}>
-        <SwiftText modifiers={[font({ size: 17 })]}>{title}</SwiftText>
-        <Spacer />
-        <Toggle
-          isOn={isOn}
-          onIsOnChange={onIsOnChange}
-          modifiers={[toggleStyle("switch"), tint(tintColor)]}
-        />
-      </HStack>
-    </VStack>
   );
 }
 
