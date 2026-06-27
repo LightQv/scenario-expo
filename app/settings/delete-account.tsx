@@ -1,42 +1,47 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  PlatformColor,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  Alert,
-  useColorScheme,
-} from "react-native";
+import { Alert, PlatformColor, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { useState } from "react";
+import {
+  Host,
+  List,
+  Section,
+  Text as SwiftText,
+  TextField,
+  useNativeState,
+} from "@expo/ui/swift-ui";
+import {
+  autocorrectionDisabled,
+  foregroundStyle,
+  keyboardType,
+  listStyle,
+  submitLabel,
+  textInputAutocapitalization,
+} from "@expo/ui/swift-ui/modifiers";
 import { useUserContext } from "@/contexts";
-import { FONTS, TOKENS, TOAST_COLORS, BUTTON } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import GoBackButton from "@/components/ui/GoBackButton";
-import HeaderTitle from "@/components/ui/HeaderTitle";
-import SettingsDescriptionCard from "@/components/settings/SettingsDescriptionCard";
+import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
+import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import { TOKENS } from "@/constants/theme";
+
+const destructiveColor = PlatformColor("systemRed") as unknown as string;
+const disabledLabelColor = PlatformColor("secondaryLabel") as unknown as string;
 
 export default function DeleteAccountSettingsScreen() {
   const { user, logout } = useUserContext();
+  const confirmationText = useNativeState("");
   const [usernameConfirmation, setUsernameConfirmation] = useState("");
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  const errorColor = isDark
-    ? TOAST_COLORS.dark.error
-    : TOAST_COLORS.light.error;
 
   const isDeleteEnabled =
+    Boolean(user?.username) &&
     usernameConfirmation.trim().toLowerCase() ===
-    user?.username.trim().toLowerCase();
+      user?.username.trim().toLowerCase();
 
   const handleDeleteAccount = () => {
+    if (!isDeleteEnabled) return;
+
     Alert.alert(
       i18n.t("form.profile.delete.account.title"),
       i18n.t("form.profile.delete.account.subtitle"),
@@ -67,94 +72,63 @@ export default function DeleteAccountSettingsScreen() {
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <GoBackButton />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <HeaderTitle title={i18n.t("screen.settings.deleteAccount.title")} />
-          <View style={styles.innerContainer}>
-            <SettingsDescriptionCard
+      <Host style={styles.host}>
+        <List modifiers={[listStyle("insetGrouped")]}> 
+          <Section>
+            <NativeSettingsDescriptionCard
               title={i18n.t("screen.settings.deleteAccount.title")}
               description={i18n.t("screen.settings.deleteAccount.description")}
               icon="trash"
+              tintColor={destructiveColor}
             />
+          </Section>
 
-            <View style={styles.inputSection}>
-              <View
-                style={[
-                  styles.inputContainer,
-                  {
-                    backgroundColor: PlatformColor(
-                      "secondarySystemGroupedBackground",
-                    ),
-                    borderColor: PlatformColor("separator"),
-                  },
-                ]}
-              >
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      color: PlatformColor("label"),
-                    },
-                  ]}
-                  value={usernameConfirmation}
-                  onChangeText={setUsernameConfirmation}
-                  placeholder={i18n.t("form.profile.delete.account.placeholder")}
-                  placeholderTextColor={PlatformColor("secondaryLabel")}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.inputHint,
-                  { color: PlatformColor("secondaryLabel") },
-                ]}
-              >
-                {i18n.t("form.profile.delete.account.label1")} {""}
-                <Text style={{ color: errorColor }}>{user?.username}</Text>{" "}
-                {i18n.t("form.profile.delete.account.label2")}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={handleDeleteAccount}
-              style={[
-                styles.deleteButton,
-                {
-                  backgroundColor: isDeleteEnabled
-                    ? errorColor
-                    : PlatformColor("secondarySystemGroupedBackground"),
-                },
+          <Section footer={<ConfirmationFooter username={user?.username ?? ""} />}>
+            <TextField
+              text={confirmationText}
+              placeholder={i18n.t("form.profile.delete.account.placeholder")}
+              onTextChange={setUsernameConfirmation}
+              modifiers={[
+                autocorrectionDisabled(),
+                keyboardType("default"),
+                submitLabel("done"),
+                textInputAutocapitalization("never"),
               ]}
-              activeOpacity={BUTTON.opacity}
+            />
+          </Section>
+
+          <Section>
+            <NativeSettingsRow
+              label={i18n.t("form.profile.delete.account.submit")}
+              labelColor={
+                isDeleteEnabled ? destructiveColor : disabledLabelColor
+              }
               disabled={!isDeleteEnabled}
-            >
-              <Text
-                style={[
-                  styles.deleteButtonText,
-                  {
-                    color: isDeleteEnabled
-                      ? "#fff"
-                      : PlatformColor("secondaryLabel"),
-                  },
-                ]}
-              >
-                {i18n.t("form.profile.delete.account.submit")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </>
+              showChevron={false}
+              onPress={handleDeleteAccount}
+            />
+          </Section>
+        </List>
+      </Host>
+    </View>
+  );
+}
+
+function ConfirmationFooter({ username }: { username: string }) {
+  return (
+    <SwiftText
+      modifiers={[
+        foregroundStyle({ type: "hierarchical", style: "secondary" }),
+      ]}
+    >
+      {i18n.t("form.profile.delete.account.label1")} {""}
+      <SwiftText modifiers={[foregroundStyle(destructiveColor)]}>
+        {username}
+      </SwiftText>{" "}
+      {i18n.t("form.profile.delete.account.label2")}
+    </SwiftText>
   );
 }
 
@@ -163,48 +137,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: PlatformColor("systemGroupedBackground"),
   },
-  scrollView: {
+  host: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: TOKENS.margin.horizontal,
-    paddingTop: 200,
-    paddingBottom: 60,
-  },
-  innerContainer: {
-    gap: 28,
-  },
-  inputSection: {
-    gap: 8,
-  },
-  inputContainer: {
-    borderRadius: TOKENS.radius.md,
-    height: 48,
-    justifyContent: "center",
-    paddingHorizontal: 14,
-    borderWidth: 1,
-  },
-  input: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.lg,
-    height: "100%",
-  },
-  inputHint: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.sm,
-    lineHeight: 16,
-    paddingHorizontal: TOKENS.margin.horizontal,
-  },
-  deleteButton: {
-    height: 52,
-    borderRadius: TOKENS.radius.xl,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-    marginTop: 12,
-  },
-  deleteButtonText: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.xxl,
+    paddingTop: TOKENS.modal.paddingTop,
   },
 });

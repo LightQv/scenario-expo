@@ -663,7 +663,12 @@
         "dark": "Sombre",
         "system": "Système"
       },
+      "appearance": {
+        "title": "Apparence",
+        "mode": "Mode"
+      },
       "colors": {
+        "accent": "Couleur d'accent",
         "light": "Mode clair",
         "dark": "Mode sombre"
       },

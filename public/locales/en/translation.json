@@ -662,7 +662,12 @@
         "dark": "Dark",
         "system": "System"
       },
+      "appearance": {
+        "title": "Appearance",
+        "mode": "Mode"
+      },
       "colors": {
+        "accent": "Accent color",
         "light": "Light mode",
         "dark": "Dark mode"
       },
