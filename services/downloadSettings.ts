@@ -24,24 +24,16 @@ export type RadarrSettings = IntegrationSummary & {
   quality_profile_id?: number | null;
 };
 
-export type SonarrSettings = IntegrationSummary & {
-  root_folder_path?: string | null;
-  anime_root_folder_path?: string | null;
-  quality_profile_id?: number | null;
-  on_air_quality_profile_id?: number | null;
-  complete_quality_profile_id?: number | null;
-  anime_quality_profile_id?: number | null;
+export type SonarrProfileType = "tv_on_air" | "tv_complete" | "anime";
+
+export type SonarrProfileConfig = {
+  root_folder_path: string;
+  quality_profile_id: number;
   language_profile_id?: number | null;
-  anime_language_profile_id?: number | null;
-  series_type?: string | null;
-  anime_series_type?: string | null;
-  monitor_mode?: string | null;
-  on_air_recency_days?: number | null;
-  season_folder?: boolean | null;
-  anime_tag_label?: string | null;
-  on_air_tag_label?: string | null;
-  complete_tag_label?: string | null;
-  use_anime_series_type?: boolean | null;
+};
+
+export type SonarrSettings = IntegrationSummary & {
+  profiles: Partial<Record<SonarrProfileType, SonarrProfileConfig>>;
 };
 
 export type RadarrOptions = {
@@ -53,9 +45,6 @@ export type SonarrOptions = {
   quality_profiles: SelectOption[];
   language_profiles: SelectOption[];
   root_folders: SelectOption[];
-  tags: SelectOption[];
-  series_types: SelectOption[];
-  monitor_modes: SelectOption[];
 };
 
 export type TestConnectionResponse = {
@@ -95,6 +84,19 @@ export function patchSonarrSettings(payload: Partial<SonarrSettings> & Record<st
   return apiFetch("/api/v1/user-settings/downloads/sonarr", {
     method: "PATCH",
     body: JSON.stringify(payload),
+  });
+}
+
+export function upsertSonarrProfile(type: SonarrProfileType, payload: SonarrProfileConfig): Promise<SonarrSettings> {
+  return apiFetch(`/api/v1/user-settings/downloads/sonarr/profiles/${type}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteSonarrProfile(type: SonarrProfileType): Promise<SonarrSettings> {
+  return apiFetch(`/api/v1/user-settings/downloads/sonarr/profiles/${type}`, {
+    method: "DELETE",
   });
 }
 

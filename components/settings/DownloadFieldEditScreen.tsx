@@ -8,6 +8,8 @@ import {
   Section,
   TextField,
   useNativeState,
+  HStack,
+  Spacer,
 } from "@expo/ui/swift-ui";
 import {
   keyboardType,
@@ -18,6 +20,7 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
 import i18n from "@/services/i18n";
+import { Text } from "@expo/ui";
 
 type DownloadFieldEditScreenProps = {
   placeholder: string;
@@ -59,10 +62,7 @@ export default function DownloadFieldEditScreen({
     }
   };
 
-  const fieldModifiers = [
-    keyboardType(keyboard),
-    submitLabel("done"),
-  ];
+  const fieldModifiers = [keyboardType(keyboard), submitLabel("done")];
 
   return (
     <View style={styles.container}>
@@ -73,12 +73,10 @@ export default function DownloadFieldEditScreen({
           disabled={saving}
           icon={"checkmark" as never}
           onPress={validate}
-        >
-          Validate
-        </Stack.Toolbar.Button>
+        />
       </Stack.Toolbar>
       <Host style={styles.host}>
-        <Form modifiers={[scrollContentBackground("hidden")]}> 
+        <Form modifiers={[scrollContentBackground("hidden")]}>
           <Section>
             {secret ? (
               <SecureField
@@ -87,11 +85,15 @@ export default function DownloadFieldEditScreen({
                 modifiers={fieldModifiers}
               />
             ) : (
-              <TextField
-                text={text}
-                placeholder={placeholder}
-                modifiers={fieldModifiers}
-              />
+              <HStack>
+                <Text>{i18n.t("screen.settings.fields.server")}</Text>
+                <Spacer minLength={68} />
+                <TextField
+                  text={text}
+                  placeholder={placeholder}
+                  modifiers={fieldModifiers}
+                />
+              </HStack>
             )}
           </Section>
         </Form>

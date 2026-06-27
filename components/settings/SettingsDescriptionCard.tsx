@@ -31,14 +31,22 @@ export default function SettingsDescriptionCard({
           {title}
         </Text>
         <Text
-          style={[styles.description, { color: PlatformColor("secondaryLabel") }]}
+          style={[
+            styles.description,
+            { color: PlatformColor("secondaryLabel") },
+          ]}
         >
           {description}
         </Text>
       </View>
       {children ? (
         <>
-          <View style={[styles.divider, { backgroundColor: PlatformColor("separator") }]} />
+          <View
+            style={[
+              styles.divider,
+              { backgroundColor: PlatformColor("separator") },
+            ]}
+          />
           <View>{children}</View>
         </>
       ) : null}

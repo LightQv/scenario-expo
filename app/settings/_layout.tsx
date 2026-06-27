@@ -115,6 +115,26 @@ export default function SettingsLayout() {
           headerTransparent: true,
         }}
       />
+      <Stack.Screen
+        name="downloads/sonarr/profiles/add"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.sonarr.addConfigurationTitle"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="downloads/sonarr/profiles/[type]"
+        options={{
+          headerShown: true,
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
     </Stack>
   );
 }

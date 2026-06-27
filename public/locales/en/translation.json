@@ -541,6 +541,7 @@
         "folders": "Folders",
         "rootFolders": "Root folders",
         "profiles": "Profiles",
+        "configurations": "Configurations",
         "languages": "Languages",
         "tags": "Tags",
         "series": "Series",
@@ -559,7 +560,11 @@
         "options": "Options",
         "loadingOptions": "Loading server options...",
         "optionsError": "Could not load server options. Check the URL, API key, and server configuration.",
-        "configureConnectionFirst": "Enter the URL and API key to load server options."
+        "configureConnectionFirst": "Enter the URL and API key to load server options.",
+        "required": "Required",
+        "optional": "Optional",
+        "validate": "Validate",
+        "cancel": "Cancel"
       },
       "theme": {
         "title": "Theme",
@@ -583,6 +588,21 @@
         "serverHint": "Scenario uses the profiles, folders, and tags configured on your Sonarr server. If an option is missing or wrong, update it in Sonarr first.",
         "testConnection": "Test connection",
         "syncOwnedTv": "Sync owned TV shows",
+        "addConfiguration": "Add Sonarr Profile Configuration",
+        "addConfigurationTitle": "Add Configuration",
+        "noConfigurations": "No configurations",
+        "tagFooter": "Scenario applies this tag automatically. Make sure matching Sonarr release profiles or indexer restrictions use the same tag when needed.",
+        "profiles": {
+          "tv_on_air": "TV On Air",
+          "tv_complete": "TV Complete",
+          "anime": "Anime"
+        },
+        "deleteConfiguration": {
+          "row": "Delete Configuration",
+          "title": "Delete configuration?",
+          "message": "Delete the {{name}} configuration? It will become available again when adding a Sonarr profile.",
+          "confirm": "Delete"
+        },
         "profilesFooter": "Scenario treats current and completed TV differently. Current seasons use the on-air profile; completed or archived seasons use the complete profile. This helps prioritize 1080p episodes while keeping full seasons lighter.",
         "tagsFooter": "Tags let Sonarr apply different release profiles. Use tv-onair for current shows and tv-complete for archived or completed seasons."
       },
@@ -597,10 +617,13 @@
       },
       "fields": {
         "url": "URL",
+        "server": "Server",
         "apiKey": "API key",
         "webhookSecret": "Webhook secret",
+        "type": "Type",
         "rootFolder": "Root folder path",
         "qualityProfile": "Quality profile ID",
+        "tag": "Tag",
         "tvRootFolder": "TV root folder path",
         "animeRootFolder": "Anime root folder path",
         "fallbackQualityProfile": "Fallback quality profile ID",
@@ -615,7 +638,6 @@
         "seriesType": "Series type",
         "animeSeriesType": "Anime series type",
         "monitorMode": "Monitor mode",
-        "onAirRecencyDays": "On-air recency days",
         "seasonFolder": "Season folders",
         "useAnimeSeriesType": "Use anime series type"
       }

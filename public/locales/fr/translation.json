@@ -542,6 +542,7 @@
         "folders": "Dossiers",
         "rootFolders": "Dossiers racine",
         "profiles": "Profils",
+        "configurations": "Configurations",
         "languages": "Langues",
         "tags": "Tags",
         "series": "Séries",
@@ -560,7 +561,11 @@
         "options": "Options",
         "loadingOptions": "Chargement des options du serveur...",
         "optionsError": "Impossible de charger les options du serveur. Vérifiez l'URL, la clé API et la configuration du serveur.",
-        "configureConnectionFirst": "Renseignez l'URL et la clé API pour charger les options du serveur."
+        "configureConnectionFirst": "Renseignez l'URL et la clé API pour charger les options du serveur.",
+        "required": "Requis",
+        "optional": "Optionnel",
+        "validate": "Valider",
+        "cancel": "Annuler"
       },
       "theme": {
         "title": "Thème",
@@ -584,6 +589,21 @@
         "serverHint": "Scenario utilise les profils, dossiers et tags configurés sur votre serveur Sonarr. Si une option manque ou semble incorrecte, modifiez-la d'abord dans Sonarr.",
         "testConnection": "Tester la connexion",
         "syncOwnedTv": "Synchroniser les séries disponibles",
+        "addConfiguration": "Ajouter une configuration de profil Sonarr",
+        "addConfigurationTitle": "Ajouter une configuration",
+        "noConfigurations": "Aucune configuration",
+        "tagFooter": "Scenario applique automatiquement ce tag. Assurez-vous que les profils de release ou restrictions d'indexer Sonarr utilisent le même tag si nécessaire.",
+        "profiles": {
+          "tv_on_air": "TV On Air",
+          "tv_complete": "TV Complete",
+          "anime": "Anime"
+        },
+        "deleteConfiguration": {
+          "row": "Supprimer la configuration",
+          "title": "Supprimer la configuration ?",
+          "message": "Supprimer la configuration {{name}} ? Elle sera de nouveau disponible lors de l'ajout d'un profil Sonarr.",
+          "confirm": "Supprimer"
+        },
         "profilesFooter": "Scenario distingue les séries en cours des saisons terminées. Les saisons en cours utilisent le profil On-air, tandis que les saisons terminées ou archivées utilisent le profil Complete. Cela permet de privilégier le 1080p pour les épisodes récents et des saisons complètes plus légères.",
         "tagsFooter": "Les tags permettent à Sonarr d'appliquer des profils de release différents. Utilisez tv-onair pour les séries en cours et tv-complete pour les saisons terminées ou archivées."
       },
@@ -598,10 +618,13 @@
       },
       "fields": {
         "url": "URL",
+        "server": "Serveur",
         "apiKey": "Clé API",
         "webhookSecret": "Secret du webhook",
+        "type": "Type",
         "rootFolder": "Chemin du dossier racine",
         "qualityProfile": "ID du profil de qualité",
+        "tag": "Tag",
         "tvRootFolder": "Chemin du dossier séries",
         "animeRootFolder": "Chemin du dossier anime",
         "fallbackQualityProfile": "ID du profil de qualité par défaut",
@@ -616,7 +639,6 @@
         "seriesType": "Type de série",
         "animeSeriesType": "Type de série anime",
         "monitorMode": "Mode de surveillance",
-        "onAirRecencyDays": "Jours de récence On-air",
         "seasonFolder": "Dossiers par saison",
         "useAnimeSeriesType": "Utiliser le type anime"
       }

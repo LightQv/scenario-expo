@@ -18,6 +18,7 @@ type SettingsNavigationRowProps = {
   disabled?: boolean;
   showDivider?: boolean;
   showChevron?: boolean;
+  trailingIcon?: keyof typeof Ionicons.glyphMap;
   labelColor?: string;
   onPress?: () => void;
 };
@@ -31,6 +32,7 @@ export default function SettingsNavigationRow({
   disabled = false,
   showDivider = false,
   showChevron = true,
+  trailingIcon,
   labelColor,
   onPress,
 }: SettingsNavigationRowProps) {
@@ -75,7 +77,14 @@ export default function SettingsNavigationRow({
                   {value}
                 </Text>
               ) : null}
-              {onPress && showChevron ? (
+              {onPress && trailingIcon ? (
+                <Ionicons
+                  name={trailingIcon}
+                  size={24}
+                  color={PlatformColor("systemBlue")}
+                />
+              ) : null}
+              {onPress && showChevron && !trailingIcon ? (
                 <Ionicons
                   name="chevron-forward"
                   size={16}
