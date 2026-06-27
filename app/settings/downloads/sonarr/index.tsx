@@ -380,5 +380,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: PlatformColor("systemGroupedBackground"),
   },
-  host: { flex: 1, marginTop: -28 },
+  host: { flex: 1, marginTop: -14 },
 });
