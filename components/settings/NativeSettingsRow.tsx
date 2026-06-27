@@ -10,6 +10,7 @@ import {
   buttonStyle,
   disabled as disabledModifier,
   foregroundStyle,
+  padding,
 } from "@expo/ui/swift-ui/modifiers";
 
 type NativeSettingsRowProps = {
@@ -34,7 +35,11 @@ export default function NativeSettingsRow({
   return (
     <Button
       onPress={onPress}
-      modifiers={[buttonStyle("plain"), disabledModifier(disabled || !onPress)]}
+      modifiers={[
+        buttonStyle("plain"),
+        disabledModifier(disabled || !onPress),
+        padding({ all: 2 }),
+      ]}
     >
       <HStack alignment="center" spacing={8}>
         <SwiftText modifiers={labelColor ? [foregroundStyle(labelColor)] : []}>
@@ -43,7 +48,9 @@ export default function NativeSettingsRow({
         <Spacer />
         {value ? (
           <SwiftText
-            modifiers={[foregroundStyle({ type: "hierarchical", style: "secondary" })]}
+            modifiers={[
+              foregroundStyle({ type: "hierarchical", style: "secondary" }),
+            ]}
           >
             {value}
           </SwiftText>

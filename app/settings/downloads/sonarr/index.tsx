@@ -1,25 +1,37 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { PlatformColor, StyleSheet, Text, View } from "react-native";
+import { PlatformColor, StyleSheet, View } from "react-native";
 import {
+  Divider,
+  HStack,
   Host,
+  Image,
   List,
-  RNHostView,
   Section,
+  Spacer,
   Text as SwiftText,
   Toggle,
+  VStack,
+  ZStack,
 } from "@expo/ui/swift-ui";
 import {
+  background,
+  font,
   foregroundStyle,
+  frame,
+  imageScale,
+  lineLimit,
   listRowBackground,
-  listRowInsets,
   listStyle,
+  multilineTextAlignment,
+  padding,
+  shapes,
   tint,
   toggleStyle,
+  truncationMode,
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
-import SettingsDescriptionCard from "@/components/settings/SettingsDescriptionCard";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
@@ -113,39 +125,30 @@ export default function SonarrSettingsScreen() {
       <GoBackButton />
       <Host style={styles.host}>
         <List modifiers={[listStyle("insetGrouped")]}>
-          <Section modifiers={hostedSectionModifiers}>
-            <RNHostView matchContents>
-              <View style={styles.hostedStack}>
-                <View style={styles.cardBlock}>
-                  <SettingsDescriptionCard
-                    title={i18n.t("screen.settings.sonarr.title")}
-                    description={i18n.t("screen.settings.sonarr.description")}
-                    icon="tv"
-                  >
-                    <Host style={styles.cardToggleHost}>
-                      <Toggle
-                        label={i18n.t("screen.settings.sonarr.title")}
-                        isOn={isEnabled}
-                        onIsOnChange={(enabled) =>
-                          patch({ enabled }).catch(() =>
-                            notifyError(i18n.t("toast.error")),
-                          )
-                        }
-                        modifiers={[toggleStyle("switch"), tint(colors.main)]}
-                      />
-                    </Host>
-                  </SettingsDescriptionCard>
-                  <Text
-                    style={[
-                      styles.serverHint,
-                      { color: PlatformColor("secondaryLabel") },
-                    ]}
-                  >
-                    {i18n.t("screen.settings.sonarr.serverHint")}
-                  </Text>
-                </View>
-              </View>
-            </RNHostView>
+          <Section
+            footer={
+              <SwiftText
+                modifiers={[
+                  font({ size: TOKENS.font.md }),
+                  foregroundStyle({ type: "hierarchical", style: "secondary" }),
+                  padding({ bottom: 8 }),
+                ]}
+              >
+                {i18n.t("screen.settings.sonarr.serverHint")}
+              </SwiftText>
+            }
+          >
+            <NativeSonarrCard
+              title={i18n.t("screen.settings.sonarr.title")}
+              description={i18n.t("screen.settings.sonarr.description")}
+              isOn={isEnabled}
+              tintColor={colors.main}
+              onIsOnChange={(enabled) =>
+                patch({ enabled }).catch(() =>
+                  notifyError(i18n.t("toast.error")),
+                )
+              }
+            />
           </Section>
 
           {isEnabled ? (
@@ -269,6 +272,85 @@ export default function SonarrSettingsScreen() {
   );
 }
 
+function NativeSonarrCard({
+  title,
+  description,
+  isOn,
+  tintColor,
+  onIsOnChange,
+}: {
+  title: string;
+  description: string;
+  isOn: boolean;
+  tintColor: string;
+  onIsOnChange: (enabled: boolean) => void;
+}) {
+  return (
+    <VStack
+      alignment="leading"
+      spacing={18}
+      modifiers={[
+        padding({ all: 2 }),
+        background(
+          PlatformColor("secondarySystemGroupedBackground"),
+          shapes.roundedRectangle({
+            cornerRadius: 28,
+            roundedCornerStyle: "continuous",
+          }),
+        ),
+      ]}
+    >
+      <ZStack
+        modifiers={[
+          frame({ width: 72, height: 72 }),
+          background(
+            tintColor,
+            shapes.roundedRectangle({
+              cornerRadius: 16,
+              roundedCornerStyle: "continuous",
+            }),
+          ),
+        ]}
+      >
+        <Image
+          systemName="display"
+          color="white"
+          modifiers={[imageScale("large")]}
+        />
+      </ZStack>
+
+      <VStack alignment="leading" spacing={6}>
+        <SwiftText modifiers={[font({ size: 32, weight: "bold" })]}>
+          {title}
+        </SwiftText>
+        <SwiftText
+          modifiers={[
+            font({ size: 17 }),
+            foregroundStyle({ type: "hierarchical", style: "secondary" }),
+            lineLimit(3),
+            truncationMode("tail"),
+            multilineTextAlignment("leading"),
+          ]}
+        >
+          {description}
+        </SwiftText>
+      </VStack>
+
+      <Divider />
+
+      <HStack alignment="center" spacing={12}>
+        <SwiftText modifiers={[font({ size: 17 })]}>{title}</SwiftText>
+        <Spacer />
+        <Toggle
+          isOn={isOn}
+          onIsOnChange={onIsOnChange}
+          modifiers={[toggleStyle("switch"), tint(tintColor)]}
+        />
+      </HStack>
+    </VStack>
+  );
+}
+
 function OptionsState({
   loading,
   error,
@@ -299,15 +381,4 @@ const styles = StyleSheet.create({
     backgroundColor: PlatformColor("systemGroupedBackground"),
   },
   host: { flex: 1, marginTop: -28 },
-  hostedStack: {
-    paddingHorizontal: TOKENS.margin.horizontal,
-    gap: 22,
-  },
-  cardBlock: { gap: 8 },
-  cardToggleHost: { paddingTop: 20, width: "100%" },
-  serverHint: {
-    paddingHorizontal: 20,
-    fontSize: TOKENS.font.sm,
-    lineHeight: 16,
-  },
 });
