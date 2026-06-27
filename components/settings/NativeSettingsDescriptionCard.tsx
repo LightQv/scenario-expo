@@ -1,12 +1,9 @@
+import type { ComponentProps, ReactNode } from "react";
 import { PlatformColor } from "react-native";
-import type { ComponentProps } from "react";
 import {
   Divider,
-  HStack,
   Image,
-  Spacer,
   Text as SwiftText,
-  Toggle,
   VStack,
   ZStack,
 } from "@expo/ui/swift-ui";
@@ -20,28 +17,24 @@ import {
   multilineTextAlignment,
   padding,
   shapes,
-  tint,
-  toggleStyle,
   truncationMode,
 } from "@expo/ui/swift-ui/modifiers";
 
-type NativeDownloadIntegrationCardProps = {
+type NativeSettingsDescriptionCardProps = {
   title: string;
   description: string;
   icon: NonNullable<ComponentProps<typeof Image>["systemName"]>;
-  isOn: boolean;
   tintColor: string;
-  onIsOnChange: (enabled: boolean) => void;
+  children?: ReactNode;
 };
 
-export default function NativeDownloadIntegrationCard({
+export default function NativeSettingsDescriptionCard({
   title,
   description,
   icon,
-  isOn,
   tintColor,
-  onIsOnChange,
-}: NativeDownloadIntegrationCardProps) {
+  children,
+}: NativeSettingsDescriptionCardProps) {
   return (
     <VStack
       alignment="leading"
@@ -59,7 +52,7 @@ export default function NativeDownloadIntegrationCard({
     >
       <ZStack
         modifiers={[
-          frame({ width: 72, height: 72 }),
+          frame({ width: 56, height: 56 }),
           background(
             tintColor,
             shapes.roundedRectangle({
@@ -69,18 +62,22 @@ export default function NativeDownloadIntegrationCard({
           ),
         ]}
       >
-        <Image systemName={icon} color="white" modifiers={[imageScale("large")]} />
+        <Image
+          systemName={icon}
+          color="white"
+          modifiers={[imageScale("large")]}
+        />
       </ZStack>
 
       <VStack alignment="leading" spacing={6}>
-        <SwiftText modifiers={[font({ size: 32, weight: "bold" })]}>
+        <SwiftText modifiers={[font({ size: 24, weight: "bold" })]}>
           {title}
         </SwiftText>
         <SwiftText
           modifiers={[
-            font({ size: 17 }),
+            font({ size: 16 }),
             foregroundStyle({ type: "hierarchical", style: "secondary" }),
-            lineLimit(3),
+            lineLimit(4),
             truncationMode("tail"),
             multilineTextAlignment("leading"),
           ]}
@@ -89,17 +86,12 @@ export default function NativeDownloadIntegrationCard({
         </SwiftText>
       </VStack>
 
-      <Divider />
-
-      <HStack alignment="center" spacing={12}>
-        <SwiftText modifiers={[font({ size: 17 })]}>{title}</SwiftText>
-        <Spacer />
-        <Toggle
-          isOn={isOn}
-          onIsOnChange={onIsOnChange}
-          modifiers={[toggleStyle("switch"), tint(tintColor)]}
-        />
-      </HStack>
+      {children ? (
+        <>
+          <Divider />
+          {children}
+        </>
+      ) : null}
     </VStack>
   );
 }

@@ -1,20 +1,34 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
-import { Host, List, Section, Text as SwiftText } from "@expo/ui/swift-ui";
+import {
+  HStack,
+  Host,
+  List,
+  Section,
+  Spacer,
+  Text as SwiftText,
+  Toggle,
+} from "@expo/ui/swift-ui";
 import {
   font,
   foregroundStyle,
   listStyle,
   padding,
+  tint,
+  toggleStyle,
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
-import NativeDownloadIntegrationCard from "@/components/settings/NativeDownloadIntegrationCard";
+import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
-import type { RadarrOptions, RadarrSettings, SelectOption } from "@/services/downloadSettings";
+import type {
+  RadarrOptions,
+  RadarrSettings,
+  SelectOption,
+} from "@/services/downloadSettings";
 import {
   getRadarrOptions,
   getRadarrSettings,
@@ -85,7 +99,9 @@ export default function RadarrSettingsScreen() {
 
   const isEnabled = settings?.enabled ?? false;
   const hasMovieConfiguration = Boolean(
-    settings?.root_folder_path && settings.quality_profile_id !== null && settings.quality_profile_id !== undefined,
+    settings?.root_folder_path &&
+      settings.quality_profile_id !== null &&
+      settings.quality_profile_id !== undefined,
   );
   const qualityProfile = findOptionLabel(
     options?.quality_profiles ?? [],
@@ -96,9 +112,7 @@ export default function RadarrSettingsScreen() {
     <View style={styles.container}>
       <GoBackButton />
       <Host style={styles.host}>
-        <List
-          modifiers={[listStyle("insetGrouped")]}
-        >
+        <List modifiers={[listStyle("insetGrouped")]}>
           <Section
             footer={
               <SwiftText
@@ -112,16 +126,28 @@ export default function RadarrSettingsScreen() {
               </SwiftText>
             }
           >
-            <NativeDownloadIntegrationCard
+            <NativeSettingsDescriptionCard
               title={i18n.t("screen.settings.radarr.title")}
               description={i18n.t("screen.settings.radarr.description")}
               icon="film"
-              isOn={isEnabled}
               tintColor={colors.main}
-              onIsOnChange={(enabled) =>
-                patch({ enabled }).catch(() => notifyError(i18n.t("toast.error")))
-              }
-            />
+            >
+              <HStack alignment="center" spacing={12}>
+                <SwiftText modifiers={[font({ size: 17 })]}>
+                  {i18n.t("screen.settings.radarr.title")}
+                </SwiftText>
+                <Spacer />
+                <Toggle
+                  isOn={isEnabled}
+                  onIsOnChange={(enabled) =>
+                    patch({ enabled }).catch(() =>
+                      notifyError(i18n.t("toast.error")),
+                    )
+                  }
+                  modifiers={[toggleStyle("switch"), tint(colors.main)]}
+                />
+              </HStack>
+            </NativeSettingsDescriptionCard>
           </Section>
 
           {isEnabled ? (
@@ -139,7 +165,9 @@ export default function RadarrSettingsScreen() {
                       ? i18n.t("screen.settings.common.configured")
                       : i18n.t("screen.settings.common.notConfigured")
                   }
-                  onPress={() => router.push("/settings/downloads/radarr/api-key")}
+                  onPress={() =>
+                    router.push("/settings/downloads/radarr/api-key")
+                  }
                 />
                 <NativeSettingsRow
                   label={i18n.t("screen.settings.fields.webhookSecret")}
@@ -187,17 +215,24 @@ export default function RadarrSettingsScreen() {
 
           {isEnabled && options ? (
             <>
-              <Section title={i18n.t("screen.settings.sections.configurations")}>
+              <Section
+                title={i18n.t("screen.settings.sections.configurations")}
+              >
                 {hasMovieConfiguration ? (
                   <NativeSettingsRow
                     label={i18n.t("screen.settings.radarr.profiles.movie")}
                     value={qualityProfile}
-                    onPress={() => router.push("/settings/downloads/radarr/configuration")}
+                    onPress={() =>
+                      router.push("/settings/downloads/radarr/configuration")
+                    }
                   />
                 ) : (
                   <SwiftText
                     modifiers={[
-                      foregroundStyle({ type: "hierarchical", style: "secondary" }),
+                      foregroundStyle({
+                        type: "hierarchical",
+                        style: "secondary",
+                      }),
                     ]}
                   >
                     {i18n.t("screen.settings.radarr.noConfigurations")}
@@ -211,7 +246,9 @@ export default function RadarrSettingsScreen() {
                     label={i18n.t("screen.settings.radarr.addConfiguration")}
                     labelColor={colors.main}
                     onPress={() =>
-                      router.push("/settings/downloads/radarr/configuration/add")
+                      router.push(
+                        "/settings/downloads/radarr/configuration/add",
+                      )
                     }
                   />
                 </Section>

@@ -1,16 +1,25 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
-import { Host, List, Section, Text as SwiftText } from "@expo/ui/swift-ui";
+import {
+  HStack,
+  Host,
+  List,
+  Section,
+  Spacer,
+  Text as SwiftText,
+  Toggle,
+} from "@expo/ui/swift-ui";
 import {
   font,
   foregroundStyle,
-  listRowBackground,
   listStyle,
   padding,
+  tint,
+  toggleStyle,
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
-import NativeDownloadIntegrationCard from "@/components/settings/NativeDownloadIntegrationCard";
+import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
@@ -30,8 +39,6 @@ import {
   findOptionLabel,
   getSonarrProfileLabel,
 } from "@/services/sonarrProfiles";
-
-const hostedSectionModifiers = [listRowBackground("clear")];
 
 export default function SonarrSettingsScreen() {
   const { colors } = useThemeContext();
@@ -118,18 +125,28 @@ export default function SonarrSettingsScreen() {
               </SwiftText>
             }
           >
-            <NativeDownloadIntegrationCard
+            <NativeSettingsDescriptionCard
               title={i18n.t("screen.settings.sonarr.title")}
               description={i18n.t("screen.settings.sonarr.description")}
               icon="display"
-              isOn={isEnabled}
               tintColor={colors.main}
-              onIsOnChange={(enabled) =>
-                patch({ enabled }).catch(() =>
-                  notifyError(i18n.t("toast.error")),
-                )
-              }
-            />
+            >
+              <HStack alignment="center" spacing={12}>
+                <SwiftText modifiers={[font({ size: 17 })]}>
+                  {i18n.t("screen.settings.sonarr.title")}
+                </SwiftText>
+                <Spacer />
+                <Toggle
+                  isOn={isEnabled}
+                  onIsOnChange={(enabled) =>
+                    patch({ enabled }).catch(() =>
+                      notifyError(i18n.t("toast.error")),
+                    )
+                  }
+                  modifiers={[toggleStyle("switch"), tint(colors.main)]}
+                />
+              </HStack>
+            </NativeSettingsDescriptionCard>
           </Section>
 
           {isEnabled ? (
