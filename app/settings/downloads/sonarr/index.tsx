@@ -27,7 +27,6 @@ import { useThemeContext } from "@/contexts";
 import i18n from "@/services/i18n";
 import {
   type SonarrOptions,
-  type SonarrProfileType,
   type SonarrSettings,
   getSonarrOptions,
   getSonarrSettings,

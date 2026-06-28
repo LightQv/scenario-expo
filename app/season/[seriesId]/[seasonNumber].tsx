@@ -31,7 +31,6 @@ export default function SeasonDetailScreen() {
   const [data, setData] = useState<SeasonDetail | null>(null);
   const [seasonAvailability, setSeasonAvailability] =
     useState<TvSeasonAvailability | null>(null);
-  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const {
     getRequestForScope,
@@ -58,7 +57,6 @@ export default function SeasonDetailScreen() {
   // Fetch season details
   useEffect(() => {
     if (seriesId && seasonNumber) {
-      setLoading(true);
       setData(null);
 
       tmdbFetch(
@@ -66,11 +64,9 @@ export default function SeasonDetailScreen() {
       )
         .then((response) => {
           setData(response);
-          setLoading(false);
         })
         .catch(() => {
           notifyError(i18n.t("toast.errorTMDB"));
-          setLoading(false);
         });
     }
   }, [seriesId, seasonNumber]);

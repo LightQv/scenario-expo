@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FormSubmitHeaderButton from "@/components/ui/FormSubmitHeaderButton";
 import GoBackButton from "@/components/ui/GoBackButton";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 // Banner preview with vertical aspect ratio for modal display
 // Width spans full screen minus padding
 const BANNER_WIDTH = width - TOKENS.margin.horizontal * 2;

@@ -13,7 +13,7 @@ import {
     DownloadRequestProvider,
     useThemeContext,
   } from "@/contexts";
-import { Appearance, Dimensions } from "react-native";
+import { Appearance } from "react-native";
 import ToastManager from "toastify-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { TOKENS } from "@/constants/theme";

@@ -91,7 +91,7 @@ export async function getDetailPaletteFromImage(
     quality: "low",
   });
 
-  const palette = createDetailPalette(result, isDark, imageUrl);
+  const palette = createDetailPalette(result, isDark);
   detailPaletteCache.set(cacheKey, palette);
 
   return palette;
@@ -110,10 +110,9 @@ export function colorWithAlpha(color: string, alpha: number): string {
 function createDetailPalette(
   colors: ImageColorsResult,
   isDark: boolean,
-  imageUrl?: string,
 ): DetailPalette {
   if (colors.platform === "ios") {
-    return createIOSDetailPalette(colors, isDark, imageUrl);
+    return createIOSDetailPalette(colors, isDark);
   }
 
   const base = pickBaseColor(colors);
@@ -150,7 +149,6 @@ function createDetailPalette(
 function createIOSDetailPalette(
   colors: Extract<ImageColorsResult, { platform: "ios" }>,
   isDark: boolean,
-  imageUrl?: string,
 ): DetailPalette {
   const fallback = getFallbackDetailPalette(isDark);
   const mood = getPaletteMood(colors);
