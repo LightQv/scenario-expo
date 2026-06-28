@@ -12,7 +12,6 @@ import {
   Text as SwiftText,
 } from "@expo/ui/swift-ui";
 import {
-  font,
   foregroundStyle,
   listStyle,
   pickerStyle,
@@ -20,6 +19,8 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import { notifySuccess } from "@/components/toasts/Toast";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { TOKENS } from "@/constants/theme";
@@ -84,19 +85,26 @@ export default function ThemeSettingsScreen() {
             />
           </Section>
 
-          <Section title={i18n.t("screen.applicationSettings.appearance.title")}>
+          <Section
+            header={
+              <SettingsSectionHeader
+                title={i18n.t("screen.applicationSettings.appearance.title")}
+              />
+            }
+          >
             <DisclosureGroup
               isExpanded={isAppearanceExpanded}
               onIsExpandedChange={setIsAppearanceExpanded}
             >
               <DisclosureGroup.Label>
                 <HStack alignment="center" spacing={8}>
-                  <SwiftText>
+                  <SwiftText modifiers={[settingsRegularFont()]}>
                     {i18n.t("screen.applicationSettings.appearance.mode")}
                   </SwiftText>
                   <Spacer />
                   <SwiftText
                     modifiers={[
+                      settingsRegularFont(),
                       foregroundStyle({
                         type: "hierarchical",
                         style: "secondary",
@@ -119,7 +127,13 @@ export default function ThemeSettingsScreen() {
             </DisclosureGroup>
           </Section>
 
-          <Section title={i18n.t("screen.applicationSettings.colors.accent")}>
+          <Section
+            header={
+              <SettingsSectionHeader
+                title={i18n.t("screen.applicationSettings.colors.accent")}
+              />
+            }
+          >
             <ColorPickerRow
               label={i18n.t("screen.applicationSettings.colors.light")}
               color={customColors.light}
@@ -159,7 +173,7 @@ function ColorPickerRow({
     <HStack alignment="center" spacing={12}>
       <SwiftText
         modifiers={[
-          font({ size: TOKENS.font.xxl }),
+          settingsRegularFont(TOKENS.font.xxl),
           foregroundStyle(PlatformColor("label")),
         ]}
       >
@@ -178,13 +192,13 @@ function ColorPickerRow({
 function renderThemePreferenceOptions() {
   return (
     <>
-      <SwiftText modifiers={[tag("light")]}> 
+      <SwiftText modifiers={[settingsRegularFont(), tag("light")]}>
         {i18n.t("screen.applicationSettings.theme.light")}
       </SwiftText>
-      <SwiftText modifiers={[tag("dark")]}> 
+      <SwiftText modifiers={[settingsRegularFont(), tag("dark")]}>
         {i18n.t("screen.applicationSettings.theme.dark")}
       </SwiftText>
-      <SwiftText modifiers={[tag("system")]}> 
+      <SwiftText modifiers={[settingsRegularFont(), tag("system")]}>
         {i18n.t("screen.applicationSettings.theme.system")}
       </SwiftText>
     </>

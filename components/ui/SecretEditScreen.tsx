@@ -14,7 +14,6 @@ import {
 } from "@expo/ui/swift-ui";
 import {
   autocorrectionDisabled,
-  font,
   foregroundStyle,
   frame,
   keyboardType,
@@ -29,6 +28,10 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { notifyError } from "@/components/toasts/Toast";
+import {
+  settingsBoldFont,
+  settingsRegularFont,
+} from "@/components/settings/nativeSettingsModifiers";
 import { THEME_COLORS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 
@@ -108,13 +111,13 @@ export default function SecretEditScreen({
                   padding({ bottom: 32, top: -16 }),
                 ]}
               >
-                <Image systemName={icon} size={78} color={THEME_COLORS.main} />
+                <Image systemName={icon} size={68} color={THEME_COLORS.main} />
               </VStack>
 
               <VStack alignment="leading" spacing={8}>
                 <Text
                   modifiers={[
-                    font({ size: 25, weight: "bold" }),
+                    settingsBoldFont(25),
                     foregroundStyle({ type: "hierarchical", style: "primary" }),
                   ]}
                 >
@@ -122,7 +125,7 @@ export default function SecretEditScreen({
                 </Text>
                 <Text
                   modifiers={[
-                    font({ size: 18, weight: "regular" }),
+                    settingsRegularFont(18),
                     foregroundStyle({
                       type: "hierarchical",
                       style: "secondary",
@@ -142,6 +145,7 @@ export default function SecretEditScreen({
               placeholder={placeholder}
               onTextChange={setValue}
               modifiers={[
+                settingsRegularFont(),
                 autocorrectionDisabled(),
                 keyboardType(keyboard),
                 submitLabel("done"),

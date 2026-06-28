@@ -10,6 +10,7 @@ import {
   useNativeState,
   HStack,
   Spacer,
+  Text as SwiftText,
 } from "@expo/ui/swift-ui";
 import {
   keyboardType,
@@ -18,9 +19,9 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { notifyError } from "@/components/toasts/Toast";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import { TOKENS } from "@/constants/theme";
 import i18n from "@/services/i18n";
-import { Text } from "@expo/ui";
 
 type DownloadFieldEditScreenProps = {
   placeholder: string;
@@ -62,7 +63,11 @@ export default function DownloadFieldEditScreen({
     }
   };
 
-  const fieldModifiers = [keyboardType(keyboard), submitLabel("done")];
+  const fieldModifiers = [
+    settingsRegularFont(),
+    keyboardType(keyboard),
+    submitLabel("done"),
+  ];
 
   return (
     <View style={styles.container}>
@@ -86,7 +91,9 @@ export default function DownloadFieldEditScreen({
               />
             ) : (
               <HStack>
-                <Text>{i18n.t("screen.settings.fields.server")}</Text>
+                <SwiftText modifiers={[settingsRegularFont()]}>
+                  {i18n.t("screen.settings.fields.server")}
+                </SwiftText>
                 <Spacer minLength={68} />
                 <TextField
                   text={text}

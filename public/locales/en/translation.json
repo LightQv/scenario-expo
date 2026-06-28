@@ -347,25 +347,25 @@
         "recommandations": "Recommandations"
       }
     },
-      "downloads": {
-        "title": "Downloads",
-        "subtitle": "Requests sent to Radarr or Sonarr. Availability updates when imports finish.",
-        "empty": "No download requests yet.",
-        "emptyState": {
-          "title": "No requests yet",
-          "body": "Request a movie or TV show from its detail page and it will appear here while your media server searches."
-        },
-        "remaining": "{{size}} remaining",
-        "scope": {
-          "movie": "Movie",
-          "series": "Series",
-          "season": "Season {{season}}",
-          "episode": "S{{season}} · E{{episode}}",
-          "movieDownload": "Movie download",
-          "seriesDownload": "Series download",
-          "seasonDownload": "Season {{season}} download",
-          "episodeDownload": "S{{season}} E{{episode}} download"
-        },
+    "downloads": {
+      "title": "Downloads",
+      "subtitle": "Requests sent to Radarr or Sonarr. Availability updates when imports finish.",
+      "empty": "No download requests yet.",
+      "emptyState": {
+        "title": "No requests yet",
+        "body": "Request a movie or TV show from its detail page and it will appear here while your media server searches."
+      },
+      "remaining": "{{size}} remaining",
+      "scope": {
+        "movie": "Movie",
+        "series": "Series",
+        "season": "Season {{season}}",
+        "episode": "S{{season}} · E{{episode}}",
+        "movieDownload": "Movie download",
+        "seriesDownload": "Series download",
+        "seasonDownload": "Season {{season}} download",
+        "episodeDownload": "S{{season}} E{{episode}} download"
+      },
       "actions": {
         "retry": "Retry",
         "cancel": "Cancel",
@@ -540,7 +540,6 @@
         "library": "Library",
         "folders": "Folders",
         "rootFolders": "Root folders",
-        "profiles": "Profiles",
         "configurations": "Configurations",
         "languages": "Languages",
         "tags": "Tags",
@@ -578,13 +577,13 @@
       "radarr": {
         "title": "Radarr",
         "description": "Radarr will be used for movie downloads and owned movie sync.",
-        "serverHint": "Scenario uses the profiles and folders configured on your Radarr server. If an option is missing or wrong, update it in Radarr first.",
+        "serverHint": "Scenario uses the folders and quality options configured on your Radarr server. If an option is missing or wrong, update it in Radarr first.",
         "testConnection": "Test connection",
         "syncOwnedMovies": "Sync owned movies",
         "addConfiguration": "Add Movie Configuration",
         "addConfigurationTitle": "Add Configuration",
         "noConfigurations": "No configurations",
-        "profiles": {
+        "configurations": {
           "movie": "Movie"
         },
         "deleteConfiguration": {
@@ -597,14 +596,14 @@
       "sonarr": {
         "title": "Sonarr",
         "description": "Sonarr will be used for TV downloads, season downloads, and owned episode sync.",
-        "serverHint": "Scenario uses the profiles, folders, and tags configured on your Sonarr server. If an option is missing or wrong, update it in Sonarr first.",
+        "serverHint": "Scenario uses the folders, quality options, languages, and tags configured on your Sonarr server. If an option is missing or wrong, update it in Sonarr first.",
         "testConnection": "Test connection",
         "syncOwnedTv": "Sync owned TV shows",
-        "addConfiguration": "Add Sonarr Profile Configuration",
+        "addConfiguration": "Add Sonarr Configuration",
         "addConfigurationTitle": "Add Configuration",
         "noConfigurations": "No configurations",
-        "tagFooter": "Scenario applies this tag automatically. Make sure matching Sonarr release profiles or indexer restrictions use the same tag when needed.",
-        "profiles": {
+        "tagFooter": "Scenario applies this tag automatically. Make sure matching Sonarr release settings or indexer restrictions use the same tag when needed.",
+        "configurations": {
           "tv_on_air": "TV On Air",
           "tv_complete": "TV Complete",
           "anime": "Anime"
@@ -612,11 +611,9 @@
         "deleteConfiguration": {
           "row": "Delete Configuration",
           "title": "Delete configuration?",
-          "message": "Delete the {{name}} configuration? It will become available again when adding a Sonarr profile.",
+          "message": "Delete the {{name}} configuration? It will become available again when adding a Sonarr configuration.",
           "confirm": "Delete"
-        },
-        "profilesFooter": "Scenario treats current and completed TV differently. Current seasons use the on-air profile; completed or archived seasons use the complete profile. This helps prioritize 1080p episodes while keeping full seasons lighter.",
-        "tagsFooter": "Tags let Sonarr apply different release profiles. Use tv-onair for current shows and tv-complete for archived or completed seasons."
+        }
       },
       "deleteAccount": {
         "title": "Delete account",

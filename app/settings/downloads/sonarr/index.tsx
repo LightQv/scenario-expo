@@ -11,7 +11,6 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import {
-  font,
   foregroundStyle,
   listStyle,
   padding,
@@ -21,6 +20,8 @@ import {
 import GoBackButton from "@/components/ui/GoBackButton";
 import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
@@ -34,10 +35,10 @@ import {
   testSonarrConnection,
 } from "@/services/downloadSettings";
 import {
-  SONARR_PROFILE_TYPES,
+  SONARR_CONFIGURATION_TYPES,
   findOptionLabel,
-  getSonarrProfileLabel,
-} from "@/services/sonarrProfiles";
+  getSonarrConfigurationLabel,
+} from "@/services/sonarrConfigurations";
 
 export default function SonarrSettingsScreen() {
   const { colors } = useThemeContext();
@@ -100,11 +101,11 @@ export default function SonarrSettingsScreen() {
   };
 
   const isEnabled = settings?.enabled ?? false;
-  const configuredTypes = SONARR_PROFILE_TYPES.filter(
-    (type) => settings?.profiles?.[type],
+  const configuredTypes = SONARR_CONFIGURATION_TYPES.filter(
+    (type) => settings?.configurations?.[type],
   );
   const canAddConfiguration =
-    configuredTypes.length < SONARR_PROFILE_TYPES.length;
+    configuredTypes.length < SONARR_CONFIGURATION_TYPES.length;
 
   return (
     <View style={styles.container}>
@@ -115,7 +116,7 @@ export default function SonarrSettingsScreen() {
             footer={
               <SwiftText
                 modifiers={[
-                  font({ size: TOKENS.font.md }),
+                  settingsRegularFont(TOKENS.font.md),
                   foregroundStyle({ type: "hierarchical", style: "secondary" }),
                   padding({ bottom: 8 }),
                 ]}
@@ -131,7 +132,7 @@ export default function SonarrSettingsScreen() {
               tintColor={colors.main}
             >
               <HStack alignment="center" spacing={12}>
-                <SwiftText modifiers={[font({ size: 17 })]}>
+                <SwiftText modifiers={[settingsRegularFont(17)]}>
                   {i18n.t("screen.settings.sonarr.title")}
                 </SwiftText>
                 <Spacer />
@@ -185,6 +186,7 @@ export default function SonarrSettingsScreen() {
                   connectionHint ? (
                     <SwiftText
                       modifiers={[
+                        settingsRegularFont(TOKENS.font.md),
                         foregroundStyle(
                           connectionHint.type === "success"
                             ? PlatformColor("secondaryLabel")
@@ -214,23 +216,27 @@ export default function SonarrSettingsScreen() {
           {isEnabled && options ? (
             <>
               <Section
-                title={i18n.t("screen.settings.sections.configurations")}
+                header={
+                  <SettingsSectionHeader
+                    title={i18n.t("screen.settings.sections.configurations")}
+                  />
+                }
               >
                 {configuredTypes.length > 0 ? (
                   configuredTypes.map((type) => {
-                    const profile = settings?.profiles?.[type];
-                    const qualityProfile = findOptionLabel(
+                    const configuration = settings?.configurations?.[type];
+                    const qualityConfiguration = findOptionLabel(
                       options.quality_profiles,
-                      profile?.quality_profile_id,
+                      configuration?.quality_profile_id,
                     );
                     return (
                       <NativeSettingsRow
                         key={type}
-                        label={getSonarrProfileLabel(type)}
-                        value={qualityProfile}
+                        label={getSonarrConfigurationLabel(type)}
+                        value={qualityConfiguration}
                         onPress={() =>
                           router.push(
-                            `/settings/downloads/sonarr/profiles/${type}`,
+                            `/settings/downloads/sonarr/configuration/${type}`,
                           )
                         }
                       />
@@ -239,6 +245,7 @@ export default function SonarrSettingsScreen() {
                 ) : (
                   <SwiftText
                     modifiers={[
+                      settingsRegularFont(),
                       foregroundStyle({
                         type: "hierarchical",
                         style: "secondary",
@@ -256,7 +263,7 @@ export default function SonarrSettingsScreen() {
                     label={i18n.t("screen.settings.sonarr.addConfiguration")}
                     labelColor={colors.main}
                     onPress={() =>
-                      router.push("/settings/downloads/sonarr/profiles/add")
+                      router.push("/settings/downloads/sonarr/configuration/add")
                     }
                   />
                 </Section>
@@ -277,9 +284,16 @@ function OptionsState({
   error: boolean;
 }) {
   return (
-    <Section title={i18n.t("screen.settings.common.options")}>
+    <Section
+      header={
+        <SettingsSectionHeader
+          title={i18n.t("screen.settings.common.options")}
+        />
+      }
+    >
       <SwiftText
         modifiers={[
+          settingsRegularFont(),
           foregroundStyle({ type: "hierarchical", style: "secondary" }),
         ]}
       >

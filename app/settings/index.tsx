@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
     backgroundColor: PlatformColor("systemGroupedBackground"),
   },
   titleContainer: {
-    marginTop: 124,
-    marginLeft: TOKENS.margin.horizontal,
+    marginTop: 126,
+    marginHorizontal: TOKENS.margin.horizontal,
   },
   host: { flex: 1 },
 });

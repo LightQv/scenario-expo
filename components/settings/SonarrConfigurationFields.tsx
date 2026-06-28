@@ -16,29 +16,32 @@ import {
   tag,
 } from "@expo/ui/swift-ui/modifiers";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import type {
   SelectOption,
-  SonarrProfileType,
+  SonarrConfigurationType,
 } from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
 import {
-  getSonarrProfileLabel,
-  getSonarrProfileTag,
-} from "@/services/sonarrProfiles";
+  getSonarrConfigurationLabel,
+  getSonarrConfigurationTag,
+} from "@/services/sonarrConfigurations";
 import { useState } from "react";
+import { TOKENS } from "@/constants/theme";
 
 type PickerValue = string | number;
 
-type SonarrProfileFieldsProps = {
-  type?: SonarrProfileType;
+type SonarrConfigurationFieldsProps = {
+  type?: SonarrConfigurationType;
   rootFolderPath?: string | null;
   qualityProfileId?: number | null;
   languageProfileId?: number | null;
   rootOptions: SelectOption[];
   qualityOptions: SelectOption[];
   languageOptions: SelectOption[];
-  availableTypes?: SonarrProfileType[];
-  onTypeChange?: (value: SonarrProfileType) => void;
+  availableTypes?: SonarrConfigurationType[];
+  onTypeChange?: (value: SonarrConfigurationType) => void;
   onRootFolderChange: (value: string) => void;
   onQualityProfileChange: (value: number) => void;
   onLanguageProfileChange: (value: number | null) => void;
@@ -46,7 +49,7 @@ type SonarrProfileFieldsProps = {
   deleteLabel?: string;
 };
 
-export default function SonarrProfileFields({
+export default function SonarrConfigurationFields({
   type,
   rootFolderPath,
   qualityProfileId,
@@ -61,7 +64,7 @@ export default function SonarrProfileFields({
   onLanguageProfileChange,
   onDelete,
   deleteLabel,
-}: SonarrProfileFieldsProps) {
+}: SonarrConfigurationFieldsProps) {
   return (
     <Host style={styles.host}>
       <List modifiers={[listStyle("insetGrouped")]}>
@@ -77,7 +80,13 @@ export default function SonarrProfileFields({
 
         {type ? (
           <>
-            <Section title={i18n.t("screen.settings.fields.rootFolder")}>
+            <Section
+              header={
+                <SettingsSectionHeader
+                  title={i18n.t("screen.settings.fields.rootFolder")}
+                />
+              }
+            >
               <NativePicker
                 value={rootFolderPath ?? null}
                 options={rootOptions}
@@ -85,7 +94,13 @@ export default function SonarrProfileFields({
               />
             </Section>
 
-            <Section title={i18n.t("screen.settings.fields.qualityProfile")}>
+            <Section
+              header={
+                <SettingsSectionHeader
+                  title={i18n.t("screen.settings.fields.qualityProfile")}
+                />
+              }
+            >
               <NativePicker
                 value={qualityProfileId ?? null}
                 options={qualityOptions}
@@ -93,7 +108,13 @@ export default function SonarrProfileFields({
               />
             </Section>
 
-            <Section title={i18n.t("screen.settings.fields.languageProfile")}>
+            <Section
+              header={
+                <SettingsSectionHeader
+                  title={i18n.t("screen.settings.fields.languageProfile")}
+                />
+              }
+            >
               <NativePicker
                 value={languageProfileId ?? null}
                 options={languageOptions}
@@ -102,26 +123,34 @@ export default function SonarrProfileFields({
             </Section>
 
             <Section
-              title={i18n.t("screen.settings.fields.tag")}
+              header={
+                <SettingsSectionHeader
+                  title={i18n.t("screen.settings.fields.tag")}
+                />
+              }
               footer={
-                <SwiftText>
+                <SwiftText modifiers={[settingsRegularFont(TOKENS.font.md)]}>
                   {i18n.t("screen.settings.sonarr.tagFooter")}
                 </SwiftText>
               }
             >
               <SwiftText
                 modifiers={[
+                  settingsRegularFont(),
                   foregroundStyle({ type: "hierarchical", style: "secondary" }),
                 ]}
               >
-                {getSonarrProfileTag(type)}
+                {getSonarrConfigurationTag(type)}
               </SwiftText>
             </Section>
 
             {onDelete ? (
               <Section>
                 <NativeSettingsRow
-                  label={deleteLabel ?? i18n.t("screen.settings.sonarr.deleteConfiguration.row")}
+                  label={
+                    deleteLabel ??
+                    i18n.t("screen.settings.sonarr.deleteConfiguration.row")
+                  }
                   labelColor="red"
                   showChevron={false}
                   onPress={onDelete}
@@ -140,9 +169,9 @@ function TypeDisclosurePicker({
   options,
   onSelect,
 }: {
-  value?: SonarrProfileType;
-  options: SonarrProfileType[];
-  onSelect: (value: SonarrProfileType) => void;
+  value?: SonarrConfigurationType;
+  options: SonarrConfigurationType[];
+  onSelect: (value: SonarrConfigurationType) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const optionsWithCurrent =
@@ -152,15 +181,18 @@ function TypeDisclosurePicker({
     <DisclosureGroup isExpanded={isExpanded} onIsExpandedChange={setIsExpanded}>
       <DisclosureGroup.Label>
         <HStack alignment="center" spacing={8}>
-          <SwiftText>{i18n.t("screen.settings.fields.type")}</SwiftText>
+          <SwiftText modifiers={[settingsRegularFont()]}>
+            {i18n.t("screen.settings.fields.type")}
+          </SwiftText>
           <Spacer />
           <SwiftText
             modifiers={[
+              settingsRegularFont(),
               foregroundStyle({ type: "hierarchical", style: "secondary" }),
             ]}
           >
             {value
-              ? getSonarrProfileLabel(value)
+              ? getSonarrConfigurationLabel(value)
               : i18n.t("screen.settings.common.required")}
           </SwiftText>
         </HStack>
@@ -168,13 +200,16 @@ function TypeDisclosurePicker({
       <Picker
         selection={value ?? null}
         onSelectionChange={(next) => {
-          if (next) onSelect(next as SonarrProfileType);
+          if (next) onSelect(next as SonarrConfigurationType);
         }}
         modifiers={[pickerStyle("inline")]}
       >
-        {optionsWithCurrent.map((profileType) => (
-          <SwiftText key={profileType} modifiers={[tag(profileType)]}>
-            {getSonarrProfileLabel(profileType)}
+        {optionsWithCurrent.map((configurationType) => (
+          <SwiftText
+            key={configurationType}
+            modifiers={[settingsRegularFont(), tag(configurationType)]}
+          >
+            {getSonarrConfigurationLabel(configurationType)}
           </SwiftText>
         ))}
       </Picker>
@@ -212,7 +247,10 @@ function NativePicker({
       modifiers={[pickerStyle("inline")]}
     >
       {optionsWithCurrent.map((option) => (
-        <SwiftText key={`${option.value}`} modifiers={[tag(option.value)]}>
+        <SwiftText
+          key={`${option.value}`}
+          modifiers={[settingsRegularFont(), tag(option.value)]}
+        >
           {option.label}
         </SwiftText>
       ))}

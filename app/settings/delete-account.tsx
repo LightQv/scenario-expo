@@ -24,6 +24,7 @@ import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import GoBackButton from "@/components/ui/GoBackButton";
 import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import { TOKENS } from "@/constants/theme";
 
 const destructiveColor = PlatformColor("systemRed") as unknown as string;
@@ -92,6 +93,7 @@ export default function DeleteAccountSettingsScreen() {
               onTextChange={setUsernameConfirmation}
               modifiers={[
                 autocorrectionDisabled(),
+                settingsRegularFont(),
                 keyboardType("default"),
                 submitLabel("done"),
                 textInputAutocapitalization("never"),
@@ -120,11 +122,17 @@ function ConfirmationFooter({ username }: { username: string }) {
   return (
     <SwiftText
       modifiers={[
+        settingsRegularFont(TOKENS.font.md),
         foregroundStyle({ type: "hierarchical", style: "secondary" }),
       ]}
     >
       {i18n.t("form.profile.delete.account.label1")} {""}
-      <SwiftText modifiers={[foregroundStyle(destructiveColor)]}>
+      <SwiftText
+        modifiers={[
+          settingsRegularFont(TOKENS.font.md),
+          foregroundStyle(destructiveColor),
+        ]}
+      >
         {username}
       </SwiftText>{" "}
       {i18n.t("form.profile.delete.account.label2")}

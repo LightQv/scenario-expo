@@ -5,6 +5,7 @@ import { Host, List, Section } from "@expo/ui/swift-ui";
 import { listStyle } from "@expo/ui/swift-ui/modifiers";
 import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts";
 import type { DownloadSettingsOverview } from "@/services/downloadSettings";
@@ -35,7 +36,13 @@ export default function DownloadSettingsScreen() {
             />
           </Section>
 
-          <Section title={i18n.t("screen.settings.sections.connection")}>
+          <Section
+            header={
+              <SettingsSectionHeader
+                title={i18n.t("screen.settings.sections.connection")}
+              />
+            }
+          >
             <NativeSettingsRow
               label={i18n.t("screen.settings.radarr.title")}
               value={

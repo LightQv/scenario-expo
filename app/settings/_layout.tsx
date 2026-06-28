@@ -1,12 +1,13 @@
 import { Stack } from "expo-router";
 import i18n from "@/services/i18n";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import { FONTS } from "@/constants/theme";
 
 export default function SettingsLayout() {
   const { colors } = useThemeContext();
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerTitleStyle: { fontFamily: FONTS.regular } }}>
       <Stack.Screen
         name="index"
         options={{
@@ -97,7 +98,7 @@ export default function SettingsLayout() {
         name="downloads/radarr/configuration/index"
         options={{
           headerShown: true,
-          headerTitle: i18n.t("screen.settings.radarr.profiles.movie"),
+          headerTitle: i18n.t("screen.settings.radarr.configurations.movie"),
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerTransparent: true,
@@ -137,7 +138,7 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
-        name="downloads/sonarr/profiles/add"
+        name="downloads/sonarr/configuration/add"
         options={{
           presentation: "modal",
           headerShown: true,
@@ -148,7 +149,7 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
-        name="downloads/sonarr/profiles/[type]"
+        name="downloads/sonarr/configuration/[type]"
         options={{
           headerShown: true,
           headerTintColor: colors.text,

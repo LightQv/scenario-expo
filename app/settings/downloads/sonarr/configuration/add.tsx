@@ -2,26 +2,26 @@ import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
 import GoBackButton from "@/components/ui/GoBackButton";
-import SonarrProfileFields from "@/components/settings/SonarrProfileFields";
+import SonarrConfigurationFields from "@/components/settings/SonarrConfigurationFields";
 import { notifyError } from "@/components/toasts/Toast";
 import type {
+  SonarrConfigurationType,
   SonarrOptions,
-  SonarrProfileType,
   SonarrSettings,
 } from "@/services/downloadSettings";
 import {
   getSonarrOptions,
   getSonarrSettings,
-  upsertSonarrProfile,
+  upsertSonarrConfiguration,
 } from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
-import { SONARR_PROFILE_TYPES } from "@/services/sonarrProfiles";
+import { SONARR_CONFIGURATION_TYPES } from "@/services/sonarrConfigurations";
 
-export default function AddSonarrProfileScreen() {
+export default function AddSonarrConfigurationScreen() {
   const [settings, setSettings] = useState<SonarrSettings | null>(null);
   const [options, setOptions] = useState<SonarrOptions | null>(null);
   const [selectedType, setSelectedType] = useState<
-    SonarrProfileType | undefined
+    SonarrConfigurationType | undefined
   >();
   const [rootFolderPath, setRootFolderPath] = useState<string | null>(null);
   const [qualityProfileId, setQualityProfileId] = useState<number | null>(null);
@@ -50,7 +50,7 @@ export default function AddSonarrProfileScreen() {
       return;
     setSaving(true);
     try {
-      await upsertSonarrProfile(selectedType, {
+      await upsertSonarrConfiguration(selectedType, {
         root_folder_path: rootFolderPath,
         quality_profile_id: qualityProfileId,
         language_profile_id: languageProfileId,
@@ -66,8 +66,8 @@ export default function AddSonarrProfileScreen() {
   const canSave = Boolean(
     selectedType && rootFolderPath && qualityProfileId !== null,
   );
-  const availableTypes = SONARR_PROFILE_TYPES.filter(
-    (type) => !settings?.profiles?.[type],
+  const availableTypes = SONARR_CONFIGURATION_TYPES.filter(
+    (type) => !settings?.configurations?.[type],
   );
 
   return (
@@ -89,7 +89,7 @@ export default function AddSonarrProfileScreen() {
         </Stack.Toolbar.Button>
       </Stack.Toolbar>
       <View style={styles.content}>
-        <SonarrProfileFields
+        <SonarrConfigurationFields
           type={selectedType}
           rootFolderPath={rootFolderPath}
           qualityProfileId={qualityProfileId}

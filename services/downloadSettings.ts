@@ -24,16 +24,21 @@ export type RadarrSettings = IntegrationSummary & {
   quality_profile_id?: number | null;
 };
 
-export type SonarrProfileType = "tv_on_air" | "tv_complete" | "anime";
+export type SonarrConfigurationType = "tv_on_air" | "tv_complete" | "anime";
 
-export type SonarrProfileConfig = {
+export type SonarrConfigurationConfig = {
   root_folder_path: string;
   quality_profile_id: number;
   language_profile_id?: number | null;
 };
 
 export type SonarrSettings = IntegrationSummary & {
-  profiles: Partial<Record<SonarrProfileType, SonarrProfileConfig>>;
+  configurations: Partial<Record<SonarrConfigurationType, SonarrConfigurationConfig>>;
+};
+
+type ApiSonarrSettings = IntegrationSummary & {
+  profiles?: Partial<Record<SonarrConfigurationType, SonarrConfigurationConfig>>;
+  configurations?: Partial<Record<SonarrConfigurationType, SonarrConfigurationConfig>>;
 };
 
 export type RadarrOptions = {
@@ -77,27 +82,27 @@ export function testRadarrConnection(): Promise<TestConnectionResponse> {
 }
 
 export function getSonarrSettings(): Promise<SonarrSettings> {
-  return apiFetch("/api/v1/user-settings/downloads/sonarr");
+  return apiFetch("/api/v1/user-settings/downloads/sonarr").then(normalizeSonarrSettings);
 }
 
 export function patchSonarrSettings(payload: Partial<SonarrSettings> & Record<string, unknown>): Promise<SonarrSettings> {
   return apiFetch("/api/v1/user-settings/downloads/sonarr", {
     method: "PATCH",
     body: JSON.stringify(payload),
-  });
+  }).then(normalizeSonarrSettings);
 }
 
-export function upsertSonarrProfile(type: SonarrProfileType, payload: SonarrProfileConfig): Promise<SonarrSettings> {
+export function upsertSonarrConfiguration(type: SonarrConfigurationType, payload: SonarrConfigurationConfig): Promise<SonarrSettings> {
   return apiFetch(`/api/v1/user-settings/downloads/sonarr/profiles/${type}`, {
     method: "PUT",
     body: JSON.stringify(payload),
-  });
+  }).then(normalizeSonarrSettings);
 }
 
-export function deleteSonarrProfile(type: SonarrProfileType): Promise<SonarrSettings> {
+export function deleteSonarrConfiguration(type: SonarrConfigurationType): Promise<SonarrSettings> {
   return apiFetch(`/api/v1/user-settings/downloads/sonarr/profiles/${type}`, {
     method: "DELETE",
-  });
+  }).then(normalizeSonarrSettings);
 }
 
 export function getSonarrOptions(): Promise<SonarrOptions> {
@@ -106,4 +111,11 @@ export function getSonarrOptions(): Promise<SonarrOptions> {
 
 export function testSonarrConnection(): Promise<TestConnectionResponse> {
   return apiFetch("/api/v1/user-settings/downloads/sonarr/test", { method: "POST" });
+}
+
+function normalizeSonarrSettings(settings: ApiSonarrSettings): SonarrSettings {
+  return {
+    ...settings,
+    configurations: settings.configurations ?? settings.profiles ?? {},
+  };
 }

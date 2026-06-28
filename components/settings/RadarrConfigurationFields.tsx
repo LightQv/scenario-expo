@@ -12,6 +12,8 @@ import {
   tag,
 } from "@expo/ui/swift-ui/modifiers";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import type { SelectOption } from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
 
@@ -41,7 +43,13 @@ export default function RadarrConfigurationFields({
   return (
     <Host style={styles.host}>
       <List modifiers={[listStyle("insetGrouped")]}>
-        <Section title={i18n.t("screen.settings.fields.rootFolder")}>
+        <Section
+          header={
+            <SettingsSectionHeader
+              title={i18n.t("screen.settings.fields.rootFolder")}
+            />
+          }
+        >
           <NativePicker
             value={rootFolderPath ?? null}
             options={rootOptions}
@@ -49,7 +57,13 @@ export default function RadarrConfigurationFields({
           />
         </Section>
 
-        <Section title={i18n.t("screen.settings.fields.qualityProfile")}>
+        <Section
+          header={
+            <SettingsSectionHeader
+              title={i18n.t("screen.settings.fields.qualityProfile")}
+            />
+          }
+        >
           <NativePicker
             value={qualityProfileId ?? null}
             options={qualityOptions}
@@ -102,7 +116,10 @@ function NativePicker({
       modifiers={[pickerStyle("inline")]}
     >
       {optionsWithCurrent.map((option) => (
-        <SwiftText key={`${option.value}`} modifiers={[tag(option.value)]}>
+        <SwiftText
+          key={`${option.value}`}
+          modifiers={[settingsRegularFont(), tag(option.value)]}
+        >
           {option.label}
         </SwiftText>
       ))}

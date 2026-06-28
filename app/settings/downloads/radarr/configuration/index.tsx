@@ -62,7 +62,7 @@ export default function RadarrConfigurationDetailScreen() {
     <View style={styles.container}>
       <GoBackButton />
       <Stack.Screen
-        options={{ title: i18n.t("screen.settings.radarr.profiles.movie") }}
+        options={{ title: i18n.t("screen.settings.radarr.configurations.movie") }}
       />
       <View style={styles.content}>
         {settings ? (

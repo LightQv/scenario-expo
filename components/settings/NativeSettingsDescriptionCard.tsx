@@ -9,7 +9,6 @@ import {
 } from "@expo/ui/swift-ui";
 import {
   background,
-  font,
   foregroundStyle,
   frame,
   imageScale,
@@ -19,6 +18,10 @@ import {
   shapes,
   truncationMode,
 } from "@expo/ui/swift-ui/modifiers";
+import {
+  settingsBoldFont,
+  settingsRegularFont,
+} from "@/components/settings/nativeSettingsModifiers";
 
 type NativeSettingsDescriptionCardProps = {
   title: string;
@@ -70,12 +73,12 @@ export default function NativeSettingsDescriptionCard({
       </ZStack>
 
       <VStack alignment="leading" spacing={6}>
-        <SwiftText modifiers={[font({ size: 24, weight: "bold" })]}>
+        <SwiftText modifiers={[settingsBoldFont(24)]}>
           {title}
         </SwiftText>
         <SwiftText
           modifiers={[
-            font({ size: 16 }),
+            settingsRegularFont(16),
             foregroundStyle({ type: "hierarchical", style: "secondary" }),
             lineLimit(4),
             truncationMode("tail"),

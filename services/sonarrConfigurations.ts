@@ -1,13 +1,13 @@
-import type { SelectOption, SonarrProfileType } from "@/services/downloadSettings";
+import type { SelectOption, SonarrConfigurationType } from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
 
-export const SONARR_PROFILE_TYPES: SonarrProfileType[] = ["tv_on_air", "tv_complete", "anime"];
+export const SONARR_CONFIGURATION_TYPES: SonarrConfigurationType[] = ["tv_on_air", "tv_complete", "anime"];
 
-export function getSonarrProfileLabel(type: SonarrProfileType): string {
-  return i18n.t(`screen.settings.sonarr.profiles.${type}`);
+export function getSonarrConfigurationLabel(type: SonarrConfigurationType): string {
+  return i18n.t(`screen.settings.sonarr.configurations.${type}`);
 }
 
-export function getSonarrProfileTag(type: SonarrProfileType): string {
+export function getSonarrConfigurationTag(type: SonarrConfigurationType): string {
   switch (type) {
     case "anime":
       return "anime";

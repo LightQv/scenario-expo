@@ -17,6 +17,7 @@ import {
   padding,
   shapes,
 } from "@expo/ui/swift-ui/modifiers";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 
 type NativeSettingsRowProps = {
   label: string;
@@ -69,6 +70,7 @@ export default function NativeSettingsRow({
         ) : null}
         <SwiftText
           modifiers={[
+            settingsRegularFont(),
             ...(labelColor ? [foregroundStyle(labelColor)] : []),
             ...(systemIcon ? [padding({ leading: 4 })] : []),
           ]}
@@ -79,6 +81,7 @@ export default function NativeSettingsRow({
         {value ? (
           <SwiftText
             modifiers={[
+              settingsRegularFont(),
               foregroundStyle({ type: "hierarchical", style: "secondary" }),
             ]}
           >

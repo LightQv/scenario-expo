@@ -11,7 +11,6 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import {
-  font,
   foregroundStyle,
   listStyle,
   padding,
@@ -21,6 +20,8 @@ import {
 import GoBackButton from "@/components/ui/GoBackButton";
 import NativeSettingsDescriptionCard from "@/components/settings/NativeSettingsDescriptionCard";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
+import SettingsSectionHeader from "@/components/settings/SettingsSectionHeader";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import { notifyError } from "@/components/toasts/Toast";
 import { TOKENS } from "@/constants/theme";
 import { useThemeContext } from "@/contexts";
@@ -117,7 +118,7 @@ export default function RadarrSettingsScreen() {
             footer={
               <SwiftText
                 modifiers={[
-                  font({ size: TOKENS.font.md }),
+                  settingsRegularFont(TOKENS.font.md),
                   foregroundStyle({ type: "hierarchical", style: "secondary" }),
                   padding({ bottom: 8 }),
                 ]}
@@ -133,7 +134,7 @@ export default function RadarrSettingsScreen() {
               tintColor={colors.main}
             >
               <HStack alignment="center" spacing={12}>
-                <SwiftText modifiers={[font({ size: 17 })]}>
+                <SwiftText modifiers={[settingsRegularFont(17)]}>
                   {i18n.t("screen.settings.radarr.title")}
                 </SwiftText>
                 <Spacer />
@@ -187,6 +188,7 @@ export default function RadarrSettingsScreen() {
                   connectionHint ? (
                     <SwiftText
                       modifiers={[
+                        settingsRegularFont(TOKENS.font.md),
                         foregroundStyle(
                           connectionHint.type === "success"
                             ? PlatformColor("secondaryLabel")
@@ -216,11 +218,15 @@ export default function RadarrSettingsScreen() {
           {isEnabled && options ? (
             <>
               <Section
-                title={i18n.t("screen.settings.sections.configurations")}
+                header={
+                  <SettingsSectionHeader
+                    title={i18n.t("screen.settings.sections.configurations")}
+                  />
+                }
               >
                 {hasMovieConfiguration ? (
                   <NativeSettingsRow
-                    label={i18n.t("screen.settings.radarr.profiles.movie")}
+                    label={i18n.t("screen.settings.radarr.configurations.movie")}
                     value={qualityProfile}
                     onPress={() =>
                       router.push("/settings/downloads/radarr/configuration")
@@ -229,6 +235,7 @@ export default function RadarrSettingsScreen() {
                 ) : (
                   <SwiftText
                     modifiers={[
+                      settingsRegularFont(),
                       foregroundStyle({
                         type: "hierarchical",
                         style: "secondary",
@@ -269,9 +276,16 @@ function OptionsState({
   error: boolean;
 }) {
   return (
-    <Section title={i18n.t("screen.settings.common.options")}>
+    <Section
+      header={
+        <SettingsSectionHeader
+          title={i18n.t("screen.settings.common.options")}
+        />
+      }
+    >
       <SwiftText
         modifiers={[
+          settingsRegularFont(),
           foregroundStyle({ type: "hierarchical", style: "secondary" }),
         ]}
       >
