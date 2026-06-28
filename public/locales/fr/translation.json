@@ -639,20 +639,7 @@
         "tag": "Tag",
         "tvRootFolder": "Chemin du dossier séries",
         "animeRootFolder": "Chemin du dossier anime",
-        "fallbackQualityProfile": "ID du profil de qualité par défaut",
-        "onAirQualityProfile": "ID du profil On-air",
-        "completeQualityProfile": "ID du profil Complete",
-        "animeQualityProfile": "ID du profil anime",
-        "languageProfile": "ID du profil de langue",
-        "animeLanguageProfile": "ID du profil de langue anime",
-        "animeTag": "Tag anime",
-        "onAirTag": "Tag On-air",
-        "completeTag": "Tag Complete",
-        "seriesType": "Type de série",
-        "animeSeriesType": "Type de série anime",
-        "monitorMode": "Mode de surveillance",
-        "seasonFolder": "Dossiers par saison",
-        "useAnimeSeriesType": "Utiliser le type anime"
+        "languageProfile": "ID du profil de langue"
       }
     },
     "applicationSettings": {

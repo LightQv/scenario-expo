@@ -638,20 +638,7 @@
         "tag": "Tag",
         "tvRootFolder": "TV root folder path",
         "animeRootFolder": "Anime root folder path",
-        "fallbackQualityProfile": "Fallback quality profile ID",
-        "onAirQualityProfile": "On-air quality profile ID",
-        "completeQualityProfile": "Complete quality profile ID",
-        "animeQualityProfile": "Anime quality profile ID",
-        "languageProfile": "Language profile ID",
-        "animeLanguageProfile": "Anime language profile ID",
-        "animeTag": "Anime tag label",
-        "onAirTag": "On-air tag label",
-        "completeTag": "Complete tag label",
-        "seriesType": "Series type",
-        "animeSeriesType": "Anime series type",
-        "monitorMode": "Monitor mode",
-        "seasonFolder": "Season folders",
-        "useAnimeSeriesType": "Use anime series type"
+        "languageProfile": "Language profile ID"
       }
     },
     "applicationSettings": {
