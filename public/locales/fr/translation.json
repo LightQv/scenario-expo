@@ -624,9 +624,17 @@
         "description": "Cette action supprime définitivement votre compte et ne peut pas être annulée."
       },
       "editTitle": {
-        "url": "URL",
-        "apiKey": "Clé API",
-        "webhookSecret": "Secret du webhook"
+        "url": "URL"
+      },
+      "secretEdit": {
+        "apiKey": {
+          "title": "Saisir la clé API",
+          "subtitle": "Collez la clé API de votre serveur de téléchargement. Elle sera stockée de façon sécurisée."
+        },
+        "webhookSecret": {
+          "title": "Saisir le secret du webhook",
+          "subtitle": "Choisissez le secret partagé que Scenario doit utiliser pour vérifier les appels webhook."
+        }
       },
       "fields": {
         "url": "URL",

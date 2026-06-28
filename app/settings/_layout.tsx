@@ -65,7 +65,7 @@ export default function SettingsLayout() {
         options={{
           presentation: "modal",
           headerShown: true,
-          headerTitle: i18n.t("screen.settings.editTitle.apiKey"),
+          headerTitle: "",
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerTransparent: true,
@@ -76,7 +76,7 @@ export default function SettingsLayout() {
         options={{
           presentation: "modal",
           headerShown: true,
-          headerTitle: i18n.t("screen.settings.editTitle.webhookSecret"),
+          headerTitle: "",
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerTransparent: true,
@@ -119,7 +119,7 @@ export default function SettingsLayout() {
         options={{
           presentation: "modal",
           headerShown: true,
-          headerTitle: i18n.t("screen.settings.editTitle.apiKey"),
+          headerTitle: "",
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerTransparent: true,
@@ -130,7 +130,7 @@ export default function SettingsLayout() {
         options={{
           presentation: "modal",
           headerShown: true,
-          headerTitle: i18n.t("screen.settings.editTitle.webhookSecret"),
+          headerTitle: "",
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerTransparent: true,

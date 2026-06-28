@@ -623,9 +623,17 @@
         "description": "This permanently deletes your account and cannot be undone."
       },
       "editTitle": {
-        "url": "URL",
-        "apiKey": "API key",
-        "webhookSecret": "Webhook secret"
+        "url": "URL"
+      },
+      "secretEdit": {
+        "apiKey": {
+          "title": "Enter API Key",
+          "subtitle": "Paste the API key from your download server. It will be stored securely."
+        },
+        "webhookSecret": {
+          "title": "Enter Webhook Secret",
+          "subtitle": "Choose the shared secret Scenario should use to verify webhook calls."
+        }
       },
       "fields": {
         "url": "URL",
