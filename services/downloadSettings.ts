@@ -62,6 +62,34 @@ export function getDownloadSettingsOverview(): Promise<DownloadSettingsOverview>
   return apiFetch("/api/v1/user-settings/downloads");
 }
 
+export function isRadarrReady(overview?: DownloadSettingsOverview | null): boolean {
+  return overview?.radarr.configured === true;
+}
+
+export function isSonarrReady(overview?: DownloadSettingsOverview | null): boolean {
+  return overview?.sonarr.configured === true;
+}
+
+export function canUseDownloads(overview?: DownloadSettingsOverview | null): boolean {
+  return isRadarrReady(overview) || isSonarrReady(overview);
+}
+
+export function canUseOwnedMedia(
+  overview: DownloadSettingsOverview | null | undefined,
+  mediaType: string | undefined,
+): boolean {
+  if (mediaType === "movie") return isRadarrReady(overview);
+  if (mediaType === "tv") return isSonarrReady(overview);
+  return false;
+}
+
+export function canDownloadMedia(
+  overview: DownloadSettingsOverview | null | undefined,
+  mediaType: string,
+): boolean {
+  return canUseOwnedMedia(overview, mediaType);
+}
+
 export function getRadarrSettings(): Promise<RadarrSettings> {
   return apiFetch("/api/v1/user-settings/downloads/radarr");
 }

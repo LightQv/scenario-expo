@@ -15,8 +15,11 @@ import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import GoBackButton from "@/components/ui/GoBackButton";
 import {
+  canUseDownloads,
   type DownloadSettingsOverview,
   getDownloadSettingsOverview,
+  isRadarrReady,
+  isSonarrReady,
 } from "@/services/downloadSettings";
 
 export default function AccountScreen() {
@@ -26,9 +29,9 @@ export default function AccountScreen() {
   const [downloadOverview, setDownloadOverview] =
     useState<DownloadSettingsOverview | null>(null);
   const isDark = colorScheme === "dark";
-  const radarrEnabled = downloadOverview?.radarr.enabled === true;
-  const sonarrEnabled = downloadOverview?.sonarr.enabled === true;
-  const downloadsEnabled = radarrEnabled || sonarrEnabled;
+  const radarrReady = isRadarrReady(downloadOverview);
+  const sonarrReady = isSonarrReady(downloadOverview);
+  const downloadsReady = canUseDownloads(downloadOverview);
 
   const errorColor = isDark
     ? TOAST_COLORS.dark.error
@@ -186,7 +189,7 @@ export default function AccountScreen() {
             </View>
           </View>
 
-          {downloadsEnabled && (
+          {downloadsReady && (
             <View style={styles.section}>
               <Text
                 style={[styles.sectionTitle, { color: PlatformColor("label") }]}
@@ -199,7 +202,7 @@ export default function AccountScreen() {
                   { backgroundColor: PlatformColor("systemGray5") },
                 ]}
               >
-                {radarrEnabled && (
+                {radarrReady && (
                   <TouchableOpacity
                     onPress={() => handleOwnedMediaPress("movie")}
                     style={styles.viewsOption}
@@ -221,7 +224,7 @@ export default function AccountScreen() {
                   </TouchableOpacity>
                 )}
 
-                {radarrEnabled && sonarrEnabled && (
+                {radarrReady && sonarrReady && (
                   <View
                     style={[
                       styles.divider,
@@ -230,7 +233,7 @@ export default function AccountScreen() {
                   />
                 )}
 
-                {sonarrEnabled && (
+                {sonarrReady && (
                   <TouchableOpacity
                     onPress={() => handleOwnedMediaPress("tv")}
                     style={styles.viewsOption}
@@ -256,7 +259,7 @@ export default function AccountScreen() {
           )}
 
           {/* Downloads Section */}
-          {downloadsEnabled && (
+          {downloadsReady && (
             <View style={styles.section}>
               <Text
                 style={[styles.sectionTitle, { color: PlatformColor("label") }]}

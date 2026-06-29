@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, type Href } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
 import {
@@ -37,6 +37,7 @@ import {
   testRadarrConnection,
 } from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
+import { authenticateForSecretAccess } from "@/services/localAuthentication";
 
 export default function RadarrSettingsScreen() {
   const { colors } = useThemeContext();
@@ -95,6 +96,18 @@ export default function RadarrSettingsScreen() {
         type: "error",
         message: i18n.t("screen.settings.common.connectionFailed"),
       });
+    }
+  };
+
+  const openSecretRoute = async (route: Href) => {
+    const status = await authenticateForSecretAccess();
+    if (status === "success") {
+      router.push(route);
+      return;
+    }
+
+    if (status === "unavailable") {
+      notifyError(i18n.t("screen.settings.localAuth.unavailable"));
     }
   };
 
@@ -166,9 +179,7 @@ export default function RadarrSettingsScreen() {
                       ? i18n.t("screen.settings.common.configured")
                       : i18n.t("screen.settings.common.notConfigured")
                   }
-                  onPress={() =>
-                    router.push("/settings/downloads/radarr/api-key")
-                  }
+                  onPress={() => openSecretRoute("/settings/downloads/radarr/api-key")}
                 />
                 <NativeSettingsRow
                   label={i18n.t("screen.settings.fields.webhookSecret")}
@@ -178,7 +189,7 @@ export default function RadarrSettingsScreen() {
                       : i18n.t("screen.settings.common.notConfigured")
                   }
                   onPress={() =>
-                    router.push("/settings/downloads/radarr/webhook-secret")
+                    openSecretRoute("/settings/downloads/radarr/webhook-secret")
                   }
                 />
               </Section>

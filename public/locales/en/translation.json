@@ -355,6 +355,10 @@
         "title": "No requests yet",
         "body": "Request a movie or TV show from its detail page and it will appear here while your media server searches."
       },
+      "unavailable": {
+        "title": "Downloads are not ready",
+        "body": "Finish your Radarr movie configuration or all Sonarr configurations to unlock downloads."
+      },
       "remaining": "{{size}} remaining",
       "scope": {
         "movie": "Movie",
@@ -602,6 +606,7 @@
         "addConfiguration": "Add Sonarr Configuration",
         "addConfigurationTitle": "Add Configuration",
         "noConfigurations": "No configurations",
+        "partialConfigurationsWarning": "Finish all Sonarr configurations to unlock TV downloads and availability sync. Scenario needs TV On Air, TV Complete, and Anime to route requests reliably.",
         "tagFooter": "Scenario applies this tag automatically. Make sure matching Sonarr release settings or indexer restrictions use the same tag when needed.",
         "configurations": {
           "tv_on_air": "TV On Air",
@@ -631,6 +636,13 @@
           "title": "Enter Webhook Secret",
           "subtitle": "Choose the shared secret Scenario should use to verify webhook calls."
         }
+      },
+      "localAuth": {
+        "prompt": "Unlock download server secrets",
+        "cancel": "Cancel",
+        "fallback": "Use Passcode",
+        "unavailable": "Set up Face ID, Touch ID, or a device passcode to edit download server secrets.",
+        "failed": "Authentication failed. Secret settings remain locked."
       },
       "fields": {
         "url": "URL",
@@ -692,6 +704,11 @@
           "body": "Sync your library to show available movies here.",
           "tvTitle": "No Available TV Shows",
           "tvBody": "Sync your Sonarr library to show available TV shows here."
+        },
+        "unavailable": {
+          "title": "Availability sync is not ready",
+          "movieBody": "Finish the Radarr movie configuration to unlock available movies.",
+          "tvBody": "Finish all Sonarr configurations to unlock available TV shows."
         }
       },
       "settings": {

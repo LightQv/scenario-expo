@@ -356,6 +356,10 @@
         "title": "Aucune demande",
         "body": "Demandez un film ou une série depuis sa fiche et il apparaîtra ici pendant la recherche."
       },
+      "unavailable": {
+        "title": "Les téléchargements ne sont pas prêts",
+        "body": "Terminez la configuration films Radarr ou toutes les configurations Sonarr pour débloquer les téléchargements."
+      },
       "remaining": "{{size}} restants",
       "scope": {
         "movie": "Film",
@@ -603,6 +607,7 @@
         "addConfiguration": "Ajouter une configuration Sonarr",
         "addConfigurationTitle": "Ajouter une configuration",
         "noConfigurations": "Aucune configuration",
+        "partialConfigurationsWarning": "Terminez toutes les configurations Sonarr pour débloquer les téléchargements TV et la synchronisation des disponibilités. Scenario a besoin de TV On Air, TV Complete et Anime pour router les demandes correctement.",
         "tagFooter": "Scenario applique automatiquement ce tag. Assurez-vous que les réglages de release ou restrictions d'indexer Sonarr utilisent le même tag si nécessaire.",
         "configurations": {
           "tv_on_air": "TV On Air",
@@ -632,6 +637,13 @@
           "title": "Saisir le secret du webhook",
           "subtitle": "Choisissez le secret partagé que Scenario doit utiliser pour vérifier les appels webhook."
         }
+      },
+      "localAuth": {
+        "prompt": "Déverrouiller les secrets du serveur de téléchargement",
+        "cancel": "Annuler",
+        "fallback": "Utiliser le code",
+        "unavailable": "Configurez Face ID, Touch ID ou un code d'appareil pour modifier les secrets du serveur de téléchargement.",
+        "failed": "L'authentification a échoué. Les paramètres secrets restent verrouillés."
       },
       "fields": {
         "url": "URL",
@@ -693,6 +705,11 @@
           "body": "Synchronisez votre bibliothèque pour afficher les films disponibles ici.",
           "tvTitle": "Aucune série disponible",
           "tvBody": "Synchronisez votre bibliothèque Sonarr pour afficher les séries disponibles ici."
+        },
+        "unavailable": {
+          "title": "La synchronisation des disponibilités n'est pas prête",
+          "movieBody": "Terminez la configuration films Radarr pour débloquer les films disponibles.",
+          "tvBody": "Terminez toutes les configurations Sonarr pour débloquer les séries disponibles."
         }
       },
       "settings": {

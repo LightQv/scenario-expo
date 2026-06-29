@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
@@ -10,6 +10,11 @@ import {
   useUserContext,
 } from "@/contexts";
 import { CONFIG } from "@/services/config";
+import {
+  canDownloadMedia,
+  type DownloadSettingsOverview,
+  getDownloadSettingsOverview,
+} from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
 
 type DetailsHeaderActionsProps = {
@@ -25,6 +30,8 @@ export default function DetailsHeaderActions({
 }: DetailsHeaderActionsProps) {
   const title = data.title || data.name || "";
   const numericTmdbId = Number(tmdbId);
+  const [downloadOverview, setDownloadOverview] =
+    useState<DownloadSettingsOverview | null>(null);
   const { authState } = useUserContext();
   const { getTvAvailability, isOwned, refreshTvAvailability } = useOwnedMediaContext();
   const {
@@ -56,6 +63,20 @@ export default function DetailsHeaderActions({
     owned ||
     downloadSubmitting ||
     (!!downloadRequest && !canRetryDownload && downloadRequest.status !== "cancelled");
+  const canShowDownloadAction = canDownloadMedia(downloadOverview, mediaType);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isAuthenticated) {
+        setDownloadOverview(null);
+        return;
+      }
+
+      getDownloadSettingsOverview()
+        .then(setDownloadOverview)
+        .catch(() => setDownloadOverview(null));
+    }, [isAuthenticated]),
+  );
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -159,7 +180,7 @@ export default function DetailsHeaderActions({
   };
 
   const moreActions = [
-    ...(mediaType === "movie" || mediaType === "tv"
+    ...(canShowDownloadAction && (mediaType === "movie" || mediaType === "tv")
       ? [
           {
             id: "download",

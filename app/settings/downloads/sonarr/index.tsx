@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, type Href } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { PlatformColor, StyleSheet, View } from "react-native";
 import {
@@ -39,6 +39,7 @@ import {
   findOptionLabel,
   getSonarrConfigurationLabel,
 } from "@/services/sonarrConfigurations";
+import { authenticateForSecretAccess } from "@/services/localAuthentication";
 
 export default function SonarrSettingsScreen() {
   const { colors } = useThemeContext();
@@ -100,11 +101,26 @@ export default function SonarrSettingsScreen() {
     }
   };
 
+  const openSecretRoute = async (route: Href) => {
+    const status = await authenticateForSecretAccess();
+    if (status === "success") {
+      router.push(route);
+      return;
+    }
+
+    if (status === "unavailable") {
+      notifyError(i18n.t("screen.settings.localAuth.unavailable"));
+    }
+  };
+
   const isEnabled = settings?.enabled ?? false;
   const configuredTypes = SONARR_CONFIGURATION_TYPES.filter(
     (type) => settings?.configurations?.[type],
   );
   const canAddConfiguration =
+    configuredTypes.length < SONARR_CONFIGURATION_TYPES.length;
+  const hasPartialConfigurations =
+    configuredTypes.length > 0 &&
     configuredTypes.length < SONARR_CONFIGURATION_TYPES.length;
 
   return (
@@ -164,9 +180,7 @@ export default function SonarrSettingsScreen() {
                       ? i18n.t("screen.settings.common.configured")
                       : i18n.t("screen.settings.common.notConfigured")
                   }
-                  onPress={() =>
-                    router.push("/settings/downloads/sonarr/api-key")
-                  }
+                  onPress={() => openSecretRoute("/settings/downloads/sonarr/api-key")}
                 />
                 <NativeSettingsRow
                   label={i18n.t("screen.settings.fields.webhookSecret")}
@@ -176,7 +190,7 @@ export default function SonarrSettingsScreen() {
                       : i18n.t("screen.settings.common.notConfigured")
                   }
                   onPress={() =>
-                    router.push("/settings/downloads/sonarr/webhook-secret")
+                    openSecretRoute("/settings/downloads/sonarr/webhook-secret")
                   }
                 />
               </Section>
@@ -220,6 +234,21 @@ export default function SonarrSettingsScreen() {
                   <SettingsSectionHeader
                     title={i18n.t("screen.settings.sections.configurations")}
                   />
+                }
+                footer={
+                  hasPartialConfigurations ? (
+                    <SwiftText
+                      modifiers={[
+                        settingsRegularFont(TOKENS.font.md),
+                        foregroundStyle({
+                          type: "hierarchical",
+                          style: "secondary",
+                        }),
+                      ]}
+                    >
+                      {i18n.t("screen.settings.sonarr.partialConfigurationsWarning")}
+                    </SwiftText>
+                  ) : undefined
                 }
               >
                 {configuredTypes.length > 0 ? (

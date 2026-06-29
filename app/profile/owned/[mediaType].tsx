@@ -15,6 +15,11 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import i18n from "@/services/i18n";
 import { useOwnedMediaContext, useThemeContext } from "@/contexts";
+import {
+  canUseOwnedMedia,
+  type DownloadSettingsOverview,
+  getDownloadSettingsOverview,
+} from "@/services/downloadSettings";
 import { TOKENS } from "@/constants/theme";
 import OwnedMediaCard from "@/components/owned/OwnedMediaCard";
 import OwnedMediaHeaderMenu from "@/components/owned/OwnedMediaHeaderMenu";
@@ -51,6 +56,8 @@ export default function OwnedMediaTypeScreen() {
   const [filteredOwnedMedia, setFilteredOwnedMedia] = useState<OwnedMediaListItem[]>([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
+  const [downloadOverview, setDownloadOverview] =
+    useState<DownloadSettingsOverview | null | undefined>(undefined);
 
   const listRef = useRef<FlatList>(null);
   const lastSyncStatusRef = useRef<OwnedMediaSyncStatus["status"] | "idle">(
@@ -117,6 +124,14 @@ export default function OwnedMediaTypeScreen() {
       let cancelled = false;
       let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
+      getDownloadSettingsOverview()
+        .then((overview) => {
+          if (!cancelled) setDownloadOverview(overview);
+        })
+        .catch(() => {
+          if (!cancelled) setDownloadOverview(null);
+        });
+
       const checkSyncStatus = async () => {
         const previousStatus = lastSyncStatusRef.current;
         const previousFinishedAt = lastSyncFinishedAtRef.current;
@@ -160,6 +175,7 @@ export default function OwnedMediaTypeScreen() {
   const backgroundColor = PlatformColor("systemBackground");
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
+  const ownedMediaReady = canUseOwnedMedia(downloadOverview, mediaType);
 
   const renderItem: ListRenderItem<OwnedMediaListItem> = ({ item }) => (
     <OwnedMediaCard
@@ -200,6 +216,35 @@ export default function OwnedMediaTypeScreen() {
       </View>
     </View>
   );
+
+  if (downloadOverview === undefined) {
+    return (
+      <View style={[styles.container, { backgroundColor }]}>
+        <GoBackButton />
+        <FullScreenLoader />
+      </View>
+    );
+  }
+
+  if (!ownedMediaReady) {
+    return (
+      <View style={[styles.container, { backgroundColor }]}>
+        <GoBackButton />
+        <HeaderTitle title={getTitle()} />
+        <Host style={styles.blockedContainer}>
+          <ContentUnavailableView
+            systemImage="gearshape.2"
+            title={i18n.t("screen.profile.owned.unavailable.title")}
+            description={i18n.t(
+              mediaType === "tv"
+                ? "screen.profile.owned.unavailable.tvBody"
+                : "screen.profile.owned.unavailable.movieBody",
+            )}
+          />
+        </Host>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -244,6 +289,12 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     height: EMPTY_STATE_HEIGHT,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: TOKENS.margin.horizontal,
+  },
+  blockedContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: TOKENS.margin.horizontal,
