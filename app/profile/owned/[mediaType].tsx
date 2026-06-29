@@ -36,11 +36,14 @@ type OwnedMediaListItem = OwnedMedia & {
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const CONTENT_TOP_PADDING = 200;
-const CONTENT_BOTTOM_PADDING = 86;
+const CONTENT_BOTTOM_PADDING = 28;
 const HEADER_BLOCK_HEIGHT = 168;
 const EMPTY_STATE_HEIGHT = Math.max(
   240,
-  SCREEN_HEIGHT - CONTENT_TOP_PADDING - CONTENT_BOTTOM_PADDING - HEADER_BLOCK_HEIGHT,
+  SCREEN_HEIGHT -
+    CONTENT_TOP_PADDING -
+    CONTENT_BOTTOM_PADDING -
+    HEADER_BLOCK_HEIGHT,
 );
 
 export default function OwnedMediaTypeScreen() {
@@ -53,11 +56,14 @@ export default function OwnedMediaTypeScreen() {
     refreshSyncStatus,
     syncStatus,
   } = useOwnedMediaContext();
-  const [filteredOwnedMedia, setFilteredOwnedMedia] = useState<OwnedMediaListItem[]>([]);
+  const [filteredOwnedMedia, setFilteredOwnedMedia] = useState<
+    OwnedMediaListItem[]
+  >([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
-  const [downloadOverview, setDownloadOverview] =
-    useState<DownloadSettingsOverview | null | undefined>(undefined);
+  const [downloadOverview, setDownloadOverview] = useState<
+    DownloadSettingsOverview | null | undefined
+  >(undefined);
 
   const listRef = useRef<FlatList>(null);
   const lastSyncStatusRef = useRef<OwnedMediaSyncStatus["status"] | "idle">(
@@ -191,7 +197,7 @@ export default function OwnedMediaTypeScreen() {
 
     return (
       <Host style={styles.emptyContainer}>
-          <ContentUnavailableView
+        <ContentUnavailableView
           systemImage={mediaType === "tv" ? "tv" : "film.stack"}
           title={i18n.t(
             mediaType === "tv"

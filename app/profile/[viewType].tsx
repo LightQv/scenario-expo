@@ -6,10 +6,7 @@ import {
   FlatList,
   ListRenderItem,
 } from "react-native";
-import {
-  useLocalSearchParams,
-  useScrollToTop,
-} from "expo-router";
+import { useLocalSearchParams, useScrollToTop } from "expo-router";
 import { useEffect, useState, useRef } from "react";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
@@ -124,9 +121,7 @@ export default function ViewTypeScreen() {
     }
     return (
       <View style={styles.emptyContainer}>
-        <Text
-          style={[styles.emptyText, { color: secondaryTextColor }]}
-        >
+        <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
           {i18n.t("screen.watchlist.detail.empty")}
         </Text>
       </View>
@@ -134,20 +129,13 @@ export default function ViewTypeScreen() {
   };
 
   const renderItemSeparator = () => (
-    <View
-      style={{ height: 2, backgroundColor }}
-    />
+    <View style={{ height: 2, backgroundColor }} />
   );
 
   const renderHeader = () => <HeaderTitle title={getTitle()} />;
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor }]}>
       <GoBackButton />
       <ViewHeaderMenu
         mediaType={viewType}
@@ -177,7 +165,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 200,
-    paddingBottom: 86,
+    paddingBottom: 28,
   },
   emptyContainer: {
     flex: 1,
