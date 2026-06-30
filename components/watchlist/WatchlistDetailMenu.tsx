@@ -180,6 +180,6 @@ export default function WatchlistDetailMenu({
   ];
 
   return (
-    <HeaderMenu label="Watchlist actions" actions={actions} />
+    <HeaderMenu label={i18n.t("navigation.actions.watchlistActions")} actions={actions} />
   );
 }

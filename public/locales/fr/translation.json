@@ -1,5 +1,20 @@
 {
   "navigation": {
+    "actions": {
+      "back": "Retour",
+      "close": "Fermer",
+      "validate": "Valider",
+      "more": "Plus d'actions",
+      "menu": "Menu",
+      "filters": "Filtres",
+      "viewFilters": "Filtres des vues",
+      "watchlistActions": "Actions de liste",
+      "profileActions": "Actions du profil",
+      "profile": "Profil",
+      "ownedMediaFilters": "Filtres des médias disponibles",
+      "mediaActions": "Actions du média",
+      "viewActions": "Actions de vue"
+    },
     "tabs": {
       "top": "Top",
       "discover": "Découvrir",
@@ -137,8 +152,7 @@
       "update": {
         "banner": {
           "title": "Changer de bannière ?",
-          "subtitle1": "Votre bannière actuelle :",
-          "subtitle2": "Votre future bannière :",
+          "subtitle": "Votre bannière actuelle :",
           "pick": "Selectionner une image",
           "delete": "Supprimer la bannière",
           "submit": "Modifier",
@@ -203,6 +217,11 @@
     },
     "forgotPassword": {
       "title": "Vous avez oublié quelque chose ?"
+    },
+    "notFound": {
+      "title": "Oups !",
+      "description": "Cet écran n'existe pas.",
+      "home": "Retour à l'accueil"
     },
     "account": {
       "title": "Compte",
@@ -326,6 +345,9 @@
           "subtitle2": "Acheter"
         },
         "recommandations": "Recommandations"
+      },
+      "credits": {
+        "empty": "Aucun crédit trouvé"
       }
     },
     "downloads": {
@@ -692,6 +714,7 @@
         "description": "Retrouvez ici toutes vos statistiques de visionnage."
       },
       "view": {
+        "title": "Vues",
         "header": {
           "movie": "Films vus",
           "tv": "Séries TV vues"

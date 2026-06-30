@@ -131,7 +131,7 @@ export default function WatchlistMediaCardMenu({
 
   return (
     <NativeCardMenu
-      accessibilityLabel="Media actions"
+      accessibilityLabel={i18n.t("navigation.actions.mediaActions")}
       actions={actions}
       textColor={textColor}
     />

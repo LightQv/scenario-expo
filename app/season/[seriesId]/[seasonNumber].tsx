@@ -136,7 +136,7 @@ export default function SeasonDetailScreen() {
           actions={[
             {
               id: "more",
-              label: "More actions",
+              label: i18n.t("navigation.actions.more"),
               icon: "ellipsis",
               menu: [
                 {

@@ -85,7 +85,7 @@ export default function SecretEditScreen({
       <GoBackButton variant="close" />
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          accessibilityLabel="Validate"
+          accessibilityLabel={i18n.t("navigation.actions.validate")}
           disabled={isSubmitDisabled}
           icon={"checkmark" as never}
           onPress={validate}

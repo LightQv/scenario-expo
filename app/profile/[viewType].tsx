@@ -37,7 +37,7 @@ export default function ViewTypeScreen() {
     } else if (viewType === "tv") {
       return i18n.t("screen.profile.view.header.tv");
     }
-    return "Views";
+    return i18n.t("screen.profile.view.title");
   };
 
   // Handle sort change

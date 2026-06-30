@@ -1,5 +1,20 @@
 {
   "navigation": {
+    "actions": {
+      "back": "Back",
+      "close": "Close",
+      "validate": "Validate",
+      "more": "More actions",
+      "menu": "Menu",
+      "filters": "Filters",
+      "viewFilters": "View filters",
+      "watchlistActions": "Watchlist actions",
+      "profileActions": "Profile actions",
+      "profile": "Profile",
+      "ownedMediaFilters": "Owned media filters",
+      "mediaActions": "Media actions",
+      "viewActions": "View actions"
+    },
     "tabs": {
       "top": "Top",
       "discover": "Discover",
@@ -137,7 +152,7 @@
       "update": {
         "banner": {
           "title": "Change your banner ?",
-          "subtitle": "Your actual banner :",
+          "subtitle": "Your current banner:",
           "pick": "Pick an image",
           "delete": "Delete banner",
           "submit": "Edit",
@@ -202,6 +217,11 @@
     },
     "forgotPassword": {
       "title": "Forgot something ?"
+    },
+    "notFound": {
+      "title": "Oops!",
+      "description": "This screen doesn't exist.",
+      "home": "Go to home screen!"
     },
     "account": {
       "title": "Account",
@@ -325,6 +345,9 @@
           "subtitle2": "Buy"
         },
         "recommandations": "Recommandations"
+      },
+      "credits": {
+        "empty": "No credits found"
       }
     },
     "downloads": {
@@ -691,6 +714,7 @@
         "description": "Find all your viewing statistics here."
       },
       "view": {
+        "title": "Views",
         "header": {
           "movie": "Watched Movies",
           "tv": "Watched TV Shows"

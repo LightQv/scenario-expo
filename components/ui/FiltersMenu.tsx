@@ -107,6 +107,6 @@ export default function FiltersMenu({
   };
 
   return (
-    <HeaderMenu label="Filters" actions={actions} />
+    <HeaderMenu label={i18n.t("navigation.actions.filters")} actions={actions} />
   );
 }

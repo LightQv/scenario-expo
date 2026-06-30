@@ -108,7 +108,7 @@ export default function CategoryDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTransparent: true,
-      headerTitle: title || "Discover",
+      headerTitle: title || i18n.t("screen.discover.title"),
       headerTintColor: colors.text,
     });
   }, [navigation, colors.text, title]);

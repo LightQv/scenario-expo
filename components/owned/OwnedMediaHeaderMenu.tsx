@@ -122,7 +122,7 @@ export default function OwnedMediaHeaderMenu({
         },
         {
           id: "ownedMediaFilters",
-          label: "Owned media filters",
+          label: i18n.t("navigation.actions.ownedMediaFilters"),
           icon: "ellipsis",
           menu: filterActions,
         },

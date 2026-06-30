@@ -1,4 +1,5 @@
 import { Stack, router } from "expo-router";
+import i18n from "@/services/i18n";
 
 type GoBackButtonProps = {
   variant?: "back" | "close";
@@ -6,7 +7,9 @@ type GoBackButtonProps = {
 
 export default function GoBackButton({ variant = "back" }: GoBackButtonProps) {
   const iconName = variant === "close" ? "xmark" : "chevron.left";
-  const label = variant === "close" ? "Close" : "Back";
+  const label = i18n.t(
+    variant === "close" ? "navigation.actions.close" : "navigation.actions.back",
+  );
 
   return (
     <Stack.Toolbar placement="left">

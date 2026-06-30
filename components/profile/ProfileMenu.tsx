@@ -11,7 +11,7 @@ export default function ProfileMenu() {
 
   return (
     <HeaderMenu
-      label="Profile actions"
+      label={i18n.t("navigation.actions.profileActions")}
       actions={[
         {
           id: "editBanner",

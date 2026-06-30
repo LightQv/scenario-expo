@@ -91,7 +91,7 @@ export default function AccountPasswordEditScreen({
       <GoBackButton variant="close" />
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          accessibilityLabel="Validate"
+          accessibilityLabel={i18n.t("navigation.actions.validate")}
           disabled={saving}
           icon={"checkmark" as never}
           onPress={validate}
