@@ -135,31 +135,11 @@
     },
     "profile": {
       "update": {
-        "title": "Edit Profile",
-        "subtitle": "Please note that you'll be disconnected to ensure the update.",
-        "confirmation": {
-          "title": "Confirm Profile Update",
-          "message": "Since the password is modified, you will be logged out for security reasons. Do you want to continue?"
-        },
         "banner": {
           "title": "Change your banner ?",
           "subtitle": "Your actual banner :",
           "pick": "Pick an image",
           "delete": "Delete banner",
-          "submit": "Edit",
-          "cancel": "Cancel"
-        },
-        "email": {
-          "title": "A change ?",
-          "label": "Email",
-          "placeholder": "Enter your email here",
-          "submit": "Edit",
-          "cancel": "Cancel"
-        },
-        "password": {
-          "title": "A change ?",
-          "label1": "Password",
-          "label2": "Confirm password",
           "submit": "Edit",
           "cancel": "Cancel"
         }
@@ -573,6 +553,31 @@
         "title": "Theme",
         "description": "Choose how Scenario looks and customize accent colors."
       },
+      "account": {
+        "title": "Account",
+        "description": "Manage the identity and security details used to sign in to Scenario.",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "editTitle": {
+          "username": "Username",
+          "email": "Email"
+        },
+        "placeholders": {
+          "username": "Enter your username",
+          "email": "Enter your email",
+          "password": "Enter a new password",
+          "confirmPassword": "Confirm the new password"
+        },
+        "passwordEdit": {
+          "title": "Change Password",
+          "subtitle": "Choose a new password for your account. You will be logged out after saving."
+        },
+        "localAuth": {
+          "prompt": "Unlock account security settings",
+          "unavailable": "Set up Face ID, Touch ID, or a device passcode to change your password."
+        }
+      },
       "downloads": {
         "title": "Downloads",
         "description": "Configure the download servers used by Scenario for your account. Secrets will be stored encrypted and never shown again after saving.",
@@ -711,19 +716,8 @@
           "tvBody": "Finish all Sonarr configurations to unlock available TV shows."
         }
       },
-      "settings": {
-        "header": "Settings",
-        "description": "Edit here your banner, pseudo, mail or password.",
-        "list": {
-          "option1": "Edit my banner",
-          "option2": "Change email",
-          "option3": "Change password",
-          "option4": "Delete my account"
-        }
-      },
       "menu": {
         "editBanner": "Edit Banner",
-        "editProfile": "Edit Profile",
         "syncOwnedMovies": "Sync owned movies",
         "syncOwnedMoviesRunning": "Sync in progress",
         "syncOwnedTv": "Sync owned TV shows",
@@ -776,10 +770,6 @@
       "urlCopied": "URL copied to clipboard",
       "banner": "Banner updated successfully",
       "profile": {
-        "update": {
-          "email": "Email updated",
-          "password": "Password updated"
-        },
         "delete": "Account deleted"
       },
       "settings": {

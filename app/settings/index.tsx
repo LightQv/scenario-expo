@@ -19,13 +19,13 @@ export default function SettingsScreen() {
         <SettingsPageTitle title={i18n.t("screen.account.settings.title")} />
       </View>
       <Host style={styles.host}>
-        <List modifiers={[listStyle("insetGrouped")]}>
+        <List modifiers={[listStyle("insetGrouped")]}> 
           <Section>
             <NativeSettingsRow
-              label={i18n.t("screen.settings.theme.title")}
-              systemIcon="paintpalette"
+              label={i18n.t("screen.settings.account.title")}
+              systemIcon="person.crop.circle"
               tintColor={colors.main}
-              onPress={() => router.push("/settings/theme")}
+              onPress={() => router.push("/settings/account")}
             />
             <NativeSettingsRow
               label={i18n.t("screen.settings.downloads.title")}
@@ -37,10 +37,10 @@ export default function SettingsScreen() {
 
           <Section>
             <NativeSettingsRow
-              label={i18n.t("screen.settings.deleteAccount.title")}
-              labelColor="red"
-              showChevron={false}
-              onPress={() => router.push("/settings/delete-account")}
+              label={i18n.t("screen.settings.theme.title")}
+              systemIcon="paintpalette"
+              tintColor={colors.main}
+              onPress={() => router.push("/settings/theme")}
             />
           </Section>
         </List>

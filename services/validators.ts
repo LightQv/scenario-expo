@@ -54,16 +54,22 @@ export const updateWatchlistSchema = Yup.object({
     .max(50, i18n.t("validator.watchlist.title.min")),
 })
 
-export const editProfileSchema = Yup.object({
+export const updateUsernameSchema = Yup.object({
   username: Yup.string()
     .min(5, i18n.t("validator.username.min"))
     .max(30, i18n.t("validator.username.max"))
     .required(i18n.t("validator.username.required")),
+})
+
+export const updateEmailSchema = Yup.object({
   email: Yup.string()
     .email(i18n.t("validator.email.required"))
     .min(8, i18n.t("validator.email.min"))
     .max(255, i18n.t("validator.email.max"))
     .required(i18n.t("validator.email.required")),
+})
+
+export const updatePasswordSchema = Yup.object({
   password: Yup.string()
     .min(8, i18n.t("validator.password.min"))
     .max(30, i18n.t("validator.password.max"))

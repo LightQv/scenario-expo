@@ -7,7 +7,13 @@ export type LocalAuthenticationStatus =
   | "cancelled"
   | "failed";
 
-export async function authenticateForSecretAccess(): Promise<LocalAuthenticationStatus> {
+type AuthenticateForSecretAccessOptions = {
+  promptMessage?: string;
+};
+
+export async function authenticateForSecretAccess(
+  options: AuthenticateForSecretAccessOptions = {},
+): Promise<LocalAuthenticationStatus> {
   const hasHardware = await LocalAuthentication.hasHardwareAsync();
   const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
@@ -18,7 +24,7 @@ export async function authenticateForSecretAccess(): Promise<LocalAuthentication
   const result = await LocalAuthentication.authenticateAsync({
     cancelLabel: i18n.t("screen.settings.localAuth.cancel"),
     fallbackLabel: i18n.t("screen.settings.localAuth.fallback"),
-    promptMessage: i18n.t("screen.settings.localAuth.prompt"),
+    promptMessage: options.promptMessage ?? i18n.t("screen.settings.localAuth.prompt"),
   });
 
   if (result.success) return "success";

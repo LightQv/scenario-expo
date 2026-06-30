@@ -23,7 +23,47 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
-        name="delete-account"
+        name="account/index"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name="account/username"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.account.editTitle.username"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="account/email"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.account.editTitle.email"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="account/password"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: "",
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="account/delete-account"
         options={{
           headerTransparent: true,
           headerTitle: "",

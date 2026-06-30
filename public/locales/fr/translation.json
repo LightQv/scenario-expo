@@ -135,32 +135,12 @@
     },
     "profile": {
       "update": {
-        "title": "Modifier le profil",
-        "subtitle": "Notez que vous serez déconnecté pour valider les changements.",
-        "confirmation": {
-          "title": "Confirmer la modification",
-          "message": "Le mot de passe étant modifié, vous serez déconnecté pour des raisons de sécurité. Voulez-vous continuer ?"
-        },
         "banner": {
           "title": "Changer de bannière ?",
           "subtitle1": "Votre bannière actuelle :",
           "subtitle2": "Votre future bannière :",
           "pick": "Selectionner une image",
           "delete": "Supprimer la bannière",
-          "submit": "Modifier",
-          "cancel": "Annuler"
-        },
-        "email": {
-          "title": "Un changement ?",
-          "label": "Email",
-          "placeholder": "Entrez votre email ici",
-          "submit": "Modifier",
-          "cancel": "Annuler"
-        },
-        "password": {
-          "title": "Un changement ?",
-          "label1": "Mot de passe",
-          "label2": "Confirmation mot de passe",
           "submit": "Modifier",
           "cancel": "Annuler"
         }
@@ -574,6 +554,31 @@
         "title": "Thème",
         "description": "Choisissez l'apparence de Scenario et personnalisez les couleurs d'accent."
       },
+      "account": {
+        "title": "Compte",
+        "description": "Gérez les informations d'identité et de sécurité utilisées pour vous connecter à Scenario.",
+        "username": "Nom d'utilisateur",
+        "email": "Email",
+        "password": "Mot de passe",
+        "editTitle": {
+          "username": "Nom d'utilisateur",
+          "email": "Email"
+        },
+        "placeholders": {
+          "username": "Entrez votre nom d'utilisateur",
+          "email": "Entrez votre email",
+          "password": "Entrez un nouveau mot de passe",
+          "confirmPassword": "Confirmez le nouveau mot de passe"
+        },
+        "passwordEdit": {
+          "title": "Changer le mot de passe",
+          "subtitle": "Choisissez un nouveau mot de passe pour votre compte. Vous serez déconnecté après l'enregistrement."
+        },
+        "localAuth": {
+          "prompt": "Déverrouiller les paramètres de sécurité du compte",
+          "unavailable": "Configurez Face ID, Touch ID ou un code d'appareil pour modifier votre mot de passe."
+        }
+      },
       "downloads": {
         "title": "Téléchargements",
         "description": "Configurez les serveurs de téléchargement utilisés par Scenario pour votre compte. Les secrets seront chiffrés et ne seront plus affichés après l'enregistrement.",
@@ -712,19 +717,8 @@
           "tvBody": "Terminez toutes les configurations Sonarr pour débloquer les séries disponibles."
         }
       },
-      "settings": {
-        "header": "Paramètres",
-        "description": "Changez ici votre bannière, pseudo, email ou mot de passe.",
-        "list": {
-          "option1": "Modifier ma bannière",
-          "option2": "Changer d'email",
-          "option3": "Changer de mot de passe",
-          "option4": "Supprimer mon compte"
-        }
-      },
       "menu": {
         "editBanner": "Modifier la bannière",
-        "editProfile": "Modifier le profil",
         "syncOwnedMovies": "Synchroniser les films possédés",
         "syncOwnedMoviesRunning": "Synchronisation en cours",
         "syncOwnedTv": "Synchroniser les séries possédées",
@@ -777,10 +771,6 @@
       "urlCopied": "URL copiée dans le presse-papiers",
       "banner": "Bannière mise à jour avec succès",
       "profile": {
-        "update": {
-          "email": "Email mis à jour",
-          "password": "Mot de passe mis à jour"
-        },
         "delete": "Compte supprimé"
       },
       "settings": {

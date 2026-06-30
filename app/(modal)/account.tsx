@@ -1,4 +1,4 @@
-import { StyleSheet, View, PlatformColor, useColorScheme } from "react-native";
+import { StyleSheet, View, PlatformColor } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
@@ -23,7 +23,7 @@ import {
   shapes,
 } from "@expo/ui/swift-ui/modifiers";
 import { useUserContext, useThemeContext } from "@/contexts";
-import { TOKENS, TOAST_COLORS } from "@/constants/theme";
+import { TOKENS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import GoBackButton from "@/components/ui/GoBackButton";
 import NativeSettingsRow from "@/components/settings/NativeSettingsRow";
@@ -40,20 +40,16 @@ import {
   isSonarrReady,
 } from "@/services/downloadSettings";
 
+const destructiveColor = PlatformColor("systemRed") as unknown as string;
+
 export default function AccountScreen() {
   const { logout, user } = useUserContext();
   const { colors } = useThemeContext();
-  const colorScheme = useColorScheme();
   const [downloadOverview, setDownloadOverview] =
     useState<DownloadSettingsOverview | null>(null);
-  const isDark = colorScheme === "dark";
   const radarrReady = isRadarrReady(downloadOverview);
   const sonarrReady = isSonarrReady(downloadOverview);
   const downloadsReady = canUseDownloads(downloadOverview);
-
-  const errorColor = isDark
-    ? TOAST_COLORS.dark.error
-    : TOAST_COLORS.light.error;
 
   const handleLogout = async () => {
     await logout();
@@ -171,7 +167,7 @@ export default function AccountScreen() {
           <Section>
             <NativeSettingsRow
               label={i18n.t("form.auth.submit.logout")}
-              labelColor={errorColor}
+              labelColor={destructiveColor}
               showChevron={false}
               onPress={handleLogout}
             />

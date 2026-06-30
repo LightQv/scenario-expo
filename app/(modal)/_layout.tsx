@@ -96,17 +96,6 @@ export default function ModalLayout() {
         }}
       />
       <Stack.Screen
-        name="profile-edit"
-        options={{
-          presentation: "modal",
-          headerShown: true,
-          headerTitle: i18n.t("form.profile.update.title"),
-          headerTintColor: colors.text,
-          headerShadowVisible: false,
-          headerTransparent: true,
-        }}
-      />
-      <Stack.Screen
         name="profile-banner-edit"
         options={{
           presentation: "modal",
