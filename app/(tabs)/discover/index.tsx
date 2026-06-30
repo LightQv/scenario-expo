@@ -7,7 +7,7 @@ import {
   Animated,
 } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import DiscoverSection from "@/components/discover/DiscoverSection";
@@ -30,21 +30,45 @@ type SectionData = {
   isFeatured?: boolean;
 };
 
+const PRIORITY_SECTION_IDS = new Set([
+  "trending-week",
+  "trending-persons",
+  "popular-movies",
+]);
+
+function mergeLoadedSections(
+  currentSections: SectionData[],
+  loadedSections: SectionData[],
+) {
+  const loadedById = new Map(
+    loadedSections.map((section) => [section.id, section]),
+  );
+
+  return currentSections.map(
+    (section) => loadedById.get(section.id) || section,
+  );
+}
+
 export default function DiscoverIndexScreen() {
   const { authState } = useUserContext();
   const { hasLoadedViews, isLoading: viewsLoading } = useViewContext();
   const { movieGenres, loading: genresLoading } = useGenreContext();
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState<SectionData[]>([]);
+  const [prioritySectionsLoaded, setPrioritySectionsLoaded] = useState(false);
+  const [randomGenre, setRandomGenre] = useState<{ id: number; name: string } | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const hasHiddenSplashRef = useRef(false);
+  const hasStartedInitialLoadRef = useRef(false);
+  const loadRunRef = useRef(0);
 
-  // Select random genre on mount and refresh
-  const randomGenre = useMemo(() => {
-    if (!movieGenres || movieGenres.length === 0) return null;
+  // Select the random genre once per provider load to avoid restarting Discover.
+  useEffect(() => {
+    if (randomGenre || !movieGenres || movieGenres.length === 0) return;
+
     const randomIndex = Math.floor(Math.random() * movieGenres.length);
-    return movieGenres[randomIndex];
-  }, [movieGenres]);
+    setRandomGenre(movieGenres[randomIndex]);
+  }, [movieGenres, randomGenre]);
 
   const fetchSectionData = async (section: SectionData) => {
     try {
@@ -213,18 +237,56 @@ export default function DiscoverIndexScreen() {
     ];
   }, [randomGenre]);
 
-  const loadAllSections = async (sectionsToLoad: SectionData[]) => {
-    const promises = sectionsToLoad.map((section) => fetchSectionData(section));
-    const results = await Promise.all(promises);
-    setSections(results);
-  };
+  const loadStagedSections = useCallback(async (
+    sectionsToLoad: SectionData[],
+    options: { reset?: boolean } = {},
+  ) => {
+    const loadRun = loadRunRef.current + 1;
+    loadRunRef.current = loadRun;
+    const prioritySections = sectionsToLoad.filter((section) =>
+      PRIORITY_SECTION_IDS.has(section.id),
+    );
+    const remainingSections = sectionsToLoad.filter(
+      (section) => !PRIORITY_SECTION_IDS.has(section.id),
+    );
+
+    setPrioritySectionsLoaded(false);
+
+    if (options.reset) {
+      setSections(sectionsToLoad);
+    }
+
+    const loadedPrioritySections = await Promise.all(
+      prioritySections.map((section) => fetchSectionData(section)),
+    );
+
+    if (loadRunRef.current !== loadRun) return;
+
+    setSections((currentSections) =>
+      mergeLoadedSections(currentSections, loadedPrioritySections),
+    );
+    setPrioritySectionsLoaded(true);
+
+    const loadedRemainingSections = await Promise.all(
+      remainingSections.map((section) => fetchSectionData(section)),
+    );
+
+    if (loadRunRef.current !== loadRun) return;
+
+    setSections((currentSections) =>
+      mergeLoadedSections(currentSections, loadedRemainingSections),
+    );
+  }, []);
 
   useEffect(() => {
-    loadAllSections(initialSections);
-  }, [initialSections]);
+    if (genresLoading || !randomGenre || hasStartedInitialLoadRef.current) return;
+
+    hasStartedInitialLoadRef.current = true;
+    loadStagedSections(initialSections, { reset: true });
+  }, [genresLoading, initialSections, loadStagedSections, randomGenre]);
 
   const discoverReady =
-    sections.length > 0 &&
+    prioritySectionsLoaded &&
     !authState.loading &&
     !genresLoading &&
     (!authState.authenticated || (hasLoadedViews && !viewsLoading));
@@ -240,7 +302,7 @@ export default function DiscoverIndexScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadAllSections(initialSections);
+    await loadStagedSections(initialSections);
     setRefreshing(false);
   };
 
@@ -273,6 +335,10 @@ export default function DiscoverIndexScreen() {
         }
       >
         {sections.map((section) => {
+          if (section.loading && section.data.length === 0) {
+            return null;
+          }
+
           // Featured movie section - render single card with full size
           if (section.isFeatured && section.data.length > 0) {
             return (
