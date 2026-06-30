@@ -9,14 +9,12 @@ import {
   UserProvider,
   ViewProvider,
   BookmarkProvider,
-    OwnedMediaProvider,
-    DownloadRequestProvider,
-    useThemeContext,
-  } from "@/contexts";
+  OwnedMediaProvider,
+  DownloadRequestProvider,
+  useThemeContext,
+} from "@/contexts";
 import { Appearance } from "react-native";
-import ToastManager from "toastify-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { TOKENS } from "@/constants/theme";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -76,7 +74,7 @@ function RootLayoutNav() {
 }
 
 function ThemeWrapper() {
-  const { isDark, themePreference, colors } = useThemeContext();
+  const { themePreference } = useThemeContext();
 
   // Force the appearance mode when theme is manually set
   useEffect(() => {
@@ -129,27 +127,6 @@ function ThemeWrapper() {
           </OwnedMediaProvider>
         </BookmarkProvider>
       </ViewProvider>
-      <ToastManager
-        theme={isDark ? "dark" : "light"}
-        iconColor={colors.text}
-        position="bottom"
-        bottomOffset={160}
-        minHeight={38}
-        duration={3000}
-        animationStyle="none"
-        iconSize={20}
-        showCloseIcon={false}
-        showProgressBar={false}
-        style={{
-          borderRadius: TOKENS.card.sizes.sm.borderRadius,
-          paddingVertical: 18,
-          paddingHorizontal: 10,
-        }}
-        textStyle={{
-          flexShrink: 1,
-          flexWrap: "wrap",
-        }}
-      />
     </UserProvider>
   );
 }
