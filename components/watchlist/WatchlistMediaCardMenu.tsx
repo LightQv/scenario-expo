@@ -4,9 +4,8 @@ import i18n from "@/services/i18n";
 import { apiFetch } from "@/services/instances";
 import { formatYear } from "@/services/utils";
 import { notifyError } from "@/components/toasts/Toast";
-import { useViewContext } from "@/contexts/ViewContext";
-import { useUserContext } from "@/contexts/UserContext";
 import { useBookmarkContext } from "@/contexts/BookmarkContext";
+import useMediaViewAction from "@/hooks/useMediaViewAction";
 import NativeCardMenu, {
   NativeCardMenuAction,
 } from "@/components/ui/NativeCardMenu";
@@ -26,48 +25,21 @@ export default function WatchlistMediaCardMenu({
   onDelete,
   textColor,
 }: WatchlistMediaCardMenuProps) {
-  const { user } = useUserContext();
-  const { isViewed, getViewByTmdbId, addView, removeView } = useViewContext();
   const { refreshBookmarks } = useBookmarkContext();
-
-  const viewed = isViewed(media.tmdb_id, media.media_type);
-
-  const handleToggleView = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    if (!user?.id) {
-      notifyError(i18n.t("toast.error"));
-      return;
-    }
-
-    try {
-      if (viewed) {
-        // Remove from views
-        const existingView = getViewByTmdbId(media.tmdb_id, media.media_type);
-        if (existingView) {
-          await removeView(existingView.id);
-        }
-      } else {
-        // Add to views
-        const viewData: ViewCreate = {
-          tmdb_id: media.tmdb_id,
-          genre_ids: media.genre_ids,
-          poster_path: media.poster_path,
-          backdrop_path: media.backdrop_path,
-          release_date: media.release_date,
-          release_year: formatYear(media.release_date),
-          runtime: media.runtime,
-          title: media.title,
-          media_type: media.media_type,
-          viewer_id: user.id,
-        };
-        await addView(viewData);
-      }
-    } catch (err) {
-      console.error("Error toggling view:", err);
-      notifyError(i18n.t("toast.error"));
-    }
-  };
+  const { viewed, toggleView } = useMediaViewAction(
+    {
+      tmdbId: media.tmdb_id,
+      genreIds: media.genre_ids,
+      posterPath: media.poster_path,
+      backdropPath: media.backdrop_path,
+      releaseDate: media.release_date,
+      releaseYear: formatYear(media.release_date),
+      runtime: media.runtime,
+      title: media.title,
+      mediaType: media.media_type,
+    },
+    { haptics: true, unauthenticatedBehavior: "error" },
+  );
 
   const handleDeleteMedia = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -111,7 +83,7 @@ export default function WatchlistMediaCardMenu({
         ? i18n.t("screen.watchlist.detail.menu.unview")
         : i18n.t("screen.watchlist.detail.menu.view"),
       systemImage: viewed ? "eye.slash" : "eye",
-      onPress: handleToggleView,
+      onPress: toggleView,
     },
     {
       id: "move",

@@ -1,12 +1,12 @@
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
-import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 import { BUTTON, TOKENS } from "@/constants/theme";
 import { notifyError } from "@/components/toasts/Toast";
-import { useBookmarkContext, useUserContext, useViewContext } from "@/contexts";
-import useView from "@/hooks/useView";
+import { useUserContext } from "@/contexts";
+import useMediaBookmarkAction from "@/hooks/useMediaBookmarkAction";
+import useMediaViewAction from "@/hooks/useMediaViewAction";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
 
@@ -45,41 +45,37 @@ export default function DetailsMediaControls({
     (video) => video.type === "Trailer" && video.site === "YouTube",
   );
 
-  const { user, authState } = useUserContext();
-  const { addView, removeView } = useViewContext();
-  const { viewed, viewObj } = useView(numericTmdbId, mediaType);
-  const { isBookmarked, addBookmark, removeBookmark, getBookmarkByTmdbId } =
-    useBookmarkContext();
+  const { authState } = useUserContext();
 
   const isAuthenticated = authState.authenticated;
-  const bookmarked = isBookmarked(numericTmdbId, mediaType);
-
-  const handleBookmark = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    try {
-      if (bookmarked) {
-        const bookmark = getBookmarkByTmdbId(numericTmdbId, mediaType);
-        if (bookmark) {
-          await removeBookmark(bookmark.id);
-        }
-      } else {
-        await addBookmark({
-          tmdb_id: numericTmdbId,
-          title,
-          poster_path: data.poster_path || "",
-          backdrop_path: data.backdrop_path || "",
-          release_date: releaseDate,
-          runtime: getMediaRuntime(data, mediaType),
-          media_type: mediaType,
-          genre_ids: genreIds,
-        });
-      }
-    } catch (error) {
-      console.error("Error toggling bookmark:", error);
-      notifyError(i18n.t("toast.error"));
-    }
-  };
+  const { bookmarked, isProcessing: isBookmarkProcessing, toggleBookmark } =
+    useMediaBookmarkAction(
+      {
+        tmdbId: numericTmdbId,
+        title,
+        posterPath: data.poster_path || "",
+        backdropPath: data.backdrop_path || "",
+        releaseDate,
+        runtime: getMediaRuntime(data, mediaType),
+        mediaType,
+        genreIds,
+      },
+      { haptics: true },
+    );
+  const { viewed, isProcessing: isViewProcessing, toggleView } = useMediaViewAction(
+    {
+      tmdbId: numericTmdbId,
+      genreIds: [0, ...genreIds],
+      posterPath: data.poster_path || "",
+      backdropPath: data.backdrop_path || data.poster_path || "",
+      releaseDate,
+      releaseYear: releaseDate.slice(0, 4),
+      runtime: getMediaRuntime(data, mediaType),
+      title,
+      mediaType,
+    },
+    { haptics: true },
+  );
 
   const handleTrailerPress = async () => {
     if (!trailer?.key) return;
@@ -105,43 +101,13 @@ export default function DetailsMediaControls({
     }
   };
 
-  const handleView = async () => {
-    if (!authState.authenticated || !user) {
-      router.push("/(modal)/login");
-      return;
-    }
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    try {
-      if (viewed && viewObj) {
-        await removeView(viewObj.id);
-      } else {
-        await addView({
-          tmdb_id: numericTmdbId,
-          genre_ids: [0, ...genreIds],
-          poster_path: data.poster_path || "",
-          backdrop_path: data.backdrop_path || data.poster_path || "",
-          release_date: releaseDate,
-          release_year: releaseDate.slice(0, 4),
-          runtime: getMediaRuntime(data, mediaType),
-          title,
-          media_type: mediaType,
-          viewer_id: user.id,
-        });
-      }
-    } catch (error) {
-      console.error("Error handling view:", error);
-      notifyError(i18n.t("toast.error"));
-    }
-  };
-
   return (
     <View style={[styles.container, backgroundColor && { backgroundColor }]}>
       {isAuthenticated && (
         <DetailIconButton
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
-          onPress={handleBookmark}
+          onPress={toggleBookmark}
+          disabled={isBookmarkProcessing}
           palette={palette}
         />
       )}
@@ -158,7 +124,8 @@ export default function DetailsMediaControls({
       {isAuthenticated && (
         <DetailIconButton
           icon={viewed ? "eye" : "eye-outline"}
-          onPress={handleView}
+          onPress={toggleView}
+          disabled={isViewProcessing}
           palette={palette}
         />
       )}
@@ -169,16 +136,24 @@ export default function DetailsMediaControls({
 type DetailIconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  disabled?: boolean;
   palette: DetailPalette;
 };
 
-function DetailIconButton({ icon, onPress, palette }: DetailIconButtonProps) {
+function DetailIconButton({
+  icon,
+  onPress,
+  disabled = false,
+  palette,
+}: DetailIconButtonProps) {
   return (
     <TouchableOpacity
       activeOpacity={BUTTON.opacity}
       onPress={onPress}
+      disabled={disabled}
       style={[
         styles.iconButton,
+        disabled && styles.disabledButton,
         {
           backgroundColor: colorWithAlpha(palette.text, 0.06),
           borderColor: colorWithAlpha(palette.text, 0.25),
