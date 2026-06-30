@@ -6,11 +6,11 @@ import {
   Text,
 } from "react-native";
 import { Image } from "expo-image";
-import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -25,11 +25,9 @@ import {
 } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { colorWithAlpha, type DetailPalette } from "@/services/detailPalette";
-import AppleMusicArtworkWash from "@/components/details/AppleMusicArtworkWash";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 600;
-const ARTWORK_WASH_HEIGHT = BANNER_HEIGHT + 120;
 
 type BannerProps = {
   src: string | undefined;
@@ -85,17 +83,12 @@ export default function Banner({
   const age = birthday ? calculateAge(birthday, deathday) : null;
   const detailPillBackground = colorWithAlpha(palette.surface, 0.68);
   const detailPillBorder = colorWithAlpha(palette.tint, 0.55);
-  const imageTintOpacity =
-    palette.mood === "vibrant" ? 0.12 : palette.mood === "muted" ? 0.045 : 0.035;
   const fadeTintOpacity =
-    palette.mood === "vibrant" ? 0.26 : palette.mood === "muted" ? 0.08 : 0.05;
+    palette.mood === "vibrant" ? 0.18 : palette.mood === "muted" ? 0.06 : 0.04;
   const firstBackgroundFade =
-    palette.mood === "vibrant" ? 0.16 : palette.mood === "muted" ? 0.32 : 0.38;
+    palette.mood === "vibrant" ? 0.2 : palette.mood === "muted" ? 0.34 : 0.4;
   const imageSource = src
     ? { uri: `https://image.tmdb.org/t/p/original/${src}` }
-    : undefined;
-  const imageUrl = src
-    ? `https://image.tmdb.org/t/p/original/${src}`
     : undefined;
 
   // Parallax animation for the banner image (same formula as previous version)
@@ -120,17 +113,20 @@ export default function Banner({
     };
   });
 
+  const blurredImageStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 36, 130, 260],
+        [0.22, 0.32, 0.62, 0.88],
+        Extrapolation.CLAMP,
+      ),
+    };
+  });
+
   return (
     <View style={[styles.container, { backgroundColor: palette.background }]}>
       <View pointerEvents="none" style={styles.visualStage}>
-        <AppleMusicArtworkWash
-          imageUrl={imageUrl}
-          palette={palette}
-          scrollY={scrollY}
-          width={width}
-          height={ARTWORK_WASH_HEIGHT}
-        />
-
         <View style={styles.imageWrapper}>
           <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
             <Image
@@ -141,52 +137,18 @@ export default function Banner({
               placeholder={BLURHASH.hash}
               transition={BLURHASH.transition}
             />
-            <LinearGradient
-              colors={[
-                "transparent",
-                "transparent",
-                colorWithAlpha(palette.tint, imageTintOpacity),
-                colorWithAlpha(palette.background, 0.18),
-              ]}
-              locations={[0, 0.46, 0.72, 1]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-            />
-          </Animated.View>
-        </View>
-
-        {/* Bottom-only blurred image fade. The solid background fade is dynamic below. */}
-        <View style={styles.gradientContainer}>
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={[
-                  "rgba(0,0,0,0)",
-                  "rgba(0,0,0,0)",
-                  "rgba(0,0,0,0.06)",
-                  "rgba(0,0,0,0.3)",
-                  "rgba(0,0,0,0.66)",
-                  "rgba(0,0,0,1)",
-                ]}
-                locations={[0, 0.38, 0.54, 0.72, 0.92, 1]}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1 }}
-              />
-            }
-          >
-            <Animated.View style={[styles.imageContainer, animatedImageStyle]}>
+            <Animated.View
+              style={[styles.blurredImageLayer, blurredImageStyle]}
+            >
               <Image
                 source={imageSource}
                 alt={alt}
                 style={styles.image}
                 contentFit="cover"
-                blurRadius={340}
+                blurRadius={84}
               />
             </Animated.View>
-          </MaskedView>
+          </Animated.View>
         </View>
       </View>
 
@@ -211,7 +173,7 @@ export default function Banner({
             ),
             palette.background,
           ]}
-          locations={[0, 0.38, 0.52, 0.66, 0.78, 0.88, 0.96, 1]}
+          locations={[0, 0.44, 0.56, 0.7, 0.8, 0.89, 0.97, 1]}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -490,13 +452,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  gradientContainer: {
+  blurredImageLayer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    overflow: "hidden",
   },
   contentSection: {
     position: "relative",
