@@ -63,6 +63,7 @@ export default function MediaCard({
       }}
       asChild
       push
+      prefetch
     >
       <TouchableOpacity
         style={componentStyles.container}

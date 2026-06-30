@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
@@ -39,7 +39,6 @@ export default function DetailsScreen() {
     getFallbackDetailPalette(isDark),
   );
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
   const scrollRef = useRef(null);
@@ -67,6 +66,9 @@ export default function DetailsScreen() {
 
         if (!isMounted) return;
 
+        setData(response);
+        setLoading(false);
+
         const imagePath = getDetailImagePath(response, type);
         const nextPalette = imagePath
           ? await getDetailPaletteFromImage(
@@ -78,7 +80,6 @@ export default function DetailsScreen() {
         if (!isMounted) return;
 
         setPalette(nextPalette);
-        setData(response);
       } catch {
         if (isMounted) {
           notifyError(i18n.t("toast.errorTMDB"));
@@ -117,14 +118,6 @@ export default function DetailsScreen() {
       scrollY.value = event.contentOffset.y;
     },
   });
-
-  // Configure header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTransparent: true,
-      headerTitle: "",
-    });
-  }, [navigation]);
 
   return (
     <View style={[styles.container, { backgroundColor: palette.background }]}>

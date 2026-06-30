@@ -32,6 +32,7 @@ export default function CastCard({
       }}
       asChild
       push
+      prefetch
     >
       <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
         <View style={styles.imageContainer}>

@@ -39,6 +39,8 @@ private final class NavigationAppearanceController {
   private var snapshot: NavigationBarSnapshot?
   private weak var snapshotNavigationBar: UINavigationBar?
   private var appearanceToken = 0
+  private var scrollPatchToken = 0
+  private var patchedScrollViewTags = Set<Int>()
 
   func setTransparent() {
     appearanceToken += 1
@@ -52,6 +54,8 @@ private final class NavigationAppearanceController {
 
   func restore() {
     appearanceToken += 1
+    scrollPatchToken += 1
+    patchedScrollViewTags.removeAll()
 
     guard let snapshot, let navigationBar = snapshotNavigationBar else {
       self.snapshot = nil
@@ -70,11 +74,20 @@ private final class NavigationAppearanceController {
   }
 
   func disableScrollEdgeEffects(forReactTag reactTag: Int) {
-    let delays: [TimeInterval] = [0, 0.05, 0.2, 0.5]
+    scrollPatchToken += 1
+    patchedScrollViewTags.removeAll()
+    let token = scrollPatchToken
+    let delays: [TimeInterval] = [0.05, 0.2, 0.5]
 
     for delay in delays {
       DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-        self?.disableScrollEdgeEffectsIfFound(reactTag: reactTag)
+        guard let self else { return }
+        guard token == self.scrollPatchToken else { return }
+        guard !self.isScrollEdgeEffectsPatched(reactTag: reactTag) else { return }
+
+        if self.disableScrollEdgeEffectsIfFound(reactTag: reactTag) {
+          self.markScrollEdgeEffectsPatched(reactTag: reactTag)
+        }
       }
     }
   }
@@ -111,9 +124,9 @@ private final class NavigationAppearanceController {
     navigationBar.compactScrollEdgeAppearance = transparentAppearance
   }
 
-  private func disableScrollEdgeEffectsIfFound(reactTag: Int) {
-    guard let rootView = activeWindow()?.rootViewController?.view else { return }
-    guard let targetView = findView(withReactTag: reactTag, in: rootView) else { return }
+  private func disableScrollEdgeEffectsIfFound(reactTag: Int) -> Bool {
+    guard let rootView = activeWindow()?.rootViewController?.view else { return false }
+    guard let targetView = findView(withReactTag: reactTag, in: rootView) else { return false }
 
     let scrollViews = findScrollViews(in: targetView)
 
@@ -124,6 +137,16 @@ private final class NavigationAppearanceController {
     for scrollView in scrollViews {
       applyParallaxScrollViewAppearance(to: scrollView)
     }
+
+    return targetView is UIScrollView || !scrollViews.isEmpty
+  }
+
+  private func isScrollEdgeEffectsPatched(reactTag: Int) -> Bool {
+    patchedScrollViewTags.contains(reactTag)
+  }
+
+  private func markScrollEdgeEffectsPatched(reactTag: Int) {
+    patchedScrollViewTags.insert(reactTag)
   }
 
   private func applyParallaxScrollViewAppearance(to scrollView: UIScrollView) {

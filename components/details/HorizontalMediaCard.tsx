@@ -52,6 +52,7 @@ export default function HorizontalMediaCard({
       }}
       asChild
       push
+      prefetch
     >
       <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
         {/* Poster on the left */}

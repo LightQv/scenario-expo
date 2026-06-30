@@ -57,7 +57,7 @@ export default function CompactMediaCard({
       {leadingAccessory}
 
       <View style={styles.content}>
-        <Link href={detailsHref} asChild push>
+        <Link href={detailsHref} asChild push prefetch>
           <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.posterTouchable}>
             <View style={styles.posterContainer}>
               <Image
@@ -72,7 +72,7 @@ export default function CompactMediaCard({
           </TouchableOpacity>
         </Link>
 
-        <Link href={detailsHref} asChild push>
+        <Link href={detailsHref} asChild push prefetch>
           <TouchableOpacity
             activeOpacity={BUTTON.opacity}
             style={textTouchableStyle}

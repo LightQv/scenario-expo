@@ -17,7 +17,6 @@ export function useTransparentNavigationBarAppearance(scrollRef: NativeViewRef) 
         }
       };
 
-      patchScrollView();
       const animationFrame = requestAnimationFrame(patchScrollView);
 
       return () => {

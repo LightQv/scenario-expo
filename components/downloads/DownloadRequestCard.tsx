@@ -63,6 +63,7 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
           }}
           asChild
           push
+          prefetch
         >
           <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.mainContent}>
             <View style={styles.posterContainer}>

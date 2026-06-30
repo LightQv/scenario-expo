@@ -45,6 +45,15 @@ export default function SearchPreviewResults({
     });
   };
 
+  const prefetchDetails = (item: TmdbData) => {
+    const type = item.media_type || mediaType;
+
+    router.prefetch({
+      pathname: "/details/[id]",
+      params: { id: item.id.toString(), type },
+    });
+  };
+
   const renderItem = ({ item }: { item: TmdbData }) => {
     const type = item.media_type || mediaType;
     const title = item.title || item.name || "";
@@ -59,6 +68,7 @@ export default function SearchPreviewResults({
       <View>
         <TouchableOpacity
           activeOpacity={BUTTON.opacity}
+          onPressIn={() => prefetchDetails(item)}
           onPress={() => handlePress(item)}
           style={styles.row}
         >
