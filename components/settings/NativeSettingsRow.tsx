@@ -11,6 +11,7 @@ import {
 import {
   background,
   buttonStyle,
+  contentShape,
   disabled as disabledModifier,
   foregroundStyle,
   frame,
@@ -51,7 +52,11 @@ export default function NativeSettingsRow({
         padding({ all: systemIcon ? 0 : 2 }),
       ]}
     >
-      <HStack alignment="center" spacing={8}>
+      <HStack
+        alignment="center"
+        spacing={8}
+        modifiers={[frame({ maxWidth: 999 }), contentShape(shapes.rectangle())]}
+      >
         {systemIcon ? (
           <ZStack
             modifiers={[
