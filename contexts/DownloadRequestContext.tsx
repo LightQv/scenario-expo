@@ -70,27 +70,58 @@ export function DownloadRequestProvider({ children }: ContextProps) {
   const [requestingTmdbIds, setRequestingTmdbIds] = useState<number[]>([]);
   const [requestingKeys, setRequestingKeys] = useState<string[]>([]);
   const availableRequestIdsRef = useRef<Set<string>>(new Set());
+  const hasLoadedRequestsRef = useRef(false);
+  const requestsFetchRef = useRef<Promise<void> | null>(null);
+  const requestsFetchRunRef = useRef(0);
+
+  const fetchRequests = useCallback((options: { force?: boolean } = {}) => {
+    if (!authState.authenticated) {
+      requestsFetchRunRef.current += 1;
+      hasLoadedRequestsRef.current = false;
+      requestsFetchRef.current = null;
+      setRequests([]);
+      return Promise.resolve();
+    }
+
+    if (requestsFetchRef.current) {
+      return requestsFetchRef.current;
+    }
+
+    if (hasLoadedRequestsRef.current && !options.force) {
+      return Promise.resolve();
+    }
+
+    const fetchRun = requestsFetchRunRef.current + 1;
+    requestsFetchRunRef.current = fetchRun;
+
+    const request = (async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiFetch("/api/v1/downloads");
+        if (requestsFetchRunRef.current !== fetchRun) return;
+        setRequests(response || []);
+      } catch (error: any) {
+        if (requestsFetchRunRef.current !== fetchRun) return;
+        if (!(error instanceof ApiError && error.status === 403)) {
+          console.error("Error fetching download requests:", error);
+          notifyError(i18n.t("toast.error"));
+        }
+        setRequests([]);
+      } finally {
+        if (requestsFetchRunRef.current !== fetchRun) return;
+        hasLoadedRequestsRef.current = true;
+        requestsFetchRef.current = null;
+        setIsLoading(false);
+      }
+    })();
+
+    requestsFetchRef.current = request;
+    return request;
+  }, [authState.authenticated]);
 
   const refreshRequests = useCallback(async () => {
-    if (!authState.authenticated) {
-      setRequests([]);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const response = await apiFetch("/api/v1/downloads");
-      setRequests(response || []);
-    } catch (error: any) {
-      if (!(error instanceof ApiError && error.status === 403)) {
-        console.error("Error fetching download requests:", error);
-        notifyError(i18n.t("toast.error"));
-      }
-      setRequests([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [authState.authenticated]);
+    await fetchRequests({ force: true });
+  }, [fetchRequests]);
 
   const upsertRequest = useCallback((request: DownloadRequest | null) => {
     if (!request) return;
@@ -343,12 +374,15 @@ export function DownloadRequestProvider({ children }: ContextProps) {
 
   useEffect(() => {
     if (authState.authenticated) {
-      refreshRequests();
+      fetchRequests();
     } else {
+      requestsFetchRunRef.current += 1;
+      hasLoadedRequestsRef.current = false;
+      requestsFetchRef.current = null;
       setRequests([]);
       availableRequestIdsRef.current.clear();
     }
-  }, [authState.authenticated, refreshRequests]);
+  }, [authState.authenticated, fetchRequests]);
 
   useEffect(() => {
     if (!authState.authenticated) return;

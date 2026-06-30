@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { ApiError, apiFetch } from "@/services/instances";
@@ -60,26 +61,53 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   const [syncStatus, setSyncStatus] = useState<OwnedMediaSyncStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const hasLoadedOwnedMediaRef = useRef(false);
+  const ownedMediaRequestRef = useRef<Promise<void> | null>(null);
+  const ownedMediaRequestRunRef = useRef(0);
 
-  const fetchOwnedMedia = useCallback(async () => {
+  const fetchOwnedMedia = useCallback((options: { force?: boolean } = {}) => {
     if (!authState.authenticated) {
+      ownedMediaRequestRunRef.current += 1;
+      hasLoadedOwnedMediaRef.current = false;
+      ownedMediaRequestRef.current = null;
       setOwnedMedia([]);
-      return;
+      return Promise.resolve();
     }
 
-    try {
-      setIsLoading(true);
-      const response = await apiFetch("/api/v1/owned-media");
-      setOwnedMedia(response || []);
-    } catch (error: any) {
-      if (!(error instanceof ApiError && error.status === 403)) {
-        console.error("Error fetching owned media:", error);
-        notifyError(i18n.t("toast.error"));
-      }
-      setOwnedMedia([]);
-    } finally {
-      setIsLoading(false);
+    if (ownedMediaRequestRef.current) {
+      return ownedMediaRequestRef.current;
     }
+
+    if (hasLoadedOwnedMediaRef.current && !options.force) {
+      return Promise.resolve();
+    }
+
+    const requestRun = ownedMediaRequestRunRef.current + 1;
+    ownedMediaRequestRunRef.current = requestRun;
+
+    const request = (async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiFetch("/api/v1/owned-media");
+        if (ownedMediaRequestRunRef.current !== requestRun) return;
+        setOwnedMedia(response || []);
+      } catch (error: any) {
+        if (ownedMediaRequestRunRef.current !== requestRun) return;
+        if (!(error instanceof ApiError && error.status === 403)) {
+          console.error("Error fetching owned media:", error);
+          notifyError(i18n.t("toast.error"));
+        }
+        setOwnedMedia([]);
+      } finally {
+        if (ownedMediaRequestRunRef.current !== requestRun) return;
+        hasLoadedOwnedMediaRef.current = true;
+        ownedMediaRequestRef.current = null;
+        setIsLoading(false);
+      }
+    })();
+
+    ownedMediaRequestRef.current = request;
+    return request;
   }, [authState.authenticated]);
 
   const refreshSyncStatus = useCallback(async (
@@ -107,7 +135,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   }, [authState.authenticated]);
 
   const refreshOwnedMedia = useCallback(async () => {
-    await fetchOwnedMedia();
+    await fetchOwnedMedia({ force: true });
   }, [fetchOwnedMedia]);
 
   const syncRadarrOwnedMovies = useCallback(async () => {
@@ -272,6 +300,9 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     if (authState.authenticated) {
       fetchOwnedMedia();
     } else {
+      ownedMediaRequestRunRef.current += 1;
+      hasLoadedOwnedMediaRef.current = false;
+      ownedMediaRequestRef.current = null;
       setOwnedMedia([]);
       setTvAvailabilityByTmdbId({});
       setSyncStatus(null);
