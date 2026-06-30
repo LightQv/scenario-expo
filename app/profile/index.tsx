@@ -1,5 +1,5 @@
 import { PlatformColor, View, StyleSheet } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "expo-router";
 import Animated, {
@@ -16,6 +16,7 @@ import ProfileBanner from "@/components/profile/ProfileBanner";
 import StatisticsPills from "@/components/profile/StatisticsPills";
 import ProfileMenu from "@/components/profile/ProfileMenu";
 import GoBackButton from "@/components/ui/GoBackButton";
+import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
 
 type Statistics = {
   movieCount: number;
@@ -36,6 +37,8 @@ export default function ProfileScreen() {
   });
   const [loading, setLoading] = useState(true);
   const scrollY = useSharedValue(0);
+  const scrollRef = useRef(null);
+  useTransparentNavigationBarAppearance(scrollRef);
 
   // Fetch statistics
   const fetchStatistics = useCallback(async () => {
@@ -120,6 +123,7 @@ export default function ProfileScreen() {
       <StatusBar style={statusStyle} animated />
 
       <Animated.ScrollView
+        ref={scrollRef}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
         showsVerticalScrollIndicator={false}

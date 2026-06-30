@@ -7,7 +7,7 @@ import {
   ListRenderItem,
   Text,
 } from "react-native";
-import { useEffect, useLayoutEffect, useState, useCallback, memo } from "react";
+import { useEffect, useLayoutEffect, useState, useCallback, memo, useRef } from "react";
 import {
   useLocalSearchParams,
   useNavigation,
@@ -25,6 +25,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
+import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<APIMedia>);
 
@@ -78,6 +79,8 @@ export default function WatchlistDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [filterType, setFilterType] = useState<FilterType>("all");
+  const listRef = useRef(null);
+  useTransparentNavigationBarAppearance(listRef);
   const navigation = useNavigation();
 
   // Shared value for scroll offset
@@ -293,6 +296,7 @@ export default function WatchlistDetailScreen() {
       <StatusBar style={statusStyle} animated />
 
       <AnimatedFlatList
+        ref={listRef}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
         showsVerticalScrollIndicator={false}

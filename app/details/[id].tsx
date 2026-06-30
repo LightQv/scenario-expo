@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
@@ -25,12 +25,14 @@ import {
   getFallbackDetailPalette,
   type DetailPalette,
 } from "@/services/detailPalette";
+import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
 
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
   const { isDark } = useThemeContext();
-  const { getTvAvailability, isOwned, refreshTvAvailability } = useOwnedMediaContext();
+  const { getTvAvailability, isOwned, refreshTvAvailability } =
+    useOwnedMediaContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [palette, setPalette] = useState<DetailPalette>(() =>
@@ -40,6 +42,8 @@ export default function DetailsScreen() {
   const navigation = useNavigation();
   // Shared value for scroll offset (replaces deprecated useScrollViewOffset)
   const scrollY = useSharedValue(0);
+  const scrollRef = useRef(null);
+  useTransparentNavigationBarAppearance(scrollRef);
 
   useEffect(() => {
     if (!type || !id) return;
@@ -102,7 +106,9 @@ export default function DetailsScreen() {
   const statusStyle = "light";
   const tvAvailability = type === "tv" ? getTvAvailability(Number(id)) : null;
   const isMediaOwned =
-    type === "movie" ? isOwned(Number(id), type) : tvAvailability?.status === "available";
+    type === "movie"
+      ? isOwned(Number(id), type)
+      : tvAvailability?.status === "available";
   const availabilityLabel = getAvailabilityLabel(isMediaOwned, tvAvailability);
 
   // Scroll handler to track scroll position
@@ -128,6 +134,7 @@ export default function DetailsScreen() {
       <StatusBar style={statusStyle} animated />
 
       <Animated.ScrollView
+        ref={scrollRef}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
         showsVerticalScrollIndicator={false}
@@ -241,7 +248,9 @@ export default function DetailsScreen() {
                     title={i18n.t("screen.detail.media.seasons.title")}
                     seasons={data.seasons}
                     seasonAvailability={tvAvailability?.seasons || []}
-                    showAvailabilityBadges={tvAvailability?.status === "partial"}
+                    showAvailabilityBadges={
+                      tvAvailability?.status === "partial"
+                    }
                     seriesId={id}
                     seriesName={data.name || data.title}
                     backgroundColor={palette.background}
