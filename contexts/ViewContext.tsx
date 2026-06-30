@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import { useUserContext } from "./UserContext";
@@ -15,6 +15,7 @@ import { randomUUID } from "expo-crypto";
 interface ViewContextValue {
   views: APIMedia[] | null;
   isLoading: boolean;
+  hasLoadedViews: boolean;
   refreshViews: () => Promise<void>;
   addView: (viewData: ViewCreate) => Promise<void>;
   removeView: (viewId: string) => Promise<void>;
@@ -36,27 +37,31 @@ export function ViewProvider({ children }: ContextProps) {
   const { user, authState } = useUserContext();
   const [views, setViews] = useState<APIMedia[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoadedViews, setHasLoadedViews] = useState(false);
 
   // Fetch all views for the authenticated user
   const fetchViews = useCallback(async () => {
     if (!user?.id || !authState.authenticated) {
       setViews(null);
+      setHasLoadedViews(true);
       return;
     }
 
     try {
       setIsLoading(true);
+      setHasLoadedViews(false);
       const response = await apiFetch(`/api/v1/views/${user.id}`);
       setViews(response);
     } catch (err: any) {
       // Don't show error for 403 (unauthenticated)
-      if (!err.message.includes("403")) {
+      if (!(err instanceof ApiError && err.status === 403)) {
         console.error("Error fetching views:", err);
         notifyError(i18n.t("toast.error"));
       }
       setViews(null);
     } finally {
       setIsLoading(false);
+      setHasLoadedViews(true);
     }
   }, [user?.id, authState.authenticated]);
 
@@ -152,13 +157,15 @@ export function ViewProvider({ children }: ContextProps) {
       fetchViews();
     } else {
       setViews(null);
+      setHasLoadedViews(!authState.loading);
     }
-  }, [authState.authenticated, user?.id, fetchViews]);
+  }, [authState.authenticated, authState.loading, user?.id, fetchViews]);
 
   const value = useMemo(
     () => ({
       views,
       isLoading,
+      hasLoadedViews,
       refreshViews,
       addView,
       removeView,
@@ -168,6 +175,7 @@ export function ViewProvider({ children }: ContextProps) {
     [
       views,
       isLoading,
+      hasLoadedViews,
       refreshViews,
       addView,
       removeView,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useGenreContext } from "@/contexts/GenreContext";
 
 /**
@@ -12,13 +12,11 @@ export default function useGenre(
   mediaType?: string,
 ): string[] | null {
   const { movieGenres, tvGenres, loading } = useGenreContext();
-  const [genreNames, setGenreNames] = useState<string[] | null>(null);
 
-  useEffect(() => {
+  return useMemo(() => {
     // Ne rien faire si les genres ne sont pas encore chargés
     if (loading || !data.genre_ids || data.genre_ids.length === 0) {
-      setGenreNames(null);
-      return;
+      return null;
     }
 
     // Déterminer le type de média
@@ -34,8 +32,7 @@ export default function useGenre(
 
     // Si aucune liste de genres n'est disponible, on ne peut rien faire
     if (!genreList) {
-      setGenreNames(null);
-      return;
+      return null;
     }
 
     // Mapper les IDs de genres aux noms
@@ -46,7 +43,7 @@ export default function useGenre(
       })
       .filter((name): name is string => name !== undefined); // Filtrer les undefined
 
-    setGenreNames(names.length > 0 ? names : null);
+    return names.length > 0 ? names : null;
   }, [
     data.genre_ids,
     data.media_type,
@@ -55,6 +52,4 @@ export default function useGenre(
     tvGenres,
     loading,
   ]);
-
-  return genreNames;
 }

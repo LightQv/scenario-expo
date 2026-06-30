@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import { useUserContext } from "./UserContext";
@@ -72,7 +72,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       const response = await apiFetch("/api/v1/owned-media");
       setOwnedMedia(response || []);
     } catch (error: any) {
-      if (!error.message?.includes("403")) {
+      if (!(error instanceof ApiError && error.status === 403)) {
         console.error("Error fetching owned media:", error);
         notifyError(i18n.t("toast.error"));
       }
@@ -98,7 +98,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       setSyncStatus(response || null);
       return response || null;
     } catch (error: any) {
-      if (!error.message?.includes("403")) {
+      if (!(error instanceof ApiError && error.status === 403)) {
         console.error("Error fetching owned media sync status:", error);
       }
       setSyncStatus(null);
@@ -137,7 +137,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       console.error("Error syncing Radarr owned movies:", error);
       await refreshSyncStatus("RADARR", "movie");
       notifyError(
-        error.message?.includes("409")
+        error instanceof ApiError && error.status === 409
           ? i18n.t("toast.errorOwnedMediaSyncRunning")
           : i18n.t("toast.error"),
       );
@@ -174,7 +174,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       console.error("Error syncing Sonarr owned TV:", error);
       await refreshSyncStatus("SONARR", "tv");
       notifyError(
-        error.message?.includes("409")
+        error instanceof ApiError && error.status === 409
           ? i18n.t("toast.errorOwnedMediaSyncRunning")
           : i18n.t("toast.error"),
       );
@@ -213,7 +213,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
         }
         return response || null;
       } catch (error: any) {
-        if (!error.message?.includes("403")) {
+        if (!(error instanceof ApiError && error.status === 403)) {
           console.error("Error fetching TV availability:", error);
         }
         return null;
@@ -246,7 +246,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
         }
         return response || null;
       } catch (error: any) {
-        if (!error.message?.includes("403")) {
+        if (!(error instanceof ApiError && error.status === 403)) {
           console.error("Error fetching TV season availability:", error);
         }
         return null;

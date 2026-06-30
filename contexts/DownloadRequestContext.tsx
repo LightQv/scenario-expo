@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { notifyError, notifySuccess } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import { useUserContext } from "./UserContext";
@@ -82,7 +82,7 @@ export function DownloadRequestProvider({ children }: ContextProps) {
       const response = await apiFetch("/api/v1/downloads");
       setRequests(response || []);
     } catch (error: any) {
-      if (!error.message?.includes("403")) {
+      if (!(error instanceof ApiError && error.status === 403)) {
         console.error("Error fetching download requests:", error);
         notifyError(i18n.t("toast.error"));
       }
@@ -122,7 +122,7 @@ export function DownloadRequestProvider({ children }: ContextProps) {
         upsertRequest(response || null);
         return response || null;
       } catch (error: any) {
-        if (!error.message?.includes("403")) {
+        if (!(error instanceof ApiError && error.status === 403)) {
           console.error("Error fetching download request status:", error);
         }
         return null;

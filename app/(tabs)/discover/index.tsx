@@ -6,6 +6,7 @@ import {
   RefreshControl,
   Animated,
 } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
@@ -15,6 +16,7 @@ import { notifyError } from "@/components/toasts/Toast";
 import { FONTS } from "@/constants/theme";
 import AnimatedHeader from "@/components/ui/AnimatedHeader";
 import { useGenreContext } from "@/contexts/GenreContext";
+import { useUserContext, useViewContext } from "@/contexts";
 import ProfileHeaderButton from "@/components/ui/ProfileHeaderButton";
 
 type SectionData = {
@@ -29,10 +31,13 @@ type SectionData = {
 };
 
 export default function DiscoverIndexScreen() {
-  const { movieGenres } = useGenreContext();
+  const { authState } = useUserContext();
+  const { hasLoadedViews, isLoading: viewsLoading } = useViewContext();
+  const { movieGenres, loading: genresLoading } = useGenreContext();
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState<SectionData[]>([]);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const hasHiddenSplashRef = useRef(false);
 
   // Select random genre on mount and refresh
   const randomGenre = useMemo(() => {
@@ -217,6 +222,21 @@ export default function DiscoverIndexScreen() {
   useEffect(() => {
     loadAllSections(initialSections);
   }, [initialSections]);
+
+  const discoverReady =
+    sections.length > 0 &&
+    !authState.loading &&
+    !genresLoading &&
+    (!authState.authenticated || (hasLoadedViews && !viewsLoading));
+
+  useEffect(() => {
+    if (!discoverReady || hasHiddenSplashRef.current) return;
+
+    hasHiddenSplashRef.current = true;
+    SplashScreen.hideAsync().catch((error) => {
+      console.error("Error hiding splash screen:", error);
+    });
+  }, [discoverReady]);
 
   const onRefresh = async () => {
     setRefreshing(true);

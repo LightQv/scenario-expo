@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import type { HeaderMenuItem } from "@/components/ui/HeaderActionCapsule";
 import HeaderMenu from "@/components/ui/HeaderMenu";
@@ -105,7 +105,7 @@ export default function WatchlistDetailMenu({
       router.back();
     } catch (err: any) {
       console.error("Error deleting watchlist:", err);
-      if (!err.message?.includes("403")) {
+      if (!(err instanceof ApiError && err.status === 403)) {
         notifyError(i18n.t("toast.error"));
       }
     }
