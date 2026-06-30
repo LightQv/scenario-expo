@@ -47,7 +47,7 @@ export default function NativeSettingsRow({
     <Button
       onPress={onPress}
       modifiers={[
-        buttonStyle("plain"),
+        buttonStyle("automatic"),
         disabledModifier(disabled || !onPress),
         padding({ all: systemIcon ? 0 : 2 }),
       ]}
@@ -76,7 +76,7 @@ export default function NativeSettingsRow({
         <SwiftText
           modifiers={[
             settingsRegularFont(),
-            ...(labelColor ? [foregroundStyle(labelColor)] : []),
+            foregroundStyle(labelColor ?? PlatformColor("label")),
             ...(systemIcon ? [padding({ leading: 4 })] : []),
           ]}
         >
@@ -87,7 +87,7 @@ export default function NativeSettingsRow({
           <SwiftText
             modifiers={[
               settingsRegularFont(),
-              foregroundStyle({ type: "hierarchical", style: "secondary" }),
+              foregroundStyle(PlatformColor("secondaryLabel")),
             ]}
           >
             {value}
