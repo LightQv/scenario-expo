@@ -29,9 +29,13 @@ import GoBackButton from "@/components/ui/GoBackButton";
 import OwnedMediaSyncStatusCard from "@/components/profile/OwnedMediaSyncStatusCard";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+type TvOwnedViewMode = "shows" | "seasons";
 type OwnedMediaListItem = OwnedMedia & {
+  owned_scope?: "show" | "season";
+  owned_season_count?: number;
   owned_episode_count?: number;
   owned_latest_episode_air_date?: string | null;
+  availability_status?: TvAvailabilityStatus;
 };
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -52,6 +56,7 @@ export default function OwnedMediaTypeScreen() {
   const {
     ownedMedia,
     ownedTvShows,
+    ownedTvSeasons,
     isLoading,
     refreshOwnedMedia,
     refreshSyncStatus,
@@ -62,6 +67,7 @@ export default function OwnedMediaTypeScreen() {
   >([]);
   const [sortType, setSortType] = useState<SortType>("title_asc");
   const [genreId, setGenreId] = useState<number | null>(null);
+  const [tvViewMode, setTvViewMode] = useState<TvOwnedViewMode>("shows");
   const [downloadOverview, setDownloadOverview] = useState<
     DownloadSettingsOverview | null | undefined
   >(undefined);
@@ -88,7 +94,9 @@ export default function OwnedMediaTypeScreen() {
   useEffect(() => {
     let processed: OwnedMediaListItem[] =
       mediaType === "tv"
-        ? [...ownedTvShows]
+        ? tvViewMode === "shows"
+          ? [...ownedTvShows]
+          : [...ownedTvSeasons]
         : ownedMedia.filter((media) => media.media_type === mediaType);
 
     if (genreId !== null) {
@@ -121,7 +129,7 @@ export default function OwnedMediaTypeScreen() {
     }
 
     setFilteredOwnedMedia(processed);
-  }, [ownedMedia, ownedTvShows, mediaType, sortType, genreId]);
+  }, [ownedMedia, ownedTvSeasons, ownedTvShows, mediaType, sortType, genreId, tvViewMode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -257,20 +265,21 @@ export default function OwnedMediaTypeScreen() {
         mediaType={mediaType || "movie"}
         sortType={sortType}
         genreId={genreId}
+        tvViewMode={tvViewMode}
         onSortChange={setSortType}
         onGenreChange={setGenreId}
+        onTvViewModeChange={setTvViewMode}
       />
       <FlatList
         ref={listRef}
         data={filteredOwnedMedia}
         renderItem={renderItem}
-        keyExtractor={(item) =>
-          item.media_type === "tv" ? `tv-${item.tmdb_id}` : item.id.toString()
-        }
+        keyExtractor={(item) => getOwnedMediaKey(item, tvViewMode)}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
+        extraData={tvViewMode}
         ItemSeparatorComponent={() => (
           <View style={{ height: 2, backgroundColor }} />
         )}
@@ -307,4 +316,12 @@ const styles = StyleSheet.create({
 
 function getSortDate(item: OwnedMediaListItem): string {
   return item.owned_latest_episode_air_date || item.release_date || "";
+}
+
+function getOwnedMediaKey(item: OwnedMediaListItem, tvViewMode: TvOwnedViewMode) {
+  if (item.media_type !== "tv") return item.id.toString();
+  if (tvViewMode === "seasons") {
+    return `tv-season-${item.tmdb_id}-${item.season_number ?? 0}`;
+  }
+  return `tv-show-${item.tmdb_id}`;
 }

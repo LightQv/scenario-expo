@@ -45,13 +45,18 @@ interface OwnedMediaContextValue {
 }
 
 export type OwnedTvShowSummary = OwnedMedia & {
+  owned_scope: "show";
+  owned_season_count: number;
   owned_episode_count: number;
   owned_latest_episode_air_date: string | null;
+  availability_status?: TvAvailabilityStatus;
 };
 
 export type OwnedTvSeasonSummary = OwnedMedia & {
+  owned_scope: "season";
   owned_episode_count: number;
   owned_latest_episode_air_date: string | null;
+  availability_status?: TvAvailabilityStatus;
 };
 
 const OwnedMediaContext = createContext<OwnedMediaContextValue | undefined>(
@@ -77,8 +82,11 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   const [syncStatus, setSyncStatus] = useState<OwnedMediaSyncStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [tvAvailabilityRefreshVersion, setTvAvailabilityRefreshVersion] =
+    useState(0);
   const hasLoadedOwnedMediaRef = useRef(false);
   const ownedMediaRequestRef = useRef<Promise<void> | null>(null);
+  const tvAvailabilityRequestRef = useRef<Promise<void> | null>(null);
   const ownedMediaRequestRunRef = useRef(0);
 
   const fetchOwnedMedia = useCallback((options: { force?: boolean } = {}) => {
@@ -107,6 +115,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
         const response = await apiFetch("/api/v1/owned-media");
         if (ownedMediaRequestRunRef.current !== requestRun) return;
         setOwnedMedia(response || []);
+        setTvAvailabilityRefreshVersion((version) => version + 1);
       } catch (error: any) {
         if (ownedMediaRequestRunRef.current !== requestRun) return;
         if (!(error instanceof ApiError && error.status === 403)) {
@@ -238,7 +247,17 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   );
 
   const { ownedTvShows, ownedTvSeasons, ownedEpisodeKeysBySeriesSeason } =
-    useMemo(() => createOwnedTvSummaries(ownedMedia), [ownedMedia]);
+    useMemo(
+      () => createOwnedTvSummaries(ownedMedia, tvAvailabilityByTmdbId),
+      [ownedMedia, tvAvailabilityByTmdbId],
+    );
+  const ownedTvTmdbIdsKey = useMemo(() => {
+    const tmdbIds = new Set<number>();
+    ownedMedia.forEach((item) => {
+      if (item.media_type === "tv") tmdbIds.add(item.tmdb_id);
+    });
+    return Array.from(tmdbIds).sort((a, b) => a - b).join(",");
+  }, [ownedMedia]);
 
   const getLocalTvAvailability = useCallback(
     (tmdbId: number, seasons: Season[] = []) => {
@@ -327,6 +346,40 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     [authState.authenticated],
   );
 
+  const refreshAllTvAvailability = useCallback(async () => {
+    if (!authState.authenticated) return;
+    if (tvAvailabilityRequestRef.current) {
+      await tvAvailabilityRequestRef.current;
+      return;
+    }
+
+    const request = (async () => {
+      try {
+        const response = await apiFetch("/api/v1/owned-media/tv/statuses");
+        if (!Array.isArray(response)) return;
+
+        setTvAvailabilityByTmdbId((current) => ({
+          ...current,
+          ...Object.fromEntries(
+            response.map((availability: TvAvailability) => [
+              availability.tmdb_id,
+              availability,
+            ]),
+          ),
+        }));
+      } catch (error: any) {
+        if (!(error instanceof ApiError && error.status === 403)) {
+          console.error("Error fetching TV availability statuses:", error);
+        }
+      } finally {
+        tvAvailabilityRequestRef.current = null;
+      }
+    })();
+
+    tvAvailabilityRequestRef.current = request;
+    await request;
+  }, [authState.authenticated]);
+
   const refreshTvSeasonAvailability = useCallback(
     async (tmdbId: number, seasonNumber: number) => {
       if (!authState.authenticated) return null;
@@ -380,11 +433,22 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       ownedMediaRequestRunRef.current += 1;
       hasLoadedOwnedMediaRef.current = false;
       ownedMediaRequestRef.current = null;
+      tvAvailabilityRequestRef.current = null;
       setOwnedMedia([]);
       setTvAvailabilityByTmdbId({});
       setSyncStatus(null);
     }
   }, [authState.authenticated, fetchOwnedMedia]);
+
+  useEffect(() => {
+    if (!authState.authenticated || !ownedTvTmdbIdsKey) return;
+    refreshAllTvAvailability();
+  }, [
+    authState.authenticated,
+    ownedTvTmdbIdsKey,
+    refreshAllTvAvailability,
+    tvAvailabilityRefreshVersion,
+  ]);
 
   const value = useMemo(
     () => ({
@@ -432,7 +496,10 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   );
 }
 
-function createOwnedTvSummaries(ownedMedia: OwnedMedia[]) {
+function createOwnedTvSummaries(
+  ownedMedia: OwnedMedia[],
+  tvAvailabilityByTmdbId: Record<number, TvAvailability>,
+) {
   const ownedTvShowsByTmdbId = new Map<number, OwnedTvShowSummary>();
   const ownedTvSeasonsByKey = new Map<string, OwnedTvSeasonSummary>();
   const ownedEpisodeKeysBySeriesSeason = new Map<string, Set<number | string>>();
@@ -456,6 +523,8 @@ function createOwnedTvSummaries(ownedMedia: OwnedMedia[]) {
       if (!existingShow) {
         ownedTvShowsByTmdbId.set(item.tmdb_id, {
           ...item,
+          owned_scope: "show",
+          owned_season_count: 1,
           owned_episode_count: didAddEpisode ? 1 : 0,
           owned_latest_episode_air_date: rowAirDate,
         });
@@ -472,6 +541,7 @@ function createOwnedTvSummaries(ownedMedia: OwnedMedia[]) {
       if (!existingSeason) {
         ownedTvSeasonsByKey.set(seasonKey, {
           ...item,
+          owned_scope: "season",
           owned_episode_count: didAddEpisode ? 1 : 0,
           owned_latest_episode_air_date: rowAirDate,
         });
@@ -484,6 +554,29 @@ function createOwnedTvSummaries(ownedMedia: OwnedMedia[]) {
         }
       }
     });
+
+  ownedTvShowsByTmdbId.forEach((show) => {
+    const seasonNumbers = new Set<number>();
+    ownedTvSeasonsByKey.forEach((season) => {
+      if (season.tmdb_id === show.tmdb_id && season.season_number) {
+        seasonNumbers.add(season.season_number);
+      }
+    });
+
+    show.owned_season_count = seasonNumbers.size;
+    const availability = tvAvailabilityByTmdbId[show.tmdb_id];
+    show.availability_status =
+      availability?.status === "partial" ? "partial" : undefined;
+  });
+
+  ownedTvSeasonsByKey.forEach((season) => {
+    const availability = tvAvailabilityByTmdbId[season.tmdb_id];
+    const seasonAvailability = availability?.seasons.find(
+      (item) => item.season_number === season.season_number,
+    );
+    season.availability_status =
+      seasonAvailability?.status === "partial" ? "partial" : undefined;
+  });
 
   return {
     ownedTvShows: Array.from(ownedTvShowsByTmdbId.values()),

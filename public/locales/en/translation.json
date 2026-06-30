@@ -738,6 +738,11 @@
           "title": "Availability sync is not ready",
           "movieBody": "Finish the Radarr movie configuration to unlock available movies.",
           "tvBody": "Finish all Sonarr configurations to unlock available TV shows."
+        },
+        "view": {
+          "title": "View",
+          "shows": "Shows",
+          "seasons": "Seasons"
         }
       },
       "menu": {

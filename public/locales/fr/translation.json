@@ -738,6 +738,11 @@
           "title": "La synchronisation des disponibilités n'est pas prête",
           "movieBody": "Terminez la configuration films Radarr pour débloquer les films disponibles.",
           "tvBody": "Terminez toutes les configurations Sonarr pour débloquer les séries disponibles."
+        },
+        "view": {
+          "title": "Vue",
+          "shows": "Séries",
+          "seasons": "Saisons"
         }
       },
       "menu": {
