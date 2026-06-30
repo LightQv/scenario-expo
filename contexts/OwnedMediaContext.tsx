@@ -14,6 +14,8 @@ import { useUserContext } from "./UserContext";
 
 interface OwnedMediaContextValue {
   ownedMedia: OwnedMedia[];
+  ownedTvShows: OwnedTvShowSummary[];
+  ownedTvSeasons: OwnedTvSeasonSummary[];
   syncStatus: OwnedMediaSyncStatus | null;
   isLoading: boolean;
   isSyncing: boolean;
@@ -25,6 +27,10 @@ interface OwnedMediaContextValue {
   syncRadarrOwnedMovies: () => Promise<void>;
   syncSonarrOwnedTv: () => Promise<void>;
   isOwned: (tmdbId: number, mediaType: string) => boolean;
+  getLocalTvAvailability: (
+    tmdbId: number,
+    seasons?: Season[],
+  ) => TvAvailability | null;
   getTvAvailability: (tmdbId: number) => TvAvailability | null;
   refreshTvAvailability: (tmdbId: number) => Promise<TvAvailability | null>;
   refreshTvSeasonAvailability: (
@@ -37,6 +43,16 @@ interface OwnedMediaContextValue {
     episodeNumber: number,
   ) => TvAvailabilityStatus;
 }
+
+export type OwnedTvShowSummary = OwnedMedia & {
+  owned_episode_count: number;
+  owned_latest_episode_air_date: string | null;
+};
+
+export type OwnedTvSeasonSummary = OwnedMedia & {
+  owned_episode_count: number;
+  owned_latest_episode_air_date: string | null;
+};
 
 const OwnedMediaContext = createContext<OwnedMediaContextValue | undefined>(
   undefined,
@@ -221,6 +237,67 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     [ownedMedia],
   );
 
+  const { ownedTvShows, ownedTvSeasons, ownedEpisodeKeysBySeriesSeason } =
+    useMemo(() => createOwnedTvSummaries(ownedMedia), [ownedMedia]);
+
+  const getLocalTvAvailability = useCallback(
+    (tmdbId: number, seasons: Season[] = []) => {
+      const relevantSeasons = seasons.filter(
+        (season) => (season.episode_count || 0) > 0,
+      );
+      const localShow = ownedTvShows.find((show) => show.tmdb_id === tmdbId);
+
+      if (!localShow && relevantSeasons.length === 0) return null;
+
+      const seasonAvailability = relevantSeasons.map((season) => {
+        const ownedEpisodeCount =
+          ownedEpisodeKeysBySeriesSeason.get(
+            getTvSeasonKey(tmdbId, season.season_number),
+          )?.size || 0;
+        const airedEpisodeCount = season.episode_count || 0;
+        const status = getAvailabilityStatus(
+          ownedEpisodeCount,
+          airedEpisodeCount,
+        );
+
+        return {
+          season_number: season.season_number,
+          status,
+          available_episode_count: ownedEpisodeCount,
+          aired_episode_count: airedEpisodeCount,
+          episodes: [],
+        };
+      });
+
+      const availableEpisodeCount = seasonAvailability.reduce(
+        (total, season) => total + season.available_episode_count,
+        0,
+      );
+      const airedEpisodeCount = seasonAvailability.reduce(
+        (total, season) => total + season.aired_episode_count,
+        0,
+      );
+      const fallbackAvailableEpisodeCount = localShow?.owned_episode_count || 0;
+      const status = getAvailabilityStatus(
+        availableEpisodeCount || fallbackAvailableEpisodeCount,
+        airedEpisodeCount,
+      );
+
+      if (status === "missing" && !localShow) return null;
+
+      return {
+        tmdb_id: tmdbId,
+        media_type: "tv" as const,
+        status,
+        available_episode_count:
+          availableEpisodeCount || fallbackAvailableEpisodeCount,
+        aired_episode_count: airedEpisodeCount,
+        seasons: seasonAvailability,
+      };
+    },
+    [ownedEpisodeKeysBySeriesSeason, ownedTvShows],
+  );
+
   const getTvAvailability = useCallback(
     (tmdbId: number) => tvAvailabilityByTmdbId[tmdbId] || null,
     [tvAvailabilityByTmdbId],
@@ -312,6 +389,8 @@ export function OwnedMediaProvider({ children }: ContextProps) {
   const value = useMemo(
     () => ({
       ownedMedia,
+      ownedTvShows,
+      ownedTvSeasons,
       syncStatus,
       isLoading,
       isSyncing,
@@ -320,6 +399,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       syncRadarrOwnedMovies,
       syncSonarrOwnedTv,
       isOwned,
+      getLocalTvAvailability,
       getTvAvailability,
       refreshTvAvailability,
       refreshTvSeasonAvailability,
@@ -327,6 +407,8 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     }),
     [
       ownedMedia,
+      ownedTvShows,
+      ownedTvSeasons,
       syncStatus,
       isLoading,
       isSyncing,
@@ -335,6 +417,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       syncRadarrOwnedMovies,
       syncSonarrOwnedTv,
       isOwned,
+      getLocalTvAvailability,
       getTvAvailability,
       refreshTvAvailability,
       refreshTvSeasonAvailability,
@@ -347,4 +430,85 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       {children}
     </OwnedMediaContext.Provider>
   );
+}
+
+function createOwnedTvSummaries(ownedMedia: OwnedMedia[]) {
+  const ownedTvShowsByTmdbId = new Map<number, OwnedTvShowSummary>();
+  const ownedTvSeasonsByKey = new Map<string, OwnedTvSeasonSummary>();
+  const ownedEpisodeKeysBySeriesSeason = new Map<string, Set<number | string>>();
+
+  ownedMedia
+    .filter((item) => item.media_type === "tv")
+    .forEach((item) => {
+      const episodeKey = item.episode_number ?? item.id;
+      const seasonKey = getTvSeasonKey(item.tmdb_id, item.season_number ?? 0);
+      const seasonEpisodes =
+        ownedEpisodeKeysBySeriesSeason.get(seasonKey) || new Set<number>();
+      const previousSeasonEpisodeCount = seasonEpisodes.size;
+
+      seasonEpisodes.add(episodeKey);
+      ownedEpisodeKeysBySeriesSeason.set(seasonKey, seasonEpisodes);
+
+      const didAddEpisode = seasonEpisodes.size > previousSeasonEpisodeCount;
+      const rowAirDate = item.episode_air_date || item.release_date || null;
+      const existingShow = ownedTvShowsByTmdbId.get(item.tmdb_id);
+
+      if (!existingShow) {
+        ownedTvShowsByTmdbId.set(item.tmdb_id, {
+          ...item,
+          owned_episode_count: didAddEpisode ? 1 : 0,
+          owned_latest_episode_air_date: rowAirDate,
+        });
+      } else {
+        if (didAddEpisode) {
+          existingShow.owned_episode_count += 1;
+        }
+        if (isAfter(rowAirDate, existingShow.owned_latest_episode_air_date)) {
+          existingShow.owned_latest_episode_air_date = rowAirDate;
+        }
+      }
+
+      const existingSeason = ownedTvSeasonsByKey.get(seasonKey);
+      if (!existingSeason) {
+        ownedTvSeasonsByKey.set(seasonKey, {
+          ...item,
+          owned_episode_count: didAddEpisode ? 1 : 0,
+          owned_latest_episode_air_date: rowAirDate,
+        });
+      } else {
+        if (didAddEpisode) {
+          existingSeason.owned_episode_count += 1;
+        }
+        if (isAfter(rowAirDate, existingSeason.owned_latest_episode_air_date)) {
+          existingSeason.owned_latest_episode_air_date = rowAirDate;
+        }
+      }
+    });
+
+  return {
+    ownedTvShows: Array.from(ownedTvShowsByTmdbId.values()),
+    ownedTvSeasons: Array.from(ownedTvSeasonsByKey.values()),
+    ownedEpisodeKeysBySeriesSeason,
+  };
+}
+
+function getTvSeasonKey(tmdbId: number, seasonNumber: number) {
+  return `${tmdbId}:${seasonNumber}`;
+}
+
+function getAvailabilityStatus(
+  availableEpisodeCount: number,
+  airedEpisodeCount: number,
+): TvAvailabilityStatus {
+  if (availableEpisodeCount <= 0) return "missing";
+  if (airedEpisodeCount > 0 && availableEpisodeCount >= airedEpisodeCount) {
+    return "available";
+  }
+  return "partial";
+}
+
+function isAfter(candidate?: string | null, current?: string | null): boolean {
+  if (!candidate) return false;
+  if (!current) return true;
+  return new Date(candidate).getTime() > new Date(current).getTime();
 }

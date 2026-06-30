@@ -51,6 +51,7 @@ export default function OwnedMediaTypeScreen() {
   const { colors, isDark } = useThemeContext();
   const {
     ownedMedia,
+    ownedTvShows,
     isLoading,
     refreshOwnedMedia,
     refreshSyncStatus,
@@ -85,13 +86,10 @@ export default function OwnedMediaTypeScreen() {
   };
 
   useEffect(() => {
-    let processed: OwnedMediaListItem[] = ownedMedia.filter(
-      (media) => media.media_type === mediaType,
-    );
-
-    if (mediaType === "tv") {
-      processed = groupOwnedTvRows(processed);
-    }
+    let processed: OwnedMediaListItem[] =
+      mediaType === "tv"
+        ? [...ownedTvShows]
+        : ownedMedia.filter((media) => media.media_type === mediaType);
 
     if (genreId !== null) {
       processed = processed.filter((media) =>
@@ -123,7 +121,7 @@ export default function OwnedMediaTypeScreen() {
     }
 
     setFilteredOwnedMedia(processed);
-  }, [ownedMedia, mediaType, sortType, genreId]);
+  }, [ownedMedia, ownedTvShows, mediaType, sortType, genreId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -307,37 +305,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function groupOwnedTvRows(rows: OwnedMediaListItem[]): OwnedMediaListItem[] {
-  const grouped = new Map<number, OwnedMediaListItem>();
-
-  rows.forEach((row) => {
-    const existing = grouped.get(row.tmdb_id);
-    const rowAirDate = row.episode_air_date || row.release_date || null;
-
-    if (!existing) {
-      grouped.set(row.tmdb_id, {
-        ...row,
-        owned_episode_count: 1,
-        owned_latest_episode_air_date: rowAirDate,
-      });
-      return;
-    }
-
-    existing.owned_episode_count = (existing.owned_episode_count || 0) + 1;
-    if (isAfter(rowAirDate, existing.owned_latest_episode_air_date)) {
-      existing.owned_latest_episode_air_date = rowAirDate;
-    }
-  });
-
-  return Array.from(grouped.values());
-}
-
 function getSortDate(item: OwnedMediaListItem): string {
   return item.owned_latest_episode_air_date || item.release_date || "";
-}
-
-function isAfter(candidate?: string | null, current?: string | null): boolean {
-  if (!candidate) return false;
-  if (!current) return true;
-  return new Date(candidate).getTime() > new Date(current).getTime();
 }

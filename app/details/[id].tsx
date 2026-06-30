@@ -31,8 +31,7 @@ const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 export default function DetailsScreen() {
   const { isDark } = useThemeContext();
-  const { getTvAvailability, isOwned, refreshTvAvailability } =
-    useOwnedMediaContext();
+  const { getLocalTvAvailability, isOwned } = useOwnedMediaContext();
   const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
   const [data, setData] = useState<TmdbDetails | null>(null);
   const [palette, setPalette] = useState<DetailPalette>(() =>
@@ -98,14 +97,11 @@ export default function DetailsScreen() {
     };
   }, [type, id, isDark]);
 
-  useEffect(() => {
-    if (type === "tv" && id) {
-      refreshTvAvailability(Number(id));
-    }
-  }, [id, refreshTvAvailability, type]);
-
   const statusStyle = "light";
-  const tvAvailability = type === "tv" ? getTvAvailability(Number(id)) : null;
+  const tvAvailability =
+    type === "tv" && data
+      ? getLocalTvAvailability(Number(id), data.seasons)
+      : null;
   const isMediaOwned =
     type === "movie"
       ? isOwned(Number(id), type)
