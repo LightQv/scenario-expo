@@ -1,11 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useUserContext, useViewContext, useThemeContext } from "@/contexts";
-import { notifyError } from "@/components/toasts/Toast";
-import useView from "@/hooks/useView";
-import i18n from "@/services/i18n";
+import { useThemeContext } from "@/contexts";
+import useMediaViewAction from "@/hooks/useMediaViewAction";
 import HeaderIconButton from "@/components/ui/HeaderIconButton";
 
 function getMediaRuntime(data: TmdbData | TmdbDetails, type: string): number {
@@ -33,11 +30,7 @@ export default function ViewAction({
   size = "details",
   style = {},
 }: ViewActionProps) {
-  const router = useRouter();
-  const { user, authState } = useUserContext();
-  const { addView, removeView } = useViewContext();
   const { colors } = useThemeContext();
-  const [isProcessing, setIsProcessing] = useState(false);
 
   // Get size-specific styles
   const sizeStyles = useMemo(() => {
@@ -75,7 +68,6 @@ export default function ViewAction({
 
   // Use the data's ID and determined type
   const tmdbId = data.id;
-  const { viewed, viewObj } = useView(tmdbId, type);
 
   // Extract genre IDs from data (memoized)
   // Handle both TmdbData (genre_ids) and TmdbDetails (genres)
@@ -92,56 +84,22 @@ export default function ViewAction({
     return [0];
   }, [data]);
 
-  const handleView = async () => {
-    // Redirect to login if not authenticated
-    if (!authState.authenticated || !user) {
-      router.push("/(modal)/login");
-      return;
-    }
-
-    // Prevent multiple simultaneous requests
-    if (isProcessing) return;
-    setIsProcessing(true);
-
-    try {
-      if (viewed && viewObj) {
-        // Remove view
-        await removeView(viewObj.id);
-      } else {
-        // Add view - all data comes from props.
-        const runtime = getMediaRuntime(data, type);
-
-        // Get backdrop (TmdbDetails) or poster (TmdbData fallback)
-        const backdrop =
-          "backdrop_path" in data && data.backdrop_path
-            ? data.backdrop_path
-            : data.poster_path || "";
-
-        const viewData: ViewCreate = {
-          tmdb_id: Number(tmdbId),
-          genre_ids: genreIds,
-          poster_path: data.poster_path || "",
-          backdrop_path: backdrop,
-          release_date: data.release_date || data.first_air_date || "",
-          release_year:
-            data.release_date?.slice(0, 4) ||
-            data.first_air_date?.slice(0, 4) ||
-            "",
-          runtime,
-          title: data.title || data.name || "",
-          media_type: type,
-          viewer_id: user.id,
-        };
-
-        await addView(viewData);
-      }
-    } catch (error) {
-      console.error("Error handling view:", error);
-      notifyError(i18n.t("toast.error"));
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  const backdrop =
+    "backdrop_path" in data && data.backdrop_path
+      ? data.backdrop_path
+      : data.poster_path || "";
+  const releaseDate = data.release_date || data.first_air_date || "";
+  const { viewed, isProcessing, toggleView } = useMediaViewAction({
+    tmdbId: Number(tmdbId),
+    genreIds,
+    posterPath: data.poster_path || "",
+    backdropPath: backdrop,
+    releaseDate,
+    releaseYear: releaseDate.slice(0, 4),
+    runtime: getMediaRuntime(data, type),
+    title: data.title || data.name || "",
+    mediaType: type,
+  });
 
   if (size === "details") {
     return (
@@ -149,14 +107,14 @@ export default function ViewAction({
         icon="eye"
         active={viewed}
         disabled={isProcessing}
-        onPress={handleView}
+        onPress={toggleView}
       />
     );
   }
 
   return (
     <Pressable
-      onPress={handleView}
+      onPress={toggleView}
       style={[styles.button, sizeStyles.container, style]}
       disabled={isProcessing}
     >

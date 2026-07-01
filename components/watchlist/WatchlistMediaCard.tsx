@@ -1,19 +1,14 @@
 import {
   StyleSheet,
-  Text,
   View,
-  TouchableOpacity,
-  PlatformColor,
   ColorValue,
 } from "react-native";
-import { Image } from "expo-image";
-import { Link } from "expo-router";
-import { TOKENS, FONTS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatFullDate, formatRuntime } from "@/services/utils";
 import i18n from "@/services/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import CompactMediaCard from "@/components/ui/CompactMediaCard";
 import WatchlistMediaCardMenu from "./WatchlistMediaCardMenu";
 
 type WatchlistMediaCardProps = {
@@ -54,82 +49,23 @@ export default function WatchlistMediaCard({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: backgroundColor || PlatformColor("systemBackground") },
-      ]}
-    >
-      {/* Viewed indicator on left center outside card */}
-      {viewed && (
+    <CompactMediaCard
+      title={data.title}
+      subtitle={getMetadata()}
+      mediaType={data.media_type}
+      tmdbId={data.tmdb_id}
+      posterPath={data.poster_path}
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      secondaryTextColor={secondaryTextColor}
+      leadingAccessory={
+        viewed ? (
         <View style={styles.viewedIndicator}>
           <Ionicons name="eye" size={11} color={colors.text} />
         </View>
-      )}
-
-      <View style={styles.content}>
-        {/* Poster */}
-        <Link
-          href={{
-            pathname: "/details/[id]",
-            params: { type: data.media_type, id: data.tmdb_id.toString() },
-          }}
-          asChild
-          push
-        >
-          <TouchableOpacity
-            activeOpacity={BUTTON.opacity}
-            style={styles.posterTouchable}
-          >
-            <View style={styles.posterContainer}>
-              <Image
-                source={{
-                  uri: `https://image.tmdb.org/t/p/w342/${data.poster_path}`,
-                }}
-                alt={data.title}
-                style={styles.poster}
-                contentFit="cover"
-                placeholder={BLURHASH.hash}
-                transition={BLURHASH.transition}
-              />
-            </View>
-          </TouchableOpacity>
-        </Link>
-
-        {/* Content in the middle */}
-        <Link
-          href={{
-            pathname: "/details/[id]",
-            params: { type: data.media_type, id: data.tmdb_id.toString() },
-          }}
-          asChild
-          push
-        >
-          <TouchableOpacity
-            activeOpacity={BUTTON.opacity}
-            style={styles.textTouchable}
-          >
-            <View style={styles.textContainer}>
-              <Text
-                style={[styles.title, { color: textColor || PlatformColor("label") }]}
-                numberOfLines={2}
-              >
-                {data.title}
-              </Text>
-              <Text
-                style={[
-                  styles.subtitle,
-                  { color: secondaryTextColor || PlatformColor("secondaryLabel") },
-                ]}
-                numberOfLines={1}
-              >
-                {getMetadata()}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </Link>
-
-        {/* Menu on the right */}
+        ) : null
+      }
+      trailingAccessory={
         <WatchlistMediaCardMenu
           media={data}
           watchlistId={watchlistId}
@@ -137,22 +73,12 @@ export default function WatchlistMediaCard({
           onDelete={onDelete}
           textColor={textColor}
         />
-      </View>
-    </View>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 8,
-    position: "relative",
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: TOKENS.margin.horizontal,
-    paddingRight: 8,
-  },
   viewedIndicator: {
     position: "absolute",
     left: 2,
@@ -160,40 +86,5 @@ const styles = StyleSheet.create({
     zIndex: 10,
     justifyContent: "center",
     alignItems: "center",
-  },
-  posterTouchable: {
-    marginLeft: 0,
-  },
-  posterContainer: {
-    width: 70,
-    height: 105,
-    borderRadius: TOKENS.radius.sm,
-    overflow: "hidden",
-    backgroundColor: PlatformColor("systemGray5"),
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: PlatformColor("separator"),
-  },
-  poster: {
-    width: "100%",
-    height: "100%",
-  },
-  textTouchable: {
-    flex: 1,
-    marginLeft: 14,
-    marginRight: 4,
-  },
-  textContainer: {
-    gap: 4,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: TOKENS.font.xxl,
-    fontFamily: FONTS.bold,
-    lineHeight: 22,
-  },
-  subtitle: {
-    fontSize: TOKENS.font.md,
-    fontFamily: FONTS.regular,
-    lineHeight: 18,
   },
 });
