@@ -48,6 +48,7 @@ type PaletteContext = {
 };
 
 const detailPaletteCache = new Map<string, DetailPalette>();
+const detailPaletteRequestCache = new Map<string, Promise<DetailPalette>>();
 const DETAIL_TEXT_COLOR = "#ffffff";
 const DETAIL_BACKGROUND_MIN_CONTRAST = 3.8;
 const DETAIL_PRIMARY_TEXT_MIN_CONTRAST = 6;
@@ -84,17 +85,47 @@ export async function getDetailPaletteFromImage(
     return cachedPalette;
   }
 
-  const result = await getColors(imageUrl, {
+  const cachedRequest = detailPaletteRequestCache.get(cacheKey);
+
+  if (cachedRequest) {
+    return cachedRequest;
+  }
+
+  const request = getColors(imageUrl, {
     cache: true,
     fallback: isDark ? "#171719" : "#f7f3ed",
     key: imageUrl,
     quality: "low",
-  });
+  })
+    .then((result) => {
+      const palette = createDetailPalette(result, isDark);
+      detailPaletteCache.set(cacheKey, palette);
 
-  const palette = createDetailPalette(result, isDark);
-  detailPaletteCache.set(cacheKey, palette);
+      return palette;
+    })
+    .finally(() => {
+      detailPaletteRequestCache.delete(cacheKey);
+    });
 
-  return palette;
+  detailPaletteRequestCache.set(cacheKey, request);
+
+  return request;
+}
+
+export function getCachedDetailPalette(
+  imageUrl: string,
+  isDark: boolean,
+): DetailPalette | undefined {
+  return detailPaletteCache.get(`${isDark ? "dark" : "light"}:${imageUrl}`);
+}
+
+export function prefetchDetailPaletteFromImage(
+  imageUrl: string | undefined,
+  isDark: boolean,
+): void {
+  if (!imageUrl) return;
+
+  getDetailPaletteFromImage(imageUrl, isDark).catch(() => undefined);
 }
 
 export function colorWithAlpha(color: string, alpha: number): string {

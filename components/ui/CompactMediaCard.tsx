@@ -10,6 +10,10 @@ import {
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { BLURHASH, BUTTON, FONTS, TOKENS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type CompactMediaCardProps = {
   title: string;
@@ -38,9 +42,16 @@ export default function CompactMediaCard({
   trailingAccessory,
   textRightMargin = 4,
 }: CompactMediaCardProps) {
+  const { isDark } = useThemeContext();
   const detailsHref = {
     pathname: "/details/[id]" as const,
     params: { type: mediaType, id: tmdbId.toString() },
+  };
+  const prefetchPalette = () => {
+    prefetchDetailPaletteFromImage(
+      posterPath ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${posterPath}` : undefined,
+      isDark,
+    );
   };
   const textTouchableStyle = StyleSheet.flatten([
     styles.textTouchable,
@@ -58,7 +69,11 @@ export default function CompactMediaCard({
 
       <View style={styles.content}>
         <Link href={detailsHref} asChild push prefetch>
-          <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.posterTouchable}>
+          <TouchableOpacity
+            activeOpacity={BUTTON.opacity}
+            onPressIn={prefetchPalette}
+            style={styles.posterTouchable}
+          >
             <View style={styles.posterContainer}>
               <Image
                 source={{ uri: `https://image.tmdb.org/t/p/w342/${posterPath}` }}
@@ -75,6 +90,7 @@ export default function CompactMediaCard({
         <Link href={detailsHref} asChild push prefetch>
           <TouchableOpacity
             activeOpacity={BUTTON.opacity}
+            onPressIn={prefetchPalette}
             style={textTouchableStyle}
           >
             <View style={styles.textContainer}>

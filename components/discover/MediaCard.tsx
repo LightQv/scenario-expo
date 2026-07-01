@@ -12,7 +12,10 @@ import { formatFullDate, formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
 import RatingBadge from "@/components/ui/RatingBadge";
 import ViewAction from "@/components/actions/ViewAction";
-import { useUserContext } from "@/contexts/UserContext";
+import { useThemeContext, useUserContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type MediaCardProps = {
   data: TmdbData;
@@ -26,9 +29,11 @@ export default function MediaCard({
   size = "sm",
 }: MediaCardProps) {
   const { authState } = useUserContext();
+  const { isDark } = useThemeContext();
   const genre = useGenre(data, mediaType);
   const releaseDate = data.release_date || data.first_air_date;
   const isUpcoming = releaseDate && new Date(releaseDate) > new Date();
+  const detailImagePath = data.backdrop_path || data.poster_path;
 
   // Choose poster quality based on size
   const getPosterUrl = () => {
@@ -68,6 +73,14 @@ export default function MediaCard({
       <TouchableOpacity
         style={componentStyles.container}
         activeOpacity={BUTTON.opacity}
+        onPressIn={() =>
+          prefetchDetailPaletteFromImage(
+            detailImagePath
+              ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${detailImagePath}`
+              : undefined,
+            isDark,
+          )
+        }
       >
         <View style={componentStyles.imageContainer}>
           <Image

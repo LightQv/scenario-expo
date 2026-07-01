@@ -9,8 +9,11 @@ import {
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type PersonCardProps = {
   data: TmdbData;
@@ -18,6 +21,7 @@ type PersonCardProps = {
 };
 
 export default function PersonCard({ data, size = "sm" }: PersonCardProps) {
+  const { isDark } = useThemeContext();
   // Choose profile quality based on size
   const getProfileUrl = () => {
     if (!data.profile_path) return null;
@@ -47,7 +51,18 @@ export default function PersonCard({ data, size = "sm" }: PersonCardProps) {
       push
       prefetch
     >
-      <TouchableOpacity style={componentStyles.container} activeOpacity={BUTTON.opacity}>
+      <TouchableOpacity
+        style={componentStyles.container}
+        activeOpacity={BUTTON.opacity}
+        onPressIn={() =>
+          prefetchDetailPaletteFromImage(
+            data.profile_path
+              ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${data.profile_path}`
+              : undefined,
+            isDark,
+          )
+        }
+      >
         <View style={componentStyles.imageContainer}>
           {profileUrl ? (
             <Image

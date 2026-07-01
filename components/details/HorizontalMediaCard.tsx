@@ -10,6 +10,10 @@ import { Link } from "expo-router";
 import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
 import { formatYear } from "@/services/utils";
 import useGenre from "@/hooks/useGenre";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type HorizontalMediaCardProps = {
   data: PersonMovieCredit | PersonTvCredit;
@@ -24,6 +28,7 @@ export default function HorizontalMediaCard({
   textColor,
   secondaryTextColor,
 }: HorizontalMediaCardProps) {
+  const { isDark } = useThemeContext();
   const genre = useGenre(
     {
       genre_ids: data.genre_ids,
@@ -43,6 +48,7 @@ export default function HorizontalMediaCard({
   const posterUrl = data.poster_path
     ? `https://image.tmdb.org/t/p/w342/${data.poster_path}`
     : null;
+  const detailImagePath = data.backdrop_path || data.poster_path;
 
   return (
     <Link
@@ -54,7 +60,18 @@ export default function HorizontalMediaCard({
       push
       prefetch
     >
-      <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={BUTTON.opacity}
+        onPressIn={() =>
+          prefetchDetailPaletteFromImage(
+            detailImagePath
+              ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${detailImagePath}`
+              : undefined,
+            isDark,
+          )
+        }
+      >
         {/* Poster on the left */}
         <View style={styles.posterContainer}>
           {posterUrl ? (
