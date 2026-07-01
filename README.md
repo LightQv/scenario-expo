@@ -1,242 +1,180 @@
-# 🎬 SCENARIO EXPO
+<div align="center">
 
-**React Native mobile app for Scenario**  
-Track your movie & TV show viewing history, manage watchlists, and discover new content with a beautiful iOS experience powered by Expo and React Native.
+<img src="assets/images/icon.png" alt="Scenario icon" width="96" height="96" />
 
-## 📊 Badges
+# SCENARIO EXPO
 
-<p align="left">
-  <a href="https://github.com/LightQv/scenario-mobile-app/stargazers">
-    <img src="https://img.shields.io/github/stars/LightQv/scenario-expo?style=for-the-badge&logo=github" alt="GitHub stars"/>
-  </a>
-  <a href="https://github.com/LightQv/scenario-mobile-app/issues">
-    <img src="https://img.shields.io/github/issues/LightQv/scenario-expo?style=for-the-badge&logo=github" alt="GitHub issues"/>
-  </a>
-  <a href="https://github.com/LightQv/scenario-mobile-app/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/LightQv/scenario-expo?style=for-the-badge" alt="License"/>
-  </a>
-</p>
+Expo Router mobile client for discovering, tracking, and organizing movies and TV shows.
 
-## 🛠️ Technologies
+[About](#about) · [Setup](#setup) · [Development](#development) · [Configuration](#configuration) · [Platform Notes](#platform-notes) · [Related Projects](#related-projects) · [License](#license)
 
-![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
+</div>
 
-## ✨ Features
+---
 
-### 🔐 Authentication
-- ✅ User registration with email & password
-- 🔑 Secure login with JWT tokens
-- 🔄 Password reset via email
-- 👤 Account management and profile settings
+## About
 
-### 🎬 Content Discovery
-- 🔍 Search movies, TV shows, and actors
-- 🌟 Browse trending content and top-rated titles
-- 🎭 Explore by genre and filter results
-- 📅 View release dates, runtime, and ratings
-- 🎥 Watch trailers directly in-app
-- 📊 Access detailed information about cast, crew, and seasons
+Scenario Expo is the mobile client for the Scenario movie and TV tracking application.
 
-### 📝 Watchlists
-- ➕ Create multiple custom watchlists
-- 📂 Add movies and TV shows to any list
-- 🔄 Move content between watchlists
-- 🗑️ Delete items from lists
-- 📊 Sort by title, date, or rating
-- 🔍 Filter by media type (movies/TV shows)
+It integrates with TMDB for media discovery and with Scenario API for authenticated user data. The app supports discovery, search, details pages, watchlists, viewing history, profile data, and statistics through an Expo Router navigation structure.
 
-### 👁️ Viewing History
-- ✅ Mark content as watched
-- 📊 Track viewing statistics
-- 🎬 View watched movies and episodes
-- 📈 Analyze viewing habits by genre and year
+Core components:
 
-### 🎨 User Experience
-- 🌓 Automatic dark/light mode support
-- 🎨 Native iOS design with platform colors
-- ⚡ Smooth animations with Reanimated
-- 🖼️ Beautiful image loading with blur hash
-- 🌐 Multi-language support (EN/FR)
-- 📱 Optimized for iOS devices
+- Expo SDK and React Native
+- Expo Router file-based navigation
+- TypeScript application code
+- Native fetch wrappers for Scenario API and TMDB
+- Context-based state for authentication, themes, genres, and views
+- Platform-aware styling with `PlatformColor`
+- Expo Image, Reanimated, SecureStore, and native iOS-oriented UI components
 
-## 🏗️ Project Structure
+---
 
-```
-app/
-├── (modal)/           # Modal screens (login, register, settings)
-├── (tabs)/            # Tab navigation screens
-│   ├── discover/      # Content discovery
-│   ├── search/        # Search functionality
-│   ├── top/           # Top-rated content
-│   └── watchlist/     # Watchlist management
-├── details/           # Content detail screens
-├── profile/           # User profile
-└── season/            # TV show season details
+## Setup
 
-components/
-├── actions/           # Action buttons (view, watchlist)
-├── details/           # Detail screen components
-├── discover/          # Discovery components
-├── profile/           # Profile components
-├── search/            # Search components
-├── toasts/            # Toast notifications
-├── ui/                # Reusable UI components
-├── views/             # Viewing history components
-└── watchlist/         # Watchlist components
+Clone the repository:
 
-contexts/
-├── GenreContext.tsx   # Genre data management
-├── ThemeContext.tsx   # Theme configuration
-├── UserContext.tsx    # Authentication state
-└── ViewContext.tsx    # Viewing history state
-
-services/
-├── config.ts          # App configuration
-├── i18n.ts            # Internationalization
-├── instances.ts       # API clients (TMDB, Backend)
-├── searchHistory.ts   # Search history persistence
-├── utils.ts           # Helper functions
-└── validators.ts      # Form validation schemas
-```
-
-## ⚙️ Installation
-
-### Prerequisites
-
-- Node.js (v18+)
-- npm or yarn
-- Xcode (for iOS development)
-- Expo CLI (`npm install -g expo-cli`)
-
-### Setup
-
-1. **Clone the repository**
 ```bash
-git clone https://github.com/LightQv/scenario-mobile-app.git
-cd scenario-mobile-app
+git clone https://github.com/LightQv/scenario-expo.git
+cd scenario-expo
 ```
 
-2. **Install dependencies**
+Install dependencies:
+
 ```bash
 npm install
 ```
 
-3. **Configure environment variables**
+Create the local environment file:
+
 ```bash
 cp .env.sample .env
-# Edit .env with your configuration:
-# - EXPO_ENV (DEV_OR_PROD)
-# - EXPO_BACKEND_URL_* (API endpoints)
-# - EXPO_TMDB_API_KEY and EXPO_TMDB_API_TOKEN
-# - EXPO_WEB_CLIENT_URL
 ```
 
-4. **Start the development server**
-```bash
-npm run dev
-```
+---
 
-5. **Run on iOS**
-```bash
-npm run ios
-```
+## Development
 
-## 🐳 Development Scripts
+Start the Expo development server:
 
 ```bash
-# Start Expo dev server
 npm start
-
-# Run on iOS simulator
-npm run ios
-
-# Run on Android emulator
-npm run android
-
-# Run with development client
-npm run dev
-
-# Rebuild iOS (clean build)
-npm run rebuild:ios
-
-# Clean all dependencies and rebuild
-npm run clean:all
-
-# Upgrade Expo SDK
-npm run upgrade
 ```
 
-## 🔧 Configuration
+Start with the development client:
 
-### Environment Variables
+```bash
+npm run dev
+```
 
-- `EXPO_ENV`: Set to `DEV` or `PROD`
-- `EXPO_BACKEND_URL_*`: API endpoints for different platforms
+Run on iOS:
+
+```bash
+npm run ios
+```
+
+Run on Android:
+
+```bash
+npm run android
+```
+
+Run TypeScript checks:
+
+```bash
+npm run typecheck
+```
+
+Regenerate the iOS native project:
+
+```bash
+npm run ios:prebuild
+```
+
+Clean and rebuild iOS dependencies:
+
+```bash
+npm run rebuild:ios
+```
+
+---
+
+## Configuration
+
+Configuration is loaded through Expo environment variables.
+
+Required variables:
+
+- `EXPO_ENV`: environment selector
+- `EXPO_API_URL_ANDROID`: Scenario API URL for Android development
+- `EXPO_API_URL_IOS`: Scenario API URL for iOS development
+- `EXPO_API_URL`: Scenario API URL for production
 - `EXPO_TMDB_API_KEY`: TMDB API key
-- `EXPO_TMDB_API_TOKEN`: TMDB API token
-- `EXPO_WEB_CLIENT_URL`: Web client URL for deep linking
+- `EXPO_TMDB_API_TOKEN`: TMDB API bearer token
+- `EXPO_WEB_CLIENT_URL`: Scenario Web URL for links and cross-client flows
 
-### API Integration
+See `.env.sample` for the expected local configuration shape.
 
-The app connects to two APIs:
-- **Backend API**: User authentication, watchlists, viewing history
-- **TMDB API**: Movie and TV show data
+---
 
-## 📱 Key Features Implementation
+## Platform Notes
 
-### Authentication Flow
-- Secure token storage with `expo-secure-store`
-- HTTPOnly cookies for API requests
-- Session expiration handling
-- Automatic logout on token expiry
+The app is built around native Expo and React Native primitives.
 
-### Data Management
-- Context-based state management (User, Views, Genres, Theme)
-- Optimistic UI updates for better UX
-- Local caching of frequently accessed data
-- Efficient API calls with pagination
+- API calls use native `fetch`, not Axios.
+- Authentication integrates with the Scenario API HTTPOnly cookie flow.
+- Secure local values use Expo SecureStore where appropriate.
+- Images use `expo-image` with blur placeholders and transitions.
+- Styling uses iOS system colors through `PlatformColor` where supported.
+- Navigation uses Expo Router file-based routes.
+- Internationalization uses `i18n-js` with English and French translations.
 
-### UI/UX
-- Native iOS components with `@expo/ui/swift-ui`
-- Smooth animations with `react-native-reanimated`
-- Adaptive theming based on system preferences
-- Platform-specific styling with `PlatformColor`
-- Image optimization with `expo-image` and blur hash
+---
 
-## 🌐 Internationalization
+## Project Structure
 
-Supported languages:
-- 🇬🇧 English (en)
-- 🇫🇷 French (fr)
+```text
+app/
+├── (tabs)/       # Tab navigation screens
+├── details/      # Media detail routes
+├── profile/      # Profile screens
+└── season/       # TV season routes
 
-Translation files located in `public/locales/`
+components/
+├── actions/      # Watchlist and viewing actions
+├── details/      # Detail screen components
+├── discover/     # Discovery lists and media cards
+├── profile/      # Profile components
+├── search/       # Search components
+├── toasts/       # Toast notifications
+├── ui/           # Shared UI components
+├── views/        # Viewing history components
+└── watchlist/    # Watchlist components
 
-## 🔍 Key Dependencies
+contexts/
+├── GenreContext.tsx
+├── ThemeContext.tsx
+├── UserContext.tsx
+└── ViewContext.tsx
 
-- **Expo SDK 56**: Core framework
-- **React Native 0.85**: Mobile framework
-- **Expo Router**: File-based navigation
-- **Reanimated**: Smooth animations
-- **Formik + Yup**: Form handling and validation
-- **@expo/ui**: Native iOS components
-- **i18n-js**: Internationalization
+services/
+├── config.ts
+├── i18n.ts
+├── instances.ts
+├── searchHistory.ts
+├── utils.ts
+└── validators.ts
+```
 
-## 📄 License
+---
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+## Related Projects
 
-## 🔗 Related Projects
+- [Scenario API](https://github.com/LightQv/scenario-fast-api)
+- [Scenario Web](https://github.com/LightQv/scenario-web-client)
 
-- [Scenario API](https://github.com/LightQv/scenario-api) - Backend API
-- [Scenario Web](https://github.com/LightQv/scenario-web-client) - Web application
+---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📧 Contact
-
-For questions or feedback, please open an issue on GitHub.
+Scenario Expo is licensed under the MIT License. See [LICENSE](LICENSE).
