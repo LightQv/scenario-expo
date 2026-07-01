@@ -45,6 +45,7 @@ export default function PersonCard({ data, size = "sm" }: PersonCardProps) {
       }}
       asChild
       push
+      prefetch
     >
       <TouchableOpacity style={componentStyles.container} activeOpacity={BUTTON.opacity}>
         <View style={componentStyles.imageContainer}>

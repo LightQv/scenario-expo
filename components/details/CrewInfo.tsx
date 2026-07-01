@@ -57,6 +57,7 @@ export default function CrewInfo({
             }}
             asChild
             push
+            prefetch
           >
             <TouchableOpacity activeOpacity={BUTTON.opacity}>
               <Text
@@ -86,6 +87,7 @@ export default function CrewInfo({
             }}
             asChild
             push
+            prefetch
           >
             <TouchableOpacity activeOpacity={BUTTON.opacity}>
               <Text

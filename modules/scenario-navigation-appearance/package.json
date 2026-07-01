@@ -1,0 +1,8 @@
+{
+  "name": "scenario-navigation-appearance",
+  "version": "1.0.0",
+  "description": "Native Scenario navigation bar appearance controls",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true
+}

@@ -102,6 +102,14 @@ function ThemeWrapper() {
                     options={{ headerShown: false, presentation: "card" }}
                   />
                   <Stack.Screen
+                    name="details/[id]"
+                    options={{
+                      headerTransparent: true,
+                      headerShadowVisible: false,
+                      headerTitle: "",
+                    }}
+                  />
+                  <Stack.Screen
                     name="genre/[genreId]"
                     options={{
                       headerTransparent: true,
