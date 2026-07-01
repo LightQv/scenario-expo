@@ -188,9 +188,7 @@ export default function SeasonDetailScreen() {
                   {seasonAvailability?.status && seasonAvailability.status !== "missing" && (
                     <View style={styles.availabilityBadge}>
                       <Text style={styles.availabilityBadgeText}>
-                        {seasonAvailability.status === "available"
-                          ? i18n.t("screen.detail.media.available")
-                          : i18n.t("screen.detail.media.partial")}
+                        {getAvailabilityLabel(seasonAvailability.status)}
                       </Text>
                     </View>
                   )}
@@ -245,97 +243,110 @@ export default function SeasonDetailScreen() {
                   {i18n.t("screen.detail.media.seasons.episode.plurial")}
                 </Text>
 
-                {data.episodes.map((episode) => (
-                  <View key={episode.id} style={styles.episodeCard}>
-                    {seasonAvailability?.status === "partial" &&
-                      getEpisodeStatus(
-                        seasonAvailability,
-                        episode.episode_number,
-                      ) === "available" && (
-                      <View style={styles.episodeAvailabilityBadge}>
-                        <Text style={styles.episodeAvailabilityText}>
-                          {i18n.t("screen.detail.media.available")}
-                        </Text>
+                {data.episodes.map((episode) => {
+                  const episodeStatus = getEpisodeStatus(
+                    seasonAvailability,
+                    episode.episode_number,
+                  );
+                  const showEpisodeBadge =
+                    seasonAvailability?.status === "partial" &&
+                    (episodeStatus === "available" || episodeStatus === "missing");
+
+                  return (
+                    <View key={episode.id} style={styles.episodeCard}>
+                      {showEpisodeBadge && (
+                        <View
+                          style={[
+                            styles.episodeAvailabilityBadge,
+                            episodeStatus === "available"
+                              ? styles.episodeAvailableBadge
+                              : styles.episodeMissingBadge,
+                          ]}
+                        >
+                          <Text style={styles.episodeAvailabilityText}>
+                            {getAvailabilityLabel(episodeStatus)}
+                          </Text>
+                        </View>
+                      )}
+
+                      {/* Visible Episode Image */}
+                      <View style={styles.episodeImageContainer}>
+                        <Image
+                          source={{
+                            uri: episode.still_path
+                              ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
+                              : undefined,
+                          }}
+                          alt={episode.name}
+                          style={styles.episodeImage}
+                          contentFit="cover"
+                          placeholder={BLURHASH.hash}
+                          transition={BLURHASH.transition}
+                        />
                       </View>
-                    )}
 
-                    {/* Visible Episode Image */}
-                    <View style={styles.episodeImageContainer}>
-                      <Image
-                        source={{
-                          uri: episode.still_path
-                            ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
-                            : undefined,
-                        }}
-                        alt={episode.name}
-                        style={styles.episodeImage}
-                        contentFit="cover"
-                        placeholder={BLURHASH.hash}
-                        transition={BLURHASH.transition}
-                      />
-                    </View>
+                      {/* Info Section with Blurred Background */}
+                      <View style={styles.episodeInfoSection}>
+                        {/* Blurred Background Image */}
+                        <Image
+                          source={{
+                            uri: episode.still_path
+                              ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
+                              : undefined,
+                          }}
+                          alt={episode.name}
+                          style={styles.episodeBlurredBg}
+                          contentFit="cover"
+                          placeholder={BLURHASH.hash}
+                          transition={BLURHASH.transition}
+                          blurRadius={80}
+                        />
 
-                    {/* Info Section with Blurred Background */}
-                    <View style={styles.episodeInfoSection}>
-                      {/* Blurred Background Image */}
-                      <Image
-                        source={{
-                          uri: episode.still_path
-                            ? `https://image.tmdb.org/t/p/w780/${episode.still_path}`
-                            : undefined,
-                        }}
-                        alt={episode.name}
-                        style={styles.episodeBlurredBg}
-                        contentFit="cover"
-                        placeholder={BLURHASH.hash}
-                        transition={BLURHASH.transition}
-                        blurRadius={80}
-                      />
+                        {/* Blurred Overlay */}
+                        <BlurView
+                          intensity={90}
+                          tint={isDark ? "dark" : "light"}
+                          style={styles.episodeOverlay}
+                        >
+                          <View style={styles.episodeInfo}>
+                            <View style={styles.episodeHeader}>
+                              <Text style={styles.episodeNumber}>
+                                {i18n.t(
+                                  "screen.detail.media.seasons.episode.singular",
+                                )}{" "}
+                                {episode.episode_number}
+                              </Text>
+                              {episode.runtime && (
+                                <Text style={styles.episodeRuntime}>
+                                  {formatRuntime(episode.runtime)}
+                                </Text>
+                              )}
+                            </View>
 
-                      {/* Blurred Overlay */}
-                      <BlurView
-                        intensity={90}
-                        tint={isDark ? "dark" : "light"}
-                        style={styles.episodeOverlay}
-                      >
-                        <View style={styles.episodeInfo}>
-                          <View style={styles.episodeHeader}>
-                            <Text style={styles.episodeNumber}>
-                              {i18n.t(
-                                "screen.detail.media.seasons.episode.singular",
-                              )}{" "}
-                              {episode.episode_number}
+                            <Text style={styles.episodeName} numberOfLines={2}>
+                              {episode.name}
                             </Text>
-                            {episode.runtime && (
-                              <Text style={styles.episodeRuntime}>
-                                {formatRuntime(episode.runtime)}
+
+                            {episode.overview && (
+                              <Text
+                                style={styles.episodeOverview}
+                                numberOfLines={3}
+                              >
+                                {episode.overview}
+                              </Text>
+                            )}
+
+                            {episode.air_date && (
+                              <Text style={styles.episodeDate}>
+                                {formatFullDate(episode.air_date)}
                               </Text>
                             )}
                           </View>
-
-                          <Text style={styles.episodeName} numberOfLines={2}>
-                            {episode.name}
-                          </Text>
-
-                          {episode.overview && (
-                            <Text
-                              style={styles.episodeOverview}
-                              numberOfLines={3}
-                            >
-                              {episode.overview}
-                            </Text>
-                          )}
-
-                          {episode.air_date && (
-                            <Text style={styles.episodeDate}>
-                              {formatFullDate(episode.air_date)}
-                            </Text>
-                          )}
-                        </View>
-                      </BlurView>
+                        </BlurView>
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  );
+                })}
               </View>
             )}
           </>
@@ -348,12 +359,19 @@ export default function SeasonDetailScreen() {
 function getEpisodeStatus(
   seasonAvailability: TvSeasonAvailability | null,
   episodeNumber: number,
-) {
+): TvAvailabilityStatus {
   return (
     seasonAvailability?.episodes.find(
       (episode) => episode.episode_number === episodeNumber,
     )?.status || "unknown"
   );
+}
+
+function getAvailabilityLabel(status: TvAvailabilityStatus) {
+  if (status === "available") return i18n.t("screen.detail.media.available");
+  if (status === "partial") return i18n.t("screen.detail.media.partiallyAvailable");
+  if (status === "missing") return i18n.t("screen.detail.media.missing");
+  return i18n.t("screen.detail.media.unknown");
 }
 
 function getSeasonDownloadTitle(
@@ -363,14 +381,20 @@ function getSeasonDownloadTitle(
   canRetry: boolean,
 ) {
   if (seasonAvailability?.status === "available") {
-    return i18n.t("screen.detail.download.available");
+    return i18n.t("screen.detail.download.seasonAvailable");
   }
-  if (isRequesting) return i18n.t("screen.detail.download.requesting");
-  if (canRetry) return i18n.t("screen.detail.download.retry");
+  if (isRequesting) return i18n.t("screen.detail.download.requestingSeason");
+  if (canRetry) return i18n.t("screen.detail.download.retrySeason");
   if (seasonRequest?.status === "downloading") {
-    return i18n.t("screen.detail.download.downloading");
+    return i18n.t("screen.detail.download.downloadingSeason");
+  }
+  if (seasonRequest?.status === "searching") {
+    return i18n.t("screen.detail.download.searchingSeason");
   }
   if (seasonRequest) return i18n.t("screen.detail.download.requested");
+  if (seasonAvailability?.status === "partial") {
+    return i18n.t("screen.detail.download.missingEpisodesAction");
+  }
   return i18n.t("screen.detail.download.seasonAction");
 }
 
@@ -497,7 +521,14 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255, 255, 255, 0.35)",
+  },
+  episodeAvailableBadge: {
+    backgroundColor: "rgba(34, 197, 94, 0.78)",
+  },
+  episodeMissingBadge: {
+    backgroundColor: "rgba(0, 0, 0, 0.52)",
   },
   episodeAvailabilityText: {
     fontFamily: FONTS.bold,

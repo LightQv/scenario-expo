@@ -242,7 +242,7 @@
         "requests": "Requests"
       },
       "settings": {
-        "title": "Account Settings"
+        "title": "Settings"
       },
       "application": {
         "title": "Application settings"
@@ -296,11 +296,22 @@
         "action": "Download",
         "seriesAction": "Download series",
         "seasonAction": "Download season",
+        "missingEpisodesAction": "Download missing episodes",
         "requesting": "Requesting...",
+        "requestingSeries": "Requesting series...",
+        "requestingSeason": "Requesting season...",
         "requested": "Requested",
+        "searching": "Searching",
+        "searchingSeries": "Searching series",
+        "searchingSeason": "Searching season",
         "downloading": "Downloading",
+        "downloadingSeries": "Downloading series",
+        "downloadingSeason": "Downloading season",
         "available": "Available",
-        "retry": "Retry"
+        "seriesAvailable": "Series available",
+        "seasonAvailable": "Season available",
+        "retry": "Retry",
+        "retrySeason": "Retry season download"
       },
       "crew": {
         "director": "Director",
@@ -310,6 +321,9 @@
         "trailer": "Watch Trailer",
         "available": "Available",
         "partial": "Partial",
+        "partiallyAvailable": "Partially available",
+        "missing": "Missing",
+        "unknown": "Unknown",
         "cast": "Cast",
         "castEmpty": "No cast information",
         "seasons": {
@@ -346,7 +360,11 @@
           "movie": "Movie",
           "series": "Series",
           "season": "Season {{season}}",
-          "episode": "S{{season}} · E{{episode}}"
+          "episode": "S{{season}} · E{{episode}}",
+          "movieDownload": "Movie download",
+          "seriesDownload": "Series download",
+          "seasonDownload": "Season {{season}} download",
+          "episodeDownload": "S{{season}} E{{episode}} download"
         },
       "actions": {
         "retry": "Retry",
@@ -370,6 +388,48 @@
         "failed": "Failed",
         "available": "Available",
         "cancelled": "Cancelled"
+      },
+      "statusScoped": {
+        "requested": {
+          "series": "Series requested",
+          "season": "Season requested",
+          "episode": "Episode requested"
+        },
+        "sent_to_radarr": {
+          "series": "Sent",
+          "season": "Sent",
+          "episode": "Sent"
+        },
+        "searching": {
+          "series": "Searching series",
+          "season": "Searching season",
+          "episode": "Searching episode"
+        },
+        "downloading": {
+          "series": "Downloading series",
+          "season": "Downloading season",
+          "episode": "Downloading episode"
+        },
+        "not_found": {
+          "series": "Series not found",
+          "season": "Season not found",
+          "episode": "Episode not found"
+        },
+        "failed": {
+          "series": "Series failed",
+          "season": "Season failed",
+          "episode": "Episode failed"
+        },
+        "available": {
+          "series": "Series available",
+          "season": "Season available",
+          "episode": "Episode available"
+        },
+        "cancelled": {
+          "series": "Series cancelled",
+          "season": "Season cancelled",
+          "episode": "Episode cancelled"
+        }
       }
     },
     "person": {
@@ -472,6 +532,69 @@
         "subtitle": "Select a watchlist to add this media"
       }
     },
+    "settings": {
+      "sections": {
+        "appearance": "Appearance",
+        "downloads": "Downloads",
+        "account": "Account",
+        "status": "Status",
+        "connection": "Connection",
+        "library": "Library",
+        "rootFolders": "Root folders",
+        "profiles": "Profiles",
+        "tags": "Tags"
+      },
+      "common": {
+        "comingSoon": "Coming soon",
+        "notConfigured": "Not configured"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Choose how Scenario looks and customize accent colors."
+      },
+      "downloads": {
+        "title": "Downloads",
+        "description": "Configure the download servers used by Scenario for your account. Secrets will be stored encrypted and never shown again after saving.",
+        "footer": "Configure Radarr and Sonarr integrations used by your account.",
+        "enable": "Enable download integrations"
+      },
+      "radarr": {
+        "title": "Radarr",
+        "description": "Radarr will be used for movie downloads and owned movie sync.",
+        "enable": "Enable Radarr",
+        "testConnection": "Test connection",
+        "syncOwnedMovies": "Sync owned movies"
+      },
+      "sonarr": {
+        "title": "Sonarr",
+        "description": "Sonarr will be used for TV downloads, season downloads, and owned episode sync.",
+        "enable": "Enable Sonarr",
+        "testConnection": "Test connection",
+        "syncOwnedTv": "Sync owned TV shows",
+        "profilesFooter": "Scenario treats current and completed TV differently. Current seasons use the on-air profile; completed or archived seasons use the complete profile. This helps prioritize 1080p episodes while keeping full seasons lighter.",
+        "tagsFooter": "Tags let Sonarr apply different release profiles. Use tv-onair for current shows and tv-complete for archived or completed seasons."
+      },
+      "deleteAccount": {
+        "title": "Delete account",
+        "description": "This permanently deletes your account and cannot be undone."
+      },
+      "fields": {
+        "apiKey": "API key",
+        "webhookSecret": "Webhook secret",
+        "rootFolder": "Root folder path",
+        "qualityProfile": "Quality profile ID",
+        "minimumAvailability": "Minimum availability",
+        "tvRootFolder": "TV root folder path",
+        "animeRootFolder": "Anime root folder path",
+        "fallbackQualityProfile": "Fallback quality profile ID",
+        "onAirQualityProfile": "On-air quality profile ID",
+        "completeQualityProfile": "Complete quality profile ID",
+        "animeQualityProfile": "Anime quality profile ID",
+        "animeTag": "Anime tag label",
+        "onAirTag": "On-air tag label",
+        "completeTag": "Complete tag label"
+      }
+    },
     "applicationSettings": {
       "title": "Application Settings",
       "theme": {
@@ -481,7 +604,6 @@
         "system": "System"
       },
       "colors": {
-        "title": "Accent Colors",
         "light": "Light mode",
         "dark": "Dark mode"
       },

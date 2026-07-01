@@ -49,12 +49,8 @@ export default function AccountScreen() {
     router.push("/profile/downloads");
   };
 
-  const handleAccountSettingsPress = () => {
-    router.push("/(modal)/account-settings");
-  };
-
-  const handleApplicationSettingsPress = () => {
-    router.push("/(modal)/application-settings");
+  const handleSettingsPress = () => {
+    router.push("/(modal)/settings");
   };
 
   return (
@@ -101,7 +97,7 @@ export default function AccountScreen() {
               </View>
               <Ionicons
                 name="chevron-forward"
-                size={20}
+                size={18}
                 color={PlatformColor("secondaryLabel")}
               />
             </TouchableOpacity>
@@ -140,7 +136,7 @@ export default function AccountScreen() {
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
               </TouchableOpacity>
@@ -164,7 +160,7 @@ export default function AccountScreen() {
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
               </TouchableOpacity>
@@ -196,7 +192,7 @@ export default function AccountScreen() {
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
               </TouchableOpacity>
@@ -220,7 +216,7 @@ export default function AccountScreen() {
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
               </TouchableOpacity>
@@ -252,14 +248,14 @@ export default function AccountScreen() {
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
               </TouchableOpacity>
             </View>
           </View>
 
-          {/* Application Settings Section */}
+          {/* Settings Section */}
           <View style={styles.section}>
             <View
               style={[
@@ -268,41 +264,20 @@ export default function AccountScreen() {
               ]}
             >
               <TouchableOpacity
-                onPress={handleApplicationSettingsPress}
+                onPress={handleSettingsPress}
                 style={styles.viewsOption}
                 activeOpacity={BUTTON.opacity}
               >
                 <Text
                   style={[styles.cardText, { color: PlatformColor("label") }]}
                 >
-                  {i18n.t("screen.account.application.title")}
+                  {i18n.t("screen.account.settings.title")}
                 </Text>
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={18}
                   color={PlatformColor("secondaryLabel")}
                 />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Account Settings Section */}
-          <View style={styles.section}>
-            <View
-              style={[
-                styles.viewsContainer,
-                { backgroundColor: PlatformColor("systemGray5") },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={handleAccountSettingsPress}
-                style={styles.viewsOption}
-                activeOpacity={BUTTON.opacity}
-              >
-                <Text style={[styles.cardText, { color: errorColor }]}>
-                  {i18n.t("screen.account.settings.title")}
-                </Text>
-                <Ionicons name="chevron-forward" size={20} color={errorColor} />
               </TouchableOpacity>
             </View>
           </View>

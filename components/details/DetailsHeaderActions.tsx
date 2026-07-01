@@ -121,13 +121,31 @@ export default function DetailsHeaderActions({
   };
 
   const getDownloadActionTitle = () => {
-    if (owned) return i18n.t("screen.detail.download.available");
-    if (downloadSubmitting) return i18n.t("screen.detail.download.requesting");
+    if (owned) {
+      return mediaType === "tv"
+        ? i18n.t("screen.detail.download.seriesAvailable")
+        : i18n.t("screen.detail.download.available");
+    }
+    if (downloadSubmitting) {
+      return mediaType === "tv"
+        ? i18n.t("screen.detail.download.requestingSeries")
+        : i18n.t("screen.detail.download.requesting");
+    }
     if (canRetryDownload) return i18n.t("screen.detail.download.retry");
     if (downloadRequest?.status === "downloading") {
-      return i18n.t("screen.detail.download.downloading");
+      return mediaType === "tv"
+        ? i18n.t("screen.detail.download.downloadingSeries")
+        : i18n.t("screen.detail.download.downloading");
+    }
+    if (downloadRequest?.status === "searching") {
+      return mediaType === "tv"
+        ? i18n.t("screen.detail.download.searchingSeries")
+        : i18n.t("screen.detail.download.searching");
     }
     if (downloadRequest) return i18n.t("screen.detail.download.requested");
+    if (mediaType === "tv" && tvAvailability?.status === "partial") {
+      return i18n.t("screen.detail.download.missingEpisodesAction");
+    }
     return mediaType === "tv"
       ? i18n.t("screen.detail.download.seriesAction")
       : i18n.t("screen.detail.download.action");
@@ -135,8 +153,8 @@ export default function DetailsHeaderActions({
 
   const getDownloadActionIcon = () => {
     if (owned) return "checkmark.circle";
-    if (downloadSubmitting || downloadRequest) return "clock";
     if (canRetryDownload) return "arrow.clockwise";
+    if (downloadSubmitting || downloadRequest) return "clock";
     return "tray.and.arrow.down";
   };
 
