@@ -1,7 +1,6 @@
 import {
   Animated,
   Easing,
-  FlatList,
   Keyboard,
   PlatformColor,
   StyleSheet,
@@ -13,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { GlassView } from "expo-glass-effect";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGenreContext } from "@/contexts/GenreContext";
@@ -55,11 +55,15 @@ export default function SearchScreen() {
   const [previewResults, setPreviewResults] = useState<TmdbData[]>([]);
   const [previewLoading, setPreviewLoading] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
+  const genreScrollY = useRef(new Animated.Value(0)).current;
+  const activeScrollY = useRef(new Animated.Value(0)).current;
   const requestIdRef = useRef(0);
   const inputRef = useRef<TextInput>(null);
 
-  const defaultHeaderHeight = insets.top + DEFAULT_HEADER_HEIGHT;
-  const activeHeaderHeight = insets.top + ACTIVE_HEADER_HEIGHT;
+  const defaultHeaderHeight =
+    insets.top + DEFAULT_HEADER_HEIGHT + CONTENT_TOP_GAP;
+  const activeHeaderHeight =
+    insets.top + ACTIVE_HEADER_HEIGHT + CONTENT_TOP_GAP;
   const genreOpacity = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 0],
@@ -168,6 +172,7 @@ export default function SearchScreen() {
   const handleHistoryItemPress = (item: SearchHistoryItem) => {
     setContentMode("search");
     setActive(true);
+    activeScrollY.setValue(0);
     setQuery(item.query);
     setSearch(item.query);
     setMediaType(item.type);
@@ -178,6 +183,7 @@ export default function SearchScreen() {
   const handleFocusSearch = () => {
     setContentMode("search");
     setActive(true);
+    activeScrollY.setValue(0);
     runSearchAnimation(1);
   };
 
@@ -187,6 +193,7 @@ export default function SearchScreen() {
 
     runSearchAnimation(0, () => {
       setContentMode("genres");
+      activeScrollY.setValue(0);
       setQuery("");
       setSearch("");
       setPreviewResults([]);
@@ -226,6 +233,8 @@ export default function SearchScreen() {
       <SearchHeader
         active={active}
         animation={animation}
+        genreScrollY={genreScrollY}
+        activeScrollY={activeScrollY}
         contentTop={insets.top}
         query={query}
         inputRef={inputRef}
@@ -247,7 +256,7 @@ export default function SearchScreen() {
         ]}
         pointerEvents={contentMode === "genres" ? "auto" : "none"}
       >
-        <FlatList
+        <Animated.FlatList
           data={totalGenres}
           renderItem={renderGenreItem}
           keyExtractor={(item) => item.id.toString()}
@@ -255,11 +264,16 @@ export default function SearchScreen() {
           columnWrapperStyle={styles.genreRow}
           contentContainerStyle={[
             styles.genreContent,
-            { paddingTop: defaultHeaderHeight + CONTENT_TOP_GAP },
+            { paddingTop: defaultHeaderHeight },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           onScrollBeginDrag={Keyboard.dismiss}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: genreScrollY } } }],
+            { useNativeDriver: false },
+          )}
+          scrollEventThrottle={16}
         />
       </Animated.View>
 
@@ -277,7 +291,7 @@ export default function SearchScreen() {
           <View
             style={[
               styles.activeContent,
-              { paddingTop: activeHeaderHeight + CONTENT_TOP_GAP },
+              { paddingTop: activeHeaderHeight },
             ]}
           >
             <SearchPreviewResults
@@ -287,19 +301,21 @@ export default function SearchScreen() {
               query={query.trim()}
               onShowAll={handleShowAllResults}
               onNavigateAway={handleNavigateAway}
+              scrollY={activeScrollY}
             />
           </View>
         ) : (
           <View
             style={[
               styles.activeContent,
-              { paddingTop: activeHeaderHeight + CONTENT_TOP_GAP },
+              { paddingTop: activeHeaderHeight },
             ]}
           >
             <SearchHistory
               history={history}
               onItemPress={handleHistoryItemPress}
               onClearHistory={handleClearHistory}
+              scrollY={activeScrollY}
             />
           </View>
         )}
@@ -311,6 +327,8 @@ export default function SearchScreen() {
 type SearchHeaderProps = {
   active: boolean;
   animation: Animated.Value;
+  genreScrollY: Animated.Value;
+  activeScrollY: Animated.Value;
   contentTop: number;
   query: string;
   inputRef: RefObject<TextInput | null>;
@@ -325,6 +343,8 @@ type SearchHeaderProps = {
 function SearchHeader({
   active,
   animation,
+  genreScrollY,
+  activeScrollY,
   contentTop,
   query,
   inputRef,
@@ -371,6 +391,32 @@ function SearchHeader({
     inputRange: [0, 1],
     outputRange: [-8, 0],
   });
+  const headerBackdropHeight = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [
+      contentTop + DEFAULT_HEADER_HEIGHT + CONTENT_TOP_GAP,
+      contentTop + ACTIVE_HEADER_HEIGHT + CONTENT_TOP_GAP,
+    ],
+  });
+  const genreBackdropOpacity = genreScrollY.interpolate({
+    inputRange: [0, 10, 32],
+    outputRange: [0, 0.35, 1],
+    extrapolate: "clamp",
+  });
+  const activeBackdropOpacity = activeScrollY.interpolate({
+    inputRange: [0, 10, 32],
+    outputRange: [0, 0.35, 1],
+    extrapolate: "clamp",
+  });
+  const inactiveHeaderOpacity = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+  const headerBackdropOpacity = Animated.add(
+    Animated.multiply(genreBackdropOpacity, inactiveHeaderOpacity),
+    Animated.multiply(activeBackdropOpacity, animation),
+  );
 
   return (
     <View
@@ -381,6 +427,21 @@ function SearchHeader({
         },
       ]}
     >
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.headerBackdrop,
+          { height: headerBackdropHeight, opacity: headerBackdropOpacity },
+        ]}
+      >
+        <BlurView
+          intensity={80}
+          tint="systemChromeMaterial"
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={styles.headerTint} />
+      </Animated.View>
+
       <Animated.Text
         style={[
           styles.headerTitle,
@@ -484,6 +545,22 @@ const styles = StyleSheet.create({
     zIndex: 100,
     paddingHorizontal: TOKENS.margin.horizontal,
     paddingBottom: 8,
+  },
+  headerBackdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    left: 0,
+    overflow: "hidden",
+  },
+  headerTint: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: PlatformColor("systemBackground"),
+    opacity: 0.1,
   },
   headerTitle: {
     fontFamily: FONTS.abril,

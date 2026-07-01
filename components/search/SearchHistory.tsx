@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
+  Animated,
   PlatformColor,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,12 +16,14 @@ type SearchHistoryProps = {
   history: SearchHistoryItem[];
   onItemPress: (item: SearchHistoryItem) => void;
   onClearHistory: () => void;
+  scrollY?: Animated.Value;
 };
 
 export default function SearchHistory({
   history,
   onItemPress,
   onClearHistory,
+  scrollY,
 }: SearchHistoryProps) {
   const { colors } = useThemeContext();
   const getTypeLabel = (type: "movie" | "tv" | "person") => {
@@ -95,12 +97,21 @@ export default function SearchHistory({
           { backgroundColor: PlatformColor("separator") },
         ]}
       />
-      <FlatList
+      <Animated.FlatList
         data={history}
         renderItem={renderHistoryItem}
         keyExtractor={(item) => `${item.query}-${item.type}-${item.timestamp}`}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        onScroll={
+          scrollY
+            ? Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: false },
+              )
+            : undefined
+        }
+        scrollEventThrottle={16}
       />
     </View>
   );

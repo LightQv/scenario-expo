@@ -1,6 +1,6 @@
 import {
   ActivityIndicator,
-  FlatList,
+  Animated,
   PlatformColor,
   StyleSheet,
   Text,
@@ -23,6 +23,7 @@ type SearchPreviewResultsProps = {
   query: string;
   onShowAll: () => void;
   onNavigateAway?: () => void;
+  scrollY?: Animated.Value;
 };
 
 export default function SearchPreviewResults({
@@ -32,6 +33,7 @@ export default function SearchPreviewResults({
   query,
   onShowAll,
   onNavigateAway,
+  scrollY,
 }: SearchPreviewResultsProps) {
   const handlePress = (item: TmdbData) => {
     const type = item.media_type || mediaType;
@@ -156,13 +158,22 @@ export default function SearchPreviewResults({
   };
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={results}
       renderItem={renderItem}
       keyExtractor={(item) => `${item.id}-${item.media_type || mediaType}`}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.content}
+      onScroll={
+        scrollY
+          ? Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false },
+            )
+          : undefined
+      }
+      scrollEventThrottle={16}
       ListHeaderComponent={
         <Text
           style={[
