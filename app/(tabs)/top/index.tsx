@@ -7,6 +7,8 @@ import {
   ListRenderItem,
   Platform,
   Animated,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import {
   useState,
@@ -69,6 +71,20 @@ export default function TopIndexScreen() {
 
   const flatListRef = useRef<FlatList<TmdbData>>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollBaseline = useRef(new Animated.Value(0)).current;
+  const scrollBaselineRef = useRef<number | null>(null);
+
+  const setScrollBaseline = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (scrollBaselineRef.current !== null) return;
+
+      const offsetY = event.nativeEvent.contentOffset.y;
+      scrollBaselineRef.current = offsetY;
+      scrollY.setValue(offsetY);
+      scrollBaseline.setValue(offsetY);
+    },
+    [scrollBaseline, scrollY],
+  );
 
   // Get genres based on active media type
   const activeGenres =
@@ -180,7 +196,11 @@ export default function TopIndexScreen() {
         mediaType={fetchParams.type}
         onMediaTypeChange={handleMediaTypeChange}
       />
-      <AnimatedHeader title={i18n.t("screen.top.title")} scrollY={scrollY} />
+      <AnimatedHeader
+        title={i18n.t("screen.top.title")}
+        scrollY={scrollY}
+        scrollBaseline={scrollBaseline}
+      />
 
       <Animated.FlatList
         ref={flatListRef}
@@ -209,9 +229,10 @@ export default function TopIndexScreen() {
         numColumns={2}
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={setScrollBaseline}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false },
+          { useNativeDriver: true },
         )}
         scrollEventThrottle={16}
         onEndReached={handleLoadMore}

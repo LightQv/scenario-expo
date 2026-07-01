@@ -5,6 +5,8 @@ import {
   PlatformColor,
   RefreshControl,
   Animated,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
@@ -58,9 +60,23 @@ export default function DiscoverIndexScreen() {
   const [prioritySectionsLoaded, setPrioritySectionsLoaded] = useState(false);
   const [randomGenre, setRandomGenre] = useState<{ id: number; name: string } | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollBaseline = useRef(new Animated.Value(0)).current;
+  const scrollBaselineRef = useRef<number | null>(null);
   const hasHiddenSplashRef = useRef(false);
   const hasStartedInitialLoadRef = useRef(false);
   const loadRunRef = useRef(0);
+
+  const setScrollBaseline = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (scrollBaselineRef.current !== null) return;
+
+      const offsetY = event.nativeEvent.contentOffset.y;
+      scrollBaselineRef.current = offsetY;
+      scrollY.setValue(offsetY);
+      scrollBaseline.setValue(offsetY);
+    },
+    [scrollBaseline, scrollY],
+  );
 
   // Select the random genre once per provider load to avoid restarting Discover.
   useEffect(() => {
@@ -312,6 +328,7 @@ export default function DiscoverIndexScreen() {
       <AnimatedHeader
         title={i18n.t("screen.discover.title")}
         scrollY={scrollY}
+        scrollBaseline={scrollBaseline}
       />
 
       <Animated.ScrollView
@@ -322,9 +339,10 @@ export default function DiscoverIndexScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
+        onScrollBeginDrag={setScrollBaseline}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false },
+          { useNativeDriver: true },
         )}
         refreshControl={
           <RefreshControl
