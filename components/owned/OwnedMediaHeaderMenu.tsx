@@ -6,13 +6,16 @@ import HeaderActionCapsule, {
 import { useGenreContext, useOwnedMediaContext } from "@/contexts";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+type TvOwnedViewMode = "shows" | "seasons";
 
 type OwnedMediaHeaderMenuProps = {
   mediaType: string;
   sortType: SortType;
   genreId: number | null;
+  tvViewMode?: TvOwnedViewMode;
   onSortChange: (sort: SortType) => void;
   onGenreChange: (genreId: number | null) => void;
+  onTvViewModeChange?: (viewMode: TvOwnedViewMode) => void;
 };
 
 const SORT_OPTIONS: { value: SortType; label: string }[] = [
@@ -26,8 +29,10 @@ export default function OwnedMediaHeaderMenu({
   mediaType,
   sortType,
   genreId,
+  tvViewMode = "shows",
   onSortChange,
   onGenreChange,
+  onTvViewModeChange,
 }: OwnedMediaHeaderMenuProps) {
   const { movieGenres, tvGenres } = useGenreContext();
   const {
@@ -75,9 +80,36 @@ export default function OwnedMediaHeaderMenu({
     if (kind === "sort") {
       onSortChange(value as SortType);
     }
+
+    if (kind === "view") {
+      onTvViewModeChange?.(value as TvOwnedViewMode);
+    }
   };
 
   const filterActions: HeaderMenuItem[] = [
+    ...(mediaType === "tv"
+      ? [
+          {
+            id: "view",
+            title: i18n.t("screen.profile.owned.view.title"),
+            icon: "rectangle.grid.1x2",
+            children: [
+              {
+                id: "view:shows",
+                title: i18n.t("screen.profile.owned.view.shows"),
+                selected: tvViewMode === "shows",
+                onPress: () => handlePressAction("view:shows"),
+              },
+              {
+                id: "view:seasons",
+                title: i18n.t("screen.profile.owned.view.seasons"),
+                selected: tvViewMode === "seasons",
+                onPress: () => handlePressAction("view:seasons"),
+              },
+            ],
+          },
+        ]
+      : []),
     {
       id: "genre",
       title: i18n.t("filter.genre.title"),

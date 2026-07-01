@@ -8,6 +8,8 @@ import {
   ListRenderItem,
   Platform,
   Animated,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
@@ -58,6 +60,20 @@ export default function WatchlistIndexScreen() {
 
   const flatListRef = useRef<FlatList<Watchlist>>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollBaseline = useRef(new Animated.Value(0)).current;
+  const scrollBaselineRef = useRef<number | null>(null);
+
+  const setScrollBaseline = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (scrollBaselineRef.current !== null) return;
+
+      const offsetY = event.nativeEvent.contentOffset.y;
+      scrollBaselineRef.current = offsetY;
+      scrollY.setValue(offsetY);
+      scrollBaseline.setValue(offsetY);
+    },
+    [scrollBaseline, scrollY],
+  );
 
   // Redirect if not authenticated
   if (!authState.loading && !authState.authenticated) {
@@ -181,6 +197,7 @@ export default function WatchlistIndexScreen() {
       <AnimatedHeader
         title={i18n.t("screen.watchlist.title")}
         scrollY={scrollY}
+        scrollBaseline={scrollBaseline}
       />
 
       <Animated.FlatList
@@ -208,9 +225,10 @@ export default function WatchlistIndexScreen() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={setScrollBaseline}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false },
+          { useNativeDriver: true },
         )}
         scrollEventThrottle={16}
         ListEmptyComponent={renderEmpty}

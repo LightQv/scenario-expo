@@ -5,18 +5,24 @@ import { FONTS } from "@/constants/theme";
 type AnimatedHeaderProps = {
   title: string;
   scrollY: Animated.Value;
+  scrollBaseline?: Animated.Value;
 };
 
 export default function AnimatedHeader({
   title,
   scrollY,
+  scrollBaseline,
 }: AnimatedHeaderProps) {
   const insets = useSafeAreaInsets();
 
-  // Title opacity animation - fades out almost instantly on scroll
-  const titleOpacity = scrollY.interpolate({
-    inputRange: [0, 2, 6],
-    outputRange: [1, 0.3, 0],
+  const scrollDistance = scrollBaseline
+    ? Animated.subtract(scrollY, scrollBaseline)
+    : scrollY;
+
+  // Fade from distance to the screen's top offset, not accumulated movement.
+  const titleOpacity = scrollDistance.interpolate({
+    inputRange: [0, 4, 12],
+    outputRange: [1, 0.45, 0],
     extrapolate: "clamp",
   });
 

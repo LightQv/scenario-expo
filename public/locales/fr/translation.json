@@ -738,6 +738,22 @@
           "title": "La synchronisation des disponibilités n'est pas prête",
           "movieBody": "Terminez la configuration films Radarr pour débloquer les films disponibles.",
           "tvBody": "Terminez toutes les configurations Sonarr pour débloquer les séries disponibles."
+        },
+        "view": {
+          "title": "Vue",
+          "shows": "Séries",
+          "seasons": "Saisons"
+        },
+        "delete": {
+          "menu": "Supprimer du serveur",
+          "movieTitle": "Supprimer le film ?",
+          "movieMessage": "Cela supprimera {{title}} de Radarr et effacera le fichier du serveur.",
+          "showTitle": "Supprimer la série ?",
+          "showMessage": "Cela supprimera tous les fichiers disponibles de {{title}} depuis Sonarr et retirera la série du serveur.",
+          "seasonTitle": "Supprimer la saison {{season}} ?",
+          "seasonMessage": "Cela supprimera les fichiers disponibles de {{title}} saison {{season}} et arrêtera la surveillance uniquement pour cette saison.",
+          "confirm": "Supprimer",
+          "cancel": "Annuler"
         }
       },
       "menu": {
@@ -785,6 +801,11 @@
       "loading": "En cours...",
       "success": "C'est fait!"
     },
+    "pending": {
+      "ownedMedia": {
+        "delete": "Suppression du serveur..."
+      }
+    },
     "login": "Email ou mot de passe invalide",
     "register": "Pseudo ou Email déjà prit",
     "expired": "Session expirée",
@@ -801,7 +822,8 @@
       },
       "ownedMedia": {
         "sync": "{{count}} films possédés synchronisés",
-        "syncStarted": "Synchronisation des films possédés lancée"
+        "syncStarted": "Synchronisation des films possédés lancée",
+        "deleted": "Supprimé du serveur"
       },
       "download": {
         "requested": "Téléchargement demandé",

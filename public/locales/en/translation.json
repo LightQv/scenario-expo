@@ -738,6 +738,22 @@
           "title": "Availability sync is not ready",
           "movieBody": "Finish the Radarr movie configuration to unlock available movies.",
           "tvBody": "Finish all Sonarr configurations to unlock available TV shows."
+        },
+        "view": {
+          "title": "View",
+          "shows": "Shows",
+          "seasons": "Seasons"
+        },
+        "delete": {
+          "menu": "Delete from server",
+          "movieTitle": "Delete movie?",
+          "movieMessage": "This will delete {{title}} from Radarr and remove the movie file from your server.",
+          "showTitle": "Delete show?",
+          "showMessage": "This will delete all available files for {{title}} from Sonarr and remove the show from your server.",
+          "seasonTitle": "Delete season {{season}}?",
+          "seasonMessage": "This will delete available files for {{title}} season {{season}} and stop monitoring only this season.",
+          "confirm": "Delete",
+          "cancel": "Cancel"
         }
       },
       "menu": {
@@ -785,6 +801,11 @@
       "loading": "Uploading...",
       "success": "Done!"
     },
+    "pending": {
+      "ownedMedia": {
+        "delete": "Deleting from server..."
+      }
+    },
     "login": "Email or password invalid",
     "register": "Username or Email already taken",
     "expired": "Session expired",
@@ -801,7 +822,8 @@
       },
       "ownedMedia": {
         "sync": "{{count}} owned movies synced",
-        "syncStarted": "Owned movies sync started"
+        "syncStarted": "Owned movies sync started",
+        "deleted": "Deleted from server"
       },
       "download": {
         "requested": "Download requested",
