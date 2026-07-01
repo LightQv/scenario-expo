@@ -66,9 +66,6 @@ export default function DetailsScreen() {
 
         if (!isMounted) return;
 
-        setData(response);
-        setLoading(false);
-
         const imagePath = getDetailImagePath(response, type);
         const nextPalette = imagePath
           ? await getDetailPaletteFromImage(
@@ -80,6 +77,7 @@ export default function DetailsScreen() {
         if (!isMounted) return;
 
         setPalette(nextPalette);
+        setData(response);
       } catch {
         if (isMounted) {
           notifyError(i18n.t("toast.errorTMDB"));
