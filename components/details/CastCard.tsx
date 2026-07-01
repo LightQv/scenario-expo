@@ -8,6 +8,10 @@ import {
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FONTS, TOKENS, BLURHASH, BUTTON } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type CastCardProps = {
   data: Cast;
@@ -20,6 +24,7 @@ export default function CastCard({
   textColor,
   secondaryTextColor,
 }: CastCardProps) {
+  const { isDark } = useThemeContext();
   const profileUrl = data.profile_path
     ? `https://image.tmdb.org/t/p/w342/${data.profile_path}`
     : null;
@@ -34,7 +39,18 @@ export default function CastCard({
       push
       prefetch
     >
-      <TouchableOpacity style={styles.container} activeOpacity={BUTTON.opacity}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={BUTTON.opacity}
+        onPressIn={() =>
+          prefetchDetailPaletteFromImage(
+            data.profile_path
+              ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${data.profile_path}`
+              : undefined,
+            isDark,
+          )
+        }
+      >
         <View style={styles.imageContainer}>
           {profileUrl ? (
             <Image

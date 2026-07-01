@@ -21,6 +21,7 @@ import { StatusBar } from "expo-status-bar";
 import DetailsHeaderActions from "@/components/details/DetailsHeaderActions";
 import { useOwnedMediaContext, useThemeContext } from "@/contexts";
 import {
+  getCachedDetailPalette,
   getDetailPaletteFromImage,
   getFallbackDetailPalette,
   type DetailPalette,
@@ -66,20 +67,23 @@ export default function DetailsScreen() {
 
         if (!isMounted) return;
 
-        setData(response);
-        setLoading(false);
-
         const imagePath = getDetailImagePath(response, type);
-        const nextPalette = imagePath
-          ? await getDetailPaletteFromImage(
-              `${TMDB_IMAGE_BASE_URL}/${imagePath}`,
-              isDark,
-            ).catch(() => getFallbackDetailPalette(isDark))
-          : getFallbackDetailPalette(isDark);
+        const imageUrl = imagePath ? `${TMDB_IMAGE_BASE_URL}/${imagePath}` : undefined;
+        const cachedPalette = imageUrl
+          ? getCachedDetailPalette(imageUrl, isDark)
+          : undefined;
+        const nextPalette =
+          cachedPalette ||
+          (imageUrl
+            ? await getDetailPaletteFromImage(imageUrl, isDark).catch(() =>
+                getFallbackDetailPalette(isDark),
+              )
+            : getFallbackDetailPalette(isDark));
 
         if (!isMounted) return;
 
         setPalette(nextPalette);
+        setData(response);
       } catch {
         if (isMounted) {
           notifyError(i18n.t("toast.errorTMDB"));

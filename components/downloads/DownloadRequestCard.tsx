@@ -9,8 +9,11 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { BLURHASH, BUTTON, FONTS, TOKENS } from "@/constants/theme";
-import { useDownloadRequestContext } from "@/contexts";
+import { useDownloadRequestContext, useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
 import i18n from "@/services/i18n";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 const ACTIVE_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
   "requested",
@@ -30,6 +33,7 @@ type DownloadRequestCardProps = {
 
 export default function DownloadRequestCard({ data }: DownloadRequestCardProps) {
   const { retryRequest, cancelRequest } = useDownloadRequestContext();
+  const { isDark } = useThemeContext();
   const statusColor = getStatusColor(data.status);
   const statusBackgroundColor = getStatusBackgroundColor(data.status);
   const queueSummary = getQueueSummary(data);
@@ -65,7 +69,18 @@ export default function DownloadRequestCard({ data }: DownloadRequestCardProps) 
           push
           prefetch
         >
-          <TouchableOpacity activeOpacity={BUTTON.opacity} style={styles.mainContent}>
+          <TouchableOpacity
+            activeOpacity={BUTTON.opacity}
+            onPressIn={() =>
+              prefetchDetailPaletteFromImage(
+                data.poster_path
+                  ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${data.poster_path}`
+                  : undefined,
+                isDark,
+              )
+            }
+            style={styles.mainContent}
+          >
             <View style={styles.posterContainer}>
               <Image
                 source={{ uri: `https://image.tmdb.org/t/p/w342/${data.poster_path}` }}

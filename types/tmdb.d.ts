@@ -4,6 +4,7 @@ interface TmdbData {
   media_type: string;
 
   /* Movie & TV Show type */
+  backdrop_path?: string;
   first_air_date?: string;
   genre_ids: Array<number>;
   id: number;

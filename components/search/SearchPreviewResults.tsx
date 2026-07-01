@@ -11,8 +11,12 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { BLURHASH, BUTTON, FONTS, TOKENS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
 import i18n from "@/services/i18n";
 import { formatYear } from "@/services/utils";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type MediaType = "movie" | "tv" | "person";
 
@@ -35,6 +39,7 @@ export default function SearchPreviewResults({
   onNavigateAway,
   scrollY,
 }: SearchPreviewResultsProps) {
+  const { isDark } = useThemeContext();
   const handlePress = (item: TmdbData) => {
     const type = item.media_type || mediaType;
     onNavigateAway?.();
@@ -49,11 +54,19 @@ export default function SearchPreviewResults({
 
   const prefetchDetails = (item: TmdbData) => {
     const type = item.media_type || mediaType;
+    const imagePath =
+      type === "person"
+        ? item.profile_path || item.backdrop_path || item.poster_path
+        : item.backdrop_path || item.poster_path || item.profile_path;
 
     router.prefetch({
       pathname: "/details/[id]",
       params: { id: item.id.toString(), type },
     });
+    prefetchDetailPaletteFromImage(
+      imagePath ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${imagePath}` : undefined,
+      isDark,
+    );
   };
 
   const renderItem = ({ item }: { item: TmdbData }) => {

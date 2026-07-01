@@ -7,7 +7,11 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
+import { prefetchDetailPaletteFromImage } from "@/services/detailPalette";
 import i18n from "@/services/i18n";
+
+const TMDB_ORIGINAL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 type CrewInfoProps = {
   crew: Crew[];
@@ -24,6 +28,7 @@ export default function CrewInfo({
   textColor,
   secondaryTextColor,
 }: CrewInfoProps) {
+  const { isDark } = useThemeContext();
   // Find director (only for movies)
   const director = crew.find((member) => member.job === "Director");
 
@@ -59,7 +64,17 @@ export default function CrewInfo({
             push
             prefetch
           >
-            <TouchableOpacity activeOpacity={BUTTON.opacity}>
+            <TouchableOpacity
+              activeOpacity={BUTTON.opacity}
+              onPressIn={() =>
+                prefetchDetailPaletteFromImage(
+                  director.profile_path
+                    ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${director.profile_path}`
+                    : undefined,
+                  isDark,
+                )
+              }
+            >
               <Text
                 style={[styles.name, { color: textColor || PlatformColor("label") }]}
               >
@@ -89,7 +104,17 @@ export default function CrewInfo({
             push
             prefetch
           >
-            <TouchableOpacity activeOpacity={BUTTON.opacity}>
+            <TouchableOpacity
+              activeOpacity={BUTTON.opacity}
+              onPressIn={() =>
+                prefetchDetailPaletteFromImage(
+                  composer.profile_path
+                    ? `${TMDB_ORIGINAL_IMAGE_BASE_URL}/${composer.profile_path}`
+                    : undefined,
+                  isDark,
+                )
+              }
+            >
               <Text
                 style={[styles.name, { color: textColor || PlatformColor("label") }]}
               >
