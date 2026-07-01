@@ -37,6 +37,12 @@ interface OwnedMediaContextValue {
     tmdbId: number,
     seasonNumber: number,
   ) => Promise<TvSeasonAvailability | null>;
+  deleteOwnedMediaFromServer: (params: {
+    tmdbId: number;
+    mediaType: string;
+    scope?: "show" | "season";
+    seasonNumber?: number | null;
+  }) => Promise<void>;
   getEpisodeAvailability: (
     tmdbId: number,
     seasonNumber: number,
@@ -413,6 +419,39 @@ export function OwnedMediaProvider({ children }: ContextProps) {
     [authState.authenticated],
   );
 
+  const deleteOwnedMediaFromServer = useCallback(
+    async ({ tmdbId, mediaType, scope, seasonNumber }: {
+      tmdbId: number;
+      mediaType: string;
+      scope?: "show" | "season";
+      seasonNumber?: number | null;
+    }) => {
+      if (!authState.authenticated) return;
+
+      const path =
+        mediaType === "tv"
+          ? `/api/v1/owned-media/tv/${tmdbId}/server?scope=${scope || "show"}${scope === "season" ? `&season_number=${seasonNumber}` : ""}`
+          : `/api/v1/owned-media/movie/${tmdbId}`;
+
+      await apiFetch(path, { method: "DELETE" });
+      await fetchOwnedMedia({ force: true });
+
+      if (mediaType === "tv") {
+        const availability = await refreshTvAvailability(tmdbId);
+        if (!availability || availability.available_episode_count <= 0) {
+          setTvAvailabilityByTmdbId((current) => {
+            const next = { ...current };
+            delete next[tmdbId];
+            return next;
+          });
+        }
+      }
+
+      notifySuccess(i18n.t("toast.success.ownedMedia.deleted"));
+    },
+    [authState.authenticated, fetchOwnedMedia, refreshTvAvailability],
+  );
+
   const getEpisodeAvailability = useCallback(
     (tmdbId: number, seasonNumber: number, episodeNumber: number) => {
       const season = tvAvailabilityByTmdbId[tmdbId]?.seasons.find(
@@ -467,6 +506,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       getTvAvailability,
       refreshTvAvailability,
       refreshTvSeasonAvailability,
+      deleteOwnedMediaFromServer,
       getEpisodeAvailability,
     }),
     [
@@ -485,6 +525,7 @@ export function OwnedMediaProvider({ children }: ContextProps) {
       getTvAvailability,
       refreshTvAvailability,
       refreshTvSeasonAvailability,
+      deleteOwnedMediaFromServer,
       getEpisodeAvailability,
     ],
   );

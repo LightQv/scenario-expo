@@ -743,6 +743,17 @@
           "title": "Vue",
           "shows": "Séries",
           "seasons": "Saisons"
+        },
+        "delete": {
+          "menu": "Supprimer du serveur",
+          "movieTitle": "Supprimer le film ?",
+          "movieMessage": "Cela supprimera {{title}} de Radarr et effacera le fichier du serveur.",
+          "showTitle": "Supprimer la série ?",
+          "showMessage": "Cela supprimera tous les fichiers disponibles de {{title}} depuis Sonarr et retirera la série du serveur.",
+          "seasonTitle": "Supprimer la saison {{season}} ?",
+          "seasonMessage": "Cela supprimera les fichiers disponibles de {{title}} saison {{season}} et arrêtera la surveillance uniquement pour cette saison.",
+          "confirm": "Supprimer",
+          "cancel": "Annuler"
         }
       },
       "menu": {
@@ -806,7 +817,8 @@
       },
       "ownedMedia": {
         "sync": "{{count}} films possédés synchronisés",
-        "syncStarted": "Synchronisation des films possédés lancée"
+        "syncStarted": "Synchronisation des films possédés lancée",
+        "deleted": "Supprimé du serveur"
       },
       "download": {
         "requested": "Téléchargement demandé",
