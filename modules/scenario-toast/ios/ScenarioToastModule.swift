@@ -17,6 +17,11 @@ private final class ScenarioToastPresenter {
   static let shared = ScenarioToastPresenter()
 
   private var overlayView: UIView?
+  private var shadowView: UIView?
+  private var iconContainer: UIView?
+  private var imageView: UIImageView?
+  private var activityIndicator: UIActivityIndicatorView?
+  private var label: UILabel?
   private var dismissWorkItem: DispatchWorkItem?
 
   private let toastHeight: CGFloat = 52
@@ -24,7 +29,12 @@ private final class ScenarioToastPresenter {
 
   func show(message: String, type: String) {
     dismissWorkItem?.cancel()
-    overlayView?.removeFromSuperview()
+
+    if overlayView != nil {
+      update(message: message, type: type, animated: true)
+      scheduleDismissIfNeeded(type: type)
+      return
+    }
 
     guard let window = activeWindow() else { return }
 
@@ -63,6 +73,11 @@ private final class ScenarioToastPresenter {
     imageView.tintColor = .white
     imageView.contentMode = .scaleAspectFit
 
+    let activityIndicator = UIActivityIndicatorView(style: .medium)
+    activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+    activityIndicator.color = .white
+    activityIndicator.hidesWhenStopped = true
+
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
     label.text = message
@@ -72,6 +87,7 @@ private final class ScenarioToastPresenter {
     label.lineBreakMode = .byTruncatingTail
 
     iconContainer.addSubview(imageView)
+    iconContainer.addSubview(activityIndicator)
     blurView.contentView.addSubview(iconContainer)
     blurView.contentView.addSubview(label)
     shadowView.addSubview(blurView)
@@ -101,6 +117,9 @@ private final class ScenarioToastPresenter {
       imageView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
       imageView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
 
+      activityIndicator.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
+      activityIndicator.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
+
       label.leadingAnchor.constraint(equalTo: iconContainer.trailingAnchor, constant: 9),
       label.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor, constant: -14),
       label.topAnchor.constraint(greaterThanOrEqualTo: blurView.contentView.topAnchor, constant: 10),
@@ -123,6 +142,58 @@ private final class ScenarioToastPresenter {
       shadowView.transform = .identity
     }
 
+    overlayView = overlay
+    self.shadowView = shadowView
+    self.iconContainer = iconContainer
+    self.imageView = imageView
+    self.activityIndicator = activityIndicator
+    self.label = label
+
+    update(message: message, type: type, animated: false)
+    scheduleDismissIfNeeded(type: type)
+  }
+
+  private func update(message: String, type: String, animated: Bool) {
+    label?.text = message
+    iconContainer?.backgroundColor = color(for: type)
+
+    if type == "pending" {
+      imageView?.isHidden = true
+      activityIndicator?.isHidden = false
+      activityIndicator?.startAnimating()
+      return
+    }
+
+    activityIndicator?.stopAnimating()
+    activityIndicator?.isHidden = true
+    imageView?.isHidden = false
+
+    let symbolName = type == "success" ? "checkmark" : "exclamationmark"
+    let symbolConfig = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold)
+    imageView?.image = UIImage(systemName: symbolName, withConfiguration: symbolConfig)
+
+    guard animated, let shadowView else { return }
+
+    shadowView.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
+    UIView.animate(
+      withDuration: 0.22,
+      delay: 0,
+      usingSpringWithDamping: 0.78,
+      initialSpringVelocity: 0.2,
+      options: [.beginFromCurrentState, .allowUserInteraction]
+    ) {
+      shadowView.transform = .identity
+    }
+  }
+
+  private func scheduleDismissIfNeeded(type: String) {
+    dismissWorkItem?.cancel()
+
+    guard type != "pending", let overlay = overlayView, let shadowView = shadowView else {
+      dismissWorkItem = nil
+      return
+    }
+
     let workItem = DispatchWorkItem { [weak self, weak overlay, weak shadowView] in
       UIView.animate(
         withDuration: 0.18,
@@ -135,11 +206,16 @@ private final class ScenarioToastPresenter {
         overlay?.removeFromSuperview()
         if self?.overlayView === overlay {
           self?.overlayView = nil
+          self?.shadowView = nil
+          self?.iconContainer = nil
+          self?.imageView = nil
+          self?.activityIndicator = nil
+          self?.label = nil
+          self?.dismissWorkItem = nil
         }
       }
     }
 
-    overlayView = overlay
     dismissWorkItem = workItem
     DispatchQueue.main.asyncAfter(deadline: .now() + toastDuration, execute: workItem)
   }
@@ -158,6 +234,14 @@ private final class ScenarioToastPresenter {
         traitCollection.userInterfaceStyle == .dark
           ? UIColor(red: 0.51, green: 0.76, blue: 0.47, alpha: 1)
           : UIColor(red: 0.33, green: 0.61, blue: 0.28, alpha: 1)
+      }
+    }
+
+    if type == "pending" {
+      return UIColor { traitCollection in
+        traitCollection.userInterfaceStyle == .dark
+          ? UIColor(red: 0.47, green: 0.47, blue: 0.51, alpha: 1)
+          : UIColor(red: 0.38, green: 0.38, blue: 0.41, alpha: 1)
       }
     }
 

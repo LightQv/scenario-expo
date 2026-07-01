@@ -801,6 +801,11 @@
       "loading": "En cours...",
       "success": "C'est fait!"
     },
+    "pending": {
+      "ownedMedia": {
+        "delete": "Suppression du serveur..."
+      }
+    },
     "login": "Email ou mot de passe invalide",
     "register": "Pseudo ou Email déjà prit",
     "expired": "Session expirée",

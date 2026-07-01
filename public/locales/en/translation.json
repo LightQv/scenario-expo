@@ -801,6 +801,11 @@
       "loading": "Uploading...",
       "success": "Done!"
     },
+    "pending": {
+      "ownedMedia": {
+        "delete": "Deleting from server..."
+      }
+    },
     "login": "Email or password invalid",
     "register": "Username or Email already taken",
     "expired": "Session expired",

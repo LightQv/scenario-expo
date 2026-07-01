@@ -447,7 +447,6 @@ export function OwnedMediaProvider({ children }: ContextProps) {
         }
       }
 
-      notifySuccess(i18n.t("toast.success.ownedMedia.deleted"));
     },
     [authState.authenticated, fetchOwnedMedia, refreshTvAvailability],
   );

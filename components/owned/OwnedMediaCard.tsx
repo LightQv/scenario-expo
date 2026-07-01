@@ -23,7 +23,7 @@ import {
   useViewContext,
 } from "@/contexts";
 import CompactMediaCard from "@/components/ui/CompactMediaCard";
-import { notifyError } from "@/components/toasts/Toast";
+import { notifyPending } from "@/components/toasts/Toast";
 import { BLURHASH, FONTS, TOKENS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 
@@ -84,6 +84,10 @@ export default function OwnedMediaCard({
   };
 
   const handleDeleteFromServer = async () => {
+    const pendingToast = notifyPending(
+      i18n.t("toast.pending.ownedMedia.delete"),
+    );
+
     try {
       await deleteOwnedMediaFromServer({
         tmdbId: data.tmdb_id,
@@ -91,9 +95,10 @@ export default function OwnedMediaCard({
         scope: data.owned_scope === "season" ? "season" : "show",
         seasonNumber: data.season_number,
       });
+      pendingToast.success(i18n.t("toast.success.ownedMedia.deleted"));
     } catch (error) {
       console.error("Error deleting owned media from server:", error);
-      notifyError(i18n.t("toast.error"));
+      pendingToast.error(i18n.t("toast.error"));
     }
   };
 
