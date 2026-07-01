@@ -1,27 +1,39 @@
-import { Alert, Dimensions, FlatList, PlatformColor, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  PlatformColor,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import DownloadRequestCard from "@/components/downloads/DownloadRequestCard";
 import GoBackButton from "@/components/ui/GoBackButton";
 import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 import HeaderTitle from "@/components/ui/HeaderTitle";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 import { TOKENS } from "@/constants/theme";
 import { useDownloadRequestContext } from "@/contexts";
+import {
+  canUseDownloads,
+  type DownloadSettingsOverview,
+  getDownloadSettingsOverview,
+} from "@/services/downloadSettings";
 import i18n from "@/services/i18n";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const CONTENT_TOP_PADDING = 200;
-const CONTENT_BOTTOM_PADDING = 86;
+const CONTENT_BOTTOM_PADDING = 28;
 const HEADER_BLOCK_HEIGHT = 80;
-const EMPTY_STATE_HEIGHT =
-  Math.max(
-    240,
-    SCREEN_HEIGHT -
-      CONTENT_TOP_PADDING -
-      CONTENT_BOTTOM_PADDING -
-      HEADER_BLOCK_HEIGHT,
-  );
+const EMPTY_STATE_HEIGHT = Math.max(
+  240,
+  SCREEN_HEIGHT -
+    CONTENT_TOP_PADDING -
+    CONTENT_BOTTOM_PADDING -
+    HEADER_BLOCK_HEIGHT,
+);
 const ACTIVE_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
   "requested",
   "sent_to_radarr",
@@ -37,7 +49,11 @@ const TERMINAL_DOWNLOAD_STATUSES: DownloadRequestStatus[] = [
 const DOWNLOAD_POLLING_INTERVAL = 5000;
 
 export default function DownloadsScreen() {
-  const { requests, refreshRequests, cleanRequests, cancelAllRequests } = useDownloadRequestContext();
+  const { requests, refreshRequests, cleanRequests, cancelAllRequests } =
+    useDownloadRequestContext();
+  const [downloadOverview, setDownloadOverview] = useState<
+    DownloadSettingsOverview | null | undefined
+  >(undefined);
   const hasActiveRequests = requests.some((request) =>
     ACTIVE_DOWNLOAD_STATUSES.includes(request.status),
   );
@@ -67,6 +83,9 @@ export default function DownloadsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      getDownloadSettingsOverview()
+        .then(setDownloadOverview)
+        .catch(() => setDownloadOverview(null));
       refreshRequests();
 
       if (!hasActiveRequests) return;
@@ -78,6 +97,33 @@ export default function DownloadsScreen() {
       return () => clearInterval(interval);
     }, [hasActiveRequests, refreshRequests]),
   );
+
+  const downloadsReady = canUseDownloads(downloadOverview);
+
+  if (downloadOverview === undefined) {
+    return (
+      <View style={styles.container}>
+        <GoBackButton />
+        <FullScreenLoader />
+      </View>
+    );
+  }
+
+  if (!downloadsReady) {
+    return (
+      <View style={styles.container}>
+        <GoBackButton />
+        <HeaderTitle title={i18n.t("screen.downloads.title")} />
+        <Host style={styles.blockedContainer}>
+          <ContentUnavailableView
+            systemImage="gearshape.2"
+            title={i18n.t("screen.downloads.unavailable.title")}
+            description={i18n.t("screen.downloads.unavailable.body")}
+          />
+        </Host>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -113,7 +159,9 @@ export default function DownloadsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <DownloadRequestCard data={item} />}
         contentContainerStyle={styles.content}
-        ListHeaderComponent={<HeaderTitle title={i18n.t("screen.downloads.title")} />}
+        ListHeaderComponent={
+          <HeaderTitle title={i18n.t("screen.downloads.title")} />
+        }
         ListEmptyComponent={
           <Host style={styles.emptyContainer}>
             <ContentUnavailableView
@@ -139,6 +187,12 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     height: EMPTY_STATE_HEIGHT,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: TOKENS.margin.horizontal,
+  },
+  blockedContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: TOKENS.margin.horizontal,

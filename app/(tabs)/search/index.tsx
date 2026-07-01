@@ -5,7 +5,6 @@ import {
   Keyboard,
   PlatformColor,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,

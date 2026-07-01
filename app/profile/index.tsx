@@ -44,32 +44,24 @@ export default function ProfileScreen() {
     try {
       setLoading(true);
 
-      // Fetch movie count
-      const movieCountData = await apiFetch(
-        `/api/v1/statistics/count/movie/${user.id}`,
-      );
+      const [movieCountData, tvCountData, movieRuntimeData, tvRuntimeData] =
+        await Promise.all([
+          apiFetch(`/api/v1/statistics/count/movie/${user.id}`),
+          apiFetch(`/api/v1/statistics/count/tv/${user.id}`),
+          apiFetch(`/api/v1/statistics/runtime/movie/${user.id}`),
+          apiFetch(`/api/v1/statistics/runtime/tv/${user.id}`),
+        ]);
+
       const movieCount =
         movieCountData.length > 0 ? movieCountData[0].count : 0;
 
-      // Fetch TV count
-      const tvCountData = await apiFetch(
-        `/api/v1/statistics/count/tv/${user.id}`,
-      );
       const tvCount = tvCountData.length > 0 ? tvCountData[0].count : 0;
 
-      // Fetch movie runtime
-      const movieRuntimeData = await apiFetch(
-        `/api/v1/statistics/runtime/movie/${user.id}`,
-      );
       const movieRuntime = movieRuntimeData.reduce(
         (total: number, item: { runtime: number }) => total + item.runtime,
         0,
       );
 
-      // Fetch TV episodes count (same as runtime count for TV)
-      const tvRuntimeData = await apiFetch(
-        `/api/v1/statistics/runtime/tv/${user.id}`,
-      );
       const tvEpisodesCount = tvRuntimeData.length;
 
       setStatistics({
@@ -78,9 +70,9 @@ export default function ProfileScreen() {
         movieRuntime,
         tvEpisodesCount,
       });
-      setLoading(false);
     } catch (error) {
       notifyError(i18n.t("toast.error"));
+    } finally {
       setLoading(false);
     }
   }, [user?.id]);

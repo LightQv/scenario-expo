@@ -1,22 +1,27 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  PlatformColor,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import { useState } from "react";
+import { StyleSheet, View, PlatformColor } from "react-native";
 import { Formik } from "formik";
-import { forgottenSchema } from "@/services/validators";
-import i18n from "@/services/i18n";
-import { useUserContext, useThemeContext } from "@/contexts";
-import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { router } from "expo-router";
+import { Form, Host, Section, TextField } from "@expo/ui/swift-ui";
+import {
+  autocorrectionDisabled,
+  keyboardType,
+  scrollContentBackground,
+  submitLabel,
+  textContentType,
+  textInputAutocapitalization,
+} from "@expo/ui/swift-ui/modifiers";
+import { useState } from "react";
+import {
+  AuthDescription,
+  AuthFooterLink,
+  AuthMessage,
+  AuthSubmitRow,
+} from "@/components/auth/NativeAuthComponents";
+import { settingsRegularFont } from "@/components/settings/nativeSettingsModifiers";
 import GoBackButton from "@/components/ui/GoBackButton";
+import { useThemeContext, useUserContext } from "@/contexts";
+import i18n from "@/services/i18n";
+import { forgottenSchema } from "@/services/validators";
 
 export default function ForgotPasswordScreen() {
   const { forgotPassword, loader } = useUserContext();
@@ -24,30 +29,19 @@ export default function ForgotPasswordScreen() {
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
-  return (
-    <>
-      <GoBackButton variant="close" />
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Title Section */}
-        <View style={styles.titleContainer}>
-          <Text
-            style={[
-              styles.subtitle,
-              { color: PlatformColor("secondaryLabel") },
-            ]}
-          >
-            {i18n.t("form.auth.title.forgot.subtitle")}
-          </Text>
-        </View>
+  const fieldModifiers = [
+    settingsRegularFont(),
+    autocorrectionDisabled(),
+    submitLabel("done"),
+    textInputAutocapitalization("never"),
+    keyboardType("email-address"),
+    textContentType("emailAddress"),
+  ];
 
+  return (
+    <View style={styles.container}>
+      <GoBackButton variant="close" />
+      <Host style={styles.host}>
         <Formik
           initialValues={{ email: "" }}
           validationSchema={forgottenSchema}
@@ -64,257 +58,78 @@ export default function ForgotPasswordScreen() {
             }
           }}
         >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <View style={styles.form}>
-              {/* Email Field */}
-              <View style={styles.fieldContainer}>
-                <View style={styles.labelContainer}>
-                  <Text
-                    style={[styles.label, { color: PlatformColor("label") }]}
-                  >
-                    {i18n.t("form.auth.label.email")}
-                  </Text>
-                  {errors.email && touched.email && (
-                    <Text
-                      style={[
-                        styles.errorIndicator,
-                        { color: colors.error },
-                      ]}
-                    >
-                      {" *"}
-                    </Text>
-                  )}
-                </View>
-                <View
-                  style={[
-                    styles.inputContainer,
-                    {
-                      backgroundColor: PlatformColor(
-                        "secondarySystemBackground",
-                      ),
-                      borderColor:
-                        errors.email && touched.email
-                          ? colors.error
-                          : PlatformColor("separator"),
-                    },
-                  ]}
+          {({ handleChange, handleSubmit, values, errors, touched }) => {
+            const validationError = touched.email && errors.email ? errors.email : null;
+            const message = formError ?? formSuccess ?? validationError;
+            const messageColor = formError || validationError ? colors.error : colors.main;
+            const disabled = !forgottenSchema.isValidSync(values) || loader;
+
+            return (
+              <Form modifiers={[scrollContentBackground("hidden")]}> 
+                <Section>
+                  <AuthDescription text={i18n.t("form.auth.title.forgot.subtitle")} />
+                </Section>
+
+                <Section
+                  footer={
+                    message ? (
+                      <AuthMessage
+                        message={message}
+                        color={messageColor}
+                        icon={Boolean(formError || validationError)}
+                      />
+                    ) : undefined
+                  }
                 >
-                  <TextInput
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    keyboardType="email-address"
-                    onChangeText={(value) => {
+                  <TextField
+                    placeholder={i18n.t("form.auth.placeholder.email")}
+                    onTextChange={(value) => {
                       setFormError(null);
                       setFormSuccess(null);
                       handleChange("email")(value);
                     }}
-                    onBlur={handleBlur("email")}
-                    value={values.email}
-                    placeholder={i18n.t("form.auth.placeholder.email")}
-                    placeholderTextColor={PlatformColor("placeholderText")}
-                    style={[styles.input, { color: PlatformColor("label") }]}
-                    cursorColor={colors.main}
-                    selectionColor={colors.main}
+                    modifiers={fieldModifiers}
                   />
-                </View>
-                {errors.email && touched.email && (
-                  <Text
-                    style={[styles.errorText, { color: colors.error }]}
-                  >
-                    {errors.email}
-                  </Text>
-                )}
-              </View>
+                </Section>
 
-              {(formError || formSuccess) && (
-                <View
-                  style={[
-                    styles.inlineMessage,
-                    {
-                      backgroundColor: PlatformColor(
-                        "secondarySystemBackground",
-                      ),
-                      borderColor: formError ? colors.error : colors.main,
-                    },
-                  ]}
+                <Section
+                  footer={
+                    <AuthFooterLink
+                      text={i18n.t("form.auth.switch.forgot.number1")}
+                      actionText={i18n.t("form.auth.switch.forgot.number2")}
+                      alignment="center"
+                      tintColor={colors.main}
+                      onPress={() => router.back()}
+                    />
+                  }
                 >
-                  <Text
-                    style={[
-                      styles.inlineMessageText,
-                      { color: formError ? colors.error : colors.main },
-                    ]}
-                  >
-                    {formError || formSuccess}
-                  </Text>
-                </View>
-              )}
-
-              {/* Submit Button */}
-              <TouchableOpacity
-                onPress={() => handleSubmit()}
-                disabled={!forgottenSchema.isValidSync(values) || loader}
-                style={[
-                  styles.submitButton,
-                  {
-                    backgroundColor:
-                      !forgottenSchema.isValidSync(values) || loader
-                        ? PlatformColor("systemGray4")
-                        : colors.main,
-                  },
-                ]}
-                activeOpacity={BUTTON.opacity}
-              >
-                <Text
-                  style={[
-                    styles.submitButtonText,
-                    {
-                      color:
-                        !forgottenSchema.isValidSync(values) || loader
-                          ? PlatformColor("systemGray")
-                          : "#fff",
-                    },
-                  ]}
-                >
-                  {loader
-                    ? i18n.t("form.auth.submit.loading")
-                    : i18n.t("form.auth.submit.forgot")}
-                </Text>
-              </TouchableOpacity>
-
-              {/* Login Link */}
-              <TouchableOpacity
-                style={styles.loginLinkContainer}
-                activeOpacity={BUTTON.opacity}
-                onPress={() => router.back()}
-              >
-                <Text
-                  style={[
-                    styles.loginLinkText,
-                    { color: PlatformColor("secondaryLabel") },
-                  ]}
-                >
-                  {i18n.t("form.auth.switch.forgot.number1")}{" "}
-                  <Text
-                    style={[
-                      styles.loginLinkTextBold,
-                      { color: colors.main },
-                    ]}
-                  >
-                    {i18n.t("form.auth.switch.forgot.number2")}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+                  <AuthSubmitRow
+                    label={
+                      loader
+                        ? i18n.t("form.auth.submit.loading")
+                        : i18n.t("form.auth.submit.forgot")
+                    }
+                    disabled={disabled}
+                    tintColor={colors.main}
+                    onPress={() => handleSubmit()}
+                  />
+                </Section>
+              </Form>
+            );
+          }}
         </Formik>
-      </ScrollView>
-      </KeyboardAvoidingView>
-    </>
+      </Host>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollView: {
-    flex: 1,
     backgroundColor: PlatformColor("systemBackground"),
   },
-  scrollContent: {
-    padding: TOKENS.margin.horizontal,
-    paddingTop: TOKENS.modal.paddingTop,
-  },
-  titleContainer: {
-    marginBottom: 24,
-    gap: 8,
-  },
-  title: {
-    fontFamily: FONTS.bold,
-    fontSize: TOKENS.font.header,
-    lineHeight: 38,
-  },
-  subtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.lg,
-    lineHeight: 20,
-  },
-  form: {
-    gap: 20,
-  },
-  fieldContainer: {
-    gap: 8,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  label: {
-    fontFamily: FONTS.medium,
-    fontSize: TOKENS.font.lg,
-  },
-  errorIndicator: {
-    fontFamily: FONTS.bold,
-    fontSize: TOKENS.font.lg,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: TOKENS.radius.md,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    height: 48,
-  },
-  input: {
+  host: {
     flex: 1,
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.lg,
-    height: "100%",
-  },
-  errorText: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.sm,
-    marginTop: -4,
-  },
-  inlineMessage: {
-    borderWidth: 1,
-    borderRadius: TOKENS.radius.md,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  inlineMessageText: {
-    fontFamily: FONTS.medium,
-    fontSize: TOKENS.font.md,
-    lineHeight: 18,
-  },
-  submitButton: {
-    height: 52,
-    borderRadius: TOKENS.radius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-  },
-  submitButtonText: {
-    fontFamily: FONTS.bold,
-    fontSize: TOKENS.font.xxl,
-  },
-  loginLinkContainer: {
-    alignItems: "center",
-    marginTop: 8,
-  },
-  loginLinkText: {
-    fontFamily: FONTS.regular,
-    fontSize: TOKENS.font.lg,
-    textAlign: "center",
-  },
-  loginLinkTextBold: {
-    fontFamily: FONTS.bold,
+    marginTop: -12,
   },
 });

@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useCallback,
   useContext,
@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import { useUserContext } from "./UserContext";
@@ -58,7 +58,7 @@ export function BookmarkProvider({ children }: ContextProps) {
       setBookmarks(response);
     } catch (err: any) {
       // Don't show error for 403 (unauthenticated)
-      if (!err.message.includes("403")) {
+      if (!(err instanceof ApiError && err.status === 403)) {
         console.error("Error fetching bookmarks:", err);
         notifyError(i18n.t("toast.error"));
       }

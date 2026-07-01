@@ -35,6 +35,13 @@ export default {
       "expo-router",
       "expo-localization",
       [
+        "expo-local-authentication",
+        {
+          faceIDPermission:
+            "Allow Scenario to use Face ID to protect download server secrets.",
+        },
+      ],
+      [
         "expo-web-browser",
         {
           experimentalLauncherActivity: true,

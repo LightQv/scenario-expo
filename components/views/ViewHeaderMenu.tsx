@@ -94,6 +94,6 @@ export default function ViewHeaderMenu({
   };
 
   return (
-    <HeaderMenu label="View filters" actions={actions} />
+    <HeaderMenu label={i18n.t("navigation.actions.viewFilters")} actions={actions} />
   );
 }

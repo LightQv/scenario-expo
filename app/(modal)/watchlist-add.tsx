@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { apiFetch, tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
-import { notifyError, notifySuccess } from "@/components/toasts/Toast";
+import { notifyError } from "@/components/toasts/Toast";
 import { useUserContext, useThemeContext } from "@/contexts";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";

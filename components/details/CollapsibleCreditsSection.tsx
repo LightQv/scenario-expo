@@ -11,6 +11,7 @@ import { useState } from "react";
 import { FONTS, TOKENS, BUTTON } from "@/constants/theme";
 import HorizontalMediaCard from "./HorizontalMediaCard";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "@/services/i18n";
 
 type CollapsibleCreditsSectionProps = {
   title: string;
@@ -56,7 +57,7 @@ export default function CollapsibleCreditsSection({
           { color: secondaryTextColor || PlatformColor("secondaryLabel") },
         ]}
       >
-        No credits found
+        {i18n.t("screen.detail.credits.empty")}
       </Text>
     </View>
   );

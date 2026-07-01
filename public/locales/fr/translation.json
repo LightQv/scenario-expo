@@ -1,5 +1,20 @@
 {
   "navigation": {
+    "actions": {
+      "back": "Retour",
+      "close": "Fermer",
+      "validate": "Valider",
+      "more": "Plus d'actions",
+      "menu": "Menu",
+      "filters": "Filtres",
+      "viewFilters": "Filtres des vues",
+      "watchlistActions": "Actions de liste",
+      "profileActions": "Actions du profil",
+      "profile": "Profil",
+      "ownedMediaFilters": "Filtres des médias disponibles",
+      "mediaActions": "Actions du média",
+      "viewActions": "Actions de vue"
+    },
     "tabs": {
       "top": "Top",
       "discover": "Découvrir",
@@ -135,32 +150,11 @@
     },
     "profile": {
       "update": {
-        "title": "Modifier le profil",
-        "subtitle": "Notez que vous serez déconnecté pour valider les changements.",
-        "confirmation": {
-          "title": "Confirmer la modification",
-          "message": "Le mot de passe étant modifié, vous serez déconnecté pour des raisons de sécurité. Voulez-vous continuer ?"
-        },
         "banner": {
           "title": "Changer de bannière ?",
-          "subtitle1": "Votre bannière actuelle :",
-          "subtitle2": "Votre future bannière :",
+          "subtitle": "Votre bannière actuelle :",
           "pick": "Selectionner une image",
           "delete": "Supprimer la bannière",
-          "submit": "Modifier",
-          "cancel": "Annuler"
-        },
-        "email": {
-          "title": "Un changement ?",
-          "label": "Email",
-          "placeholder": "Entrez votre email ici",
-          "submit": "Modifier",
-          "cancel": "Annuler"
-        },
-        "password": {
-          "title": "Un changement ?",
-          "label1": "Mot de passe",
-          "label2": "Confirmation mot de passe",
           "submit": "Modifier",
           "cancel": "Annuler"
         }
@@ -223,6 +217,11 @@
     },
     "forgotPassword": {
       "title": "Vous avez oublié quelque chose ?"
+    },
+    "notFound": {
+      "title": "Oups !",
+      "description": "Cet écran n'existe pas.",
+      "home": "Retour à l'accueil"
     },
     "account": {
       "title": "Compte",
@@ -346,27 +345,34 @@
           "subtitle2": "Acheter"
         },
         "recommandations": "Recommandations"
+      },
+      "credits": {
+        "empty": "Aucun crédit trouvé"
       }
     },
-      "downloads": {
-        "title": "Téléchargements",
-        "subtitle": "Demandes envoyées à Radarr ou Sonarr. La disponibilité se met à jour après import.",
-        "empty": "Aucune demande de téléchargement pour le moment.",
-        "emptyState": {
-          "title": "Aucune demande",
-          "body": "Demandez un film ou une série depuis sa fiche et il apparaîtra ici pendant la recherche."
-        },
-        "remaining": "{{size}} restants",
-        "scope": {
-          "movie": "Film",
-          "series": "Série",
-          "season": "Saison {{season}}",
-          "episode": "S{{season}} · E{{episode}}",
-          "movieDownload": "Téléchargement du film",
-          "seriesDownload": "Téléchargement de la série",
-          "seasonDownload": "Téléchargement de la saison {{season}}",
-          "episodeDownload": "Téléchargement S{{season}} E{{episode}}"
-        },
+    "downloads": {
+      "title": "Téléchargements",
+      "subtitle": "Demandes envoyées à Radarr ou Sonarr. La disponibilité se met à jour après import.",
+      "empty": "Aucune demande de téléchargement pour le moment.",
+      "emptyState": {
+        "title": "Aucune demande",
+        "body": "Demandez un film ou une série depuis sa fiche et il apparaîtra ici pendant la recherche."
+      },
+      "unavailable": {
+        "title": "Les téléchargements ne sont pas prêts",
+        "body": "Terminez la configuration films Radarr ou toutes les configurations Sonarr pour débloquer les téléchargements."
+      },
+      "remaining": "{{size}} restants",
+      "scope": {
+        "movie": "Film",
+        "series": "Série",
+        "season": "Saison {{season}}",
+        "episode": "S{{season}} · E{{episode}}",
+        "movieDownload": "Téléchargement du film",
+        "seriesDownload": "Téléchargement de la série",
+        "seasonDownload": "Téléchargement de la saison {{season}}",
+        "episodeDownload": "Téléchargement S{{season}} E{{episode}}"
+      },
       "actions": {
         "retry": "Réessayer",
         "cancel": "Annuler",
@@ -535,65 +541,149 @@
     },
     "settings": {
       "sections": {
-        "appearance": "Apparence",
-        "downloads": "Téléchargements",
-        "account": "Compte",
         "status": "Statut",
         "connection": "Connexion",
+        "actions": "Actions",
         "library": "Bibliothèque",
+        "folders": "Dossiers",
         "rootFolders": "Dossiers racine",
-        "profiles": "Profils",
-        "tags": "Tags"
+        "configurations": "Configurations",
+        "languages": "Langues",
+        "tags": "Tags",
+        "series": "Séries",
+        "behavior": "Comportement"
       },
       "common": {
         "comingSoon": "Bientôt disponible",
-        "notConfigured": "Non configuré"
+        "notConfigured": "Non configuré",
+        "configured": "Configuré",
+        "on": "Activé",
+        "off": "Désactivé",
+        "loading": "Chargement",
+        "testConnection": "Tester la connexion",
+        "connectionSuccess": "Connecté à {{name}}{{version}}",
+        "connectionFailed": "Connexion impossible. Vérifiez l'URL et la clé API.",
+        "options": "Options",
+        "loadingOptions": "Chargement des options du serveur...",
+        "optionsError": "Impossible de charger les options du serveur. Vérifiez l'URL, la clé API et la configuration du serveur.",
+        "configureConnectionFirst": "Renseignez l'URL et la clé API pour charger les options du serveur.",
+        "required": "Requis",
+        "optional": "Optionnel",
+        "validate": "Valider",
+        "cancel": "Annuler"
       },
       "theme": {
         "title": "Thème",
         "description": "Choisissez l'apparence de Scenario et personnalisez les couleurs d'accent."
       },
+      "account": {
+        "title": "Compte",
+        "description": "Gérez les informations d'identité et de sécurité utilisées pour vous connecter à Scenario.",
+        "username": "Nom d'utilisateur",
+        "email": "Email",
+        "password": "Mot de passe",
+        "editTitle": {
+          "username": "Nom d'utilisateur",
+          "email": "Email"
+        },
+        "placeholders": {
+          "username": "Entrez votre nom d'utilisateur",
+          "email": "Entrez votre email",
+          "password": "Entrez un nouveau mot de passe",
+          "confirmPassword": "Confirmez le nouveau mot de passe"
+        },
+        "passwordEdit": {
+          "title": "Changer le mot de passe",
+          "subtitle": "Choisissez un nouveau mot de passe pour votre compte. Vous serez déconnecté après l'enregistrement."
+        },
+        "localAuth": {
+          "prompt": "Déverrouiller les paramètres de sécurité du compte",
+          "unavailable": "Configurez Face ID, Touch ID ou un code d'appareil pour modifier votre mot de passe."
+        }
+      },
       "downloads": {
         "title": "Téléchargements",
         "description": "Configurez les serveurs de téléchargement utilisés par Scenario pour votre compte. Les secrets seront chiffrés et ne seront plus affichés après l'enregistrement.",
-        "footer": "Configurez les intégrations Radarr et Sonarr utilisées par votre compte.",
         "enable": "Activer les intégrations de téléchargement"
       },
       "radarr": {
         "title": "Radarr",
         "description": "Radarr sera utilisé pour les téléchargements de films et la synchronisation des films disponibles.",
-        "enable": "Activer Radarr",
+        "serverHint": "Scenario utilise les dossiers et options de qualité configurés sur votre serveur Radarr. Si une option manque ou semble incorrecte, modifiez-la d'abord dans Radarr.",
         "testConnection": "Tester la connexion",
-        "syncOwnedMovies": "Synchroniser les films disponibles"
+        "syncOwnedMovies": "Synchroniser les films disponibles",
+        "addConfiguration": "Ajouter une configuration de films",
+        "addConfigurationTitle": "Ajouter une configuration",
+        "noConfigurations": "Aucune configuration",
+        "configurations": {
+          "movie": "Film"
+        },
+        "deleteConfiguration": {
+          "row": "Supprimer la configuration",
+          "title": "Supprimer la configuration ?",
+          "message": "Supprimer la configuration films ? Elle sera de nouveau disponible lors de l'ajout d'une configuration Radarr.",
+          "confirm": "Supprimer"
+        }
       },
       "sonarr": {
         "title": "Sonarr",
         "description": "Sonarr sera utilisé pour les téléchargements de séries, de saisons et la synchronisation des épisodes disponibles.",
-        "enable": "Activer Sonarr",
+        "serverHint": "Scenario utilise les dossiers, options de qualité, langues et tags configurés sur votre serveur Sonarr. Si une option manque ou semble incorrecte, modifiez-la d'abord dans Sonarr.",
         "testConnection": "Tester la connexion",
         "syncOwnedTv": "Synchroniser les séries disponibles",
-        "profilesFooter": "Scenario distingue les séries en cours des saisons terminées. Les saisons en cours utilisent le profil On-air, tandis que les saisons terminées ou archivées utilisent le profil Complete. Cela permet de privilégier le 1080p pour les épisodes récents et des saisons complètes plus légères.",
-        "tagsFooter": "Les tags permettent à Sonarr d'appliquer des profils de release différents. Utilisez tv-onair pour les séries en cours et tv-complete pour les saisons terminées ou archivées."
+        "addConfiguration": "Ajouter une configuration Sonarr",
+        "addConfigurationTitle": "Ajouter une configuration",
+        "noConfigurations": "Aucune configuration",
+        "partialConfigurationsWarning": "Terminez toutes les configurations Sonarr pour débloquer les téléchargements TV et la synchronisation des disponibilités. Scenario a besoin de TV On Air, TV Complete et Anime pour router les demandes correctement.",
+        "tagFooter": "Scenario applique automatiquement ce tag. Assurez-vous que les réglages de release ou restrictions d'indexer Sonarr utilisent le même tag si nécessaire.",
+        "configurations": {
+          "tv_on_air": "TV On Air",
+          "tv_complete": "TV Complete",
+          "anime": "Anime"
+        },
+        "deleteConfiguration": {
+          "row": "Supprimer la configuration",
+          "title": "Supprimer la configuration ?",
+          "message": "Supprimer la configuration {{name}} ? Elle sera de nouveau disponible lors de l'ajout d'une configuration Sonarr.",
+          "confirm": "Supprimer"
+        }
       },
       "deleteAccount": {
         "title": "Supprimer le compte",
         "description": "Cette action supprime définitivement votre compte et ne peut pas être annulée."
       },
+      "editTitle": {
+        "url": "URL"
+      },
+      "secretEdit": {
+        "apiKey": {
+          "title": "Saisir la clé API",
+          "subtitle": "Collez la clé API de votre serveur de téléchargement. Elle sera stockée de façon sécurisée."
+        },
+        "webhookSecret": {
+          "title": "Saisir le secret du webhook",
+          "subtitle": "Choisissez le secret partagé que Scenario doit utiliser pour vérifier les appels webhook."
+        }
+      },
+      "localAuth": {
+        "prompt": "Déverrouiller les secrets du serveur de téléchargement",
+        "cancel": "Annuler",
+        "fallback": "Utiliser le code",
+        "unavailable": "Configurez Face ID, Touch ID ou un code d'appareil pour modifier les secrets du serveur de téléchargement.",
+        "failed": "L'authentification a échoué. Les paramètres secrets restent verrouillés."
+      },
       "fields": {
+        "url": "URL",
+        "server": "Serveur",
         "apiKey": "Clé API",
         "webhookSecret": "Secret du webhook",
+        "type": "Type",
         "rootFolder": "Chemin du dossier racine",
         "qualityProfile": "ID du profil de qualité",
-        "minimumAvailability": "Disponibilité minimale",
+        "tag": "Tag",
         "tvRootFolder": "Chemin du dossier séries",
         "animeRootFolder": "Chemin du dossier anime",
-        "fallbackQualityProfile": "ID du profil de qualité par défaut",
-        "onAirQualityProfile": "ID du profil On-air",
-        "completeQualityProfile": "ID du profil Complete",
-        "animeQualityProfile": "ID du profil anime",
-        "animeTag": "Tag anime",
-        "onAirTag": "Tag On-air",
-        "completeTag": "Tag Complete"
+        "languageProfile": "ID du profil de langue"
       }
     },
     "applicationSettings": {
@@ -604,7 +694,12 @@
         "dark": "Sombre",
         "system": "Système"
       },
+      "appearance": {
+        "title": "Apparence",
+        "mode": "Mode"
+      },
       "colors": {
+        "accent": "Couleur d'accent",
         "light": "Mode clair",
         "dark": "Mode sombre"
       },
@@ -619,6 +714,7 @@
         "description": "Retrouvez ici toutes vos statistiques de visionnage."
       },
       "view": {
+        "title": "Vues",
         "header": {
           "movie": "Films vus",
           "tv": "Séries TV vues"
@@ -637,21 +733,15 @@
           "body": "Synchronisez votre bibliothèque pour afficher les films disponibles ici.",
           "tvTitle": "Aucune série disponible",
           "tvBody": "Synchronisez votre bibliothèque Sonarr pour afficher les séries disponibles ici."
-        }
-      },
-      "settings": {
-        "header": "Paramètres",
-        "description": "Changez ici votre bannière, pseudo, email ou mot de passe.",
-        "list": {
-          "option1": "Modifier ma bannière",
-          "option2": "Changer d'email",
-          "option3": "Changer de mot de passe",
-          "option4": "Supprimer mon compte"
+        },
+        "unavailable": {
+          "title": "La synchronisation des disponibilités n'est pas prête",
+          "movieBody": "Terminez la configuration films Radarr pour débloquer les films disponibles.",
+          "tvBody": "Terminez toutes les configurations Sonarr pour débloquer les séries disponibles."
         }
       },
       "menu": {
         "editBanner": "Modifier la bannière",
-        "editProfile": "Modifier le profil",
         "syncOwnedMovies": "Synchroniser les films possédés",
         "syncOwnedMoviesRunning": "Synchronisation en cours",
         "syncOwnedTv": "Synchroniser les séries possédées",
@@ -704,10 +794,6 @@
       "urlCopied": "URL copiée dans le presse-papiers",
       "banner": "Bannière mise à jour avec succès",
       "profile": {
-        "update": {
-          "email": "Email mis à jour",
-          "password": "Mot de passe mis à jour"
-        },
         "delete": "Compte supprimé"
       },
       "settings": {

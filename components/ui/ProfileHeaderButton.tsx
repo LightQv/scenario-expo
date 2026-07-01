@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext, useUserContext } from "@/contexts";
 import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
 import { BUTTON, FONTS, TOKENS } from "@/constants/theme";
+import i18n from "@/services/i18n";
 
 export default function ProfileHeaderButton() {
   const { authState, user } = useUserContext();
@@ -45,7 +46,7 @@ export default function ProfileHeaderButton() {
       actions={[
         {
           id: "profile",
-          label: "Profile",
+          label: i18n.t("navigation.actions.profile"),
           icon: "person.crop.circle",
           onPress: handlePress,
         },

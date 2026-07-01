@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import i18n from "@/services/i18n";
 import { notifyError } from "@/components/toasts/Toast";
-import { apiFetch } from "@/services/instances";
+import { ApiError, apiFetch } from "@/services/instances";
 import { CONFIG } from "@/services/config";
 
 /**
@@ -119,7 +119,7 @@ export function UserProvider({ children }: ContextProps) {
       // Auto-login after successful registration
       await login(email, password);
     } catch (err: any) {
-      const isExpectedAuthError = err.message.includes("400");
+      const isExpectedAuthError = err instanceof ApiError && err.status === 400;
       if (!isExpectedAuthError) {
         console.error("Registration error:", err);
       }
@@ -150,7 +150,7 @@ export function UserProvider({ children }: ContextProps) {
       }
     } catch (err: any) {
       const isExpectedAuthError =
-        err.message.includes("401") || err.message.includes("403");
+        err instanceof ApiError && (err.status === 401 || err.status === 403);
       if (!isExpectedAuthError) {
         console.error("Login error:", err);
       }

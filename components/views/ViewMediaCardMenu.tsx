@@ -66,7 +66,7 @@ export default function ViewMediaCardMenu({
 
   return (
     <NativeCardMenu
-      accessibilityLabel="View actions"
+      accessibilityLabel={i18n.t("navigation.actions.viewActions")}
       actions={actions}
       textColor={textColor}
     />

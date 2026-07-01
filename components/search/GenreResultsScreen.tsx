@@ -146,7 +146,7 @@ export default function GenreResultsScreen({
           />
         }
       >
-        <HeaderTitle title={genreName || "Genre"} />
+        <HeaderTitle title={genreName || i18n.t("filter.genre.title")} />
 
         {sections
           .filter((section) => section.data.length > 0 || section.loading)

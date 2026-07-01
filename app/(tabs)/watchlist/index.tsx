@@ -52,7 +52,7 @@ export default function WatchlistIndexScreen() {
   const { user, authState } = useUserContext();
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
   const [sortedWatchlists, setSortedWatchlists] = useState<Watchlist[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [sortType, setSortType] = useState<SortType>("title_asc");
 
@@ -107,14 +107,7 @@ export default function WatchlistIndexScreen() {
     setSortedWatchlists(sorted);
   }, [watchlists, sortType]);
 
-  // Initial load
-  useEffect(() => {
-    if (user?.id) {
-      fetchWatchlists();
-    }
-  }, [user?.id]);
-
-  // Refresh when screen comes into focus (e.g., after creating a watchlist)
+  // Initial load and refresh when screen comes into focus.
   useFocusEffect(
     useCallback(() => {
       if (user?.id) {

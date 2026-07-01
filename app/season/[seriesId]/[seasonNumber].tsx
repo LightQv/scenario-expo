@@ -5,8 +5,8 @@ import {
   ScrollView,
   PlatformColor,
 } from "react-native";
-import { useEffect, useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
 import { Image } from "expo-image";
 import { tmdbFetch } from "@/services/instances";
 import i18n from "@/services/i18n";
@@ -19,6 +19,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useDownloadRequestContext, useOwnedMediaContext } from "@/contexts";
 import HeaderActionCapsule from "@/components/ui/HeaderActionCapsule";
+import {
+  type DownloadSettingsOverview,
+  getDownloadSettingsOverview,
+  isSonarrReady,
+} from "@/services/downloadSettings";
 
 export default function SeasonDetailScreen() {
   const { colors, isDark } = useThemeContext();
@@ -31,7 +36,8 @@ export default function SeasonDetailScreen() {
   const [data, setData] = useState<SeasonDetail | null>(null);
   const [seasonAvailability, setSeasonAvailability] =
     useState<TvSeasonAvailability | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [downloadOverview, setDownloadOverview] =
+    useState<DownloadSettingsOverview | null>(null);
   const navigation = useNavigation();
   const {
     getRequestForScope,
@@ -54,11 +60,19 @@ export default function SeasonDetailScreen() {
   );
   const canRetrySeasonRequest =
     seasonRequest?.status === "failed" || seasonRequest?.status === "not_found";
+  const canShowDownloadAction = isSonarrReady(downloadOverview);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDownloadSettingsOverview()
+        .then(setDownloadOverview)
+        .catch(() => setDownloadOverview(null));
+    }, []),
+  );
 
   // Fetch season details
   useEffect(() => {
     if (seriesId && seasonNumber) {
-      setLoading(true);
       setData(null);
 
       tmdbFetch(
@@ -66,11 +80,9 @@ export default function SeasonDetailScreen() {
       )
         .then((response) => {
           setData(response);
-          setLoading(false);
         })
         .catch(() => {
           notifyError(i18n.t("toast.errorTMDB"));
-          setLoading(false);
         });
     }
   }, [seriesId, seasonNumber]);
@@ -119,37 +131,39 @@ export default function SeasonDetailScreen() {
         { backgroundColor: colors.background },
       ]}
     >
-      <HeaderActionCapsule
-        actions={[
-          {
-            id: "more",
-            label: "More actions",
-            icon: "ellipsis",
-            menu: [
-              {
-                id: "download-season",
-                title: getSeasonDownloadTitle(
-                  seasonAvailability,
-                  seasonRequest,
-                  isSeasonRequesting,
-                  canRetrySeasonRequest,
-                ),
-                icon:
-                  seasonAvailability?.status === "available"
-                    ? "checkmark.circle"
-                    : "tray.and.arrow.down",
-                disabled:
-                  seasonAvailability?.status === "available" ||
-                  isSeasonRequesting ||
-                  (!!seasonRequest &&
-                    !canRetrySeasonRequest &&
-                    seasonRequest.status !== "cancelled"),
-                onPress: handleDownloadSeason,
-              },
-            ],
-          },
-        ]}
-      />
+      {canShowDownloadAction ? (
+        <HeaderActionCapsule
+          actions={[
+            {
+              id: "more",
+              label: i18n.t("navigation.actions.more"),
+              icon: "ellipsis",
+              menu: [
+                {
+                  id: "download-season",
+                  title: getSeasonDownloadTitle(
+                    seasonAvailability,
+                    seasonRequest,
+                    isSeasonRequesting,
+                    canRetrySeasonRequest,
+                  ),
+                  icon:
+                    seasonAvailability?.status === "available"
+                      ? "checkmark.circle"
+                      : "tray.and.arrow.down",
+                  disabled:
+                    seasonAvailability?.status === "available" ||
+                    isSeasonRequesting ||
+                    (!!seasonRequest &&
+                      !canRetrySeasonRequest &&
+                      seasonRequest.status !== "cancelled"),
+                  onPress: handleDownloadSeason,
+                },
+              ],
+            },
+          ]}
+        />
+      ) : null}
       <StatusBar style={statusStyle} animated />
 
       <ScrollView
