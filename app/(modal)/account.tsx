@@ -16,6 +16,7 @@ import {
 import {
   background,
   buttonStyle,
+  contentShape,
   foregroundStyle,
   frame,
   listStyle,
@@ -192,9 +193,13 @@ function AccountProfileCard({
   return (
     <Button
       onPress={onPress}
-      modifiers={[buttonStyle("plain"), padding({ all: 2 })]}
+      modifiers={[buttonStyle("automatic"), padding({ all: 2 })]}
     >
-      <HStack alignment="center" spacing={14}>
+      <HStack
+        alignment="center"
+        spacing={14}
+        modifiers={[frame({ maxWidth: 999 }), contentShape(shapes.rectangle())]}
+      >
         <ZStack
           modifiers={[
             frame({ width: 51, height: 51 }),
@@ -209,11 +214,18 @@ function AccountProfileCard({
         </ZStack>
 
         <VStack alignment="leading" spacing={2}>
-          <SwiftText modifiers={[settingsBoldFont(18)]}>{username}</SwiftText>
+          <SwiftText
+            modifiers={[
+              settingsBoldFont(18),
+              foregroundStyle(PlatformColor("label")),
+            ]}
+          >
+            {username}
+          </SwiftText>
           <SwiftText
             modifiers={[
               settingsRegularFont(TOKENS.font.lg),
-              foregroundStyle({ type: "hierarchical", style: "secondary" }),
+              foregroundStyle(PlatformColor("secondaryLabel")),
             ]}
           >
             {i18n.t("screen.account.viewProfile")}
