@@ -1,12 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
-import { ColorValue, StyleSheet, View } from "react-native";
-import {
-  Button as NativeButton,
-  ContextMenu,
-  Host,
-  RNHostView,
-} from "@expo/ui/swift-ui";
-import CompactMediaCardPreview from "@/components/ui/CompactMediaCardPreview";
+import { ColorValue, StyleSheet } from "react-native";
+import { Button as NativeButton } from "@expo/ui/swift-ui";
+import ScenarioContextMenu from "scenario-context-menu";
 
 export type CompactMediaContextMenuAction = {
   id: string;
@@ -28,6 +23,8 @@ type CompactMediaContextMenuProps = {
     secondaryTextColor?: string;
     leadingAccessory?: ReactNode;
     trailingAccessory?: ReactNode;
+    viewed?: boolean;
+    badgeLabel?: string;
   };
 };
 
@@ -37,42 +34,32 @@ export default function CompactMediaContextMenu({
   preview,
 }: CompactMediaContextMenuProps) {
   return (
-    <Host style={styles.contextMenuHost}>
-      <ContextMenu>
-        <ContextMenu.Items>
-          {actions.map((action) => (
-            <NativeButton
-              key={action.id}
-              label={action.label}
-              systemImage={action.systemImage}
-              role={action.destructive ? "destructive" : undefined}
-              onPress={action.onPress}
-            />
-          ))}
-        </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <RNHostView>
-            <View style={styles.contextMenuTrigger} collapsable={false}>
-              {trigger}
-            </View>
-          </RNHostView>
-        </ContextMenu.Trigger>
-        <ContextMenu.Preview>
-          <RNHostView matchContents>
-            <CompactMediaCardPreview {...preview} />
-          </RNHostView>
-        </ContextMenu.Preview>
-      </ContextMenu>
-    </Host>
+    <ScenarioContextMenu
+      actions={actions.map((action) => ({
+        id: action.id,
+        label: action.label,
+        systemImage: action.systemImage,
+        destructive: action.destructive,
+      }))}
+      preview={{
+        title: preview.title,
+        subtitle: preview.subtitle,
+        posterPath: preview.posterPath,
+        viewed: preview.viewed,
+        badgeLabel: preview.badgeLabel,
+      }}
+      onAction={(actionId) => {
+        actions.find((action) => action.id === actionId)?.onPress();
+      }}
+      style={styles.contextMenuHost}
+    >
+      {trigger}
+    </ScenarioContextMenu>
   );
 }
 
 const styles = StyleSheet.create({
   contextMenuHost: {
-    width: "100%",
-    height: 121,
-  },
-  contextMenuTrigger: {
     width: "100%",
     height: 121,
   },

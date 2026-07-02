@@ -1,17 +1,17 @@
 import {
-  StyleSheet,
-  View,
-  Text,
-  PlatformColor,
   FlatList,
   ListRenderItem,
+  PlatformColor,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { useLocalSearchParams, useScrollToTop } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import i18n from "@/services/i18n";
 import { useViewContext } from "@/contexts/ViewContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
-import { TOKENS, FONTS } from "@/constants/theme";
+import { FONTS, TOKENS } from "@/constants/theme";
 import ViewMediaCard from "@/components/views/ViewMediaCard";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import ViewHeaderMenu from "@/components/views/ViewHeaderMenu";
@@ -19,6 +19,8 @@ import FullScreenLoader from "@/components/ui/FullScreenLoader";
 import GoBackButton from "@/components/ui/GoBackButton";
 
 type SortType = "title_asc" | "title_desc" | "date_asc" | "date_desc";
+
+const COMPACT_MEDIA_SEPARATOR_HEIGHT = 2;
 
 export default function ViewTypeScreen() {
   const { viewType } = useLocalSearchParams<{ viewType: string }>();
@@ -40,29 +42,24 @@ export default function ViewTypeScreen() {
     return i18n.t("screen.profile.view.title");
   };
 
-  // Handle sort change
   const handleSortChange = (sort: SortType) => {
     setSortType(sort);
   };
 
-  // Handle genre filter change
   const handleGenreChange = (genre: number | null) => {
     setGenreId(genre);
   };
 
-  // Filter, sort and process views
   useEffect(() => {
     if (views) {
       let processed = views.filter((view) => view.media_type === viewType);
 
-      // Apply genre filter
       if (genreId !== null) {
         processed = processed.filter((view) =>
           view.genre_ids?.includes(genreId),
         );
       }
 
-      // Apply sort
       switch (sortType) {
         case "title_asc":
           processed.sort((a, b) =>
@@ -96,29 +93,30 @@ export default function ViewTypeScreen() {
     }
   }, [views, viewType, sortType, genreId]);
 
-  // Handle local deletion to avoid scroll to top
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     setFilteredViews((prev) => prev.filter((view) => view.id !== id));
-  };
+  }, []);
 
   const backgroundColor = PlatformColor("systemBackground");
   const textColor = colors.text;
   const secondaryTextColor = isDark ? "#c9c9ce" : "#8e8e93";
 
-  const renderItem: ListRenderItem<APIMedia> = ({ item }) => (
-    <ViewMediaCard
-      data={item}
-      onDelete={handleDelete}
-      backgroundColor={backgroundColor}
-      textColor={textColor}
-      secondaryTextColor={secondaryTextColor}
-    />
+  const renderItem: ListRenderItem<APIMedia> = useCallback(
+    ({ item }) => (
+      <ViewMediaCard
+        data={item}
+        onDelete={handleDelete}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+      />
+    ),
+    [backgroundColor, handleDelete, secondaryTextColor, textColor],
   );
 
-  const renderEmpty = () => {
-    if (isLoading) {
-      return <FullScreenLoader />;
-    }
+  const renderEmpty = useCallback(() => {
+    if (isLoading) return <FullScreenLoader />;
+
     return (
       <View style={styles.emptyContainer}>
         <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
@@ -126,13 +124,26 @@ export default function ViewTypeScreen() {
         </Text>
       </View>
     );
-  };
+  }, [isLoading, secondaryTextColor]);
 
-  const renderItemSeparator = () => (
-    <View style={{ height: 2, backgroundColor }} />
+  const renderItemSeparator = useCallback(
+    () => (
+      <View
+        style={{
+          height: COMPACT_MEDIA_SEPARATOR_HEIGHT,
+          backgroundColor,
+        }}
+      />
+    ),
+    [backgroundColor],
   );
 
-  const renderHeader = () => <HeaderTitle title={getTitle()} />;
+  const renderHeader = useCallback(
+    () => <HeaderTitle title={getTitle()} />,
+    [viewType],
+  );
+
+  const keyExtractor = useCallback((item: APIMedia) => item.id.toString(), []);
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -148,12 +159,16 @@ export default function ViewTypeScreen() {
         ref={listRef}
         data={filteredViews}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
         ItemSeparatorComponent={renderItemSeparator}
+        initialNumToRender={10}
+        maxToRenderPerBatch={8}
+        updateCellsBatchingPeriod={50}
+        windowSize={9}
       />
     </View>
   );

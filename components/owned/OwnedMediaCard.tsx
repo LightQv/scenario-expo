@@ -134,6 +134,8 @@ export default function OwnedMediaCard({
         secondaryTextColor,
         leadingAccessory: previewViewedIndicator,
         trailingAccessory: partialBadge,
+        viewed,
+        badgeLabel: showPartialBadge ? i18n.t("screen.detail.media.partial") : undefined,
       }}
       trigger={
         <CompactMediaCard
