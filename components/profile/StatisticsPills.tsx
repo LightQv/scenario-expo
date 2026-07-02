@@ -8,7 +8,10 @@ type StatisticsPillsProps = {
   tvCount: number;
   movieRuntime: number; // in minutes
   tvEpisodesCount: number;
-  ownedMovieCount: number;
+  availableMovieCount: number;
+  availableTvCount: number;
+  showAvailableMovieCount: boolean;
+  showAvailableTvCount: boolean;
   pillBackgroundColor?: ColorValue;
   textColor?: ColorValue;
 };
@@ -18,7 +21,10 @@ export default function StatisticsPills({
   tvCount,
   movieRuntime,
   tvEpisodesCount,
-  ownedMovieCount,
+  availableMovieCount,
+  availableTvCount,
+  showAvailableMovieCount,
+  showAvailableTvCount,
   pillBackgroundColor = PlatformColor("secondarySystemBackground"),
   textColor = PlatformColor("label"),
 }: StatisticsPillsProps) {
@@ -45,10 +51,16 @@ export default function StatisticsPills({
     return `${tvEpisodesCount} ${i18n.t("stats.tvsRuntime")}`;
   };
 
-  const formatOwnedMovies = () => {
-    if (ownedMovieCount === 1)
-      return `${ownedMovieCount} ${i18n.t("stats.ownedMovie")}`;
-    return `${ownedMovieCount} ${i18n.t("stats.ownedMovies")}`;
+  const formatAvailableMovies = () => {
+    if (availableMovieCount === 1)
+      return `${availableMovieCount} ${i18n.t("stats.availableMovie")}`;
+    return `${availableMovieCount} ${i18n.t("stats.availableMovies")}`;
+  };
+
+  const formatAvailableTvShows = () => {
+    if (availableTvCount === 1)
+      return `${availableTvCount} ${i18n.t("stats.availableTv")}`;
+    return `${availableTvCount} ${i18n.t("stats.availableTvs")}`;
   };
 
   return (
@@ -101,17 +113,31 @@ export default function StatisticsPills({
         </Text>
       </View>
 
-      {/* Owned Movie Count */}
-      <View
-        style={[
-          styles.pill,
-          { backgroundColor: pillBackgroundColor },
-        ]}
-      >
-        <Text style={[styles.pillText, { color: textColor }]}> 
-          {formatOwnedMovies()}
-        </Text>
-      </View>
+      {showAvailableMovieCount ? (
+        <View
+          style={[
+            styles.pill,
+            { backgroundColor: pillBackgroundColor },
+          ]}
+        >
+          <Text style={[styles.pillText, { color: textColor }]}> 
+            {formatAvailableMovies()}
+          </Text>
+        </View>
+      ) : null}
+
+      {showAvailableTvCount ? (
+        <View
+          style={[
+            styles.pill,
+            { backgroundColor: pillBackgroundColor },
+          ]}
+        >
+          <Text style={[styles.pillText, { color: textColor }]}> 
+            {formatAvailableTvShows()}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }

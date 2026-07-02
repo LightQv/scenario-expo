@@ -793,8 +793,10 @@
     "movieRuntime": "de Films cumulés",
     "tvRuntime": "Épisode vu",
     "tvsRuntime": "Épisodes vus",
-    "ownedMovie": "Disponible",
-    "ownedMovies": "Disponibles"
+    "availableMovie": "Film disponible",
+    "availableMovies": "Films disponibles",
+    "availableTv": "Série disponible",
+    "availableTvs": "Séries disponibles"
   },
   "toast": {
     "promise": {

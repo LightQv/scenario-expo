@@ -793,8 +793,10 @@
     "movieRuntime": "Movie's total runtime",
     "tvRuntime": "Episode watched",
     "tvsRuntime": "Episodes watched",
-    "ownedMovie": "Available",
-    "ownedMovies": "Available"
+    "availableMovie": "Available movie",
+    "availableMovies": "Available movies",
+    "availableTv": "Available TV show",
+    "availableTvs": "Available TV shows"
   },
   "toast": {
     "promise": {

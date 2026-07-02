@@ -10,6 +10,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { useOwnedMediaContext, useThemeContext, useUserContext } from "@/contexts";
 import { apiFetch } from "@/services/instances";
+import {
+  getDownloadSettingsOverview,
+  isRadarrReady,
+  isSonarrReady,
+  type DownloadSettingsOverview,
+} from "@/services/downloadSettings";
 import { notifyError } from "@/components/toasts/Toast";
 import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
@@ -28,13 +34,15 @@ type Statistics = {
 export default function ProfileScreen() {
   const { colors, isDark } = useThemeContext();
   const { user, refreshUser } = useUserContext();
-  const { ownedMedia } = useOwnedMediaContext();
+  const { ownedMedia, ownedTvShows } = useOwnedMediaContext();
   const [statistics, setStatistics] = useState<Statistics>({
     movieCount: 0,
     tvCount: 0,
     movieRuntime: 0,
     tvEpisodesCount: 0,
   });
+  const [downloadOverview, setDownloadOverview] =
+    useState<DownloadSettingsOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const scrollY = useSharedValue(0);
   const scrollRef = useRef(null);
@@ -90,6 +98,9 @@ export default function ProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       refreshUser();
+      getDownloadSettingsOverview()
+        .then(setDownloadOverview)
+        .catch(() => setDownloadOverview(null));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
@@ -103,6 +114,9 @@ export default function ProfileScreen() {
   const ownedMovieCount = ownedMedia.filter(
     (item) => item.media_type === "movie",
   ).length;
+  const ownedTvCount = ownedTvShows.length;
+  const showAvailableMovieCount = isRadarrReady(downloadOverview);
+  const showAvailableTvCount = isSonarrReady(downloadOverview);
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -149,7 +163,10 @@ export default function ProfileScreen() {
                 tvCount={statistics.tvCount}
                 movieRuntime={statistics.movieRuntime}
                 tvEpisodesCount={statistics.tvEpisodesCount}
-                ownedMovieCount={ownedMovieCount}
+                availableMovieCount={ownedMovieCount}
+                availableTvCount={ownedTvCount}
+                showAvailableMovieCount={showAvailableMovieCount}
+                showAvailableTvCount={showAvailableTvCount}
                 pillBackgroundColor={pillBackgroundColor}
                 textColor={textColor}
               />
