@@ -148,6 +148,7 @@ export default function WatchlistMediaCard({
         textColor,
         secondaryTextColor,
         leadingAccessory: previewViewedIndicator,
+        viewed,
       }}
       trigger={
         <CompactMediaCard

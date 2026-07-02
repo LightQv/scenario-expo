@@ -18,6 +18,7 @@ import CompactMediaContextMenu, {
   type CompactMediaContextMenuAction,
 } from "@/components/ui/CompactMediaContextMenu";
 import { notifyPending } from "@/components/toasts/Toast";
+import { colorWithAlpha } from "@/services/detailPalette";
 import i18n from "@/services/i18n";
 
 type OwnedMediaCardProps = {
@@ -115,8 +116,13 @@ export default function OwnedMediaCard({
   ) : null;
 
   const partialBadge = showPartialBadge ? (
-    <View style={styles.partialBadge}>
-      <Text style={styles.partialBadgeText}>
+    <View
+      style={[
+        styles.partialBadge,
+        { backgroundColor: colorWithAlpha(colors.main, 0.16) },
+      ]}
+    >
+      <Text style={[styles.partialBadgeText, { color: colors.main }]}>
         {i18n.t("screen.detail.media.partial")}
       </Text>
     </View>
@@ -134,6 +140,8 @@ export default function OwnedMediaCard({
         secondaryTextColor,
         leadingAccessory: previewViewedIndicator,
         trailingAccessory: partialBadge,
+        viewed,
+        badgeLabel: showPartialBadge ? i18n.t("screen.detail.media.partial") : undefined,
       }}
       trigger={
         <CompactMediaCard
@@ -173,12 +181,10 @@ const styles = StyleSheet.create({
   partialBadge: {
     alignSelf: "center",
     borderRadius: 999,
-    backgroundColor: "rgba(234,178,8,0.16)",
     paddingHorizontal: 9,
     paddingVertical: 5,
   },
   partialBadgeText: {
-    color: "#eab208",
     fontSize: 11,
     fontWeight: "700",
   },

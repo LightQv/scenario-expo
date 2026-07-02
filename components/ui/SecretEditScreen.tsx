@@ -32,7 +32,7 @@ import {
   settingsBoldFont,
   settingsRegularFont,
 } from "@/components/settings/nativeSettingsModifiers";
-import { THEME_COLORS } from "@/constants/theme";
+import { useThemeContext } from "@/contexts";
 import i18n from "@/services/i18n";
 
 type SecretEditScreenProps = {
@@ -54,6 +54,7 @@ export default function SecretEditScreen({
   keyboard = "default",
   onSave,
 }: SecretEditScreenProps) {
+  const { colors } = useThemeContext();
   const text = useNativeState(initialValue);
   const [value, setValue] = useState(initialValue);
   const [saving, setSaving] = useState(false);
@@ -111,7 +112,7 @@ export default function SecretEditScreen({
                   padding({ bottom: 32, top: -16 }),
                 ]}
               >
-                <Image systemName={icon} size={68} color={THEME_COLORS.main} />
+                <Image systemName={icon} size={68} color={colors.main} />
               </VStack>
 
               <VStack alignment="leading" spacing={8}>

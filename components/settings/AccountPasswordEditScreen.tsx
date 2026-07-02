@@ -33,7 +33,6 @@ import {
 import { notifyError } from "@/components/toasts/Toast";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useThemeContext } from "@/contexts";
-import { THEME_COLORS } from "@/constants/theme";
 import i18n from "@/services/i18n";
 import { updatePasswordSchema } from "@/services/validators";
 
@@ -117,7 +116,7 @@ export default function AccountPasswordEditScreen({
                   padding({ bottom: 32, top: -16 }),
                 ]}
               >
-                <Image systemName="lock.circle" size={68} color={THEME_COLORS.main} />
+                <Image systemName="lock.circle" size={68} color={colors.main} />
               </VStack>
 
               <VStack alignment="leading" spacing={8}>

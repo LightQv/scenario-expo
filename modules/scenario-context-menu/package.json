@@ -1,0 +1,8 @@
+{
+  "name": "scenario-context-menu",
+  "version": "1.0.0",
+  "description": "Native iOS context menu wrapper for Scenario cards",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "private": true
+}

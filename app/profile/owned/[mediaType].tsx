@@ -283,6 +283,10 @@ export default function OwnedMediaTypeScreen() {
         ItemSeparatorComponent={() => (
           <View style={{ height: 2, backgroundColor }} />
         )}
+        initialNumToRender={10}
+        maxToRenderPerBatch={8}
+        updateCellsBatchingPeriod={50}
+        windowSize={9}
       />
     </View>
   );
