@@ -1,12 +1,11 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { ColorValue, StyleSheet } from "react-native";
-import { Button as NativeButton } from "@expo/ui/swift-ui";
 import ScenarioContextMenu from "scenario-context-menu";
 
 export type CompactMediaContextMenuAction = {
   id: string;
   label: string;
-  systemImage: ComponentProps<typeof NativeButton>["systemImage"];
+  systemImage: string;
   destructive?: boolean;
   onPress: () => void;
 };
