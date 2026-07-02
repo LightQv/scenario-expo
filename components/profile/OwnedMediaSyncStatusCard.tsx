@@ -23,7 +23,7 @@ export default function OwnedMediaSyncStatusCard({
       style={[
         styles.container,
         compact && styles.compactContainer,
-        { backgroundColor: PlatformColor("secondarySystemGroupedBackground") },
+        { backgroundColor: PlatformColor("secondarySystemBackground") },
       ]}
     >
       <View style={styles.copyContainer}>
