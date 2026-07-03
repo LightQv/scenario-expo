@@ -757,45 +757,76 @@
         }
       },
       "badges": {
-        "first-scene": {
-          "title": "First Scene",
-          "description": "Watch your first movie"
-        },
-        "movie-night": {
-          "title": "Movie Night",
-          "description": "Watch 10 movies"
-        },
-        "cinephile": {
-          "title": "Cinephile",
-          "description": "Watch 50 movies"
-        },
-        "pilot-episode": {
-          "title": "Pilot Episode",
-          "description": "Watch your first TV episode"
-        },
-        "binge-starter": {
-          "title": "Binge Starter",
-          "description": "Watch 10 TV episodes"
-        },
-        "seasoned": {
-          "title": "Seasoned",
-          "description": "Watch 25 TV episodes"
-        },
-        "archivist-i": {
-          "title": "Archivist I",
-          "description": "Add 10 movies to your collection"
-        },
-        "archivist-ii": {
-          "title": "Archivist II",
-          "description": "Add 50 movies to your collection"
-        },
-        "archivist-iii": {
-          "title": "Archivist III",
-          "description": "Add 100 movies to your collection"
-        }
+        "movieCountI": { "title": "First Scene", "description": "Watch 25 movies" },
+        "movieCountII": { "title": "Movie Night", "description": "Watch 100 movies" },
+        "movieCountIII": { "title": "Cinephile", "description": "Watch 500 movies" },
+        "movieCountIV": { "title": "\"I'll Be Back\"", "description": "Watch 1000 movies" },
+        "tvShowCountI": { "title": "Pilot Episode", "description": "Watch 25 TV shows" },
+        "tvShowCountII": { "title": "Binge Starter", "description": "Watch 100 TV shows" },
+        "tvShowCountIII": { "title": "Seasoned", "description": "Watch 500 TV shows" },
+        "tvShowCountIV": { "title": "\"Winter Is Coming\"", "description": "Watch 1000 TV shows" },
+        "movieCollectionI": { "title": "Archivist I", "description": "Add 10 movies to your collection" },
+        "movieCollectionII": { "title": "Archivist II", "description": "Add 50 movies to your collection" },
+        "movieCollectionIII": { "title": "Archivist III", "description": "Add 150 movies to your collection" },
+        "movieCollectionIV": { "title": "\"This Belongs in a Museum!\"", "description": "Add 300 movies to your collection" },
+        "downloadRequestI": { "title": "First Request", "description": "Request 5 downloads" },
+        "downloadRequestII": { "title": "Queue Master", "description": "Request 25 downloads" },
+        "downloadRequestIII": { "title": "Signal Boost", "description": "Request 100 downloads" },
+        "downloadRequestIV": { "title": "\"Guns. Lots of Guns.\"", "description": "Request 250 downloads" },
+        "watchlistCreatedI": { "title": "Curator", "description": "Create 1 personal watchlist" },
+        "watchlistCreatedII": { "title": "Shelf Builder", "description": "Create 5 personal watchlists" },
+        "watchlistCreatedIII": { "title": "Collection Architect", "description": "Create 10 personal watchlists" },
+        "watchlistCreatedIV": { "title": "Library of Babel", "description": "Create 20 personal watchlists" },
+        "watchlistMediaI": { "title": "Collector's Eye", "description": "Save 25 media to watchlists" },
+        "watchlistMediaII": { "title": "Shelf Space", "description": "Save 100 media to watchlists" },
+        "watchlistMediaIII": { "title": "Vault Keeper", "description": "Save 250 media to watchlists" },
+        "watchlistMediaIV": { "title": "The Infinite Queue", "description": "Save 500 media to watchlists" },
+        "genreBreadthI": { "title": "The Multiverse", "description": "Watch media from every supported genre" },
+        "actionAdventureI": { "title": "Action Hero", "description": "Watch 25 action or adventure media" },
+        "actionAdventureII": { "title": "Explosive Taste", "description": "Watch 75 action or adventure media" },
+        "actionAdventureIII": { "title": "Adrenaline Junkie", "description": "Watch 150 action or adventure media" },
+        "actionAdventureIV": { "title": "\"Yippee-Ki-Yay\"", "description": "Watch 300 action or adventure media" },
+        "horrorI": { "title": "Horror Hour", "description": "Watch 25 horror media" },
+        "horrorII": { "title": "Night Watcher", "description": "Watch 75 horror media" },
+        "horrorIII": { "title": "Fear Collector", "description": "Watch 150 horror media" },
+        "horrorIV": { "title": "\"We All Go a Little Mad Sometimes\"", "description": "Watch 300 horror media" },
+        "comedyI": { "title": "Laugh Track", "description": "Watch 25 comedy media" },
+        "comedyII": { "title": "Comedy Regular", "description": "Watch 75 comedy media" },
+        "comedyIII": { "title": "Punchline Pro", "description": "Watch 150 comedy media" },
+        "comedyIV": { "title": "\"Why So Serious?\"", "description": "Watch 300 comedy media" },
+        "sciFiFantasyI": { "title": "Mind Bender", "description": "Watch 25 sci-fi or fantasy media" },
+        "sciFiFantasyII": { "title": "Beyond the Stars", "description": "Watch 75 sci-fi or fantasy media" },
+        "sciFiFantasyIII": { "title": "Future Shock", "description": "Watch 150 sci-fi or fantasy media" },
+        "sciFiFantasyIV": { "title": "\"May the Force Be With You\"", "description": "Watch 300 sci-fi or fantasy media" },
+        "crimeThrillerMysteryI": { "title": "Crime Board", "description": "Watch 25 crime, thriller, or mystery media" },
+        "crimeThrillerMysteryII": { "title": "Case File", "description": "Watch 75 crime, thriller, or mystery media" },
+        "crimeThrillerMysteryIII": { "title": "Master Detective", "description": "Watch 150 crime, thriller, or mystery media" },
+        "crimeThrillerMysteryIV": { "title": "\"I See Dead People\"", "description": "Watch 300 crime, thriller, or mystery media" },
+        "romanceI": { "title": "Meet Cute", "description": "Watch 25 romance media" },
+        "romanceII": { "title": "Hopeless Romantic", "description": "Watch 75 romance media" },
+        "romanceIII": { "title": "Grand Gesture", "description": "Watch 150 romance media" },
+        "romanceIV": { "title": "\"To Me, You Are Perfect\"", "description": "Watch 300 romance media" },
+        "dramaI": { "title": "Dramatic Pause", "description": "Watch 25 drama media" },
+        "dramaII": { "title": "Emotional Range", "description": "Watch 75 drama media" },
+        "dramaIII": { "title": "Tearjerker", "description": "Watch 150 drama media" },
+        "dramaIV": { "title": "\"I'm the King of the World!\"", "description": "Watch 300 drama media" },
+        "animationI": { "title": "Frame by Frame", "description": "Watch 25 animation media" },
+        "animationII": { "title": "Saturday Morning", "description": "Watch 75 animation media" },
+        "animationIII": { "title": "Animated Soul", "description": "Watch 150 animation media" },
+        "animationIV": { "title": "\"To Infinity and Beyond\"", "description": "Watch 300 animation media" },
+        "longMovieI": { "title": "The Long Cut", "description": "Watch a movie over 3 hours" },
+        "classicMovieI": { "title": "Time Machine", "description": "Watch a movie released before 1980" },
+        "doubleFeatureI": { "title": "Double Feature", "description": "Watch 2 movies on the same day" },
+        "mixedNightI": { "title": "The Crossover", "description": "Watch a movie and a TV show on the same day" },
+        "seasonHunterI": { "title": "Season Hunter", "description": "Request a season download" },
+        "watchtimeI": { "title": "Just One More", "description": "Log 100 hours watched" },
+        "watchtimeII": { "title": "Lost Weekend", "description": "Log 500 hours watched" },
+        "watchtimeIII": { "title": "Time Well Spent", "description": "Log 1500 hours watched" },
+        "watchtimeIV": { "title": "\"We Are the Walking Dead\"", "description": "Log 3000 hours watched" }
       },
       "menu": {
         "editBanner": "Edit Banner",
+        "showAllBadges": "Show all achievements",
         "syncOwnedMovies": "Sync owned movies",
         "syncOwnedMoviesRunning": "Sync in progress",
         "syncOwnedTv": "Sync owned TV shows",

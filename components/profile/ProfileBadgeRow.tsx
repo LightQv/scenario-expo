@@ -21,7 +21,9 @@ export default function ProfileBadgeRow({
 }: ProfileBadgeRowProps) {
   const clampedCurrent = Math.min(badge.current, badge.target);
   const progress = badge.target > 0 ? clampedCurrent / badge.target : 0;
-  const palette = badge.unlocked ? BADGE_COLORS[badge.tier] : BADGE_COLORS.locked;
+  const displayTier = badge.displayTier || (badge.unlocked ? badge.tier : "locked");
+  const palette = BADGE_COLORS[displayTier];
+  const isMastered = badge.mastered ?? badge.unlocked;
 
   return (
     <View style={[styles.container, { backgroundColor }]}> 
@@ -30,7 +32,7 @@ export default function ProfileBadgeRow({
           colors={palette.background}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[styles.medallion, !badge.unlocked && styles.lockedMedallion]}
+          style={[styles.medallion, displayTier === "locked" && styles.lockedMedallion]}
         >
           <Ionicons name={badge.icon} size={24} color="#fff" />
         </LinearGradient>
@@ -57,14 +59,17 @@ export default function ProfileBadgeRow({
                 ]}
               />
             </View>
-            <Text style={[styles.progressText, { color: secondaryTextColor }]}> 
+            <Text
+              style={[styles.progressText, { color: secondaryTextColor }]}
+              numberOfLines={1}
+            > 
               {clampedCurrent} / {badge.target}
             </Text>
           </View>
         </View>
 
         <View style={styles.trailingIcon}>
-          {badge.unlocked ? (
+          {isMastered ? (
             <Ionicons name="checkmark-circle" size={22} color={palette.progress} />
           ) : (
             <Ionicons name="lock-closed" size={18} color={secondaryTextColor} />
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
   progressRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 6,
   },
   progressTrack: {
     flex: 1,
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: TOKENS.radius.full,
   },
   progressText: {
-    width: 48,
+    width: 82,
     textAlign: "right",
     fontSize: TOKENS.font.sm,
     fontFamily: FONTS.medium,

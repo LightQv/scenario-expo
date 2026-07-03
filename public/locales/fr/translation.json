@@ -757,45 +757,76 @@
         }
       },
       "badges": {
-        "first-scene": {
-          "title": "Première scène",
-          "description": "Regarder votre premier film"
-        },
-        "movie-night": {
-          "title": "Soirée cinéma",
-          "description": "Regarder 10 films"
-        },
-        "cinephile": {
-          "title": "Cinéphile",
-          "description": "Regarder 50 films"
-        },
-        "pilot-episode": {
-          "title": "Épisode pilote",
-          "description": "Regarder votre premier épisode"
-        },
-        "binge-starter": {
-          "title": "Début de marathon",
-          "description": "Regarder 10 épisodes"
-        },
-        "seasoned": {
-          "title": "Sérieux",
-          "description": "Regarder 25 épisodes"
-        },
-        "archivist-i": {
-          "title": "Archiviste I",
-          "description": "Ajouter 10 films à la collection"
-        },
-        "archivist-ii": {
-          "title": "Archiviste II",
-          "description": "Ajouter 50 films à la collection"
-        },
-        "archivist-iii": {
-          "title": "Archiviste III",
-          "description": "Ajouter 100 films à la collection"
-        }
+        "movieCountI": { "title": "Première scène", "description": "Regarder 25 films" },
+        "movieCountII": { "title": "Soirée cinéma", "description": "Regarder 100 films" },
+        "movieCountIII": { "title": "Cinéphile", "description": "Regarder 500 films" },
+        "movieCountIV": { "title": "\"Je reviendrai\"", "description": "Regarder 1000 films" },
+        "tvShowCountI": { "title": "Épisode pilote", "description": "Regarder 25 séries" },
+        "tvShowCountII": { "title": "Début de marathon", "description": "Regarder 100 séries" },
+        "tvShowCountIII": { "title": "Sérieux", "description": "Regarder 500 séries" },
+        "tvShowCountIV": { "title": "\"L'hiver vient\"", "description": "Regarder 1000 séries" },
+        "movieCollectionI": { "title": "Archiviste I", "description": "Ajouter 10 films à la collection" },
+        "movieCollectionII": { "title": "Archiviste II", "description": "Ajouter 50 films à la collection" },
+        "movieCollectionIII": { "title": "Archiviste III", "description": "Ajouter 150 films à la collection" },
+        "movieCollectionIV": { "title": "\"Ça devrait être dans un musée !\"", "description": "Ajouter 300 films à la collection" },
+        "downloadRequestI": { "title": "Première demande", "description": "Demander 5 téléchargements" },
+        "downloadRequestII": { "title": "Maître de la file", "description": "Demander 25 téléchargements" },
+        "downloadRequestIII": { "title": "Signal amplifié", "description": "Demander 100 téléchargements" },
+        "downloadRequestIV": { "title": "\"Des armes. Beaucoup d'armes.\"", "description": "Demander 250 téléchargements" },
+        "watchlistCreatedI": { "title": "Curateur", "description": "Créer 1 liste personnelle" },
+        "watchlistCreatedII": { "title": "Bâtisseur d'étagères", "description": "Créer 5 listes personnelles" },
+        "watchlistCreatedIII": { "title": "Architecte de collection", "description": "Créer 10 listes personnelles" },
+        "watchlistCreatedIV": { "title": "Bibliothèque de Babel", "description": "Créer 20 listes personnelles" },
+        "watchlistMediaI": { "title": "Œil de collectionneur", "description": "Ajouter 25 médias aux listes" },
+        "watchlistMediaII": { "title": "Place en rayon", "description": "Ajouter 100 médias aux listes" },
+        "watchlistMediaIII": { "title": "Gardien du coffre", "description": "Ajouter 250 médias aux listes" },
+        "watchlistMediaIV": { "title": "La file infinie", "description": "Ajouter 500 médias aux listes" },
+        "genreBreadthI": { "title": "Le Multivers", "description": "Regarder des médias de tous les genres pris en charge" },
+        "actionAdventureI": { "title": "Héros d'action", "description": "Regarder 25 médias action ou aventure" },
+        "actionAdventureII": { "title": "Goût explosif", "description": "Regarder 75 médias action ou aventure" },
+        "actionAdventureIII": { "title": "Accro à l'adrénaline", "description": "Regarder 150 médias action ou aventure" },
+        "actionAdventureIV": { "title": "\"Yippee-Ki-Yay\"", "description": "Regarder 300 médias action ou aventure" },
+        "horrorI": { "title": "Heure d'horreur", "description": "Regarder 25 médias d'horreur" },
+        "horrorII": { "title": "Veilleur de nuit", "description": "Regarder 75 médias d'horreur" },
+        "horrorIII": { "title": "Collectionneur de peur", "description": "Regarder 150 médias d'horreur" },
+        "horrorIV": { "title": "\"On devient tous un peu fou parfois\"", "description": "Regarder 300 médias d'horreur" },
+        "comedyI": { "title": "Rires en boîte", "description": "Regarder 25 comédies" },
+        "comedyII": { "title": "Habitué des comédies", "description": "Regarder 75 comédies" },
+        "comedyIII": { "title": "Pro de la chute", "description": "Regarder 150 comédies" },
+        "comedyIV": { "title": "\"Pourquoi cet air si sérieux ?\"", "description": "Regarder 300 comédies" },
+        "sciFiFantasyI": { "title": "Casse-tête", "description": "Regarder 25 médias SF ou fantasy" },
+        "sciFiFantasyII": { "title": "Au-delà des étoiles", "description": "Regarder 75 médias SF ou fantasy" },
+        "sciFiFantasyIII": { "title": "Choc du futur", "description": "Regarder 150 médias SF ou fantasy" },
+        "sciFiFantasyIV": { "title": "\"Que la Force soit avec toi\"", "description": "Regarder 300 médias SF ou fantasy" },
+        "crimeThrillerMysteryI": { "title": "Tableau d'enquête", "description": "Regarder 25 médias crime, thriller ou mystère" },
+        "crimeThrillerMysteryII": { "title": "Dossier classé", "description": "Regarder 75 médias crime, thriller ou mystère" },
+        "crimeThrillerMysteryIII": { "title": "Maître détective", "description": "Regarder 150 médias crime, thriller ou mystère" },
+        "crimeThrillerMysteryIV": { "title": "\"Je vois des gens qui sont morts\"", "description": "Regarder 300 médias crime, thriller ou mystère" },
+        "romanceI": { "title": "Coup de foudre", "description": "Regarder 25 romances" },
+        "romanceII": { "title": "Romantique invétéré", "description": "Regarder 75 romances" },
+        "romanceIII": { "title": "Grande déclaration", "description": "Regarder 150 romances" },
+        "romanceIV": { "title": "\"Pour moi, tu es parfaite\"", "description": "Regarder 300 romances" },
+        "dramaI": { "title": "Pause dramatique", "description": "Regarder 25 drames" },
+        "dramaII": { "title": "Palette d'émotions", "description": "Regarder 75 drames" },
+        "dramaIII": { "title": "Tire-larmes", "description": "Regarder 150 drames" },
+        "dramaIV": { "title": "\"Je suis le roi du monde !\"", "description": "Regarder 300 drames" },
+        "animationI": { "title": "Image par image", "description": "Regarder 25 animations" },
+        "animationII": { "title": "Samedi matin", "description": "Regarder 75 animations" },
+        "animationIII": { "title": "Âme animée", "description": "Regarder 150 animations" },
+        "animationIV": { "title": "\"Vers l'infini et au-delà\"", "description": "Regarder 300 animations" },
+        "longMovieI": { "title": "Version longue", "description": "Regarder un film de plus de 3 heures" },
+        "classicMovieI": { "title": "Machine à remonter le temps", "description": "Regarder un film sorti avant 1980" },
+        "doubleFeatureI": { "title": "Double programme", "description": "Regarder 2 films le même jour" },
+        "mixedNightI": { "title": "Le Crossover", "description": "Regarder un film et une série le même jour" },
+        "seasonHunterI": { "title": "Chasseur de saison", "description": "Demander le téléchargement d'une saison" },
+        "watchtimeI": { "title": "Encore un seul", "description": "Atteindre 100 heures regardées" },
+        "watchtimeII": { "title": "Week-end perdu", "description": "Atteindre 500 heures regardées" },
+        "watchtimeIII": { "title": "Du temps bien investi", "description": "Atteindre 1500 heures regardées" },
+        "watchtimeIV": { "title": "\"Nous sommes les morts-vivants\"", "description": "Atteindre 3000 heures regardées" }
       },
       "menu": {
         "editBanner": "Modifier la bannière",
+        "showAllBadges": "Afficher tous les succès",
         "syncOwnedMovies": "Synchroniser les films possédés",
         "syncOwnedMoviesRunning": "Synchronisation en cours",
         "syncOwnedTv": "Synchroniser les séries possédées",

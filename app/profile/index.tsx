@@ -32,7 +32,12 @@ import ProfileMenu from "@/components/profile/ProfileMenu";
 import ProfileBadgeRow from "@/components/profile/ProfileBadgeRow";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
-import { createProfileBadges, type ProfileBadge } from "@/services/badges";
+import {
+  createCurrentBadgeDisplay,
+  createProfileBadges,
+  fetchProfileBadges,
+  type ProfileBadge,
+} from "@/services/badges";
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<ProfileBadge>);
 
@@ -40,7 +45,6 @@ type Statistics = {
   movieCount: number;
   tvCount: number;
   movieRuntime: number;
-  tvEpisodesCount: number;
 };
 
 const ListHeader = memo(
@@ -87,7 +91,6 @@ const ListHeader = memo(
           movieCount={statistics.movieCount}
           tvCount={statistics.tvCount}
           movieRuntime={statistics.movieRuntime}
-          tvEpisodesCount={statistics.tvEpisodesCount}
           availableMovieCount={ownedMovieCount}
           availableTvCount={ownedTvCount}
           showAvailableMovieCount={showAvailableMovieCount}
@@ -110,10 +113,11 @@ export default function ProfileScreen() {
     movieCount: 0,
     tvCount: 0,
     movieRuntime: 0,
-    tvEpisodesCount: 0,
   });
   const [downloadOverview, setDownloadOverview] =
     useState<DownloadSettingsOverview | null>(null);
+  const [backendBadges, setBackendBadges] = useState<ProfileBadge[] | null>(null);
+  const [showAllBadges, setShowAllBadges] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollY = useSharedValue(0);
   const scrollRef = useRef(null);
@@ -126,12 +130,11 @@ export default function ProfileScreen() {
     try {
       setLoading(true);
 
-      const [movieCountData, tvCountData, movieRuntimeData, tvRuntimeData] =
+      const [movieCountData, tvCountData, movieRuntimeData] =
         await Promise.all([
           apiFetch(`/api/v1/statistics/count/movie/${user.id}`),
           apiFetch(`/api/v1/statistics/count/tv/${user.id}`),
           apiFetch(`/api/v1/statistics/runtime/movie/${user.id}`),
-          apiFetch(`/api/v1/statistics/runtime/tv/${user.id}`),
         ]);
 
       const movieCount =
@@ -144,18 +147,27 @@ export default function ProfileScreen() {
         0,
       );
 
-      const tvEpisodesCount = tvRuntimeData.length;
-
       setStatistics({
         movieCount,
         tvCount,
         movieRuntime,
-        tvEpisodesCount,
       });
     } catch (error) {
       notifyError(i18n.t("toast.error"));
     } finally {
       setLoading(false);
+    }
+  }, [user?.id]);
+
+  const fetchBadges = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      const badges = await fetchProfileBadges();
+      setBackendBadges(badges);
+    } catch (error) {
+      console.error("Error fetching badges:", error);
+      setBackendBadges(null);
     }
   }, [user?.id]);
 
@@ -172,8 +184,9 @@ export default function ProfileScreen() {
       getDownloadSettingsOverview()
         .then(setDownloadOverview)
         .catch(() => setDownloadOverview(null));
+      fetchBadges();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [fetchBadges]),
   );
 
   const statusStyle = isDark ? "light" : "dark";
@@ -188,15 +201,19 @@ export default function ProfileScreen() {
   const ownedTvCount = ownedTvShows.length;
   const showAvailableMovieCount = isRadarrReady(downloadOverview);
   const showAvailableTvCount = isSonarrReady(downloadOverview);
-  const badges = useMemo(
+  const localBadges = useMemo(
     () =>
       createProfileBadges({
         movieCount: statistics.movieCount,
-        tvEpisodesCount: statistics.tvEpisodesCount,
+        tvShowCount: statistics.tvCount,
         availableMovieCount: ownedMovieCount,
       }),
-    [statistics.movieCount, statistics.tvEpisodesCount, ownedMovieCount],
+    [statistics.movieCount, statistics.tvCount, ownedMovieCount],
   );
+  const badges = backendBadges || localBadges;
+  const displayedBadges = showAllBadges
+    ? badges
+    : createCurrentBadgeDisplay(badges);
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -274,7 +291,10 @@ export default function ProfileScreen() {
       ]}
     >
       <GoBackButton />
-      <ProfileMenu />
+      <ProfileMenu
+        showAllBadges={showAllBadges}
+        onToggleAllBadges={() => setShowAllBadges((value) => !value)}
+      />
       <StatusBar style={statusStyle} animated />
 
       <AnimatedFlatList
@@ -285,7 +305,7 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         entering={FadeInLeft}
         exiting={FadeOutRight}
-        data={!loading && user ? badges : []}
+        data={!loading && user ? displayedBadges : []}
         renderItem={renderBadge}
         keyExtractor={keyExtractor}
         ListHeaderComponent={renderListHeader()}
