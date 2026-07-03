@@ -129,13 +129,33 @@ export function prefetchDetailPaletteFromImage(
 }
 
 export function colorWithAlpha(color: string, alpha: number): string {
-  const rgb = hexToRgb(color);
+  const rgb = colorToRgb(color);
 
   if (!rgb) {
     return color;
   }
 
   return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+}
+
+function colorToRgb(color: string): Rgb | null {
+  return hexToRgb(color) || rgbStringToRgb(color);
+}
+
+function rgbStringToRgb(color: string): Rgb | null {
+  const match = color
+    .trim()
+    .match(/^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:,\s*[\d.]+\s*)?\)$/i);
+
+  if (!match) {
+    return null;
+  }
+
+  const [r, g, b] = match.slice(1, 4).map((channel) =>
+    Math.max(0, Math.min(255, Math.round(Number(channel)))),
+  );
+
+  return { r, g, b };
 }
 
 function createDetailPalette(
@@ -1058,6 +1078,8 @@ function hexToRgb(hex: string): Rgb | null {
           .split("")
           .map((char) => char + char)
           .join("")
+      : normalized.length === 8
+        ? normalized.slice(0, 6)
       : normalized;
 
   if (!/^[0-9a-fA-F]{6}$/.test(value)) {
