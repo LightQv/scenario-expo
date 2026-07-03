@@ -1,8 +1,16 @@
-import { PlatformColor, View, StyleSheet } from "react-native";
-import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  ColorValue,
+  FlatList,
+  ListRenderItem,
+  PlatformColor,
+  View,
+  StyleSheet,
+} from "react-native";
+import { memo, useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "expo-router";
 import Animated, {
+  SharedValue,
   useAnimatedScrollHandler,
   useSharedValue,
   FadeInLeft,
@@ -21,8 +29,12 @@ import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import StatisticsPills from "@/components/profile/StatisticsPills";
 import ProfileMenu from "@/components/profile/ProfileMenu";
+import ProfileBadgeRow from "@/components/profile/ProfileBadgeRow";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
+import { createProfileBadges, type ProfileBadge } from "@/services/badges";
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<ProfileBadge>);
 
 type Statistics = {
   movieCount: number;
@@ -30,6 +42,65 @@ type Statistics = {
   movieRuntime: number;
   tvEpisodesCount: number;
 };
+
+const ListHeader = memo(
+  ({
+    user,
+    statistics,
+    ownedMovieCount,
+    ownedTvCount,
+    showAvailableMovieCount,
+    showAvailableTvCount,
+    scrollY,
+    backgroundColor,
+    fadeBackgroundColor,
+    textColor,
+    secondaryTextColor,
+    pillBackgroundColor,
+  }: {
+    user: User;
+    statistics: Statistics;
+    ownedMovieCount: number;
+    ownedTvCount: number;
+    showAvailableMovieCount: boolean;
+    showAvailableTvCount: boolean;
+    scrollY: SharedValue<number>;
+    backgroundColor: ColorValue;
+    fadeBackgroundColor: string;
+    textColor: string;
+    secondaryTextColor: string;
+    pillBackgroundColor: ColorValue;
+  }) => (
+    <>
+      <ProfileBanner
+        bannerUrl={user.profileBanner}
+        username={user.username}
+        email={user.email}
+        scrollY={scrollY}
+        backgroundColor={backgroundColor}
+        fadeBackgroundColor={fadeBackgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+      />
+      <View style={[styles.contentContainer, { backgroundColor }]}> 
+        <StatisticsPills
+          movieCount={statistics.movieCount}
+          tvCount={statistics.tvCount}
+          movieRuntime={statistics.movieRuntime}
+          tvEpisodesCount={statistics.tvEpisodesCount}
+          availableMovieCount={ownedMovieCount}
+          availableTvCount={ownedTvCount}
+          showAvailableMovieCount={showAvailableMovieCount}
+          showAvailableTvCount={showAvailableTvCount}
+          pillBackgroundColor={pillBackgroundColor}
+          textColor={textColor}
+        />
+      </View>
+    </>
+  ),
+);
+
+ListHeader.displayName = "ProfileListHeader";
 
 export default function ProfileScreen() {
   const { colors, isDark } = useThemeContext();
@@ -117,6 +188,15 @@ export default function ProfileScreen() {
   const ownedTvCount = ownedTvShows.length;
   const showAvailableMovieCount = isRadarrReady(downloadOverview);
   const showAvailableTvCount = isSonarrReady(downloadOverview);
+  const badges = useMemo(
+    () =>
+      createProfileBadges({
+        movieCount: statistics.movieCount,
+        tvEpisodesCount: statistics.tvEpisodesCount,
+        availableMovieCount: ownedMovieCount,
+      }),
+    [statistics.movieCount, statistics.tvEpisodesCount, ownedMovieCount],
+  );
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -124,6 +204,67 @@ export default function ProfileScreen() {
       scrollY.value = event.contentOffset.y;
     },
   });
+
+  const renderBadge: ListRenderItem<ProfileBadge> = useCallback(
+    ({ item }) => (
+      <ProfileBadgeRow
+        badge={item}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+        progressTrackColor={pillBackgroundColor}
+      />
+    ),
+    [backgroundColor, pillBackgroundColor, secondaryTextColor, textColor],
+  );
+
+  const renderItemSeparator = useCallback(
+    () => (
+      <View
+        style={{
+          height: 2,
+          backgroundColor,
+        }}
+      />
+    ),
+    [backgroundColor],
+  );
+
+  const renderListHeader = useCallback(() => {
+    if (loading || !user) return null;
+    return (
+      <ListHeader
+        user={user}
+        statistics={statistics}
+        ownedMovieCount={ownedMovieCount}
+        ownedTvCount={ownedTvCount}
+        showAvailableMovieCount={showAvailableMovieCount}
+        showAvailableTvCount={showAvailableTvCount}
+        scrollY={scrollY}
+        backgroundColor={backgroundColor}
+        fadeBackgroundColor={fadeBackgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+        pillBackgroundColor={pillBackgroundColor}
+      />
+    );
+  }, [
+    backgroundColor,
+    fadeBackgroundColor,
+    loading,
+    ownedMovieCount,
+    ownedTvCount,
+    pillBackgroundColor,
+    scrollY,
+    secondaryTextColor,
+    showAvailableMovieCount,
+    showAvailableTvCount,
+    statistics,
+    textColor,
+    user,
+  ]);
+
+  const keyExtractor = useCallback((item: ProfileBadge) => item.id, []);
 
   return (
     <View
@@ -136,7 +277,7 @@ export default function ProfileScreen() {
       <ProfileMenu />
       <StatusBar style={statusStyle} animated />
 
-      <Animated.ScrollView
+      <AnimatedFlatList
         ref={scrollRef}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
@@ -144,37 +285,17 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         entering={FadeInLeft}
         exiting={FadeOutRight}
-      >
-        {!loading && user && (
-          <>
-            <ProfileBanner
-              bannerUrl={user.profileBanner}
-              username={user.username}
-              email={user.email}
-              scrollY={scrollY}
-              backgroundColor={backgroundColor}
-              fadeBackgroundColor={fadeBackgroundColor}
-              textColor={textColor}
-              secondaryTextColor={secondaryTextColor}
-            />
-            <View style={[styles.contentContainer, { backgroundColor }]}> 
-              <StatisticsPills
-                movieCount={statistics.movieCount}
-                tvCount={statistics.tvCount}
-                movieRuntime={statistics.movieRuntime}
-                tvEpisodesCount={statistics.tvEpisodesCount}
-                availableMovieCount={ownedMovieCount}
-                availableTvCount={ownedTvCount}
-                showAvailableMovieCount={showAvailableMovieCount}
-                showAvailableTvCount={showAvailableTvCount}
-                pillBackgroundColor={pillBackgroundColor}
-                textColor={textColor}
-              />
-            </View>
-            {/* Additional profile content will be added here later */}
-          </>
-        )}
-      </Animated.ScrollView>
+        data={!loading && user ? badges : []}
+        renderItem={renderBadge}
+        keyExtractor={keyExtractor}
+        ListHeaderComponent={renderListHeader()}
+        ItemSeparatorComponent={renderItemSeparator}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={10}
+        windowSize={21}
+      />
     </View>
   );
 }
@@ -185,9 +306,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 0,
+    paddingBottom: 28,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 300,
+    paddingTop: 12,
+    paddingBottom: 34,
   },
 });

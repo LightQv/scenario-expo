@@ -756,6 +756,44 @@
           "cancel": "Annuler"
         }
       },
+      "badges": {
+        "first-scene": {
+          "title": "Première scène",
+          "description": "Regarder votre premier film"
+        },
+        "movie-night": {
+          "title": "Soirée cinéma",
+          "description": "Regarder 10 films"
+        },
+        "cinephile": {
+          "title": "Cinéphile",
+          "description": "Regarder 50 films"
+        },
+        "pilot-episode": {
+          "title": "Épisode pilote",
+          "description": "Regarder votre premier épisode"
+        },
+        "binge-starter": {
+          "title": "Début de marathon",
+          "description": "Regarder 10 épisodes"
+        },
+        "seasoned": {
+          "title": "Sérieux",
+          "description": "Regarder 25 épisodes"
+        },
+        "archivist-i": {
+          "title": "Archiviste I",
+          "description": "Ajouter 10 films à la collection"
+        },
+        "archivist-ii": {
+          "title": "Archiviste II",
+          "description": "Ajouter 50 films à la collection"
+        },
+        "archivist-iii": {
+          "title": "Archiviste III",
+          "description": "Ajouter 100 films à la collection"
+        }
+      },
       "menu": {
         "editBanner": "Modifier la bannière",
         "syncOwnedMovies": "Synchroniser les films possédés",

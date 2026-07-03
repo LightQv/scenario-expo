@@ -756,6 +756,44 @@
           "cancel": "Cancel"
         }
       },
+      "badges": {
+        "first-scene": {
+          "title": "First Scene",
+          "description": "Watch your first movie"
+        },
+        "movie-night": {
+          "title": "Movie Night",
+          "description": "Watch 10 movies"
+        },
+        "cinephile": {
+          "title": "Cinephile",
+          "description": "Watch 50 movies"
+        },
+        "pilot-episode": {
+          "title": "Pilot Episode",
+          "description": "Watch your first TV episode"
+        },
+        "binge-starter": {
+          "title": "Binge Starter",
+          "description": "Watch 10 TV episodes"
+        },
+        "seasoned": {
+          "title": "Seasoned",
+          "description": "Watch 25 TV episodes"
+        },
+        "archivist-i": {
+          "title": "Archivist I",
+          "description": "Add 10 movies to your collection"
+        },
+        "archivist-ii": {
+          "title": "Archivist II",
+          "description": "Add 50 movies to your collection"
+        },
+        "archivist-iii": {
+          "title": "Archivist III",
+          "description": "Add 100 movies to your collection"
+        }
+      },
       "menu": {
         "editBanner": "Edit Banner",
         "syncOwnedMovies": "Sync owned movies",
