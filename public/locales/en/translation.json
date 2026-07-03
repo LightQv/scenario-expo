@@ -789,7 +789,7 @@
         "horrorI": { "title": "Horror Hour", "description": "Watch 25 horror media" },
         "horrorII": { "title": "Night Watcher", "description": "Watch 75 horror media" },
         "horrorIII": { "title": "Fear Collector", "description": "Watch 150 horror media" },
-        "horrorIV": { "title": "\"We All Go a Little Mad Sometimes\"", "description": "Watch 300 horror media" },
+        "horrorIV": { "title": "\"What's your favorite scary movie?\"", "description": "Watch 300 horror media" },
         "comedyI": { "title": "Laugh Track", "description": "Watch 25 comedy media" },
         "comedyII": { "title": "Comedy Regular", "description": "Watch 75 comedy media" },
         "comedyIII": { "title": "Punchline Pro", "description": "Watch 150 comedy media" },

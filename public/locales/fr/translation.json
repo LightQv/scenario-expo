@@ -789,7 +789,7 @@
         "horrorI": { "title": "Heure d'horreur", "description": "Regarder 25 médias d'horreur" },
         "horrorII": { "title": "Veilleur de nuit", "description": "Regarder 75 médias d'horreur" },
         "horrorIII": { "title": "Collectionneur de peur", "description": "Regarder 150 médias d'horreur" },
-        "horrorIV": { "title": "\"On devient tous un peu fou parfois\"", "description": "Regarder 300 médias d'horreur" },
+        "horrorIV": { "title": "\"Quel est ton film d'horreur préféré ?\"", "description": "Regarder 300 médias d'horreur" },
         "comedyI": { "title": "Rires en boîte", "description": "Regarder 25 comédies" },
         "comedyII": { "title": "Habitué des comédies", "description": "Regarder 75 comédies" },
         "comedyIII": { "title": "Pro de la chute", "description": "Regarder 150 comédies" },
