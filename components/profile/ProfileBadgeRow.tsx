@@ -1,8 +1,8 @@
 import { ColorValue, PlatformColor, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { BADGE_COLORS, FONTS, TOKENS } from "@/constants/theme";
 import type { ProfileBadge } from "@/services/badges";
+import ProfileBadgeToken from "./ProfileBadgeToken";
 
 type ProfileBadgeRowProps = {
   badge: ProfileBadge;
@@ -28,14 +28,12 @@ export default function ProfileBadgeRow({
   return (
     <View style={[styles.container, { backgroundColor }]}> 
       <View style={styles.content}>
-        <LinearGradient
-          colors={palette.background}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.medallion, displayTier === "locked" && styles.lockedMedallion]}
-        >
-          <Ionicons name={badge.icon} size={24} color="#fff" />
-        </LinearGradient>
+        <ProfileBadgeToken
+          badgeId={badge.id}
+          icon={badge.icon}
+          tier={displayTier}
+          mastered={isMastered}
+        />
 
         <View style={styles.textContainer}>
           <Text style={[styles.title, { color: textColor }]} numberOfLines={1}>
@@ -90,21 +88,9 @@ const styles = StyleSheet.create({
     paddingLeft: TOKENS.margin.horizontal,
     paddingRight: 12,
   },
-  medallion: {
-    width: 60,
-    height: 60,
-    borderRadius: TOKENS.radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(255,255,255,0.45)",
-  },
-  lockedMedallion: {
-    opacity: 0.55,
-  },
   textContainer: {
     flex: 1,
-    marginLeft: 14,
+    marginLeft: 16,
     gap: 2,
   },
   title: {
@@ -124,7 +110,7 @@ const styles = StyleSheet.create({
   },
   progressTrack: {
     flex: 1,
-    height: 6,
+    height: 5,
     borderRadius: TOKENS.radius.full,
     overflow: "hidden",
   },
