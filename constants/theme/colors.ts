@@ -47,3 +47,26 @@ export const TOAST_COLORS = {
     info: "#60a5fa",
   },
 };
+
+export const BADGE_COLORS = {
+  bronze: {
+    background: ["#9A5A2E", "#D8A15F"],
+    progress: "#D8A15F",
+  },
+  silver: {
+    background: ["#6E7581", "#D7DCE2"],
+    progress: "#B8C0CA",
+  },
+  gold: {
+    background: ["#B67A00", "#F9CD4A"],
+    progress: "#F9CD4A",
+  },
+  platinum: {
+    background: ["#36556F", "#8EC5D9"],
+    progress: "#8EC5D9",
+  },
+  locked: {
+    background: ["#6B7280", "#A1A1AA"],
+    progress: "#8E8E93",
+  },
+} as const;

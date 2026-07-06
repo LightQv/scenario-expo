@@ -7,7 +7,6 @@ type StatisticsPillsProps = {
   movieCount: number;
   tvCount: number;
   movieRuntime: number; // in minutes
-  tvEpisodesCount: number;
   availableMovieCount: number;
   availableTvCount: number;
   showAvailableMovieCount: boolean;
@@ -20,7 +19,6 @@ export default function StatisticsPills({
   movieCount,
   tvCount,
   movieRuntime,
-  tvEpisodesCount,
   availableMovieCount,
   availableTvCount,
   showAvailableMovieCount,
@@ -42,13 +40,6 @@ export default function StatisticsPills({
 
   const formatMovieRuntime = () => {
     return formatTotalRuntime(movieRuntime);
-  };
-
-  const formatTvEpisodes = () => {
-    if (tvEpisodesCount === 0) return `0 ${i18n.t("stats.tvsRuntime")}`;
-    if (tvEpisodesCount === 1)
-      return `${tvEpisodesCount} ${i18n.t("stats.tvRuntime")}`;
-    return `${tvEpisodesCount} ${i18n.t("stats.tvsRuntime")}`;
   };
 
   const formatAvailableMovies = () => {
@@ -98,18 +89,6 @@ export default function StatisticsPills({
       >
         <Text style={[styles.pillText, { color: textColor }]}> 
           {formatMovieRuntime()}
-        </Text>
-      </View>
-
-      {/* TV Episodes Count */}
-      <View
-        style={[
-          styles.pill,
-          { backgroundColor: pillBackgroundColor },
-        ]}
-      >
-        <Text style={[styles.pillText, { color: textColor }]}> 
-          {formatTvEpisodes()}
         </Text>
       </View>
 

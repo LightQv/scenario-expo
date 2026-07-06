@@ -1,8 +1,16 @@
-import { PlatformColor, View, StyleSheet } from "react-native";
-import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  ColorValue,
+  FlatList,
+  ListRenderItem,
+  PlatformColor,
+  View,
+  StyleSheet,
+} from "react-native";
+import { memo, useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "expo-router";
 import Animated, {
+  SharedValue,
   useAnimatedScrollHandler,
   useSharedValue,
   FadeInLeft,
@@ -21,15 +29,81 @@ import i18n from "@/services/i18n";
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import StatisticsPills from "@/components/profile/StatisticsPills";
 import ProfileMenu from "@/components/profile/ProfileMenu";
+import ProfileBadgeRow from "@/components/profile/ProfileBadgeRow";
 import GoBackButton from "@/components/ui/GoBackButton";
 import { useTransparentNavigationBarAppearance } from "@/hooks/useTransparentNavigationBarAppearance";
+import {
+  createCurrentBadgeDisplay,
+  createProfileBadges,
+  fetchProfileBadges,
+  type ProfileBadge,
+} from "@/services/badges";
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<ProfileBadge>);
 
 type Statistics = {
   movieCount: number;
   tvCount: number;
   movieRuntime: number;
-  tvEpisodesCount: number;
 };
+
+const ListHeader = memo(
+  ({
+    user,
+    statistics,
+    ownedMovieCount,
+    ownedTvCount,
+    showAvailableMovieCount,
+    showAvailableTvCount,
+    scrollY,
+    backgroundColor,
+    fadeBackgroundColor,
+    textColor,
+    secondaryTextColor,
+    pillBackgroundColor,
+  }: {
+    user: User;
+    statistics: Statistics;
+    ownedMovieCount: number;
+    ownedTvCount: number;
+    showAvailableMovieCount: boolean;
+    showAvailableTvCount: boolean;
+    scrollY: SharedValue<number>;
+    backgroundColor: ColorValue;
+    fadeBackgroundColor: string;
+    textColor: string;
+    secondaryTextColor: string;
+    pillBackgroundColor: ColorValue;
+  }) => (
+    <>
+      <ProfileBanner
+        bannerUrl={user.profileBanner}
+        username={user.username}
+        email={user.email}
+        scrollY={scrollY}
+        backgroundColor={backgroundColor}
+        fadeBackgroundColor={fadeBackgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+      />
+      <View style={[styles.contentContainer, { backgroundColor }]}> 
+        <StatisticsPills
+          movieCount={statistics.movieCount}
+          tvCount={statistics.tvCount}
+          movieRuntime={statistics.movieRuntime}
+          availableMovieCount={ownedMovieCount}
+          availableTvCount={ownedTvCount}
+          showAvailableMovieCount={showAvailableMovieCount}
+          showAvailableTvCount={showAvailableTvCount}
+          pillBackgroundColor={pillBackgroundColor}
+          textColor={textColor}
+        />
+      </View>
+    </>
+  ),
+);
+
+ListHeader.displayName = "ProfileListHeader";
 
 export default function ProfileScreen() {
   const { colors, isDark } = useThemeContext();
@@ -39,10 +113,11 @@ export default function ProfileScreen() {
     movieCount: 0,
     tvCount: 0,
     movieRuntime: 0,
-    tvEpisodesCount: 0,
   });
   const [downloadOverview, setDownloadOverview] =
     useState<DownloadSettingsOverview | null>(null);
+  const [backendBadges, setBackendBadges] = useState<ProfileBadge[] | null>(null);
+  const [showAllBadges, setShowAllBadges] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollY = useSharedValue(0);
   const scrollRef = useRef(null);
@@ -55,12 +130,11 @@ export default function ProfileScreen() {
     try {
       setLoading(true);
 
-      const [movieCountData, tvCountData, movieRuntimeData, tvRuntimeData] =
+      const [movieCountData, tvCountData, movieRuntimeData] =
         await Promise.all([
           apiFetch(`/api/v1/statistics/count/movie/${user.id}`),
           apiFetch(`/api/v1/statistics/count/tv/${user.id}`),
           apiFetch(`/api/v1/statistics/runtime/movie/${user.id}`),
-          apiFetch(`/api/v1/statistics/runtime/tv/${user.id}`),
         ]);
 
       const movieCount =
@@ -73,18 +147,27 @@ export default function ProfileScreen() {
         0,
       );
 
-      const tvEpisodesCount = tvRuntimeData.length;
-
       setStatistics({
         movieCount,
         tvCount,
         movieRuntime,
-        tvEpisodesCount,
       });
     } catch (error) {
       notifyError(i18n.t("toast.error"));
     } finally {
       setLoading(false);
+    }
+  }, [user?.id]);
+
+  const fetchBadges = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      const badges = await fetchProfileBadges();
+      setBackendBadges(badges);
+    } catch (error) {
+      console.error("Error fetching badges:", error);
+      setBackendBadges(null);
     }
   }, [user?.id]);
 
@@ -101,8 +184,9 @@ export default function ProfileScreen() {
       getDownloadSettingsOverview()
         .then(setDownloadOverview)
         .catch(() => setDownloadOverview(null));
+      fetchBadges();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [fetchBadges]),
   );
 
   const statusStyle = isDark ? "light" : "dark";
@@ -117,6 +201,19 @@ export default function ProfileScreen() {
   const ownedTvCount = ownedTvShows.length;
   const showAvailableMovieCount = isRadarrReady(downloadOverview);
   const showAvailableTvCount = isSonarrReady(downloadOverview);
+  const localBadges = useMemo(
+    () =>
+      createProfileBadges({
+        movieCount: statistics.movieCount,
+        tvShowCount: statistics.tvCount,
+        availableMovieCount: ownedMovieCount,
+      }),
+    [statistics.movieCount, statistics.tvCount, ownedMovieCount],
+  );
+  const badges = backendBadges || localBadges;
+  const displayedBadges = showAllBadges
+    ? badges.map((badge) => ({ ...badge, displayTier: badge.tier }))
+    : createCurrentBadgeDisplay(badges);
 
   // Scroll handler to track scroll position
   const scrollHandler = useAnimatedScrollHandler({
@@ -124,6 +221,67 @@ export default function ProfileScreen() {
       scrollY.value = event.contentOffset.y;
     },
   });
+
+  const renderBadge: ListRenderItem<ProfileBadge> = useCallback(
+    ({ item }) => (
+      <ProfileBadgeRow
+        badge={item}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+        progressTrackColor={pillBackgroundColor}
+      />
+    ),
+    [backgroundColor, pillBackgroundColor, secondaryTextColor, textColor],
+  );
+
+  const renderItemSeparator = useCallback(
+    () => (
+      <View
+        style={{
+          height: 2,
+          backgroundColor,
+        }}
+      />
+    ),
+    [backgroundColor],
+  );
+
+  const renderListHeader = useCallback(() => {
+    if (loading || !user) return null;
+    return (
+      <ListHeader
+        user={user}
+        statistics={statistics}
+        ownedMovieCount={ownedMovieCount}
+        ownedTvCount={ownedTvCount}
+        showAvailableMovieCount={showAvailableMovieCount}
+        showAvailableTvCount={showAvailableTvCount}
+        scrollY={scrollY}
+        backgroundColor={backgroundColor}
+        fadeBackgroundColor={fadeBackgroundColor}
+        textColor={textColor}
+        secondaryTextColor={secondaryTextColor}
+        pillBackgroundColor={pillBackgroundColor}
+      />
+    );
+  }, [
+    backgroundColor,
+    fadeBackgroundColor,
+    loading,
+    ownedMovieCount,
+    ownedTvCount,
+    pillBackgroundColor,
+    scrollY,
+    secondaryTextColor,
+    showAvailableMovieCount,
+    showAvailableTvCount,
+    statistics,
+    textColor,
+    user,
+  ]);
+
+  const keyExtractor = useCallback((item: ProfileBadge) => item.id, []);
 
   return (
     <View
@@ -133,10 +291,13 @@ export default function ProfileScreen() {
       ]}
     >
       <GoBackButton />
-      <ProfileMenu />
+      <ProfileMenu
+        showAllBadges={showAllBadges}
+        onToggleAllBadges={() => setShowAllBadges((value) => !value)}
+      />
       <StatusBar style={statusStyle} animated />
 
-      <Animated.ScrollView
+      <AnimatedFlatList
         ref={scrollRef}
         scrollEventThrottle={16}
         onScroll={scrollHandler}
@@ -144,37 +305,17 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         entering={FadeInLeft}
         exiting={FadeOutRight}
-      >
-        {!loading && user && (
-          <>
-            <ProfileBanner
-              bannerUrl={user.profileBanner}
-              username={user.username}
-              email={user.email}
-              scrollY={scrollY}
-              backgroundColor={backgroundColor}
-              fadeBackgroundColor={fadeBackgroundColor}
-              textColor={textColor}
-              secondaryTextColor={secondaryTextColor}
-            />
-            <View style={[styles.contentContainer, { backgroundColor }]}> 
-              <StatisticsPills
-                movieCount={statistics.movieCount}
-                tvCount={statistics.tvCount}
-                movieRuntime={statistics.movieRuntime}
-                tvEpisodesCount={statistics.tvEpisodesCount}
-                availableMovieCount={ownedMovieCount}
-                availableTvCount={ownedTvCount}
-                showAvailableMovieCount={showAvailableMovieCount}
-                showAvailableTvCount={showAvailableTvCount}
-                pillBackgroundColor={pillBackgroundColor}
-                textColor={textColor}
-              />
-            </View>
-            {/* Additional profile content will be added here later */}
-          </>
-        )}
-      </Animated.ScrollView>
+        data={!loading && user ? displayedBadges : []}
+        renderItem={renderBadge}
+        keyExtractor={keyExtractor}
+        ListHeaderComponent={renderListHeader()}
+        ItemSeparatorComponent={renderItemSeparator}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={10}
+        windowSize={21}
+      />
     </View>
   );
 }
@@ -185,9 +326,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 0,
+    paddingBottom: 28,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 300,
+    paddingTop: 12,
+    paddingBottom: 34,
   },
 });
