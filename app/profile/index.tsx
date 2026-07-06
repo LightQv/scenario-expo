@@ -212,7 +212,7 @@ export default function ProfileScreen() {
   );
   const badges = backendBadges || localBadges;
   const displayedBadges = showAllBadges
-    ? badges
+    ? badges.map((badge) => ({ ...badge, displayTier: badge.tier }))
     : createCurrentBadgeDisplay(badges);
 
   // Scroll handler to track scroll position

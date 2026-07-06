@@ -30,9 +30,7 @@ export default function ProfileBadgeRow({
       <View style={styles.content}>
         <ProfileBadgeToken
           badgeId={badge.id}
-          icon={badge.icon}
           tier={displayTier}
-          mastered={isMastered}
         />
 
         <View style={styles.textContainer}>
