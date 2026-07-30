@@ -1,11 +1,16 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import {
+  DarkTheme,
+  DefaultTheme,
+  Stack,
+  ThemeProvider as NavigationThemeProvider,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import {
-  ThemeProvider,
+  ThemeProvider as AppThemeProvider,
   GenreProvider,
   UserProvider,
   ViewProvider,
@@ -54,15 +59,26 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <GestureHandlerRootView>
-      <ThemeProvider>
+      <AppThemeProvider>
         <ThemeWrapper />
-      </ThemeProvider>
+      </AppThemeProvider>
     </GestureHandlerRootView>
   );
 }
 
 function ThemeWrapper() {
-  const { themePreference } = useThemeContext();
+  const { colors, isDark, themePreference } = useThemeContext();
+  const baseNavigationTheme = isDark ? DarkTheme : DefaultTheme;
+  const navigationTheme = {
+    ...baseNavigationTheme,
+    colors: {
+      ...baseNavigationTheme.colors,
+      primary: colors.main,
+      background: colors.background,
+      card: colors.headerBackground,
+      text: colors.text,
+    },
+  };
 
   // Force the appearance mode when theme is manually set
   useEffect(() => {
@@ -77,52 +93,54 @@ function ThemeWrapper() {
   }, [themePreference]);
 
   return (
-    <UserProvider>
-      <ViewProvider>
-        <BookmarkProvider>
-          <OwnedMediaProvider>
-            <DownloadRequestProvider>
-              <GenreProvider>
-                <Stack
-                  screenOptions={{
-                    headerBackButtonDisplayMode: "minimal",
-                  }}
-                >
-                  <Stack.Screen
-                    name="(modal)"
-                    options={{ presentation: "modal", headerShown: false }}
-                  />
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="profile"
-                    options={{ headerShown: false, presentation: "card" }}
-                  />
-                  <Stack.Screen
-                    name="settings"
-                    options={{ headerShown: false, presentation: "card" }}
-                  />
-                  <Stack.Screen
-                    name="details/[id]"
-                    options={{
-                      headerTransparent: true,
-                      headerShadowVisible: false,
-                      headerTitle: "",
+    <NavigationThemeProvider value={navigationTheme}>
+      <UserProvider>
+        <ViewProvider>
+          <BookmarkProvider>
+            <OwnedMediaProvider>
+              <DownloadRequestProvider>
+                <GenreProvider>
+                  <Stack
+                    screenOptions={{
+                      headerBackButtonDisplayMode: "minimal",
                     }}
-                  />
-                  <Stack.Screen
-                    name="genre/[genreId]"
-                    options={{
-                      headerTransparent: true,
-                      headerShadowVisible: false,
-                      headerTitle: "",
-                    }}
-                  />
-                </Stack>
-              </GenreProvider>
-            </DownloadRequestProvider>
-          </OwnedMediaProvider>
-        </BookmarkProvider>
-      </ViewProvider>
-    </UserProvider>
+                  >
+                    <Stack.Screen
+                      name="(modal)"
+                      options={{ presentation: "modal", headerShown: false }}
+                    />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="profile"
+                      options={{ headerShown: false, presentation: "card" }}
+                    />
+                    <Stack.Screen
+                      name="settings"
+                      options={{ headerShown: false, presentation: "card" }}
+                    />
+                    <Stack.Screen
+                      name="details/[id]"
+                      options={{
+                        headerTransparent: true,
+                        headerShadowVisible: false,
+                        headerTitle: "",
+                      }}
+                    />
+                    <Stack.Screen
+                      name="genre/[genreId]"
+                      options={{
+                        headerTransparent: true,
+                        headerShadowVisible: false,
+                        headerTitle: "",
+                      }}
+                    />
+                  </Stack>
+                </GenreProvider>
+              </DownloadRequestProvider>
+            </OwnedMediaProvider>
+          </BookmarkProvider>
+        </ViewProvider>
+      </UserProvider>
+    </NavigationThemeProvider>
   );
 }
