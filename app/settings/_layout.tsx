@@ -70,6 +70,26 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="account/api-tokens/add"
+        options={{
+          presentation: "modal",
+          headerShown: true,
+          headerTitle: i18n.t("screen.settings.apiTokens.addTitle"),
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="account/api-tokens/[id]"
+        options={{
+          headerShown: true,
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
         name="downloads/index"
         options={{
           headerTransparent: true,

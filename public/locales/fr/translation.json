@@ -648,6 +648,26 @@
           "confirm": "Supprimer"
         }
       },
+      "apiTokens": {
+        "title": "Jetons d'accès long terme",
+        "add": "Ajouter un nouveau jeton long terme",
+        "addTitle": "Ajouter un jeton long terme",
+        "empty": "Aucun jeton d'accès long terme",
+        "name": "Nom",
+        "namePlaceholder": "Service externe",
+        "token": "Jeton",
+        "tokenPlaceholder": "Générer ou coller un jeton",
+        "required": "Le nom et le jeton sont requis.",
+        "sectionFooter": "Les jetons d'accès long terme permettent à des services de confiance d'accéder à votre pipeline de téléchargement Scenario pour Radarr et Sonarr. Les téléchargements ne fonctionnent que si ces intégrations sont configurées pour votre compte.",
+        "addFooter": "Utilisez Générer pour créer un jeton long terme, puis enregistrez-le avec un nom reconnaissable.",
+        "detailFooter": "Ce jeton est lié à votre compte. Toute personne possédant cette valeur peut utiliser les actions API Scenario autorisées jusqu'à sa révocation.",
+        "copy": "Copier le jeton",
+        "copied": "Jeton copié",
+        "revoke": "Révoquer le jeton",
+        "revokeTitle": "Révoquer le jeton ?",
+        "revokeMessage": "Révoquer {{name}} ? Nyx et les autres clients utilisant ce jeton perdront l'accès immédiatement.",
+        "revokeConfirm": "Révoquer"
+      },
       "deleteAccount": {
         "title": "Supprimer le compte",
         "description": "Cette action supprime définitivement votre compte et ne peut pas être annulée."
