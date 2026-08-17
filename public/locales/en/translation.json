@@ -648,6 +648,26 @@
           "confirm": "Delete"
         }
       },
+      "apiTokens": {
+        "title": "Long-term access tokens",
+        "add": "Add new long-term token",
+        "addTitle": "Add Long-term Token",
+        "empty": "No long-term access tokens",
+        "name": "Name",
+        "namePlaceholder": "External service",
+        "token": "Token",
+        "tokenPlaceholder": "Generate or paste a token",
+        "required": "Name and token are required.",
+        "sectionFooter": "Long-term access tokens let trusted services access your Scenario download pipeline for Radarr and Sonarr. Downloads only work when those integrations are configured for your account.",
+        "addFooter": "Use Generate to create a long-term token, then save it with a recognizable name.",
+        "detailFooter": "This token is tied to your account. Anyone with this value can use the allowed Scenario API actions until you revoke it.",
+        "copy": "Copy Token",
+        "copied": "Token copied",
+        "revoke": "Revoke token",
+        "revokeTitle": "Revoke token?",
+        "revokeMessage": "Revoke {{name}}? Nyx and other clients using this token will lose access immediately.",
+        "revokeConfirm": "Revoke"
+      },
       "deleteAccount": {
         "title": "Delete account",
         "description": "This permanently deletes your account and cannot be undone."

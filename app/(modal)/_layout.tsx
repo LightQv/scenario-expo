@@ -1,16 +1,14 @@
 import { Stack } from "expo-router";
+import { PlatformColor } from "react-native";
 import i18n from "@/services/i18n";
-import { useThemeContext } from "@/contexts/ThemeContext";
 
 export default function ModalLayout() {
-  const { colors } = useThemeContext();
-
   return (
     <Stack
       screenOptions={{
         presentation: "modal",
         headerShown: true,
-        headerTintColor: colors.text,
+        headerTintColor: PlatformColor("label"),
         headerShadowVisible: false,
         headerTransparent: true,
       }}
