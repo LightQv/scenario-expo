@@ -33,6 +33,9 @@ export default {
     },
     plugins: [
       "expo-router",
+      "./plugins/withIosSceneLifecycle",
+      "expo-image",
+      "expo-splash-screen",
       "expo-localization",
       [
         "expo-local-authentication",
