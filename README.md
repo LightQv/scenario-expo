@@ -6,7 +6,7 @@
 
 Expo Router mobile client for discovering, tracking, and organizing movies and TV shows.
 
-[About](#about) · [Setup](#setup) · [Development](#development) · [Configuration](#configuration) · [Platform Notes](#platform-notes) · [Related Projects](#related-projects) · [License](#license)
+[About](#about) · [Setup](#setup) · [Development](#development) · [Configuration](#configuration) · [Platform Notes](#platform-notes) · [Archive and Restore](#archive-and-restore) · [Related Projects](#related-projects) · [License](#license)
 
 </div>
 
@@ -170,8 +170,37 @@ services/
 
 ## Related Projects
 
+- [Scenario PWA](https://github.com/LightQv/scenario-pwa) — maintained browser-native successor
 - [Scenario API](https://github.com/LightQv/scenario-fast-api)
 - [Scenario Web](https://github.com/LightQv/scenario-web-client)
+
+---
+
+## Archive and Restore
+
+This native client is retained as the design reference for [Scenario PWA](https://github.com/LightQv/scenario-pwa). Archiving on GitHub makes the repository read-only; unarchive it in repository settings before resuming pushes or maintenance.
+
+For space-efficient local storage, only regenerable dependencies/caches are removed: `node_modules`, `.expo`, `ios/Pods` and `ios/build`. Source, assets, local modules, package manifests/lockfile, local environment files, native project files and `ios/Podfile.lock` are preserved. Generated native folders may contain local customizations, so they are **not** deleted wholesale.
+
+Restore the locked JavaScript dependencies (including the existing `patch-package` postinstall):
+
+```bash
+npm ci
+```
+
+Then start the development server:
+
+```bash
+npm start
+```
+
+For a local iOS build, with Xcode and CocoaPods available:
+
+```bash
+npm run ios
+```
+
+Expo restores CocoaPods dependencies and build output as needed. Alternatively, run `pod install` inside the preserved `ios` directory first. A fresh clone does not include ignored native folders or local environment files: configure `.env` from `.env.sample` and run `npm run ios:prebuild` before building iOS. Do not use the clean-rebuild script merely to restore dependencies; it intentionally removes the CocoaPods lockfile and regenerates native projects.
 
 ---
 
